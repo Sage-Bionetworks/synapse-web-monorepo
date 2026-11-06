@@ -66,7 +66,18 @@ const fontLoader = async () => ({
   fonts: [await document.fonts.load('700 1em "DM Sans"')],
 })
 
-export const loaders = [mswLoader]
+/**
+ * A story that serves its own network sets `parameters.msw` to `false`. It then renders without
+ * waiting for the MSW worker, so it also works where service workers are blocked (the grid load
+ * benchmark runs that way).
+ */
+function mswLoaderUnlessDisabled(context: Parameters<typeof mswLoader>[0]) {
+  return context.parameters.msw === false
+    ? Promise.resolve({})
+    : mswLoader(context)
+}
+
+export const loaders = [mswLoaderUnlessDisabled]
 
 if (isChromatic() && document.fonts) {
   loaders.push(fontLoader)
