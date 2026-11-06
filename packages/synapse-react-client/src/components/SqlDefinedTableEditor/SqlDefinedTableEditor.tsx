@@ -56,6 +56,25 @@ const VIRTUAL_TABLE_HELP = (
   </Box>
 )
 
+const SEARCH_INDEX_HELP = (
+  <Box
+    sx={{
+      mb: 2.5,
+    }}
+  >
+    <Typography
+      variant={'body1'}
+      sx={{
+        color: 'grey.700',
+      }}
+    >
+      A Search Index is defined by a Synapse SQL query that must reference
+      exactly one table or view. Each column in the SELECT clause becomes a
+      field in the search index.
+    </Typography>
+  </Box>
+)
+
 export type SqlDefinedTableEditorProps = TextFieldProps & {
   /* Optional entity type for showing help documentation */
   entityType?: EntityType
@@ -74,6 +93,7 @@ export default function SqlDefinedTableEditor(
     <>
       {entityType === EntityType.materializedview && MATERIALIZED_VIEW_HELP}
       {entityType === EntityType.virtualtable && VIRTUAL_TABLE_HELP}
+      {entityType === EntityType.searchindex && SEARCH_INDEX_HELP}
       <TextField
         label={'Defining SQL'}
         placeholder={'SELECT * FROM syn123'}

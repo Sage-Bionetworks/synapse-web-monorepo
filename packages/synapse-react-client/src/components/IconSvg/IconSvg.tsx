@@ -126,6 +126,7 @@ import RemoveCircleTwoTone from '@mui/icons-material/RemoveCircleTwoTone'
 import ReplyTwoTone from '@mui/icons-material/ReplyTwoTone'
 import ReportProblemOutlined from '@mui/icons-material/ReportProblemOutlined'
 import RestoreFromTrashTwoTone from '@mui/icons-material/RestoreFromTrashTwoTone'
+import ManageSearch from '@mui/icons-material/ManageSearch'
 import SearchOutlined from '@mui/icons-material/SearchOutlined'
 import SearchTwoTone from '@mui/icons-material/SearchTwoTone'
 import ShareTwoTone from '@mui/icons-material/ShareTwoTone'
@@ -199,6 +200,7 @@ export const IconStrings = [
   'download',
   'searchOutlined',
   'search',
+  'manageSearch',
   'history',
   'time',
   'login',
@@ -460,6 +462,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <SearchOutlined {...otherProps} />
     case 'search':
       return <SearchTwoTone {...otherProps} />
+    case 'manageSearch':
+      return <ManageSearch {...otherProps} />
     case 'history':
       return <HistoryTwoTone {...otherProps} />
     case 'time':
