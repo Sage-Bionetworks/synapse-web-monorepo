@@ -5,6 +5,7 @@ import FullContextProvider, {
   defaultQueryClientConfig,
 } from '@/utils/context/FullContextProvider'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { IsEditingStore } from '@/utils/context/GlobalIsEditingContext'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactNode } from 'react'
 import { createTestIsEditingStore } from './IsEditingStoreTestUtils'
@@ -15,10 +16,12 @@ type RtlWrapperProps = {
 
 /**
  * Creates a test wrapper for components being tested with @testing-library/react. This wrapper
- * includes context and an isolated query cache. Returns the queryClient so it may be modified as needed
+ * includes context and an isolated query cache. Returns the queryClient so it may be modified as needed.
+ * Pass `isEditingStore` to observe the global editing state the way a host app (e.g. SWC) does.
  */
 export const createWrapperAndQueryClient = (
   props?: Partial<SynapseContextType>,
+  isEditingStore?: IsEditingStore,
 ) => {
   // Creating a new query client for each rendering is important isolating tests, otherwise the
   // cache could be shared across tests.
@@ -33,7 +36,7 @@ export const createWrapperAndQueryClient = (
           synapseContext={wrapperProps}
           queryClient={queryClient}
           applicationSessionContext={MOCK_APPLICATION_SESSION_CONTEXT}
-          isEditingStore={createTestIsEditingStore()}
+          isEditingStore={isEditingStore ?? createTestIsEditingStore()}
         >
           {children}
         </FullContextProvider>
@@ -47,8 +50,11 @@ export const createWrapperAndQueryClient = (
  * Creates a test wrapper for components being tested with @testing-library/react. This wrapper
  * includes context and an isolated query cache.
  */
-export const createWrapper = (props?: Partial<SynapseContextType>) => {
-  return createWrapperAndQueryClient(props).wrapperFn
+export const createWrapper = (
+  props?: Partial<SynapseContextType>,
+  isEditingStore?: IsEditingStore,
+) => {
+  return createWrapperAndQueryClient(props, isEditingStore).wrapperFn
 }
 
 /** Helper to get both a Wrapper and the QueryClient */

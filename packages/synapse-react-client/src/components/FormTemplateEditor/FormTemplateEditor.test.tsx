@@ -7,6 +7,7 @@ import {
   getRegisteredSchemaHandlers,
 } from '@/mocks/msw/handlers/schemaHandlers'
 import { server } from '@/mocks/msw/server'
+import { createTestIsEditingStore } from '@/testutils/IsEditingStoreTestUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { FormTemplate } from '@sage-bionetworks/synapse-client'
@@ -19,9 +20,14 @@ import {
 } from '@testing-library/react'
 import userEvent, { UserEvent } from '@testing-library/user-event'
 import { JSONSchema7 } from 'json-schema'
+import { createMemoryRouter, RouterProvider } from 'react-router'
 import { FormTemplateEditor } from './FormTemplateEditor'
 import { ACCESS_REQUIREMENT_BASE_SCHEMA_ID } from './formTemplateSchema'
 import { CHOICE_OPTION_PROBLEM_TEXT } from './schemaFieldUtils'
+import {
+  DISCARD_CHANGES_CONFIRM_TEXT,
+  DISCARD_CHANGES_TITLE,
+} from './useUnsavedChangesPrompt'
 
 const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
@@ -36,11 +42,30 @@ const listSchemaVersionsSpy = vi.spyOn(
   'postRepoV1SchemaVersionList',
 )
 
-function renderEditor(onSaved = vi.fn(), templateId?: string) {
-  return render(
-    <FormTemplateEditor templateId={templateId} onSaved={onSaved} />,
-    { wrapper: createWrapper() },
-  )
+function renderEditor(
+  onSaved = vi.fn(),
+  templateId?: string,
+  onCancel?: () => void,
+) {
+  // The editor blocks navigation away from unsaved changes, which needs a data router.
+  const router = createMemoryRouter([
+    {
+      path: '/',
+      element: (
+        <FormTemplateEditor
+          templateId={templateId}
+          onSaved={onSaved}
+          onCancel={onCancel}
+        />
+      ),
+    },
+  ])
+  // The host app (SWC) asks before leaving the page while this store reports editing.
+  const isEditingStore = createTestIsEditingStore()
+  const result = render(<RouterProvider router={router} />, {
+    wrapper: createWrapper(undefined, isEditingStore),
+  })
+  return { ...result, isEditingStore }
 }
 
 /** Create a field via the library's "New" button; opens its drawer. */
@@ -502,5 +527,64 @@ describe('FormTemplateEditor', () => {
     expect(
       screen.queryByRole('textbox', { name: 'Internal Name' }),
     ).not.toBeInTheDocument()
+  })
+
+  describe('unsaved changes', () => {
+    it('cancels right away when nothing changed', async () => {
+      const user = userEvent.setup()
+      const onCancel = vi.fn()
+      renderEditor(vi.fn(), undefined, onCancel)
+
+      await user.click(await screen.findByRole('button', { name: 'Cancel' }))
+
+      expect(onCancel).toHaveBeenCalledTimes(1)
+      expect(
+        screen.queryByRole('dialog', { name: DISCARD_CHANGES_TITLE }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('cancels only once the user confirms discarding their changes', async () => {
+      const user = userEvent.setup()
+      const onCancel = vi.fn()
+      renderEditor(vi.fn(), undefined, onCancel)
+      await user.type(getNameField(), 'Draft')
+
+      await user.click(screen.getByRole('button', { name: 'Cancel' }))
+      const prompt = screen.getByRole('dialog', { name: DISCARD_CHANGES_TITLE })
+      expect(onCancel).not.toHaveBeenCalled()
+
+      await user.click(
+        within(prompt).getByRole('button', {
+          name: DISCARD_CHANGES_CONFIRM_TEXT,
+        }),
+      )
+      expect(onCancel).toHaveBeenCalledTimes(1)
+    })
+
+    it('stops asking once the changes are saved', async () => {
+      const user = userEvent.setup()
+      const onSaved = vi.fn()
+      const onCancel = vi.fn()
+      const { isEditingStore } = renderEditor(
+        onSaved,
+        mockGenomicsTemplate.id,
+        onCancel,
+      )
+      await user.type(
+        await screen.findByRole('textbox', { name: 'Internal Name' }),
+        ' v2',
+      )
+      expect(isEditingStore.getSnapshot()).toBe(true)
+
+      await user.click(screen.getByRole('button', { name: 'Save Changes' }))
+      await waitFor(() => expect(onSaved).toHaveBeenCalled())
+
+      await waitFor(() => expect(isEditingStore.getSnapshot()).toBe(false))
+      await user.click(screen.getByRole('button', { name: 'Cancel' }))
+      expect(onCancel).toHaveBeenCalledTimes(1)
+      expect(
+        screen.queryByRole('dialog', { name: DISCARD_CHANGES_TITLE }),
+      ).not.toBeInTheDocument()
+    })
   })
 })
