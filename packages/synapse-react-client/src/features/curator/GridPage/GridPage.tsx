@@ -29,19 +29,16 @@ function GridPageInternal() {
   }
 
   return (
-    <>
-      <GridPageTitle sessionId={sessionId} taskId={taskId} />
-      <div className={'pageContent'}>
-        <SynapseGrid
-          agentRegistrationId={agentRegistrationId ?? undefined}
-          ref={handle => {
-            if (handle) {
-              handle.loadExistingSession(sessionId)
-            }
-          }}
-        />
-      </div>
-    </>
+    <SynapseGrid
+      header={<GridPageTitle sessionId={sessionId} taskId={taskId} />}
+      contentClassName={'pageContent'}
+      agentRegistrationId={agentRegistrationId ?? undefined}
+      ref={handle => {
+        if (handle) {
+          handle.loadExistingSession(sessionId)
+        }
+      }}
+    />
   )
 }
 

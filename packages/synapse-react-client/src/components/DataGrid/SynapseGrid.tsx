@@ -2,6 +2,8 @@ import CertificationRequirement from '@/components/AccessRequirementList/Require
 import ExportCsvFromGridButton from '@/components/DataGrid/components/ExportCsvFromGridButton'
 import GridLoadingState from '@/components/DataGrid/components/GridLoadingState'
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
+import OpenGridAgentSidebarButton from '@/components/DataGrid/components/GridAgentSidebar/OpenGridAgentSidebarButton'
+import useGridAgentSidebarOpen from '@/components/DataGrid/components/GridAgentSidebar/useGridAgentSidebarOpen'
 import ReorderColumnsButton from '@/components/DataGrid/components/ReorderColumnsButton'
 import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
 import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid'
@@ -37,6 +39,7 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { ClickableJsonCrdt } from 'clickable-json'
 import {
+  ReactNode,
   Ref,
   useCallback,
   useEffect,
@@ -60,7 +63,7 @@ import { applyModelChange, ModelChange } from './utils/applyModelChange'
 import { removeNoOpOperations } from './utils/DataGridUtils'
 import { enrichRowsWithChangeInfo } from './utils/enrichRowsWithChangeInfo'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
-import CurieAvatarHead from '@/assets/mui_components/CurieAvatarHead'
+import styles from './SynapseGrid.module.scss'
 
 // Stable reference for renders with no model snapshot, so column memos don't recompute
 const EMPTY_COLUMN_NAMES: string[] = []
@@ -68,6 +71,10 @@ const EMPTY_COLUMN_NAMES: string[] = []
 export type SynapseGridProps = {
   agentRegistrationId?: string
   showDebugInfo?: boolean
+  /** Content shown above the grid, beside the docked AI Assistant sidebar */
+  header?: ReactNode
+  /** Class name for the container around the grid content, which excludes `header` and the sidebar */
+  contentClassName?: string
   ref?: Ref<SynapseGridHandle>
 }
 
@@ -79,11 +86,17 @@ export type SynapseGridHandle = {
 function SynapseGridInner({
   agentRegistrationId,
   showDebugInfo = false,
+  header,
+  contentClassName,
   ref,
 }: SynapseGridProps) {
   const [session, setSession] = useState<GridSession | null>(null)
   const [replicaId, setReplicaId] = useState<number | null>(null)
-  const [chatOpen, setChatOpen] = useState(false)
+  const {
+    isOpen: isAgentSidebarOpen,
+    openSidebar: openAgentSidebar,
+    closeSidebar: closeAgentSidebar,
+  } = useGridAgentSidebarOpen()
   const [lastSelection, setLastSelection] = useState<SelectionWithId | null>(
     null,
   )
@@ -377,238 +390,263 @@ function SynapseGridInner({
   )
 
   if (!isLoading && !userBundle?.isCertified) {
-    return <CertificationRequirement />
+    return (
+      <>
+        {header}
+        <div className={contentClassName}>
+          <CertificationRequirement />
+        </div>
+      </>
+    )
   }
 
   return (
-    <div>
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 12, xl: 8 }}>
-          <StartGridSession
-            ref={startGridSessionRef}
-            onSessionChange={setSession}
-            onReplicaChange={setReplicaId}
-            show={showDebugInfo}
-          />
-        </Grid>
-        {/* Debug Information */}
-        <Grid size={{ xs: 12, xl: 4 }}>
-          {showDebugInfo && (
-            <div>
-              <p>Session ID: {session?.sessionId || 'No session created'}</p>
-              <p>Replica ID: {replicaId || 'No replica created'}</p>
-              <p>
-                Source Entity ID:{' '}
-                {session?.sourceEntityId || 'No source entity'}
-              </p>
-              <p>
-                JSON Schema $id:{' '}
-                {session?.gridJsonSchema$Id || 'No schema attached to session'}
-              </p>
-              <p>
-                Presigned URL:{' '}
-                {presignedUrl
-                  ? presignedUrl.substring(0, 30) +
-                    (presignedUrl.length > 30
-                      ? ' ... ' +
-                        presignedUrl.substring(presignedUrl.length - 10)
-                      : '')
-                  : 'No URL generated'}
-              </p>
-              <p>
-                WebSocket Status:{' '}
-                <span style={{ color: isConnected ? 'green' : 'red' }}>
-                  {connectionStatus}
-                </span>
-              </p>
-              <p>
-                {(() => {
-                  const connectedReplicas = replicas.filter(r => r.isConnected)
-                  return (
-                    <>
-                      Connected Replicas ({connectedReplicas.length} /{' '}
-                      {replicas.length} total):{' '}
-                      {connectedReplicas.length === 0
-                        ? 'none'
-                        : connectedReplicas.map((r, i) => (
-                            <Tooltip
-                              key={r.replicaId}
-                              title={
-                                <pre style={{ margin: 0, fontSize: '11px' }}>
-                                  {JSON.stringify(r, null, 2)}
-                                </pre>
-                              }
-                            >
-                              <span
-                                style={{
-                                  cursor: 'pointer',
-                                  textDecoration: 'underline dotted',
-                                }}
-                              >
-                                {r.replicaId}
-                                {i < connectedReplicas.length - 1 ? ', ' : ''}
-                              </span>
-                            </Tooltip>
-                          ))}
-                    </>
-                  )
-                })()}
-              </p>
-            </div>
-          )}
-        </Grid>
+    <div className={styles.layout}>
+      <div className={styles.main}>
+        {header}
+        <div className={contentClassName}>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, xl: 8 }}>
+              <StartGridSession
+                ref={startGridSessionRef}
+                onSessionChange={setSession}
+                onReplicaChange={setReplicaId}
+                show={showDebugInfo}
+              />
+            </Grid>
+            {/* Debug Information */}
+            <Grid size={{ xs: 12, xl: 4 }}>
+              {showDebugInfo && (
+                <div>
+                  <p>
+                    Session ID: {session?.sessionId || 'No session created'}
+                  </p>
+                  <p>Replica ID: {replicaId || 'No replica created'}</p>
+                  <p>
+                    Source Entity ID:{' '}
+                    {session?.sourceEntityId || 'No source entity'}
+                  </p>
+                  <p>
+                    JSON Schema $id:{' '}
+                    {session?.gridJsonSchema$Id ||
+                      'No schema attached to session'}
+                  </p>
+                  <p>
+                    Presigned URL:{' '}
+                    {presignedUrl
+                      ? presignedUrl.substring(0, 30) +
+                        (presignedUrl.length > 30
+                          ? ' ... ' +
+                            presignedUrl.substring(presignedUrl.length - 10)
+                          : '')
+                      : 'No URL generated'}
+                  </p>
+                  <p>
+                    WebSocket Status:{' '}
+                    <span style={{ color: isConnected ? 'green' : 'red' }}>
+                      {connectionStatus}
+                    </span>
+                  </p>
+                  <p>
+                    {(() => {
+                      const connectedReplicas = replicas.filter(
+                        r => r.isConnected,
+                      )
+                      return (
+                        <>
+                          Connected Replicas ({connectedReplicas.length} /{' '}
+                          {replicas.length} total):{' '}
+                          {connectedReplicas.length === 0
+                            ? 'none'
+                            : connectedReplicas.map((r, i) => (
+                                <Tooltip
+                                  key={r.replicaId}
+                                  title={
+                                    <pre
+                                      style={{ margin: 0, fontSize: '11px' }}
+                                    >
+                                      {JSON.stringify(r, null, 2)}
+                                    </pre>
+                                  }
+                                >
+                                  <span
+                                    style={{
+                                      cursor: 'pointer',
+                                      textDecoration: 'underline dotted',
+                                    }}
+                                  >
+                                    {r.replicaId}
+                                    {i < connectedReplicas.length - 1
+                                      ? ', '
+                                      : ''}
+                                  </span>
+                                </Tooltip>
+                              ))}
+                        </>
+                      )
+                    })()}
+                  </p>
+                </div>
+              )}
+            </Grid>
 
-        {session && (
-          <>
-            {/* Grid Loading State */}
-            {!hasCompletedInitialLoad && (
-              <Grid size={12}>
-                <GridLoadingState
-                  hasReplicaId={replicaId != null}
-                  hasPresignedUrl={!!presignedUrl}
-                  isConnected={isConnected}
-                />
-              </Grid>
-            )}
-            {/* Grid */}
-            {hasCompletedInitialLoad && (
+            {session && (
               <>
-                <Grid size={12}>
-                  <ValidationAlert
-                    rowValues={rowValues}
-                    columnNames={columnNames}
-                    columnOrder={columnOrder}
-                    onNavigateToCell={handleNavigateToCell}
-                    isLoading={!hasCompletedInitialSync}
-                  />
-                </Grid>
-                <Grid size={12}>
-                  <Stack
-                    direction={'row'}
-                    spacing={1}
-                    sx={{ justifyContent: 'flex-end' }}
-                  >
-                    {/* Keep this sync indicator first in the stack, otherwise it will cause other buttons to shift */}
-                    {isSyncing && (
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1,
-                        }}
+                {/* Grid Loading State */}
+                {!hasCompletedInitialLoad && (
+                  <Grid size={12}>
+                    <GridLoadingState
+                      hasReplicaId={replicaId != null}
+                      hasPresignedUrl={!!presignedUrl}
+                      isConnected={isConnected}
+                    />
+                  </Grid>
+                )}
+                {/* Grid */}
+                {hasCompletedInitialLoad && (
+                  <>
+                    <Grid size={12}>
+                      <ValidationAlert
+                        rowValues={rowValues}
+                        columnNames={columnNames}
+                        columnOrder={columnOrder}
+                        onNavigateToCell={handleNavigateToCell}
+                        isLoading={!hasCompletedInitialSync}
+                      />
+                    </Grid>
+                    <Grid size={12}>
+                      <Stack
+                        direction={'row'}
+                        spacing={1}
+                        useFlexGap
+                        sx={{ justifyContent: 'flex-end', flexWrap: 'wrap' }}
                       >
-                        <SynapseSpinner size={16} margin="0" />
-                        <Typography variant="caption" color="text.secondary">
-                          Syncing…
-                        </Typography>
-                      </Box>
-                    )}
-                    <GridMenuButton
+                        {/* Keep this sync indicator first in the stack, otherwise it will cause other buttons to shift */}
+                        {isSyncing && (
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 1,
+                            }}
+                          >
+                            <SynapseSpinner size={16} margin="0" />
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                            >
+                              Syncing…
+                            </Typography>
+                          </Box>
+                        )}
+                        <GridMenuButton
+                          variant="outlined"
+                          startIcon={<HelpOutline />}
+                          href="https://docs.synapse.org/synapse-docs/managing-metadata-with-curator"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{ mr: 'auto' }}
+                        >
+                          Help and Instructions
+                        </GridMenuButton>
+                        {undoUI}
+                        {redoUI}
+                        <ReorderColumnsButton
+                          columnNames={columnNames}
+                          columnOrder={columnOrder}
+                          jsonSchema={jsonSchema}
+                          upsertKey={upsertKey}
+                          canRemoveColumns={isRecordSet}
+                          onReorder={handleReorderColumns}
+                        />
+                        {session.sourceEntityId && (
+                          <UploadCsvToGridButton
+                            sourceEntityId={session.sourceEntityId}
+                            gridSessionId={session.sessionId!}
+                          />
+                        )}
+                        {session.sessionId && (
+                          <ExportCsvFromGridButton
+                            gridSessionId={session.sessionId}
+                            filename={
+                              'grid-' + (session.sourceEntityId || 'export')
+                            }
+                          />
+                        )}
+                        {session.sourceEntityId && (
+                          <SyncGridWithSourceButton gridSession={session} />
+                        )}
+                      </Stack>
+                    </Grid>
+                    <Grid size={12}>
+                      <DataGrid
+                        gridRef={gridRef}
+                        rowValues={enrichedRowValues}
+                        columnNames={columnNames}
+                        columnOrder={columnOrder}
+                        schemaPropertiesInfo={schemaPropertiesInfo}
+                        entityIsView={entityIsView}
+                        jsonSchema={jsonSchema}
+                        lastSelection={lastSelection}
+                        handleChange={handleChange}
+                        handleSelectionChange={handleSelectionChange}
+                        remoteSelections={remoteSelections}
+                        upsertKey={upsertKey}
+                      />
+                    </Grid>
+                  </>
+                )}
+                {/* Debug Model Snapshot */}
+                {showDebugInfo && (
+                  <Grid
+                    size={12}
+                    style={{
+                      margin: '10px 0',
+                      maxHeight: '400px',
+                      overflowY: 'auto',
+                    }}
+                  >
+                    <Accordion
+                      disableGutters
+                      square
                       variant="outlined"
-                      startIcon={<HelpOutline />}
-                      href="https://docs.synapse.org/synapse-docs/managing-metadata-with-curator"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{ mr: 'auto' }}
+                      slotProps={{ transition: { unmountOnExit: true } }}
                     >
-                      Help and Instructions
-                    </GridMenuButton>
-                    {undoUI}
-                    {redoUI}
-                    <ReorderColumnsButton
-                      columnNames={columnNames}
-                      columnOrder={columnOrder}
-                      jsonSchema={jsonSchema}
-                      upsertKey={upsertKey}
-                      canRemoveColumns={isRecordSet}
-                      onReorder={handleReorderColumns}
-                    />
-                    <GridMenuButton
-                      variant={'outlined'}
-                      onClick={() => setChatOpen(true)}
-                      startIcon={<CurieAvatarHead />}
-                    >
-                      Open Curie
-                    </GridMenuButton>
-                    <GridAgentChat
-                      agentRegistrationId={agentRegistrationId}
-                      open={chatOpen}
-                      onClose={() => setChatOpen(false)}
-                      gridSessionId={session.sessionId!}
-                      usersReplicaId={replicaId!}
-                      chatbotName="Curie"
-                    />
-                    {session.sourceEntityId && (
-                      <UploadCsvToGridButton
-                        sourceEntityId={session.sourceEntityId}
-                        gridSessionId={session.sessionId!}
-                      />
-                    )}
-                    {session.sessionId && (
-                      <ExportCsvFromGridButton
-                        gridSessionId={session.sessionId}
-                        filename={
-                          'grid-' + (session.sourceEntityId || 'export')
-                        }
-                      />
-                    )}
-                    {session.sourceEntityId && (
-                      <SyncGridWithSourceButton gridSession={session} />
-                    )}
-                  </Stack>
-                </Grid>
-                <Grid size={12}>
-                  <DataGrid
-                    gridRef={gridRef}
-                    rowValues={enrichedRowValues}
-                    columnNames={columnNames}
-                    columnOrder={columnOrder}
-                    schemaPropertiesInfo={schemaPropertiesInfo}
-                    entityIsView={entityIsView}
-                    jsonSchema={jsonSchema}
-                    lastSelection={lastSelection}
-                    handleChange={handleChange}
-                    handleSelectionChange={handleSelectionChange}
-                    remoteSelections={remoteSelections}
-                    upsertKey={upsertKey}
-                  />
-                </Grid>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="headline1" component="h3">
+                          Model
+                        </Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        {model ? (
+                          <ClickableJsonCrdt model={model} />
+                        ) : (
+                          'No model available'
+                        )}
+                      </AccordionDetails>
+                    </Accordion>
+                  </Grid>
+                )}
               </>
             )}
-            {/* Debug Model Snapshot */}
-            {showDebugInfo && (
-              <Grid
-                size={12}
-                style={{
-                  margin: '10px 0',
-                  maxHeight: '400px',
-                  overflowY: 'auto',
-                }}
-              >
-                <Accordion
-                  disableGutters
-                  square
-                  variant="outlined"
-                  slotProps={{ transition: { unmountOnExit: true } }}
-                >
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant="headline1" component="h3">
-                      Model
-                    </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {model ? (
-                      <ClickableJsonCrdt model={model} />
-                    ) : (
-                      'No model available'
-                    )}
-                  </AccordionDetails>
-                </Accordion>
-              </Grid>
-            )}
-          </>
-        )}
-      </Grid>
+          </Grid>
+        </div>
+      </div>
+      {session && hasCompletedInitialLoad && (
+        <>
+          {!isAgentSidebarOpen && (
+            <OpenGridAgentSidebarButton onClick={openAgentSidebar} />
+          )}
+          <GridAgentChat
+            agentRegistrationId={agentRegistrationId}
+            open={isAgentSidebarOpen}
+            onClose={closeAgentSidebar}
+            gridSessionId={session.sessionId!}
+            usersReplicaId={replicaId!}
+            chatbotName="Curie"
+          />
+        </>
+      )}
     </div>
   )
 }
