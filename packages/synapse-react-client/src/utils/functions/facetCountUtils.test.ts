@@ -1,4 +1,8 @@
-import { formatFacetValueCount } from './facetCountUtils'
+import { SUPPRESSED_FACET_VALUE_COUNT } from './enumerationFacet'
+import {
+  formatFacetValueCount,
+  SUPPRESSED_FACET_VALUE_COUNT_TEXT,
+} from './facetCountUtils'
 
 describe('formatFacetValueCount', () => {
   it.each([
@@ -50,6 +54,27 @@ describe('formatFacetValueCount', () => {
       binSize: undefined,
       facetPostProcessingApplied: undefined,
       expected: '12',
+    },
+    {
+      case: 'a suppressed binned count as suppressed, not as a bin range',
+      count: SUPPRESSED_FACET_VALUE_COUNT,
+      binSize: 5,
+      facetPostProcessingApplied: true,
+      expected: SUPPRESSED_FACET_VALUE_COUNT_TEXT,
+    },
+    {
+      case: 'a suppressed noised count as suppressed, not as approximate',
+      count: SUPPRESSED_FACET_VALUE_COUNT,
+      binSize: undefined,
+      facetPostProcessingApplied: true,
+      expected: SUPPRESSED_FACET_VALUE_COUNT_TEXT,
+    },
+    {
+      case: 'a suppressed count without post-processing as suppressed',
+      count: SUPPRESSED_FACET_VALUE_COUNT,
+      binSize: undefined,
+      facetPostProcessingApplied: false,
+      expected: SUPPRESSED_FACET_VALUE_COUNT_TEXT,
     },
   ])(
     'formats $case',

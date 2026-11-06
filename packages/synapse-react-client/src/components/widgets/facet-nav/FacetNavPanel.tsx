@@ -13,7 +13,10 @@ import {
   Stack,
   Tooltip,
 } from '@mui/material'
-import { EnumerationFacet } from '@/utils/functions/enumerationFacet'
+import {
+  EnumerationFacet,
+  isSuppressedFacetValueCount,
+} from '@/utils/functions/enumerationFacet'
 import {
   ColumnTypeEnum,
   FacetColumnRequest,
@@ -176,8 +179,12 @@ export async function extractPlotDataArray(
               .replace(')', ', 0.25)'),
       )
     : colorPalette
-  const counts: Plotly.Datum[] = facetToPlot.facetValues.map(
-    facet => facet.count,
+  // A suppressed count is plotted with no length; its hover and legend show that it is suppressed.
+  const counts: Plotly.Datum[] = facetToPlot.facetValues.map(facet =>
+    isSuppressedFacetValueCount(facet.count) ? 0 : facet.count,
+  )
+  const isAnyCountSuppressed = facetToPlot.facetValues.some(facet =>
+    isSuppressedFacetValueCount(facet.count),
   )
   const valueLabels = facetToPlot.facetValues.map(
     facet => labels.find(label => label.facet === facet)?.label ?? facet.value,
@@ -195,21 +202,21 @@ export async function extractPlotDataArray(
     y = new Array(x.length).fill('Proportional') // single value for every x value
   }
 
-  // Approximate counts are hovered as their display text, without a misleading exact value or percentage.
+  // Approximate or suppressed counts are hovered as their display text, without a misleading exact value or percentage.
   let exactHoverCount = '%{value}'
   if (plotType === 'PIE') {
     exactHoverCount = '%{value} (%{percent})'
   } else if (plotType === 'HORIZONTAL_BAR') {
     exactHoverCount = '%{x}'
   }
-  const hoverCount = facetPostProcessingApplied
-    ? '%{customdata}'
-    : exactHoverCount
+  const isHoveredAsCountText =
+    facetPostProcessingApplied === true || isAnyCountSuppressed
+  const hoverCount = isHoveredAsCountText ? '%{customdata}' : exactHoverCount
   const singleChartData: Plotly.Data = {
     values: plotType === 'PIE' ? counts : undefined,
     labels: labels.map(el => el.label),
     text,
-    customdata: facetPostProcessingApplied
+    customdata: isHoveredAsCountText
       ? labels.map(el => el.countText)
       : undefined,
     x,
