@@ -10,7 +10,13 @@ import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { FormTemplate } from '@sage-bionetworks/synapse-client'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
 import userEvent, { UserEvent } from '@testing-library/user-event'
 import { JSONSchema7 } from 'json-schema'
 import { FormTemplateEditor } from './FormTemplateEditor'
@@ -224,6 +230,58 @@ describe('FormTemplateEditor', () => {
         '"/newField" does not resolve to a property in the schema.',
       ),
     ).toBeVisible()
+    expect(
+      screen.getByRole('button', { name: 'Create Template' }),
+    ).toBeDisabled()
+    // A field-level error is listed above the save button, not on the step card.
+    expect(
+      within(screen.getByRole('region', { name: /^Step 1:/ })).queryByRole(
+        'alert',
+      ),
+    ).not.toBeInTheDocument()
+  })
+
+  it('flags each empty step on its own card and blocks saving until it has a field', async () => {
+    const user = userEvent.setup()
+    renderEditor()
+
+    await createField(user)
+    await user.click(screen.getByRole('button', { name: 'Close field editor' }))
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'New' })).toBeEnabled(),
+    )
+    await user.type(
+      screen.getByRole('textbox', { name: 'Internal Name' }),
+      'My Template',
+    )
+
+    const firstStep = screen.getByRole('region', { name: /^Step 1:/ })
+    expect(within(firstStep).getByRole('alert')).toHaveTextContent(
+      'Step 1 "New Step" has no fields.',
+    )
+    expect(
+      screen.getByRole('button', { name: 'Create Template' }),
+    ).toBeDisabled()
+
+    await user.click(
+      within(firstStep).getByRole('combobox', { name: 'Bind field' }),
+    )
+    await user.click(
+      await screen.findByRole('option', { name: 'New field (/newField)' }),
+    )
+
+    expect(within(firstStep).queryByRole('alert')).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Create Template' }),
+    ).toBeEnabled()
+
+    await user.click(screen.getByRole('button', { name: 'Add step' }))
+
+    const secondStep = screen.getByRole('region', { name: /^Step 2:/ })
+    expect(within(secondStep).getByRole('alert')).toHaveTextContent(
+      'Step 2 "New Step" has no fields.',
+    )
+    expect(within(firstStep).queryByRole('alert')).not.toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Create Template' }),
     ).toBeDisabled()

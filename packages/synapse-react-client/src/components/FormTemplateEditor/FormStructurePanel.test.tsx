@@ -3,7 +3,8 @@ import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FormStructurePanel } from './FormStructurePanel'
-import { BIND_FIELD_LABEL } from './utils'
+import { validateFormTemplateFields } from './formTemplateValidation'
+import { BIND_FIELD_LABEL, toFormTemplateSteps } from './utils'
 import { useFormTemplateDraft } from './useFormTemplateDraft'
 
 const jsonSchema: RJSFSchema = {
@@ -43,6 +44,10 @@ function Harness({
       jsonSchema={draft.jsonSchema}
       unboundProperties={draft.unboundProperties}
       formTemplateId={undefined}
+      validationErrors={validateFormTemplateFields(
+        toFormTemplateSteps(draft.steps),
+        draft.jsonSchema,
+      )}
       onStepsChange={draft.setSteps}
       onBindField={draft.bindField}
     />

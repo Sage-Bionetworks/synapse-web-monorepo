@@ -7,6 +7,7 @@ import {
   propertyKeyToPointer,
   ResolvedSchemaProperty,
 } from '@/utils/jsonschema/submissionContext'
+import { FormTemplateFieldValidationError } from './formTemplateValidation'
 import { StepCard } from './StepCard'
 import {
   BIND_FIELD_LABEL,
@@ -22,6 +23,8 @@ export type FormStructurePanelProps = {
   unboundProperties: ResolvedSchemaProperty[]
   /** The FormTemplate's id, if it has been saved. Threaded down to file-field template uploads. */
   formTemplateId: string | undefined
+  /** Current validation errors; those against a whole step are shown on that step's card. */
+  validationErrors: FormTemplateFieldValidationError[]
   onStepsChange: (next: EditableFormTemplateStep[]) => void
   onBindField: (propertyKey: string, stepKey: string) => void
 }
@@ -37,6 +40,7 @@ export function FormStructurePanel({
   jsonSchema,
   unboundProperties,
   formTemplateId,
+  validationErrors,
   onStepsChange,
   onBindField,
 }: FormStructurePanelProps) {
@@ -129,6 +133,11 @@ export function FormStructurePanel({
               onMoveUp={() => handleMoveStep(stepIdx, -1)}
               onMoveDown={() => handleMoveStep(stepIdx, 1)}
               onRemove={() => handleRemoveStep(stepIdx)}
+              stepErrors={validationErrors
+                .filter(
+                  e => e.stepIndex === stepIdx && e.fieldIndex === undefined,
+                )
+                .map(e => e.message)}
             />
           ))
         )}

@@ -209,6 +209,7 @@ export function FormTemplateEditorForm({
               jsonSchema={jsonSchema}
               unboundProperties={unboundProperties}
               formTemplateId={initialTemplate?.id}
+              validationErrors={validationErrors}
               onStepsChange={setSteps}
               onBindField={bindField}
             />

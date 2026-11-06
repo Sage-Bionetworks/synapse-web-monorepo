@@ -55,15 +55,22 @@ export type FormTemplateFieldValidationError = {
   /** Index of the step/field slot this error is anchored to. Omitted for an error against a
    * schema-required property that isn't bound to any field -- there is no slot to anchor it to. */
   stepIndex?: number
+  /** Omitted, along with `schemaPath`, for an error against a whole step. */
   fieldIndex?: number
-  schemaPath: string
+  schemaPath?: string
   message: string
 }
 
+/** Names a step for messages by its 1-based number, plus its title when it has one. */
+function describeStep(step: FormTemplateStep, stepIndex: number): string {
+  const number = `Step ${stepIndex + 1}`
+  return step.title ? `${number} "${step.title}"` : number
+}
+
 /**
- * Replicates the three rules the server enforces on `FormTemplateField` at create/update time
- * (see the `FormTemplateField` doc comment), so the editor can block save and point the error at
- * the offending field before ever reaching the server: the server only returns a flat,
+ * Replicates the rules the server enforces on `FormTemplateStep` and `FormTemplateField` at
+ * create/update time (see their doc comments), so the editor can block save and point the error
+ * at the offending step or field before ever reaching the server: the server only returns a flat,
  * concatenated message, not per-field errors. Also flags a schema property the server will
  * require (per its resolved submission context) that no field in the template binds to -- the
  * server accepts this silently, but the requester would then be unable to satisfy it.
@@ -77,6 +84,12 @@ export function validateFormTemplateFields(
   const boundPropertyKeys = new Set<string>()
 
   steps.forEach((step, stepIndex) => {
+    if (step.fields.length === 0) {
+      errors.push({
+        stepIndex,
+        message: `${describeStep(step, stepIndex)} has no fields.`,
+      })
+    }
     step.fields.forEach((field: FormTemplateField, fieldIndex: number) => {
       const { schemaPath } = field
 

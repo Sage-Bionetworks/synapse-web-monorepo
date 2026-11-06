@@ -142,6 +142,31 @@ describe('validateFormTemplateFields', () => {
     expect(errors[0].fieldIndex).toBeUndefined()
   })
 
+  it('flags an empty first step by its number and title', () => {
+    const steps: FormTemplateStep[] = [
+      { title: 'Intro', fields: [] },
+      { title: 'Details', fields: [field('/a')] },
+    ]
+    expect(validateFormTemplateFields(steps, jsonSchema)).toEqual([
+      { stepIndex: 0, message: 'Step 1 "Intro" has no fields.' },
+    ])
+  })
+
+  it('flags an empty later step, naming it by number when untitled', () => {
+    const steps: FormTemplateStep[] = [
+      { title: 'Intro', fields: [field('/a')] },
+      { title: 'Data Use Certificate', fields: [] },
+      { title: '', fields: [] },
+    ]
+    expect(validateFormTemplateFields(steps, jsonSchema)).toEqual([
+      {
+        stepIndex: 1,
+        message: 'Step 2 "Data Use Certificate" has no fields.',
+      },
+      { stepIndex: 2, message: 'Step 3 has no fields.' },
+    ])
+  })
+
   it('does not flag a required property that is bound, or one that is not required', () => {
     const steps: FormTemplateStep[] = [
       { title: 'Step 1', fields: [field('/a')] },

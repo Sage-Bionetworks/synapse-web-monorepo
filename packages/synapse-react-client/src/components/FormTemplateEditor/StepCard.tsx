@@ -5,6 +5,7 @@ import {
   FormTemplateStep,
 } from '@sage-bionetworks/synapse-client'
 import {
+  Alert,
   Box,
   Collapse,
   IconButton,
@@ -22,7 +23,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import UpIcon from '@mui/icons-material/ArrowUpward'
 import { RJSFSchema } from '@rjsf/utils'
 import pluralize from 'pluralize'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import {
   pointerToPropertyKey,
   propertyKeyToPointer,
@@ -68,6 +69,8 @@ export type StepCardProps = {
   onMoveUp: () => void
   onMoveDown: () => void
   onRemove: () => void
+  /** Validation messages against the step as a whole, shown on the card. */
+  stepErrors: string[]
 }
 
 export function StepCard({
@@ -84,8 +87,10 @@ export function StepCard({
   onMoveUp,
   onMoveDown,
   onRemove,
+  stepErrors,
 }: StepCardProps) {
   const [expanded, setExpanded] = useState(defaultExpanded)
+  const headingId = useId()
 
   // Step is sortable within its group, and also accepts field drops to bind.
   const { ref, handleRef, isDragging, isDropTarget } = useSortable({
@@ -127,6 +132,8 @@ export function StepCard({
 
   return (
     <Paper
+      component="section"
+      aria-labelledby={headingId}
       ref={ref}
       variant="outlined"
       className={`${dropTargetStyles.dropTarget} ${dragHandleStyles.dragSource}`}
@@ -157,7 +164,7 @@ export function StepCard({
           )}
         </IconButton>
         <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-          <Typography variant="body2" fontWeight={500} noWrap>
+          <Typography id={headingId} variant="body2" fontWeight={500} noWrap>
             Step {stepIndex + 1}: {step.title || '(untitled)'}
           </Typography>
           <Typography variant="caption" color="text.secondary">
@@ -184,6 +191,12 @@ export function StepCard({
           <DeleteIcon fontSize="small" />
         </IconButton>
       </Box>
+
+      {stepErrors.map(message => (
+        <Alert key={message} severity="error" sx={{ mt: 1 }}>
+          {message}
+        </Alert>
+      ))}
 
       <Collapse in={expanded} unmountOnExit>
         <Box sx={{ pt: 1.5 }}>
