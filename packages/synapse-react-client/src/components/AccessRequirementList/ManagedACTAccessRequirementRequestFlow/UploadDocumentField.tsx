@@ -1,5 +1,6 @@
+import { ProgressCallback } from '@/synapse-client/SynapseClient'
 import { useGetFileBatch } from '@/synapse-queries/file/useFiles'
-import { Box, Button, ButtonProps } from '@mui/material'
+import { Box, Button, ButtonProps, LinearProgress } from '@mui/material'
 import {
   FileHandleAssociation,
   UploadCallbackResp,
@@ -35,6 +36,7 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
     uploadBtnVariant = 'outlined',
   } = props
   const [isUploading, setIsUploading] = useState(false)
+  const [progress, setProgress] = useState<ProgressCallback>()
 
   const { data: fileData } = useGetFileBatch(
     {
@@ -60,7 +62,11 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
     >
       <FileUpload
         id={`${id}-upload`}
-        onUploadStart={() => setIsUploading(true)}
+        onUploadStart={() => {
+          setProgress(undefined)
+          setIsUploading(true)
+        }}
+        onProgress={setProgress}
         onComplete={res => {
           setIsUploading(false)
           uploadCallback(res)
@@ -94,6 +100,7 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
             {onClearAttachment && (
               <Button
                 className={'clear-x'}
+                aria-label="Remove file"
                 variant={'text'}
                 onClick={() => onClearAttachment(fha.fileHandleId)}
               >
@@ -111,6 +118,14 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
         >
           Uploading...
         </Button>
+      )}
+      {isUploading && progress && progress.total > 0 && (
+        <LinearProgress
+          variant="determinate"
+          value={(100 * progress.value) / progress.total}
+          aria-label="Upload progress"
+          sx={{ width: 160 }}
+        />
       )}
     </Box>
   )

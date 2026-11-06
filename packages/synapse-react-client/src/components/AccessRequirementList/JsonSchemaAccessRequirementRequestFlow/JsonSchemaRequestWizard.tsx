@@ -19,6 +19,7 @@ import {
   Stepper,
 } from '@mui/material'
 import {
+  FileHandleAssociateType,
   JsonSchemaAccessRequirement,
   Renewal,
   Request,
@@ -26,7 +27,7 @@ import {
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
 import { RJSFSchema } from '@rjsf/utils'
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { DialogBaseTitle } from '../../DialogBase'
 import RequesterInformationFields from './RequesterInformationFields'
 import {
@@ -39,8 +40,9 @@ import {
 import SchemaStepForm, {
   SchemaStepFormHandle,
 } from '@/components/JsonSchemaForm/SchemaStepForm'
+import { FileHandleWidgetContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import {
-  getFileUploadFieldTitles,
+  fileAnswersChanged,
   getStepTitle,
   SchemaData,
 } from '@/utils/jsonschema/schemaData'
@@ -169,7 +171,6 @@ function JsonSchemaRequestWizardContent(
       onError: e => setAlertMessage(e.reason),
     })
 
-  const fileUploadFieldTitles = getFileUploadFieldTitles(steps)
   const isBusy = isSaving || isSubmitting
   // Step 0 is the requester information; schema steps follow
   const lastStepIndex = steps.length
@@ -179,11 +180,13 @@ function JsonSchemaRequestWizardContent(
     ? undefined
     : steps[activeStepIndex - 1]
 
-  async function saveAndAdvance(latestSchemaData: SchemaData = schemaData) {
+  /** Saves the request with the given answers. Resolves to undefined if the save failed. */
+  async function saveRequest(
+    latestSchemaData: SchemaData,
+  ): Promise<Request | Renewal | undefined> {
     setAlertMessage(undefined)
-    let saved: Request | Renewal
     try {
-      saved = await updateRequest(
+      return await updateRequest(
         buildRequest(
           request,
           requesterInformation,
@@ -194,6 +197,43 @@ function JsonSchemaRequestWizardContent(
       )
     } catch {
       // The mutation's onError displays the message
+      return undefined
+    }
+  }
+
+  function onSchemaDataChange(latestSchemaData: SchemaData) {
+    setSchemaData(latestSchemaData)
+    if (fileAnswersChanged(schema, schemaData, latestSchemaData)) {
+      // Save a file answer as soon as it changes: the request must list the file in its attachments before the file can
+      // be downloaded through the request, and the file should not be lost if the requester leaves the wizard
+      void saveRequest(latestSchemaData)
+    }
+  }
+
+  const fileHandleWidgetContext = useMemo<FileHandleWidgetContext>(
+    () => ({
+      answerObject: request.id
+        ? {
+            associateObjectType:
+              FileHandleAssociateType.DataAccessRequestAttachment,
+            associateObjectId: String(request.id),
+          }
+        : undefined,
+      answerFileHandleIds: request.attachments ?? [],
+      templateObject: {
+        associateObjectType:
+          FileHandleAssociateType.AccessRequirementAttachment,
+        associateObjectId: String(accessRequirement.id),
+      },
+      // A second save started before the first one finishes would use a stale etag
+      canEdit: !isBusy,
+    }),
+    [request.id, request.attachments, accessRequirement.id, isBusy],
+  )
+
+  async function saveAndAdvance(latestSchemaData: SchemaData = schemaData) {
+    const saved = await saveRequest(latestSchemaData)
+    if (!saved) {
       return
     }
     if (!isLastStep) {
@@ -245,8 +285,7 @@ function JsonSchemaRequestWizardContent(
   const disableNext =
     isBusy ||
     (isRequesterInformationStep &&
-      !isRequesterInformationComplete(requesterInformation, isEDucEnabled)) ||
-    (isLastStep && fileUploadFieldTitles.length > 0)
+      !isRequesterInformationComplete(requesterInformation, isEDucEnabled))
 
   let primaryActionText = 'Next'
   if (isLastStep) {
@@ -292,16 +331,10 @@ function JsonSchemaRequestWizardContent(
             ref={schemaStepFormRef}
             step={activeSchemaStep}
             schemaData={schemaData}
-            onSchemaDataChange={setSchemaData}
+            onSchemaDataChange={onSchemaDataChange}
+            fileHandleWidgetContext={fileHandleWidgetContext}
             onValid={latestSchemaData => void saveAndAdvance(latestSchemaData)}
           />
-        )}
-        {isLastStep && fileUploadFieldTitles.length > 0 && (
-          <Alert severity="warning" sx={{ mt: 2 }}>
-            This request includes file upload questions (
-            {fileUploadFieldTitles.join(', ')}), which cannot be answered here
-            yet. The request cannot be submitted.
-          </Alert>
         )}
         {alertMessage && (
           <Alert severity="error" sx={{ mt: 2 }}>

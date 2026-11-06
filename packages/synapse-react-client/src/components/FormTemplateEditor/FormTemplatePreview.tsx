@@ -1,3 +1,4 @@
+import { FileHandleWidgetContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import SchemaStepForm from '@/components/JsonSchemaForm/SchemaStepForm'
 import { generateDataAccessSchema } from '@/utils/jsonschema/generateDataAccessSchema'
 import { getStepTitle, SchemaData } from '@/utils/jsonschema/schemaData'
@@ -16,11 +17,14 @@ import {
   Typography,
 } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
+import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { useMemo, useState } from 'react'
 
 type FormTemplatePreviewProps = {
   template: FormTemplate
   jsonSchema: RJSFSchema
+  /** The ID of the saved template, if it has been saved. Used to download the template files of file fields. */
+  formTemplateId?: string
 }
 
 /**
@@ -31,6 +35,7 @@ type FormTemplatePreviewProps = {
 export function FormTemplatePreview({
   template,
   jsonSchema,
+  formTemplateId,
 }: FormTemplatePreviewProps) {
   const [activeStep, setActiveStep] = useState(0)
   // Kept across steps and request types so ACT can see how answers carry through the form
@@ -42,6 +47,25 @@ export function FormTemplatePreview({
   const { steps } = useMemo(
     () => generateDataAccessSchema(template, jsonSchema, requestType),
     [template, jsonSchema, requestType],
+  )
+
+  // The preview has no request, so a requester's files cannot be uploaded or shown here
+  const fileHandleWidgetContext = useMemo<FileHandleWidgetContext>(
+    () => ({
+      answerFileHandleIds: [],
+      templateObject: formTemplateId
+        ? {
+            // AccessRequirementAttachment is a stand-in: a FormTemplate is not an
+            // AccessRequirement, so the server may not authorize this download.
+            // Supported FormTemplate template-file downloads are tracked in PLFM-10013.
+            associateObjectType:
+              FileHandleAssociateType.AccessRequirementAttachment,
+            associateObjectId: formTemplateId,
+          }
+        : undefined,
+      canEdit: false,
+    }),
+    [formTemplateId],
   )
 
   if (steps.length === 0) {
@@ -96,6 +120,7 @@ export function FormTemplatePreview({
         step={currentStep}
         schemaData={schemaData}
         onSchemaDataChange={setSchemaData}
+        fileHandleWidgetContext={fileHandleWidgetContext}
       />
     </Paper>
   )
