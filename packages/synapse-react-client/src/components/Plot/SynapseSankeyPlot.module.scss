@@ -61,3 +61,37 @@
     transition: none;
   }
 }
+
+// Two-column layout used when a detail panel is supplied. The chart keeps the
+// larger share because it needs real width to stay legible; both columns get
+// min-width:0 so a wide panel cannot squeeze the chart to nothing.
+.withDetailPanel {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  // The panel reads as a companion to the chart rather than a separate block
+  // when its center lines up with the chart's.
+  align-items: center;
+
+  > * {
+    min-width: 0;
+  }
+}
+
+@media (min-width: 1200px) {
+  .withDetailPanel {
+    grid-template-columns: 3fr 2fr;
+    gap: 48px;
+  }
+}
+
+.detailPanel {
+  min-width: 0;
+}
+
+// The chart's standalone top margin would offset it within its grid cell,
+// leaving the two columns visually misaligned even though the grid centers
+// them. The layout's own gap provides the separation here.
+.withDetailPanel .root {
+  margin-top: 0;
+}
