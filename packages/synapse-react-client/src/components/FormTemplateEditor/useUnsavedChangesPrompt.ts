@@ -8,7 +8,7 @@ import { useBlocker } from 'react-router'
 
 export const DISCARD_CHANGES_TITLE = 'Discard unsaved changes?'
 export const DISCARD_CHANGES_MESSAGE =
-  'You have unsaved changes to this form template. If you leave now, they will be lost.'
+  'You have unsaved changes. If you leave now, they will be lost.'
 export const DISCARD_CHANGES_CONFIRM_TEXT = 'Discard changes'
 export const KEEP_EDITING_TEXT = 'Keep editing'
 

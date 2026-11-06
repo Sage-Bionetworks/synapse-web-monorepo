@@ -1,4 +1,5 @@
 import { mockGenomicsTemplate } from '@/mocks/accessRequirement/mockFormTemplates'
+import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
@@ -26,6 +27,14 @@ import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers
 import { mockGenomicsSchema } from '@/mocks/accessRequirement/mockJsonSchemas'
 
 const REPO_ORIGIN = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+const FORM_TEMPLATE_URL = `${REPO_ORIGIN}/repo/v1/accessRequirement/formTemplate/:id`
+
+function serveGenomicsTemplate() {
+  server.use(
+    ...getFormTemplateHandlers(REPO_ORIGIN),
+    ...getRegisteredSchemaHandlers(REPO_ORIGIN, [mockGenomicsSchema]),
+  )
+}
 
 function renderAt(...initialEntries: string[]) {
   // `useBlocker` only works under a data router, which is how the Reviewer Dashboard mounts this route.
@@ -69,10 +78,7 @@ describe('FormTemplateEditorRoute', () => {
   })
 
   it('loads the template for /:templateId', async () => {
-    server.use(
-      ...getFormTemplateHandlers(REPO_ORIGIN),
-      ...getRegisteredSchemaHandlers(REPO_ORIGIN, [mockGenomicsSchema]),
-    )
+    serveGenomicsTemplate()
     renderAt(getFormTemplatePath(mockGenomicsTemplate.id!))
     await screen.findByText('Edit Form Template')
   })
@@ -81,6 +87,18 @@ describe('FormTemplateEditorRoute', () => {
     const user = userEvent.setup()
     renderAt(NEW_FORM_TEMPLATE_PATH)
     await user.click(await screen.findByRole('button', { name: 'Cancel' }))
+    await screen.findByText('Template list')
+    expect(queryDiscardPrompt()).not.toBeInTheDocument()
+  })
+
+  it('returns to the list on cancel without asking when an opened template was not edited', async () => {
+    const user = userEvent.setup()
+    serveGenomicsTemplate()
+    renderAt(getFormTemplatePath(mockGenomicsTemplate.id!))
+    await screen.findByText('Edit Form Template')
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+
     await screen.findByText('Template list')
     expect(queryDiscardPrompt()).not.toBeInTheDocument()
   })
@@ -141,10 +159,17 @@ describe('FormTemplateEditorRoute', () => {
     await editName(user)
 
     await act(() => router.navigate(-1))
+    await user.click(
+      within(getDiscardPrompt()).getByRole('button', {
+        name: KEEP_EDITING_TEXT,
+      }),
+    )
+    await waitFor(() => expect(queryDiscardPrompt()).not.toBeInTheDocument())
+    expect(screen.getByRole('textbox', { name: 'Internal Name' })).toHaveValue(
+      'Unsaved name',
+    )
 
-    expect(getDiscardPrompt()).toBeVisible()
-    expect(screen.queryByText('Template list')).not.toBeInTheDocument()
-
+    await act(() => router.navigate(-1))
     await user.click(
       within(getDiscardPrompt()).getByRole('button', {
         name: DISCARD_CHANGES_CONFIRM_TEXT,
@@ -179,10 +204,7 @@ describe('FormTemplateEditorRoute', () => {
 
   it('returns to the list without asking after a successful save', async () => {
     const user = userEvent.setup()
-    server.use(
-      ...getFormTemplateHandlers(REPO_ORIGIN),
-      ...getRegisteredSchemaHandlers(REPO_ORIGIN, [mockGenomicsSchema]),
-    )
+    serveGenomicsTemplate()
     renderAt(getFormTemplatePath(mockGenomicsTemplate.id!))
     await editName(user)
 
@@ -192,11 +214,62 @@ describe('FormTemplateEditorRoute', () => {
     expect(queryDiscardPrompt()).not.toBeInTheDocument()
   })
 
+  it('still asks before leaving after a save when the draft changed while it was saving', async () => {
+    const user = userEvent.setup()
+    serveGenomicsTemplate()
+    const saveGate = Promise.withResolvers<void>()
+    server.use(
+      http.post(FORM_TEMPLATE_URL, async ({ request }) => {
+        const body = (await request.json()) as FormTemplate
+        await saveGate.promise
+        return HttpResponse.json(body)
+      }),
+    )
+    renderAt(getFormTemplatePath(mockGenomicsTemplate.id!))
+    await editName(user)
+
+    await user.click(screen.getByRole('button', { name: 'Save Changes' }))
+    await screen.findByRole('button', { name: 'Saving…' })
+    await user.type(
+      screen.getByRole('textbox', { name: 'Internal Name' }),
+      ' and more',
+    )
+    saveGate.resolve()
+
+    expect(
+      await screen.findByRole('dialog', { name: DISCARD_CHANGES_TITLE }),
+    ).toBeVisible()
+    expect(screen.queryByText('Template list')).not.toBeInTheDocument()
+  })
+
+  it('keeps asking before leaving when a save fails', async () => {
+    const user = userEvent.setup()
+    serveGenomicsTemplate()
+    const saveRequested = vi.fn()
+    server.use(
+      http.post(FORM_TEMPLATE_URL, () => {
+        saveRequested()
+        return HttpResponse.json({ reason: 'Server error' }, { status: 500 })
+      }),
+    )
+    renderAt(getFormTemplatePath(mockGenomicsTemplate.id!))
+    await editName(user)
+
+    await user.click(screen.getByRole('button', { name: 'Save Changes' }))
+    await waitFor(() => expect(saveRequested).toHaveBeenCalled())
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeEnabled(),
+    )
+
+    expect(dispatchBeforeUnload().defaultPrevented).toBe(true)
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(getDiscardPrompt()).toBeVisible()
+  })
+
   it('shows an error when the template cannot be loaded', async () => {
     server.use(
-      http.get(
-        `${REPO_ORIGIN}/repo/v1/accessRequirement/formTemplate/:id`,
-        () => HttpResponse.json({ reason: 'not found' }, { status: 404 }),
+      http.get(FORM_TEMPLATE_URL, () =>
+        HttpResponse.json({ reason: 'not found' }, { status: 404 }),
       ),
     )
     renderAt(getFormTemplatePath('missing'))
