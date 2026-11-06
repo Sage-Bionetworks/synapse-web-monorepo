@@ -233,9 +233,15 @@ describe('FormTemplateEditor', () => {
     expect(
       screen.getByRole('button', { name: 'Create Template' }),
     ).toBeDisabled()
+    // A field-level error is listed above the save button, not on the step card.
+    expect(
+      within(screen.getByRole('region', { name: /^Step 1:/ })).queryByRole(
+        'alert',
+      ),
+    ).not.toBeInTheDocument()
   })
 
-  it('blocks saving with an error on the card of an empty step until a field is added to it', async () => {
+  it('flags each empty step on its own card and blocks saving until it has a field', async () => {
     const user = userEvent.setup()
     renderEditor()
 
