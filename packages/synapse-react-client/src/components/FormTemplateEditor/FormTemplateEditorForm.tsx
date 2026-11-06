@@ -23,7 +23,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { RJSFSchema } from '@rjsf/utils'
 import isEqual from 'lodash-es/isEqual'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ConfirmationDialog } from '@/components/ConfirmationDialog/ConfirmationDialog'
 import { displayToast } from '@/components/ToastMessage'
 import {
@@ -120,16 +120,23 @@ export function FormTemplateEditorForm({
     [currentContent, savedContent],
   )
   const unsavedChangesPrompt = useUnsavedChangesPrompt(isDirty)
+  // The form stays editable while a save is in flight, so its outcome is compared with the draft
+  // as it is when the save finishes, not as it was when Save was clicked.
+  const latestContentRef = useRef(currentContent)
+  useEffect(() => {
+    latestContentRef.current = currentContent
+  }, [currentContent])
 
   const validationErrors = useMemo(
-    () => validateFormTemplateFields(toFormTemplateSteps(steps), jsonSchema),
-    [steps, jsonSchema],
+    () => validateFormTemplateFields(currentContent.steps, jsonSchema),
+    [currentContent.steps, jsonSchema],
   )
 
   const handleSave = async () => {
     setNameTouched(true)
     if (!trimmedName) return
     setSaveError(null)
+    const contentToSave = currentContent
     try {
       const result = await save({
         initialTemplate,
@@ -149,8 +156,13 @@ export function FormTemplateEditorForm({
         'success',
         { title: 'Template saved' },
       )
-      setSavedContent(currentContent)
-      unsavedChangesPrompt.exitWithoutPrompt(() => onSaved?.(result.template))
+      setSavedContent(contentToSave)
+      const leaveAfterSave = () => onSaved?.(result.template)
+      if (isEqual(latestContentRef.current, contentToSave)) {
+        unsavedChangesPrompt.exitWithoutPrompt(leaveAfterSave)
+      } else {
+        leaveAfterSave()
+      }
     } catch (error) {
       const clientError = error as SynapseClientError
       if (clientError.status === 412) {
