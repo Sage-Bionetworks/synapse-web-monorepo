@@ -28,10 +28,12 @@ export const mockGenomicsSchema: RJSFSchema = {
         'Describe in detail how you intend to use the requested data.',
     },
     agreeToTerms: {
+      // A box the requester must check: the schema accepts only `true`.
       type: 'boolean',
-      title: 'Terms and Conditions',
+      const: true,
+      title: 'I agree to the terms and conditions',
       description:
-        'I agree to abide by all terms and conditions for accessing this data.',
+        'You must abide by all terms and conditions for accessing this data.',
     },
   },
   required: ['intendedDataUse', 'agreeToTerms'],

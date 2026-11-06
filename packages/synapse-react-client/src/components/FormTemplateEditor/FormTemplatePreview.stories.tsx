@@ -147,3 +147,29 @@ export const YesNoField: Story = {
     },
   },
 }
+
+/** A boolean that must be `true` is a single box the requester must check, not Yes/No. */
+export const MustCheckField: Story = {
+  args: {
+    template: template([
+      {
+        title: 'Agreements',
+        fields: [{ schemaPath: '/agreeToTerms', uiDefinition: {} }],
+      },
+    ]),
+    jsonSchema: {
+      ...schema,
+      properties: {
+        ...schema.properties,
+        agreeToTerms: {
+          type: 'boolean',
+          const: true,
+          title: 'I agree to the terms and conditions',
+          description:
+            'You must abide by all terms and conditions for accessing this data.',
+        },
+      },
+      required: [...(schema.required ?? []), 'agreeToTerms'],
+    },
+  },
+}

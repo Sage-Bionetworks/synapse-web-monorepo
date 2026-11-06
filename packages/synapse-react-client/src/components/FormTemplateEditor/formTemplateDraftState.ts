@@ -189,7 +189,8 @@ export function replaceProperty(
  * Change a property to a simple field type: its schema takes that type's shape, and its slot
  * `uiDefinition` takes that type's widget, whether or not a step binds it yet. Text and Long
  * answer share one schema shape, so switching between them keeps the schema as it is, including
- * constraints the editor doesn't author such as `maxLength` or `pattern`.
+ * constraints the editor doesn't author such as `maxLength` or `pattern`. A 'mustCheck' box is
+ * made required, since an optional one would accept being left unchecked.
  */
 export function changeFieldType(
   state: FormTemplateDraftState,
@@ -205,10 +206,12 @@ export function changeFieldType(
   const replaced = keepsSchema
     ? state
     : replaceProperty(state, key, applyFieldType(resolved.subSchema, type))
+  const next =
+    type === 'mustCheck' ? changeRequired(replaced, key, true) : replaced
   // The generated client types `uiDefinition` as `any`.
   const uiDefinition = (fieldSettingsFor(state.fieldSettings, path)
     .uiDefinition ?? {}) as UiSchema
-  return updateFieldSettings(replaced, path, {
+  return updateFieldSettings(next, path, {
     uiDefinition: applyFieldTypeUiDefinition(uiDefinition, type),
   })
 }

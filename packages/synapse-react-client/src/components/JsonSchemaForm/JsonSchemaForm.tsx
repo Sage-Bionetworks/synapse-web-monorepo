@@ -10,17 +10,28 @@ import DescriptionFieldTemplate from '@/components/JsonSchemaForm/templates/Desc
 import ErrorListTemplate from '@/components/JsonSchemaForm/templates/ErrorListTemplate'
 import FieldErrorTemplate from '@/components/JsonSchemaForm/templates/FieldErrorTemplate'
 import { FieldTemplate } from '@/components/JsonSchemaForm/templates/FieldTemplate'
+import { isMustCheckBoolean } from '@/components/JsonSchemaForm/mustCheckBoolean'
 import { BooleanWidget } from '@/components/JsonSchemaForm/widgets/BooleanWidget'
 import { DateTimeWidget } from '@/components/JsonSchemaForm/widgets/DateTimeWidget'
+import { MustCheckWidget } from '@/components/JsonSchemaForm/widgets/MustCheckWidget'
 import { SelectWidget } from '@/components/JsonSchemaForm/widgets/SelectWidget'
 import { YesNoRadioWidget } from '@/components/JsonSchemaForm/widgets/YesNoRadioWidget'
 import { Optional } from '@/utils/types/Optional'
 import RJSFForm, { FormProps } from '@rjsf/core'
 import Form from '@rjsf/mui'
-import { GenericObjectType, RJSFSchema, Widget } from '@rjsf/utils'
+import { GenericObjectType, RJSFSchema, Widget, WidgetProps } from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'
 import { Ref } from 'react'
 import styles from './JsonSchemaForm.module.scss'
+
+/** Yes/No radios, or a single checkbox for a boolean that must be true. */
+function RequesterBooleanWidget(props: WidgetProps) {
+  return isMustCheckBoolean(props.schema) ? (
+    <MustCheckWidget {...props} />
+  ) : (
+    <YesNoRadioWidget {...props} />
+  )
+}
 
 /** The widget that replaces RJSF's `CheckboxWidget` for each `booleanWidget` mode, if any. */
 const BOOLEAN_WIDGETS: Record<
@@ -28,7 +39,7 @@ const BOOLEAN_WIDGETS: Record<
   Widget | undefined
 > = {
   yesNoSelect: BooleanWidget,
-  yesNoRadio: YesNoRadioWidget,
+  yesNoRadio: RequesterBooleanWidget,
   checkbox: undefined,
 }
 
