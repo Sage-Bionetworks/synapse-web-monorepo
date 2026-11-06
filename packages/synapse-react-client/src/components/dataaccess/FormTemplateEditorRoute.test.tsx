@@ -47,13 +47,13 @@ function renderAt(...initialEntries: string[]) {
     ],
     { initialEntries, initialIndex: initialEntries.length - 1 },
   )
-  // Read the way SWC does: SWC prompts before leaving the page (header links, other pages,
-  // closing the tab) while this says the user is editing.
+  // The host app (SWC) asks before leaving the page (header links, other pages, closing the tab)
+  // while this store reports editing.
   const isEditingStore = createTestIsEditingStore()
-  render(<RouterProvider router={router} />, {
+  const { unmount } = render(<RouterProvider router={router} />, {
     wrapper: createWrapper(undefined, isEditingStore),
   })
-  return { router, isEditingStore }
+  return { router, isEditingStore, unmount }
 }
 
 async function editName(user: UserEvent) {
@@ -208,6 +208,17 @@ describe('FormTemplateEditorRoute', () => {
     expect(dispatchBeforeUnload().defaultPrevented).toBe(false)
 
     await user.clear(screen.getByRole('textbox', { name: 'Internal Name' }))
+    expect(isEditingStore.getSnapshot()).toBe(false)
+  })
+
+  it('stops reporting unsaved changes once the host removes the editor', async () => {
+    const user = userEvent.setup()
+    const { isEditingStore, unmount } = renderAt(NEW_FORM_TEMPLATE_PATH)
+    await editName(user)
+    expect(isEditingStore.getSnapshot()).toBe(true)
+
+    unmount()
+
     expect(isEditingStore.getSnapshot()).toBe(false)
   })
 
