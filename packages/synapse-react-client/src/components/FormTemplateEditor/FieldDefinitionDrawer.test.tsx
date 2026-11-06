@@ -142,6 +142,48 @@ describe('FieldDefinitionDrawer', () => {
     ).toHaveTextContent('Long answer')
   })
 
+  it('shows a boolean that must be true as a must-be-checked checkbox that is always required', () => {
+    render(
+      <FieldDefinitionDrawer
+        {...baseProps({
+          property: { type: 'boolean', const: true, title: 'Agree' },
+          isRequired: true,
+        })}
+      />,
+    )
+    expect(
+      screen.getByRole('combobox', { name: 'Field type' }),
+    ).toHaveTextContent('Checkbox (must be checked)')
+    const required = screen.getByRole('switch', { name: 'Required' })
+    expect(required).toBeChecked()
+    expect(required).toBeDisabled()
+  })
+
+  it('lets a plain Yes / No question be made optional', () => {
+    render(
+      <FieldDefinitionDrawer
+        {...baseProps({ property: { type: 'boolean' }, isRequired: true })}
+      />,
+    )
+    expect(screen.getByRole('switch', { name: 'Required' })).toBeEnabled()
+  })
+
+  it('lets a must-be-checked box authored as optional be made required', async () => {
+    const user = userEvent.setup()
+    const onChangeRequired = vi.fn()
+    render(
+      <FieldDefinitionDrawer
+        {...baseProps({
+          property: { type: 'boolean', const: true },
+          isRequired: false,
+          onChangeRequired,
+        })}
+      />,
+    )
+    await user.click(screen.getByRole('switch', { name: 'Required' }))
+    expect(onChangeRequired).toHaveBeenCalledWith(true)
+  })
+
   describe('property key editing', () => {
     it('shows "Required" when the key is cleared', async () => {
       const user = userEvent.setup()

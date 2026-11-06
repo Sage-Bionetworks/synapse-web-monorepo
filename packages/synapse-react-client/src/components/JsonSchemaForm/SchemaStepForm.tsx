@@ -1,5 +1,6 @@
 import { CustomFormContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
+import { explainMustCheckErrors } from '@/components/JsonSchemaForm/mustCheckBoolean'
 import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
 import { getStepData, SchemaData } from '@/utils/jsonschema/schemaData'
 import RJSFForm from '@rjsf/core'
@@ -9,6 +10,12 @@ const SCHEMA_STEP_FORM_CONTEXT: CustomFormContext = {
   descriptionVariant: 'inline',
   booleanWidget: 'yesNoRadio',
 }
+
+/**
+ * RJSF fills a `const` property with its value by default, which would check a must-be-true box
+ * for the requester; their answers start from what they gave instead.
+ */
+const DEFAULT_FORM_STATE_BEHAVIOR = { constAsDefaults: 'never' } as const
 
 export type SchemaStepFormHandle = {
   /** Validates the step's answers, showing errors against invalid fields. */
@@ -47,6 +54,10 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
       formData={getStepData(schemaData, step)}
       formContext={SCHEMA_STEP_FORM_CONTEXT}
       liveValidate={false}
+      experimental_defaultFormStateBehavior={DEFAULT_FORM_STATE_BEHAVIOR}
+      transformErrors={errors =>
+        explainMustCheckErrors(step.jsonSchema, errors)
+      }
       onChange={event =>
         onSchemaDataChange({ ...schemaData, ...event.formData })
       }

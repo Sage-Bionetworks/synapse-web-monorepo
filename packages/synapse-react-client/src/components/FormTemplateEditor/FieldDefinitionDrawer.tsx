@@ -231,6 +231,9 @@ export function FieldDefinitionDrawer({
                     />
                   }
                   label="Required"
+                  // Choosing the type makes it required, and an optional box could be left
+                  // unchecked, so it stays required (one authored as optional can still be fixed).
+                  disabled={type === 'mustCheck' && isRequired}
                 />
               </Stack>
 

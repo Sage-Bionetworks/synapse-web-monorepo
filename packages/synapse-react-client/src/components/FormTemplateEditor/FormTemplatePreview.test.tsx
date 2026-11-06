@@ -243,6 +243,47 @@ describe('FormTemplatePreview', () => {
     expect(screen.getByRole('radio', { name: 'Yes' })).not.toBeChecked()
   })
 
+  it('shows a boolean that must be true as a checkbox, which blocks validated navigation until checked', async () => {
+    const user = userEvent.setup()
+    renderPreview({
+      template: template([
+        {
+          title: 'Agreements',
+          fields: [{ schemaPath: '/agreeToTerms', uiDefinition: {} }],
+        },
+        {
+          title: 'Additional info',
+          fields: [{ schemaPath: '/signingOfficial', uiDefinition: {} }],
+        },
+      ]),
+      jsonSchema: {
+        ...schema,
+        properties: {
+          ...schema.properties,
+          agreeToTerms: { type: 'boolean', const: true, title: 'I agree' },
+        },
+        required: [...(schema.required ?? []), 'agreeToTerms'],
+      },
+    })
+    const terms = screen.getByRole('checkbox', { name: 'I agree' })
+    expect(terms).not.toBeChecked()
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument()
+
+    await user.click(getValidateCheckbox())
+    await user.click(screen.getByRole('button', { name: 'Additional info' }))
+    expect(
+      await screen.findByRole('checkbox', {
+        name: 'I agree',
+        description: /You must check this box to continue/,
+      }),
+    ).toHaveAttribute('aria-invalid', 'true')
+    expect(queryFieldLabel('Signing Official')).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('checkbox', { name: 'I agree' }))
+    await user.click(screen.getByRole('button', { name: 'Additional info' }))
+    expect(await screen.findByText('Signing Official')).toBeInTheDocument()
+  })
+
   describe('Validate responses', () => {
     it('is offered unchecked, so navigation is free by default', async () => {
       const user = userEvent.setup()

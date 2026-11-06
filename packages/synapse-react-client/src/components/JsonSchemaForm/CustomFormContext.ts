@@ -39,8 +39,9 @@ export interface CustomFormContext extends FormContextType {
    * - `'yesNoSelect'` (default) — a `true`/`false` dropdown. Used by the annotations editor,
    *   where a boolean annotation needs an explicit "unset" state distinct from false.
    * - `'yesNoRadio'` — "Yes"/"No" radio buttons that start with neither selected, so a required
-   *   question left unanswered fails validation instead of reading as "No". Used for the
-   *   questions a data access requester answers.
+   *   question left unanswered fails validation instead of reading as "No". A boolean the schema
+   *   only accepts as `true` (`const: true`) is instead a single checkbox to check, such as
+   *   agreeing to terms. Used for the questions a data access requester answers.
    * - `'checkbox'` — a real checkbox (RJSF/MUI's own `CheckboxWidget`), for forms where the
    *   source schema is a genuine yes/no toggle with no meaningful "unset" state.
    */
