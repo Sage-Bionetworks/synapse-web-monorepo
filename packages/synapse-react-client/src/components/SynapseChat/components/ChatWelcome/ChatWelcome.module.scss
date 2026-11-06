@@ -1,0 +1,33 @@
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.uploadCard:global(.MuiButtonBase-root) {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border: 2px dashed var(--synapse-v2-gray-300);
+  border-radius: 4px;
+  color: var(--synapse-v2-gray-900);
+
+  &:hover,
+  &:global(.Mui-focusVisible) {
+    background-color: var(--synapse-v2-gray-50);
+    border-color: var(--synapse-primary-action-color);
+  }
+
+  &:global(.Mui-disabled) {
+    opacity: 0.5;
+  }
+}
+
+.uploadCardTitle:global(.MuiTypography-root) {
+  color: var(--synapse-primary-action-color);
+  font-weight: 600;
+}

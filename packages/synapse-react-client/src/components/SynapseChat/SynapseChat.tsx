@@ -19,14 +19,26 @@ import {
   GridAgentSessionContext,
 } from '@sage-bionetworks/synapse-client'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { SkeletonParagraph } from '../Skeleton'
 import { displayToast } from '../ToastMessage'
 import AccessLevelMenu from './AccessLevelMenu'
 import { ChatAttachment } from './utils/types'
-import { ChatInputArea } from './components/ChatInputArea/ChatInputArea'
+import {
+  ChatScrollBlock,
+  scrollChatElementIntoView,
+} from './utils/scrollChatElementIntoView'
+import {
+  ChatInputArea,
+  ChatInputAreaHandle,
+} from './components/ChatInputArea/ChatInputArea'
+import {
+  ChatWelcome,
+  ChatWelcomeContent,
+} from './components/ChatWelcome/ChatWelcome'
 import SynapseChatMessage from './SynapseChatMessage'
 import SmartToyTwoTone from '@mui/icons-material/SmartToyTwoTone'
+import ChevronRight from '@mui/icons-material/ChevronRight'
 import { UserCard } from '../UserCard/UserCard'
 import { useApplicationSessionContext } from '@/utils/AppUtils'
 import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
@@ -112,6 +124,13 @@ export type SynapseChatProps = {
    * log in. When omitted, the session creation error is shown inline instead.
    */
   onSessionCreationUnauthenticated?: () => void
+  /**
+   * Introduction shown while the conversation is empty, in place of the default greeting. When
+   * attachments are allowed, it includes a card that opens the composer's file upload.
+   */
+  welcome?: ChatWelcomeContent
+  /** Placeholder for the message input. Defaults to a prompt naming the chatbot. */
+  inputPlaceholder?: string
 }
 
 export function SynapseChat({
@@ -131,6 +150,8 @@ export function SynapseChat({
   suggestedPrompts,
   allowAttachments = false,
   onSessionCreationUnauthenticated,
+  welcome,
+  inputPlaceholder,
 }: SynapseChatProps) {
   const { accessToken, isAuthenticated } = useSynapseContext()
   const { userId } = useApplicationSessionContext()
@@ -177,7 +198,25 @@ export function SynapseChat({
   const chatState = externalChatState ?? internalChatState
   const { interactions, isAwaitingResponse, sendChat } = chatState
 
-  const showGreeting = variant === 'curie' && interactions.length === 0
+  const isConversationEmpty = interactions.length === 0
+  const shownWelcome = isConversationEmpty ? welcome : undefined
+  const showGreeting = !welcome && variant === 'curie' && isConversationEmpty
+  const chatInputAreaRef = useRef<ChatInputAreaHandle>(null)
+  const messageListRef = useRef<HTMLDivElement>(null)
+  const messageListContentRef = useRef<HTMLUListElement>(null)
+  const scrollToMessageElement = useCallback(
+    (element: HTMLElement, block: ChatScrollBlock) => {
+      if (messageListRef.current && messageListContentRef.current) {
+        scrollChatElementIntoView(
+          element,
+          messageListRef.current,
+          messageListContentRef.current,
+          block,
+        )
+      }
+    },
+    [],
+  )
 
   const curieAccessLevelSuffix =
     variant === 'curie' ? CURIE_ACCESS_LEVEL_SUFFIX[agentAccessLevel] : ''
@@ -336,13 +375,18 @@ export function SynapseChat({
       {!agentSession && <SkeletonParagraph numRows={10} />}
       {agentSession && (
         <Box
+          ref={messageListRef}
           sx={{
             flexGrow: 1,
+            // Without this, the list can't shrink below its content, so a tall conversation
+            // overflows the chat and slides under the sticky composer instead of scrolling here
+            minHeight: 0,
             overflowY: 'auto',
             mb: variant === 'curie' ? 0 : 2,
           }}
         >
           <List
+            ref={messageListContentRef}
             sx={{
               flex: 1,
               overflowY: 'auto',
@@ -350,7 +394,7 @@ export function SynapseChat({
               ...(variant === 'curie' && { pt: 0, pb: 0, gap: '20px' }),
               display: 'flex',
               flexDirection: 'column',
-              ...(showGreeting && {
+              ...((showGreeting || shownWelcome) && {
                 minHeight: '100%',
                 justifyContent: 'flex-end',
               }),
@@ -383,6 +427,19 @@ export function SynapseChat({
                 </Typography>
               </ListItem>
             )}
+            {shownWelcome && (
+              <ListItem sx={{ p: 0 }}>
+                <ChatWelcome
+                  {...shownWelcome}
+                  onUploadClick={
+                    allowAttachments
+                      ? () => chatInputAreaRef.current?.openAddFilesDialog()
+                      : undefined
+                  }
+                  disabled={isAwaitingResponse}
+                />
+              </ListItem>
+            )}
             {interactions.map((interaction, index) => {
               const isLast = index === interactions.length - 1
               return (
@@ -395,6 +452,7 @@ export function SynapseChat({
                   showLoadingIcon={variant !== 'curie'}
                   onSendChat={sendChat}
                   scrollIntoView={isLast}
+                  scrollToElement={scrollToMessageElement}
                   animateEntry={!presentAtMount.has(interaction.id)}
                   isAwaitingResponse={isAwaitingResponse}
                   pendingAttachments={
@@ -419,30 +477,52 @@ export function SynapseChat({
         {suggestedPrompts &&
           suggestedPrompts.length > 0 &&
           interactions.length === 0 && (
-            <Stack
-              direction="row"
-              spacing={1}
-              sx={{ pt: '8px', flexWrap: 'wrap', gap: 1 }}
-            >
+            <Stack sx={{ pt: '8px', gap: 1, alignItems: 'flex-start' }}>
               {suggestedPrompts.map(prompt => (
                 <Chip
                   key={prompt}
-                  label={prompt}
-                  variant="outlined"
+                  label={
+                    <Stack
+                      direction="row"
+                      component="span"
+                      sx={{ alignItems: 'center', gap: '4px' }}
+                    >
+                      {prompt}
+                      <ChevronRight
+                        sx={{
+                          flexShrink: 0,
+                          fontSize: '16px',
+                          color: 'grey.700',
+                        }}
+                      />
+                    </Stack>
+                  }
                   onClick={() => setUserChatTextfieldValue(prompt)}
                   disabled={!agentSession}
-                  sx={{ cursor: 'pointer' }}
+                  sx={{
+                    cursor: 'pointer',
+                    maxWidth: '100%',
+                    // Long prompts wrap onto more lines rather than being cut off in a narrow chat
+                    height: 'auto',
+                    minHeight: '32px',
+                    py: '4px',
+                    '& .MuiChip-label': { whiteSpace: 'normal' },
+                    bgcolor: 'secondary.100',
+                    '&:hover': { bgcolor: 'secondary.200' },
+                  }}
                 />
               ))}
             </Stack>
           )}
         <Box sx={{ mt: '5px' }}>
           <ChatInputArea
+            ref={chatInputAreaRef}
             value={userChatTextfieldValue}
             onValueChange={setUserChatTextfieldValue}
             onSend={handleSend}
             placeholder={
-              variant === 'curie' ? 'Ask anything' : `Message ${chatbotName}`
+              inputPlaceholder ??
+              (variant === 'curie' ? 'Ask anything' : `Message ${chatbotName}`)
             }
             disabled={!agentSession || isAwaitingResponse}
             allowAttachments={allowAttachments}
