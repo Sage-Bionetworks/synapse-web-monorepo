@@ -1,4 +1,8 @@
 import {
+  DATA_SHARING_QUESTION,
+  getGenomicsDataSharingHandlers,
+} from '@/mocks/accessRequirement/mockGenomicsDataSharing'
+import {
   mockJsonSchemaAR1,
   mockJsonSchemaAR2,
 } from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
@@ -17,7 +21,7 @@ import {
   Request,
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent, { UserEvent } from '@testing-library/user-event'
 import { JSONSchema7 } from 'json-schema'
 import { http, HttpResponse } from 'msw'
@@ -148,8 +152,16 @@ function renderWizard(
   return props
 }
 
-async function chooseYes(user: UserEvent) {
+async function acceptTerms(user: UserEvent) {
   await user.click(await screen.findByRole('radio', { name: 'Yes' }))
+}
+
+/** Answers the Research Use step of the genomics form served by getGenomicsDataSharingHandlers */
+async function advanceToDataSharingStep(user: UserEvent) {
+  await advanceToStep(user)
+  await user.type(await screen.findByRole('textbox'), 'Studying the genome')
+  await user.click(screen.getByRole('button', { name: 'Next' }))
+  return screen.findByRole('radiogroup', { name: DATA_SHARING_QUESTION })
 }
 
 async function advanceToStep(user: ReturnType<typeof userEvent.setup>) {
@@ -210,7 +222,7 @@ describe('JsonSchemaRequestWizard', () => {
     await advanceToStep(user)
     await user.type(await screen.findByRole('textbox'), 'Studying the genome')
     await user.click(screen.getByRole('button', { name: 'Next' }))
-    await chooseYes(user)
+    await acceptTerms(user)
     await user.click(screen.getByRole('button', { name: 'Submit' }))
 
     await waitFor(() =>
@@ -230,25 +242,6 @@ describe('JsonSchemaRequestWizard', () => {
     ])
   })
 
-  it('does not submit while a required Yes/No question is unanswered', async () => {
-    const { submissionRequests } = mockRequestServices(
-      genomicsAccessRequirement,
-      createRequest(genomicsAccessRequirement),
-    )
-    const user = userEvent.setup()
-    const props = renderWizard(genomicsAccessRequirement)
-    await advanceToStep(user)
-    await user.type(await screen.findByRole('textbox'), 'Studying the genome')
-    await user.click(screen.getByRole('button', { name: 'Next' }))
-    await screen.findByRole('radio', { name: 'Yes' })
-
-    await user.click(screen.getByRole('button', { name: 'Submit' }))
-
-    expect(await screen.findAllByText(/required/i)).not.toHaveLength(0)
-    expect(props.onSubmissionCreated).not.toHaveBeenCalled()
-    expect(submissionRequests).toHaveLength(0)
-  })
-
   it('shows the server message and keeps the answers when the submission is rejected', async () => {
     const rejection = 'The intended data use is too vague'
     mockRequestServices(
@@ -261,7 +254,7 @@ describe('JsonSchemaRequestWizard', () => {
     await advanceToStep(user)
     await user.type(await screen.findByRole('textbox'), 'Studying the genome')
     await user.click(screen.getByRole('button', { name: 'Next' }))
-    await chooseYes(user)
+    await acceptTerms(user)
     await user.click(screen.getByRole('button', { name: 'Submit' }))
 
     await screen.findByText(rejection)
@@ -284,23 +277,6 @@ describe('JsonSchemaRequestWizard', () => {
     await advanceToStep(user)
 
     expect(await screen.findByRole('textbox')).toHaveValue('Saved answer')
-  })
-
-  it('restores a saved No answer to a Yes/No question', async () => {
-    mockRequestServices(
-      genomicsAccessRequirement,
-      createRequest(genomicsAccessRequirement, {
-        schemaData: { intendedDataUse: 'Saved answer', agreeToTerms: false },
-      }),
-    )
-    const user = userEvent.setup()
-    renderWizard(genomicsAccessRequirement)
-    await advanceToStep(user)
-    await screen.findByRole('textbox')
-    await user.click(screen.getByRole('button', { name: 'Next' }))
-
-    expect(await screen.findByRole('radio', { name: 'No' })).toBeChecked()
-    expect(screen.getByRole('radio', { name: 'Yes' })).not.toBeChecked()
   })
 
   it('replaces the saved attachments with the file handles that the saved answers reference', async () => {
@@ -413,7 +389,7 @@ describe('JsonSchemaRequestWizard', () => {
     await advanceToStep(user)
     await user.type(await screen.findByRole('textbox'), 'Studying the genome')
     await user.click(screen.getByRole('button', { name: 'Next' }))
-    await chooseYes(user)
+    await acceptTerms(user)
     await user.click(screen.getByRole('button', { name: 'Continue' }))
 
     await waitFor(() => expect(props.onEDucContinue).toHaveBeenCalled())
@@ -421,5 +397,70 @@ describe('JsonSchemaRequestWizard', () => {
       intendedDataUse: 'Studying the genome',
     })
     expect(submissionRequests).toHaveLength(0)
+  })
+
+  it('does not advance past an unanswered required Yes/No question', async () => {
+    const { savedRequests } = mockRequestServices(
+      genomicsAccessRequirement,
+      createRequest(genomicsAccessRequirement),
+    )
+    server.use(...getGenomicsDataSharingHandlers(REPO_ENDPOINT))
+    const user = userEvent.setup()
+    renderWizard(genomicsAccessRequirement)
+    const question = await advanceToDataSharingStep(user)
+    const savesBeforeNext = savedRequests.length
+
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+
+    expect(await screen.findAllByText(/required/i)).not.toHaveLength(0)
+    expect(question).toBeVisible()
+    expect(savedRequests).toHaveLength(savesBeforeNext)
+  })
+
+  it('saves a No answer to a Yes/No question as false', async () => {
+    const { savedRequests } = mockRequestServices(
+      genomicsAccessRequirement,
+      createRequest(genomicsAccessRequirement),
+    )
+    server.use(...getGenomicsDataSharingHandlers(REPO_ENDPOINT))
+    const user = userEvent.setup()
+    renderWizard(genomicsAccessRequirement)
+    const question = await advanceToDataSharingStep(user)
+
+    await user.click(within(question).getByRole('radio', { name: 'No' }))
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+
+    await waitFor(() =>
+      expect(savedRequests.at(-1)?.schemaData).toMatchObject({
+        intendedDataUse: 'Studying the genome',
+        sharesDataExternally: false,
+      }),
+    )
+  })
+
+  it('restores a saved No answer to a Yes/No question', async () => {
+    mockRequestServices(
+      genomicsAccessRequirement,
+      createRequest(genomicsAccessRequirement, {
+        schemaData: {
+          intendedDataUse: 'Saved answer',
+          sharesDataExternally: false,
+        },
+      }),
+    )
+    server.use(...getGenomicsDataSharingHandlers(REPO_ENDPOINT))
+    const user = userEvent.setup()
+    renderWizard(genomicsAccessRequirement)
+    await advanceToStep(user)
+    await screen.findByRole('textbox')
+    await user.click(screen.getByRole('button', { name: 'Next' }))
+
+    const question = await screen.findByRole('radiogroup', {
+      name: DATA_SHARING_QUESTION,
+    })
+    expect(within(question).getByRole('radio', { name: 'No' })).toBeChecked()
+    expect(
+      within(question).getByRole('radio', { name: 'Yes' }),
+    ).not.toBeChecked()
   })
 })
