@@ -97,6 +97,9 @@ function getFieldLabel(title: string) {
 function queryFieldLabel(title: string) {
   return screen.queryByText(title, { selector: 'label' })
 }
+function getValidateCheckbox() {
+  return screen.getByRole('checkbox', { name: 'Validate responses' })
+}
 
 describe('FormTemplatePreview', () => {
   it('shows an empty-state prompt when no step has a bound field', () => {
@@ -235,5 +238,62 @@ describe('FormTemplatePreview', () => {
     await user.click(screen.getByRole('radio', { name: 'No' }))
     expect(screen.getByRole('radio', { name: 'No' })).toBeChecked()
     expect(screen.getByRole('radio', { name: 'Yes' })).not.toBeChecked()
+  })
+
+  describe('Validate responses', () => {
+    it('is offered unchecked, so navigation is free by default', async () => {
+      const user = userEvent.setup()
+      renderPreview({
+        template: twoAlwaysVisibleStepsTemplate,
+        jsonSchema: schema,
+      })
+      expect(getValidateCheckbox()).not.toBeChecked()
+      // The required Institution field is blank
+      await user.click(screen.getByRole('button', { name: 'Additional info' }))
+      expect(getFieldLabel('Signing Official')).toBeInTheDocument()
+      expect(screen.queryByText(/required/i)).not.toBeInTheDocument()
+    })
+
+    it('keeps the current step and shows its errors when a required field is blank', async () => {
+      const user = userEvent.setup()
+      renderPreview({
+        template: twoAlwaysVisibleStepsTemplate,
+        jsonSchema: schema,
+      })
+      await user.click(getValidateCheckbox())
+      await user.click(screen.getByRole('button', { name: 'Additional info' }))
+      expect(await screen.findAllByText(/required/i)).not.toHaveLength(0)
+      expect(getFieldLabel('Institution')).toBeInTheDocument()
+      expect(queryFieldLabel('Signing Official')).not.toBeInTheDocument()
+    })
+
+    it('moves to the chosen step when the current step is valid', async () => {
+      const user = userEvent.setup()
+      renderPreview({
+        template: twoAlwaysVisibleStepsTemplate,
+        jsonSchema: schema,
+      })
+      await user.click(getValidateCheckbox())
+      await user.type(screen.getByRole('textbox'), 'Sage Bionetworks')
+      await user.click(screen.getByRole('button', { name: 'Additional info' }))
+      expect(
+        await screen.findByText('Signing Official', { selector: 'label' }),
+      ).toBeInTheDocument()
+      expect(queryFieldLabel('Institution')).not.toBeInTheDocument()
+    })
+
+    it('stays on when switching between the Request and Renewal views', async () => {
+      const user = userEvent.setup()
+      renderPreview({ template: renewalGatedTemplate, jsonSchema: schema })
+      await user.click(getValidateCheckbox())
+      await user.click(screen.getByRole('button', { name: 'Renewal' }))
+      expect(getValidateCheckbox()).toBeChecked()
+      await user.click(screen.getByRole('button', { name: 'Renewal details' }))
+      expect(await screen.findAllByText(/required/i)).not.toHaveLength(0)
+      expect(queryFieldLabel('Summary')).not.toBeInTheDocument()
+
+      await user.click(screen.getByRole('button', { name: 'Request' }))
+      expect(getValidateCheckbox()).toBeChecked()
+    })
   })
 })

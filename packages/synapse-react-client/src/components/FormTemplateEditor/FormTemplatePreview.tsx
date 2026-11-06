@@ -1,4 +1,6 @@
-import SchemaStepForm from '@/components/JsonSchemaForm/SchemaStepForm'
+import SchemaStepForm, {
+  SchemaStepFormHandle,
+} from '@/components/JsonSchemaForm/SchemaStepForm'
 import { generateDataAccessSchema } from '@/utils/jsonschema/generateDataAccessSchema'
 import { getStepTitle, SchemaData } from '@/utils/jsonschema/schemaData'
 import {
@@ -7,6 +9,8 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import {
   Box,
+  Checkbox,
+  FormControlLabel,
   Paper,
   Step,
   StepButton,
@@ -16,7 +20,7 @@ import {
   Typography,
 } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
 type FormTemplatePreviewProps = {
   template: FormTemplate
@@ -38,6 +42,11 @@ export function FormTemplatePreview({
   const [requestType, setRequestType] = useState<DataAccessRequestType>(
     DataAccessRequestType.REQUEST,
   )
+  // Off by default so ACT can move freely between steps; on, steps are gated as in the request wizard
+  const [validateResponses, setValidateResponses] = useState(false)
+  const schemaStepFormRef = useRef<SchemaStepFormHandle>(null)
+  // The step to move to once the current step's answers pass validation
+  const pendingStepRef = useRef<number | null>(null)
 
   const { steps } = useMemo(
     () => generateDataAccessSchema(template, jsonSchema, requestType),
@@ -59,30 +68,58 @@ export function FormTemplatePreview({
   const safeIndex = Math.min(activeStep, steps.length - 1)
   const currentStep = steps[safeIndex]
 
+  function goToStep(index: number) {
+    if (!validateResponses) {
+      setActiveStep(index)
+      return
+    }
+    pendingStepRef.current = index
+    // Validates the step; onValid is invoked only if the answers are valid
+    schemaStepFormRef.current?.submit()
+  }
+
   return (
     <Paper variant="outlined" sx={{ p: 2 }}>
-      <ToggleButtonGroup
-        value={requestType}
-        exclusive
-        size="small"
-        onChange={(_, next: DataAccessRequestType | null) => {
-          if (next) setRequestType(next)
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 2,
+          mb: 2,
         }}
-        sx={{ mb: 2 }}
       >
-        <ToggleButton value={DataAccessRequestType.REQUEST}>
-          Request
-        </ToggleButton>
-        <ToggleButton value={DataAccessRequestType.RENEWAL}>
-          Renewal
-        </ToggleButton>
-      </ToggleButtonGroup>
+        <ToggleButtonGroup
+          value={requestType}
+          exclusive
+          size="small"
+          onChange={(_, next: DataAccessRequestType | null) => {
+            if (next) setRequestType(next)
+          }}
+        >
+          <ToggleButton value={DataAccessRequestType.REQUEST}>
+            Request
+          </ToggleButton>
+          <ToggleButton value={DataAccessRequestType.RENEWAL}>
+            Renewal
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={validateResponses}
+              onChange={event => setValidateResponses(event.target.checked)}
+            />
+          }
+          label="Validate responses"
+        />
+      </Box>
 
       {steps.length > 1 && (
         <Stepper activeStep={safeIndex} nonLinear sx={{ mb: 2 }}>
           {steps.map((step, index) => (
             <Step key={index}>
-              <StepButton onClick={() => setActiveStep(index)}>
+              <StepButton onClick={() => goToStep(index)}>
                 {getStepTitle(step, index + 1)}
               </StepButton>
             </Step>
@@ -93,9 +130,16 @@ export function FormTemplatePreview({
       <SchemaStepForm
         // Each step is a separate form, as it is for a requester
         key={safeIndex}
+        ref={schemaStepFormRef}
         step={currentStep}
         schemaData={schemaData}
         onSchemaDataChange={setSchemaData}
+        onValid={() => {
+          if (pendingStepRef.current !== null) {
+            setActiveStep(pendingStepRef.current)
+            pendingStepRef.current = null
+          }
+        }}
       />
     </Paper>
   )
