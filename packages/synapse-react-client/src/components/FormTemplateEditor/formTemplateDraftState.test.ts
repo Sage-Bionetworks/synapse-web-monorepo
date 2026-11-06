@@ -393,6 +393,31 @@ describe('changeFieldType', () => {
       '/age': { 'ui:options': { rows: 3 } },
     })
   })
+
+  it('makes a must-be-checked property a required boolean that must be true, and drops const when switched away', () => {
+    const mustCheck = changeFieldType(draft(), 'age', 'mustCheck')
+    expect(resolve(mustCheck, 'age')).toMatchObject({
+      subSchema: { type: 'boolean', const: true },
+      isRequired: true,
+      context: 'ALWAYS',
+    })
+
+    const yesNo = changeFieldType(mustCheck, 'age', 'boolean')
+    expect(resolve(yesNo, 'age')?.subSchema).not.toHaveProperty('const')
+    expect(resolve(yesNo, 'age')?.subSchema).toMatchObject({ type: 'boolean' })
+  })
+
+  it('keeps a must-be-checked property in its own context', () => {
+    const mustCheck = changeFieldType(
+      changeRequired(draft(), 'summaryOfUse', false),
+      'summaryOfUse',
+      'mustCheck',
+    )
+    expect(resolve(mustCheck, 'summaryOfUse')).toMatchObject({
+      context: 'RENEWAL_ONLY',
+      isRequired: true,
+    })
+  })
 })
 
 describe('replaceJsonSchema', () => {

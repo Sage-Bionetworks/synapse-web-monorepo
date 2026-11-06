@@ -703,6 +703,98 @@ describe('FormTemplateEditor', () => {
     })
   })
 
+  describe('Checkbox (must be checked)', () => {
+    const MUST_CHECK = 'Checkbox (must be checked)'
+
+    async function chooseFieldType(user: UserEvent, label: string) {
+      await user.click(screen.getByRole('combobox', { name: 'Field type' }))
+      await user.click(await screen.findByRole('option', { name: label }))
+    }
+
+    it('saves a required boolean that must be true, and previews a checkbox', async () => {
+      const user = userEvent.setup()
+      server.use(
+        ...getFormTemplateHandlers(REPO_ENDPOINT, getFormTemplateService([])),
+      )
+      const onSaved = vi.fn()
+      renderEditor(onSaved)
+
+      await createField(user)
+      await chooseFieldType(user, MUST_CHECK)
+      expect(
+        screen.getByRole('combobox', { name: 'Field type' }),
+      ).toHaveTextContent(MUST_CHECK)
+      expect(screen.getByRole('switch', { name: 'Required' })).toBeChecked()
+      await user.click(
+        screen.getByRole('button', { name: 'Close field editor' }),
+      )
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: 'New' })).toBeEnabled(),
+      )
+      await user.click(screen.getByRole('combobox', { name: 'Bind field' }))
+      await user.click(
+        await screen.findByRole('option', { name: 'New field (/newField)' }),
+      )
+
+      expect(
+        screen.getByRole('checkbox', { name: 'New field' }),
+      ).not.toBeChecked()
+      expect(screen.queryByRole('radiogroup')).not.toBeInTheDocument()
+
+      await user.type(getNameField(), 'My Template')
+      await user.click(screen.getByRole('button', { name: 'Create Template' }))
+      await waitFor(() => expect(onSaved).toHaveBeenCalled())
+      expect(createdSchemas[0].properties?.newField).toEqual({
+        type: 'boolean',
+        const: true,
+        title: 'New field',
+        description: '',
+      })
+      expect(createdSchemas[0].required).toContain('newField')
+    })
+
+    it('reopens as a must-be-checked checkbox, and switching to Yes / No removes const', async () => {
+      const user = userEvent.setup()
+      server.use(
+        ...getFormTemplateHandlers(REPO_ENDPOINT, getFormTemplateService()),
+      )
+      listSchemaVersionsSpy.mockResolvedValue({
+        page: [{ semanticVersion: '1.0.0' }],
+      })
+      const onSaved = vi.fn()
+      renderEditor(onSaved, mockGenomicsTemplate.id)
+      await screen.findByRole('heading', { name: 'Edit Form Template' })
+
+      const libraryRow = screen.getByRole('button', {
+        name: 'Edit I agree to the terms and conditions',
+      })
+      expect(libraryRow).toHaveTextContent(MUST_CHECK)
+      await user.click(libraryRow)
+      expect(
+        screen.getByRole('combobox', { name: 'Field type' }),
+      ).toHaveTextContent(MUST_CHECK)
+
+      await chooseFieldType(user, 'Yes / No')
+      await user.click(
+        screen.getByRole('button', { name: 'Close field editor' }),
+      )
+      await waitFor(() =>
+        expect(
+          screen.getByRole('button', { name: 'Save Changes' }),
+        ).toBeEnabled(),
+      )
+
+      await user.click(screen.getByRole('button', { name: 'Save Changes' }))
+      await waitFor(() => expect(onSaved).toHaveBeenCalled())
+      const saved = createdSchemas.at(-1)
+      expect(saved?.properties?.agreeToTerms).toEqual(
+        expect.objectContaining({ type: 'boolean' }),
+      )
+      expect(saved?.properties?.agreeToTerms).not.toHaveProperty('const')
+      expect(saved?.required).toContain('agreeToTerms')
+    })
+  })
+
   it('shows an error instead of the editor when the template cannot be loaded', async () => {
     renderEditor(vi.fn(), 'missing-template')
 
@@ -737,7 +829,9 @@ describe('FormTemplateEditor', () => {
       await user.type(getNameField(), 'Draft')
 
       await user.click(screen.getByRole('button', { name: 'Cancel' }))
-      const prompt = screen.getByRole('dialog', { name: DISCARD_CHANGES_TITLE })
+      const prompt = screen.getByRole('dialog', {
+        name: DISCARD_CHANGES_TITLE,
+      })
       expect(onCancel).not.toHaveBeenCalled()
 
       await user.click(

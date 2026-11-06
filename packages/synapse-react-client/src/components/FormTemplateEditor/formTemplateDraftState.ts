@@ -207,7 +207,8 @@ export function uiDefinitionsByPath(
 
 /**
  * Change a property to a simple field type: its schema takes that type's shape, and its slot
- * `uiDefinition` (held in the draft until bound, if unbound) takes that type's widget.
+ * `uiDefinition` (held in the draft until bound, if unbound) takes that type's widget. A
+ * 'mustCheck' box is made required, since an optional one would accept being left unchecked.
  */
 export function changeFieldType(
   state: FormTemplateDraftState,
@@ -217,11 +218,13 @@ export function changeFieldType(
   const path = propertyKeyToPointer(key)
   const resolved = resolveSchemaPropertyAtPointer(state.jsonSchema, path)
   if (!resolved) return state
-  const next = replaceProperty(
+  const replaced = replaceProperty(
     state,
     key,
     applyFieldType(resolved.subSchema, type),
   )
+  const next =
+    type === 'mustCheck' ? changeRequired(replaced, key, true) : replaced
   if (boundSchemaPaths(state.steps).has(path)) {
     return {
       ...next,
