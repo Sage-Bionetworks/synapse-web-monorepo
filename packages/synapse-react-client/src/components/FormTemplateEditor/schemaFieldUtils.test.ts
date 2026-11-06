@@ -7,6 +7,7 @@ import {
   detectFieldType,
   fieldTypeLabel,
   generatePropertyKey,
+  LONG_TEXT_WIDGET,
   sanitizePropertyKey,
 } from './schemaFieldUtils'
 
@@ -59,7 +60,7 @@ describe('detectFieldType', () => {
 
   it('detects a plain string whose uiDefinition asks for a textarea as longText', () => {
     expect(
-      detectFieldType({ type: 'string' }, { 'ui:widget': 'textarea' }),
+      detectFieldType({ type: 'string' }, { 'ui:widget': LONG_TEXT_WIDGET }),
     ).toBe('longText')
     expect(detectFieldType({ type: 'string' }, { 'ui:widget': 'email' })).toBe(
       'text',
@@ -210,14 +211,14 @@ describe('applyFieldTypeUiDefinition', () => {
   it('sets the textarea widget for longText, keeping other keys', () => {
     expect(applyFieldTypeUiDefinition(options, 'longText')).toEqual({
       ...options,
-      'ui:widget': 'textarea',
+      'ui:widget': LONG_TEXT_WIDGET,
     })
   })
 
   it('removes only the textarea widget for any other type', () => {
     expect(
       applyFieldTypeUiDefinition(
-        { ...options, 'ui:widget': 'textarea' },
+        { ...options, 'ui:widget': LONG_TEXT_WIDGET },
         'text',
       ),
     ).toEqual(options)

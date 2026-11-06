@@ -165,6 +165,33 @@ export function replaceProperty(
 }
 
 /**
+ * Replace the schema wholesale (the raw JSON editor). A `uiDefinition` held for a property the new
+ * schema no longer has is dropped, so a later property reusing that key doesn't inherit it.
+ */
+export function replaceJsonSchema(
+  state: FormTemplateDraftState,
+  jsonSchema: RJSFSchema,
+): FormTemplateDraftState {
+  const paths = new Set(
+    [...schemaPropertyKeys(jsonSchema)].map(propertyKeyToPointer),
+  )
+  return {
+    ...state,
+    jsonSchema,
+    unboundUiDefinitions: Object.fromEntries(
+      Object.entries(state.unboundUiDefinitions).filter(([path]) =>
+        paths.has(path),
+      ),
+    ),
+  }
+}
+
+/** A slot's `uiDefinition`, which the generated client types as `any`. */
+function slotUiDefinition(field: { uiDefinition: unknown }): UiSchema {
+  return (field.uiDefinition as UiSchema | null) ?? {}
+}
+
+/**
  * Each property's slot `uiDefinition`, keyed by `schemaPath`: the bound slot's, or the one held for
  * an unbound property.
  */
@@ -173,7 +200,7 @@ export function uiDefinitionsByPath(
 ): Record<string, UiSchema> {
   const byPath = { ...state.unboundUiDefinitions }
   for (const field of state.steps.flatMap(step => step.fields)) {
-    byPath[field.schemaPath] = (field.uiDefinition as UiSchema | null) ?? {}
+    byPath[field.schemaPath] = slotUiDefinition(field)
   }
   return byPath
 }
@@ -187,17 +214,14 @@ export function changeFieldType(
   key: string,
   type: SimpleFieldType,
 ): FormTemplateDraftState {
-  const resolved = resolveSchemaPropertyAtPointer(
-    state.jsonSchema,
-    propertyKeyToPointer(key),
-  )
+  const path = propertyKeyToPointer(key)
+  const resolved = resolveSchemaPropertyAtPointer(state.jsonSchema, path)
   if (!resolved) return state
   const next = replaceProperty(
     state,
     key,
     applyFieldType(resolved.subSchema, type),
   )
-  const path = propertyKeyToPointer(key)
   if (boundSchemaPaths(state.steps).has(path)) {
     return {
       ...next,
@@ -208,7 +232,7 @@ export function changeFieldType(
             ? {
                 ...f,
                 uiDefinition: applyFieldTypeUiDefinition(
-                  (f.uiDefinition as UiSchema | null) ?? {},
+                  slotUiDefinition(f),
                   type,
                 ),
               }
@@ -374,10 +398,9 @@ export function replaceSteps(
     ),
   )
   for (const field of state.steps.flatMap(step => step.fields)) {
-    const uiDefinition = field.uiDefinition as UiSchema | null
+    const uiDefinition = slotUiDefinition(field)
     if (
       !nextPaths.has(field.schemaPath) &&
-      uiDefinition &&
       Object.keys(uiDefinition).length > 0
     ) {
       unboundUiDefinitions[field.schemaPath] = uiDefinition

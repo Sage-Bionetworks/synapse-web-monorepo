@@ -31,7 +31,7 @@ function isStringEnum(values: unknown): values is string[] {
 }
 
 /** The RJSF widget a slot's `uiDefinition` names to render a 'longText' string as a multi-line box. */
-const LONG_TEXT_WIDGET = 'textarea'
+export const LONG_TEXT_WIDGET = 'textarea'
 
 /**
  * The simple type a property is authored as. Most types are a schema shape alone; 'longText' is a

@@ -17,10 +17,12 @@ import {
   NEW_FIELD_TITLE,
   removeProperty,
   renamePropertyKey,
+  replaceJsonSchema,
   replaceProperty,
   replaceSteps,
   updateProperty,
 } from './formTemplateDraftState'
+import { LONG_TEXT_WIDGET } from './schemaFieldUtils'
 import { EditableFormTemplateStep } from './utils'
 
 /**
@@ -300,7 +302,10 @@ describe('bindField', () => {
 })
 
 describe('replaceSteps', () => {
-  const uiDefinition = { 'ui:widget': 'textarea', 'ui:options': { rows: 5 } }
+  const uiDefinition = {
+    'ui:widget': LONG_TEXT_WIDGET,
+    'ui:options': { rows: 5 },
+  }
   const boundWithUi = () =>
     draft([
       {
@@ -319,6 +324,12 @@ describe('replaceSteps', () => {
       { schemaPath: '/age', uiDefinition, isPublic: false },
     ])
     expect(rebound.unboundUiDefinitions).toEqual({})
+  })
+
+  it('drops a held uiDefinition once the new steps bind its property again', () => {
+    const state = boundWithUi()
+    const unbound = replaceSteps(state, [step('s1'), step('s2')])
+    expect(replaceSteps(unbound, state.steps).unboundUiDefinitions).toEqual({})
   })
 
   it('follows a rename and is dropped with the property', () => {
@@ -349,7 +360,7 @@ describe('changeFieldType', () => {
     expect(resolve(long, 'age')?.subSchema).toMatchObject({ type: 'string' })
     expect(long.steps[0].fields[0].uiDefinition).toEqual({
       'ui:options': { rows: 3 },
-      'ui:widget': 'textarea',
+      'ui:widget': LONG_TEXT_WIDGET,
     })
 
     const text = changeFieldType(long, 'age', 'text')
@@ -361,14 +372,41 @@ describe('changeFieldType', () => {
   it('holds the choice for an unbound property until it is bound', () => {
     const long = changeFieldType(draft([step('s1')]), 'age', 'longText')
     expect(long.unboundUiDefinitions).toEqual({
-      '/age': { 'ui:widget': 'textarea' },
+      '/age': { 'ui:widget': LONG_TEXT_WIDGET },
     })
     expect(
       bindField(long, 'age', 's1').steps[0].fields[0].uiDefinition,
-    ).toEqual({ 'ui:widget': 'textarea' })
+    ).toEqual({ 'ui:widget': LONG_TEXT_WIDGET })
     expect(changeFieldType(long, 'age', 'number').unboundUiDefinitions).toEqual(
       {},
     )
+  })
+
+  it('keeps other held keys when an unbound property switches away', () => {
+    const state = {
+      ...draft([step('s1')]),
+      unboundUiDefinitions: {
+        '/age': { 'ui:widget': LONG_TEXT_WIDGET, 'ui:options': { rows: 3 } },
+      },
+    }
+    expect(changeFieldType(state, 'age', 'text').unboundUiDefinitions).toEqual({
+      '/age': { 'ui:options': { rows: 3 } },
+    })
+  })
+})
+
+describe('replaceJsonSchema', () => {
+  it('drops a held uiDefinition whose property the new schema no longer has', () => {
+    const state = {
+      ...draft([step('s1')]),
+      unboundUiDefinitions: {
+        '/age': { 'ui:widget': LONG_TEXT_WIDGET },
+        '/gone': { 'ui:widget': LONG_TEXT_WIDGET },
+      },
+    }
+    expect(replaceJsonSchema(state, schema).unboundUiDefinitions).toEqual({
+      '/age': { 'ui:widget': LONG_TEXT_WIDGET },
+    })
   })
 })
 

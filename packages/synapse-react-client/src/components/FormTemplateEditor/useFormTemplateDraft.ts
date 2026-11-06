@@ -23,6 +23,7 @@ import {
   moveStep,
   removeProperty,
   renamePropertyKey,
+  replaceJsonSchema,
   replaceSteps,
   schemaPropertyKeys,
   uiDefinitionsByPath,
@@ -84,7 +85,7 @@ export function useFormTemplateDraft(
   const uiDefinitions = useMemo(() => uiDefinitionsByPath(draft), [draft])
 
   const setJsonSchema = useCallback(
-    (next: RJSFSchema) => setDraft(prev => ({ ...prev, jsonSchema: next })),
+    (next: RJSFSchema) => setDraft(prev => replaceJsonSchema(prev, next)),
     [],
   )
   const setSteps = useCallback(

@@ -6,7 +6,11 @@ import {
   FieldDefinitionDrawer,
   FieldDefinitionDrawerProps,
 } from './FieldDefinitionDrawer'
-import { applyFieldType, FIELD_TYPE_OPTIONS } from './schemaFieldUtils'
+import {
+  applyFieldType,
+  FIELD_TYPE_OPTIONS,
+  LONG_TEXT_WIDGET,
+} from './schemaFieldUtils'
 
 const textProperty: RJSFSchema = { type: 'string', title: 'Institution' }
 
@@ -130,7 +134,7 @@ describe('FieldDefinitionDrawer', () => {
   it('shows a string whose uiDefinition asks for a textarea as Long answer', () => {
     render(
       <FieldDefinitionDrawer
-        {...baseProps({ uiDefinition: { 'ui:widget': 'textarea' } })}
+        {...baseProps({ uiDefinition: { 'ui:widget': LONG_TEXT_WIDGET } })}
       />,
     )
     expect(

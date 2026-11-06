@@ -532,10 +532,11 @@ describe('FormTemplateEditor', () => {
       page: [{ semanticVersion: '1.0.0' }],
     })
     const onSaved = vi.fn()
+    // The genomics template's /intendedDataUse slot has
+    // { 'ui:widget': 'textarea', 'ui:options': { rows: 5 } }.
     const { unmount } = renderEditor(onSaved, mockGenomicsTemplate.id)
     await screen.findByRole('heading', { name: 'Edit Form Template' })
 
-    // Edit the field's definition.
     await user.click(
       screen.getByRole('button', { name: 'Edit Intended Data Use Statement' }),
     )
