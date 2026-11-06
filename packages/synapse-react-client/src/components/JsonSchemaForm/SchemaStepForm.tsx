@@ -4,6 +4,10 @@ import {
 } from '@/components/JsonSchemaForm/CustomFormContext'
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
 import { FileHandleWidget } from '@/components/JsonSchemaForm/widgets/FileHandleWidget'
+import {
+  isMustCheckBoolean,
+  MUST_CHECK_ERROR_MESSAGE,
+} from '@/components/JsonSchemaForm/mustCheckBoolean'
 import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
 import {
   getStepData,
@@ -34,6 +38,37 @@ function withoutRequiredFileErrors(
       typeof property === 'object' &&
       property.format === SYNAPSE_FILE_HANDLE_ID_FORMAT
     )
+  })
+}
+
+/**
+ * RJSF fills a `const` property with its value by default, which would check a must-be-true box
+ * for the requester; their answers start from what they gave instead.
+ */
+const DEFAULT_FORM_STATE_BEHAVIOR = { constAsDefaults: 'never' } as const
+
+/**
+ * Replace the validator's message for an unchecked must-be-true box ("must have required
+ * property", or "must be equal to constant" for a saved `false`) with one a requester can act on.
+ * A step's schema is flat, so each error's property is one of its top-level `properties`.
+ */
+function explainMustCheckErrors(
+  stepSchema: RJSFSchema,
+  errors: RJSFValidationError[],
+): RJSFValidationError[] {
+  return errors.map(error => {
+    // The validator names the field as `.key` (a `const` error) or `key` (a `required` one).
+    const propertyKey =
+      error.name === 'required' || error.name === 'const'
+        ? error.property?.replace(/^\./, '')
+        : undefined
+    const property = propertyKey
+      ? stepSchema.properties?.[propertyKey]
+      : undefined
+    if (typeof property !== 'object' || !isMustCheckBoolean(property)) {
+      return error
+    }
+    return { ...error, message: MUST_CHECK_ERROR_MESSAGE }
   })
 }
 
@@ -98,10 +133,14 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
       // A property with this format is a number in the schema, and the widget is chosen by its format
       widgets={{ [SYNAPSE_FILE_HANDLE_ID_FORMAT]: FileHandleWidget }}
       liveValidate={false}
-      transformErrors={
-        ignoreRequiredFileAnswers
-          ? errors => withoutRequiredFileErrors(step.jsonSchema, errors)
-          : undefined
+      experimental_defaultFormStateBehavior={DEFAULT_FORM_STATE_BEHAVIOR}
+      transformErrors={errors =>
+        explainMustCheckErrors(
+          step.jsonSchema,
+          ignoreRequiredFileAnswers
+            ? withoutRequiredFileErrors(step.jsonSchema, errors)
+            : errors,
+        )
       }
       onChange={event =>
         onSchemaDataChange({ ...schemaData, ...event.formData })

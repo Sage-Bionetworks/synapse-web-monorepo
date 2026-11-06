@@ -49,6 +49,19 @@ export const ChoiceField: Story = {
   },
 }
 
+/** A box the requester must check: a required boolean that must be `true`. */
+export const MustCheckField: Story = {
+  args: {
+    propertyKey: 'agreeToTerms',
+    property: {
+      type: 'boolean',
+      const: true,
+      title: 'I agree to the terms and conditions',
+    },
+    isRequired: true,
+  },
+}
+
 export const MultipleChoiceField: Story = {
   args: {
     propertyKey: 'dataTypes',

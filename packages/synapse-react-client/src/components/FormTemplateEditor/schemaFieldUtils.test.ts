@@ -84,6 +84,11 @@ describe('detectFieldType', () => {
     expect(detectFieldType({ type: 'boolean' })).toBe('boolean')
   })
 
+  it('detects a boolean that must be true as mustCheck, and any other const as advanced', () => {
+    expect(detectFieldType({ type: 'boolean', const: true })).toBe('mustCheck')
+    expect(detectFieldType({ type: 'boolean', const: false })).toBeNull()
+  })
+
   it('returns null for an unrecognized shape (advanced)', () => {
     expect(detectFieldType({ type: 'array' })).toBeNull()
   })
@@ -119,6 +124,7 @@ describe('fieldTypeLabel', () => {
     expect(fieldTypeLabel('longText')).toBe('Long answer')
     expect(fieldTypeLabel('number')).toBe('Number')
     expect(fieldTypeLabel('boolean')).toBe('Yes / No')
+    expect(fieldTypeLabel('mustCheck')).toBe('Checkbox (must be checked)')
     expect(fieldTypeLabel('choice')).toBe('Single choice')
     expect(fieldTypeLabel('multiChoice')).toBe('Multiple choice (select many)')
     expect(fieldTypeLabel('file')).toBe('File upload')
@@ -143,7 +149,16 @@ describe('applyFieldType', () => {
   })
 
   it('builds a boolean field', () => {
-    expect(applyFieldType({}, 'boolean')).toMatchObject({ type: 'boolean' })
+    expect(applyFieldType({}, 'boolean')).toEqual({ type: 'boolean' })
+  })
+
+  it('builds a must-be-checked field as a boolean that must be true, dropped when switched back', () => {
+    const mustCheck = applyFieldType({ title: 'Agree' }, 'mustCheck')
+    expect(mustCheck).toEqual({ title: 'Agree', type: 'boolean', const: true })
+    expect(applyFieldType(mustCheck, 'boolean')).toEqual({
+      title: 'Agree',
+      type: 'boolean',
+    })
   })
 
   it('builds a file field with the synapse-filehandle-id format', () => {
