@@ -102,3 +102,26 @@ export const Empty: Story = {
     template: template([]),
   },
 }
+
+export const MultiSelectField: Story = {
+  args: {
+    template: template([
+      {
+        title: 'Basics',
+        fields: [{ schemaPath: '/colors', uiDefinition: {} }],
+      },
+    ]),
+    jsonSchema: {
+      ...schema,
+      properties: {
+        ...schema.properties,
+        colors: {
+          type: 'array',
+          title: 'Favorite colors',
+          items: { type: 'string', enum: ['Red', 'Blue', 'Green'] },
+          uniqueItems: true,
+        },
+      },
+    },
+  },
+}
