@@ -11,7 +11,7 @@ import pluralize from 'pluralize'
 import { ReactNode, Suspense, useMemo, useState } from 'react'
 import { SignInPrompt, SynapseErrorBoundary } from '../error/ErrorBanner'
 import { QueryBuilderControls } from '../QueryBuilder/QueryBuilderControls'
-import { QBGroup } from '../QueryBuilder/QueryBuilderTypes'
+import { QBGroup, QBGroupDefinition } from '../QueryBuilder/QueryBuilderTypes'
 import { useQueryContext } from '../QueryContext/QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationContext'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
@@ -24,6 +24,7 @@ import { AggregateDataPreviewControls } from './AggregateDataPreviewControls'
 import styles from './CohortBuilder.module.scss'
 import { CohortFilesPanel } from './CohortFilesPanel'
 import { CohortDiscoveryBanner } from './CohortDiscoveryBanner'
+import { CohortSampleQuerySelector } from './CohortSampleQuerySelector'
 
 /**
  * The Cohort Builder only requests the count and facet statistics: it never shows participant rows, and the server
@@ -64,6 +65,8 @@ export type CohortBuilderProps = {
   unitDescription?: string
   /** Notice that queries are logged. Defaults to {@link DEFAULT_COHORT_BUILDER_AUDIT_NOTICE}. */
   auditNotice?: ReactNode
+  /** Sample queries, by name, that users can load into the Query Builder. Listed in insertion order. */
+  sampleQueries?: Record<string, QBGroupDefinition>
 }
 
 /**
@@ -79,6 +82,7 @@ export function CohortBuilder(props: CohortBuilderProps) {
     columnAliases,
     unitDescription = 'participant',
     auditNotice = DEFAULT_COHORT_BUILDER_AUDIT_NOTICE,
+    sampleQueries,
   } = props
   const { isAuthenticated } = useSynapseContext()
 
@@ -125,7 +129,7 @@ export function CohortBuilder(props: CohortBuilderProps) {
               sourceTableId={participantsSourceTableId}
             />
           )}
-          <CohortQueryBuilder />
+          <CohortQueryBuilder sampleQueries={sampleQueries} />
           {/* Only the results are replaced by an error or withheld-result notice, so the cohort stays editable. */}
           <QueryWrapperErrorBoundary>
             <Suspense fallback={<QueryWrapperLoadingScreen />}>
@@ -150,20 +154,46 @@ function CohortPreviewNotice() {
   return <Alert severity="warning">{COHORT_BUILDER_PREVIEW_NOTICE}</Alert>
 }
 
-function CohortQueryBuilder() {
+function CohortQueryBuilder(props: {
+  sampleQueries?: Record<string, QBGroupDefinition>
+}) {
+  const { sampleQueries } = props
   const [tree, setTree] = useState<QBGroup | null>(null)
-  // The Query Builder's value options are queried with the current request, so changing it (e.g. stopping an
-  // aggregate-only preview whose threshold withheld them) can clear the error.
-  const { currentQueryRequest } = useQueryContext()
   return (
-    <SynapseErrorBoundary resetKeys={[currentQueryRequest]}>
+    <ResetOnQueryRequestChangeErrorBoundary>
       <Suspense fallback={null}>
+        {sampleQueries && Object.keys(sampleQueries).length > 0 && (
+          <CohortSampleQuerySelector
+            sampleQueries={sampleQueries}
+            tree={tree}
+            onTreeChange={setTree}
+          />
+        )}
         <QueryBuilderControls
           tree={tree}
           onTreeChange={setTree}
           onlyFacetedColumns
         />
       </Suspense>
+    </ResetOnQueryRequestChangeErrorBoundary>
+  )
+}
+
+/**
+ * An error boundary that resets when the current query request changes. The Query Builder's value options are queried
+ * with the current request, so changing it (e.g. stopping an aggregate-only preview whose threshold withheld them)
+ * can clear the error.
+ */
+function ResetOnQueryRequestChangeErrorBoundary(props: {
+  children: ReactNode
+}) {
+  // Only this component subscribes to the QueryContext: `children` keeps its identity when the context changes, so
+  // React does not re-render a still-suspended subtree on each change. Re-rendering it creates new query observers,
+  // which change the QueryContext again; under React's act() (Storybook dev) that loops without end.
+  const { currentQueryRequest } = useQueryContext()
+  return (
+    <SynapseErrorBoundary resetKeys={[currentQueryRequest]}>
+      {props.children}
     </SynapseErrorBoundary>
   )
 }

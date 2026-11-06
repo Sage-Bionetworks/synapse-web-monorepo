@@ -33,7 +33,7 @@ import {
   waitFor,
   within,
 } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import userEvent, { UserEvent } from '@testing-library/user-event'
 import { http } from 'msw'
 import {
   AGGREGATE_DATA_PREVIEW_TITLE,
@@ -49,6 +49,7 @@ import {
   DEFAULT_COHORT_BUILDER_AUDIT_NOTICE,
 } from './CohortBuilder'
 import {
+  COHORT_FILES_TITLE,
   COHORT_FILES_ZERO_COUNT_TEXT,
   COHORT_TOO_LARGE_TEXT,
 } from './CohortFilesPanel'
@@ -58,6 +59,10 @@ import {
   HOW_TO_USE_COHORT_BUILDER_CONFIRM_TEXT,
   HOW_TO_USE_COHORT_BUILDER_TITLE,
 } from './CohortDiscoveryBanner'
+import {
+  SAMPLE_QUERY_PLACEHOLDER,
+  SAMPLE_QUERY_TITLE,
+} from './CohortSampleQuerySelector'
 
 // The Download List confirmation estimates download time by downloading a test file.
 vi.mock('@/utils/functions/testDownloadSpeed', () => ({
@@ -261,6 +266,144 @@ describe('CohortBuilder', () => {
       }),
     )
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+  })
+
+  describe('sample queries', () => {
+    const sampleName = 'Methylation data, without dementia'
+    const sampleQueries: CohortBuilderProps['sampleQueries'] = {
+      [sampleName]: {
+        combinator: 'AND',
+        children: [
+          {
+            columnName: 'assay',
+            op: 'is_any_of',
+            values: ['methylationArray'],
+          },
+          {
+            combinator: 'OR',
+            not: true,
+            children: [
+              { columnName: 'hasDementia', op: 'is_any_of', values: ['true'] },
+            ],
+          },
+        ],
+      },
+      'Living participants': {
+        combinator: 'AND',
+        children: [
+          {
+            columnName: 'mortalityStatus',
+            op: 'is_any_of',
+            values: ['Living'],
+          },
+        ],
+      },
+    }
+
+    async function loadSampleQuery(user: UserEvent, name: string) {
+      await user.click(
+        await screen.findByRole('combobox', { name: /^Try a sample query/ }),
+      )
+      await user.click(await screen.findByRole('option', { name }))
+    }
+
+    it('is not shown when no sample queries are configured', async () => {
+      renderCohortBuilder()
+      await screen.findByText(`${allParticipantsCount} participants`)
+
+      expect(
+        screen.queryByRole('region', { name: SAMPLE_QUERY_TITLE }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('loads a sample query into the Query Builder, which Update Results applies', async () => {
+      const user = userEvent.setup()
+      renderCohortBuilder({ sampleQueries })
+      await screen.findByText(`${allParticipantsCount} participants`)
+
+      await loadSampleQuery(user, sampleName)
+
+      expect(
+        screen.getByRole('combobox', { name: /^Try a sample query/ }),
+      ).toHaveTextContent(sampleName)
+      expect(
+        screen.getByRole('group', { name: 'Filter condition on assay' }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('group', { name: 'Filter condition on hasDementia' }),
+      ).toBeInTheDocument()
+      // Loading only edits the Query Builder; the cohort changes when the user applies it.
+      expect(
+        sentRequests.filter(request => request.query.additionalFilters),
+      ).toEqual([])
+
+      await user.click(screen.getByRole('button', { name: 'Update Results' }))
+
+      await waitFor(() =>
+        expect(
+          sentRequests.find(request => request.query.additionalFilters)?.query
+            .additionalFilters,
+        ).toEqual([
+          expect.objectContaining({
+            concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+            operator: 'AND',
+            children: [
+              // assay is a list column, so "is any of" uses HAS.
+              expect.objectContaining({
+                concreteType:
+                  'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
+                columnName: 'assay',
+                function: 'HAS',
+                values: ['methylationArray'],
+              }),
+              expect.objectContaining({
+                concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+                operator: 'OR',
+                not: true,
+                children: [
+                  expect.objectContaining({
+                    columnName: 'hasDementia',
+                    operator: 'IN',
+                    values: ['true'],
+                  }),
+                ],
+              }),
+            ],
+          }),
+        ]),
+      )
+    })
+
+    it('replaces the Query Builder tree, and can reload a sample after it is edited', async () => {
+      const user = userEvent.setup()
+      renderCohortBuilder({ sampleQueries })
+      await screen.findByText(`${allParticipantsCount} participants`)
+      const selector = await screen.findByRole('combobox', {
+        name: /^Try a sample query/,
+      })
+      expect(selector).toHaveTextContent(SAMPLE_QUERY_PLACEHOLDER)
+
+      await loadSampleQuery(user, sampleName)
+      await loadSampleQuery(user, 'Living participants')
+      expect(
+        screen.getAllByRole('group', { name: /^Filter condition/ }),
+      ).toHaveLength(1)
+      expect(
+        screen.getByRole('group', {
+          name: 'Filter condition on mortalityStatus',
+        }),
+      ).toBeInTheDocument()
+
+      await user.click(screen.getByRole('button', { name: 'Remove condition' }))
+      expect(selector).toHaveTextContent(SAMPLE_QUERY_PLACEHOLDER)
+
+      await loadSampleQuery(user, 'Living participants')
+      expect(
+        screen.getByRole('group', {
+          name: 'Filter condition on mortalityStatus',
+        }),
+      ).toBeInTheDocument()
+    })
   })
 
   it('does not offer the aggregate-only preview to a user who does not administer the participant source table', async () => {
@@ -531,7 +674,7 @@ describe('CohortBuilder', () => {
       await screen.findByText(`${allParticipantsCount} participants`)
 
       const filesPanel = screen.getByRole('region', {
-        name: 'Files and datasets',
+        name: COHORT_FILES_TITLE,
       })
       expect(await within(filesPanel).findByRole('progressbar')).toBeVisible()
       pendingFilesQuery.resolve()
