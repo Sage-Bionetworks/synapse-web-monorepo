@@ -407,7 +407,7 @@ describe('changeFieldType', () => {
     expect(resolve(yesNo, 'age')?.subSchema).toMatchObject({ type: 'boolean' })
   })
 
-  it('keeps a must-be-checked property in its own context', () => {
+  it('makes an optional renewal-only property required in its own context when it becomes must-be-checked', () => {
     const mustCheck = changeFieldType(
       changeRequired(draft(), 'summaryOfUse', false),
       'summaryOfUse',

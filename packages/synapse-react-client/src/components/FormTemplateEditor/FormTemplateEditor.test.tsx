@@ -1,5 +1,8 @@
 import { mockGenomicsTemplate } from '@/mocks/accessRequirement/mockFormTemplates'
-import { mockGenomicsSchema } from '@/mocks/accessRequirement/mockJsonSchemas'
+import {
+  GENOMICS_TERMS_LABEL,
+  mockGenomicsSchema,
+} from '@/mocks/accessRequirement/mockJsonSchemas'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import {
   getFormTemplateHandlers,
@@ -26,7 +29,7 @@ import { JSONSchema7 } from 'json-schema'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { FormTemplateEditor } from './FormTemplateEditor'
 import { ACCESS_REQUIREMENT_BASE_SCHEMA_ID } from './formTemplateSchema'
-import { CHOICE_OPTION_PROBLEM_TEXT } from './schemaFieldUtils'
+import { CHOICE_OPTION_PROBLEM_TEXT, fieldTypeLabel } from './schemaFieldUtils'
 import {
   DISCARD_CHANGES_CONFIRM_TEXT,
   DISCARD_CHANGES_TITLE,
@@ -704,7 +707,7 @@ describe('FormTemplateEditor', () => {
   })
 
   describe('Checkbox (must be checked)', () => {
-    const MUST_CHECK = 'Checkbox (must be checked)'
+    const MUST_CHECK = fieldTypeLabel('mustCheck')
 
     async function chooseFieldType(user: UserEvent, label: string) {
       await user.click(screen.getByRole('combobox', { name: 'Field type' }))
@@ -766,7 +769,7 @@ describe('FormTemplateEditor', () => {
       await screen.findByRole('heading', { name: 'Edit Form Template' })
 
       const libraryRow = screen.getByRole('button', {
-        name: 'Edit I agree to the terms and conditions',
+        name: `Edit ${GENOMICS_TERMS_LABEL}`,
       })
       expect(libraryRow).toHaveTextContent(MUST_CHECK)
       await user.click(libraryRow)

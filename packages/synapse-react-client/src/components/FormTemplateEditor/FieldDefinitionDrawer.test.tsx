@@ -168,6 +168,22 @@ describe('FieldDefinitionDrawer', () => {
     expect(screen.getByRole('switch', { name: 'Required' })).toBeEnabled()
   })
 
+  it('lets a must-be-checked box authored as optional be made required', async () => {
+    const user = userEvent.setup()
+    const onChangeRequired = vi.fn()
+    render(
+      <FieldDefinitionDrawer
+        {...baseProps({
+          property: { type: 'boolean', const: true },
+          isRequired: false,
+          onChangeRequired,
+        })}
+      />,
+    )
+    await user.click(screen.getByRole('switch', { name: 'Required' }))
+    expect(onChangeRequired).toHaveBeenCalledWith(true)
+  })
+
   describe('property key editing', () => {
     it('shows "Required" when the key is cleared', async () => {
       const user = userEvent.setup()

@@ -7,6 +7,7 @@ import {
   mockJsonSchemaAR2,
 } from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
 import {
+  GENOMICS_TERMS_LABEL as TERMS_LABEL,
   mockClinicalSchema,
   mockGenomicsSchema,
 } from '@/mocks/accessRequirement/mockJsonSchemas'
@@ -151,8 +152,6 @@ function renderWizard(
   })
   return props
 }
-
-const TERMS_LABEL = 'I agree to the terms and conditions'
 
 async function acceptTerms(user: UserEvent) {
   await user.click(await screen.findByRole('checkbox', { name: TERMS_LABEL }))
