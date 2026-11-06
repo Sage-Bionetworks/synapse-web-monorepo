@@ -22,6 +22,8 @@ import {
 import { RJSFSchema } from '@rjsf/utils'
 import { useMemo, useRef, useState } from 'react'
 
+export const VALIDATE_RESPONSES_LABEL = 'Validate responses'
+
 type FormTemplatePreviewProps = {
   template: FormTemplate
   jsonSchema: RJSFSchema
@@ -45,7 +47,8 @@ export function FormTemplatePreview({
   // Off by default so ACT can move freely between steps; on, steps are gated as in the request wizard
   const [validateResponses, setValidateResponses] = useState(false)
   const schemaStepFormRef = useRef<SchemaStepFormHandle>(null)
-  // The step to move to once the current step's answers pass validation
+  // The step a step-button click asked for, until validation settles; Enter in a field also submits, and must not
+  // later move to a step that was blocked
   const pendingStepRef = useRef<number | null>(null)
 
   const { steps } = useMemo(
@@ -74,7 +77,7 @@ export function FormTemplatePreview({
       return
     }
     pendingStepRef.current = index
-    // Validates the step; onValid is invoked only if the answers are valid
+    // The same validation the request wizard's Next button runs
     schemaStepFormRef.current?.submit()
   }
 
@@ -111,7 +114,7 @@ export function FormTemplatePreview({
               onChange={event => setValidateResponses(event.target.checked)}
             />
           }
-          label="Validate responses"
+          label={VALIDATE_RESPONSES_LABEL}
         />
       </Box>
 
@@ -139,6 +142,9 @@ export function FormTemplatePreview({
             setActiveStep(pendingStepRef.current)
             pendingStepRef.current = null
           }
+        }}
+        onInvalid={() => {
+          pendingStepRef.current = null
         }}
       />
     </Paper>
