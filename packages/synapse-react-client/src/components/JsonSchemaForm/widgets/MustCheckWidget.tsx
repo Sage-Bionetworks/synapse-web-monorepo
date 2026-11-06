@@ -40,7 +40,16 @@ export function MustCheckWidget(props: WidgetProps) {
           name={id}
           checked={value === true}
           autoFocus={autofocus}
-          sx={hasError ? { color: 'error.main' } : undefined}
+          // The theme colors an unchecked box with this selector, so the error color must match it.
+          sx={
+            hasError
+              ? {
+                  '&:not(.Mui-checked):not(.MuiCheckbox-indeterminate)': {
+                    color: 'error.main',
+                  },
+                }
+              : undefined
+          }
           onChange={(_, checked) => props.onChange(checked ? true : undefined)}
           onBlur={() => props.onBlur(id, value)}
           onFocus={() => props.onFocus(id, value)}

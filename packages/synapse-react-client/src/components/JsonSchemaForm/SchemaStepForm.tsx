@@ -4,10 +4,7 @@ import {
 } from '@/components/JsonSchemaForm/CustomFormContext'
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
 import { FileHandleWidget } from '@/components/JsonSchemaForm/widgets/FileHandleWidget'
-import {
-  isMustCheckBoolean,
-  MUST_CHECK_ERROR_MESSAGE,
-} from '@/components/JsonSchemaForm/mustCheckBoolean'
+import { explainMustCheckErrors } from '@/components/JsonSchemaForm/mustCheckBoolean'
 import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
 import {
   getStepData,
@@ -46,31 +43,6 @@ function withoutRequiredFileErrors(
  * for the requester; their answers start from what they gave instead.
  */
 const DEFAULT_FORM_STATE_BEHAVIOR = { constAsDefaults: 'never' } as const
-
-/**
- * Replace the validator's message for an unchecked must-be-true box ("must have required
- * property", or "must be equal to constant" for a saved `false`) with one a requester can act on.
- * A step's schema is flat, so each error's property is one of its top-level `properties`.
- */
-function explainMustCheckErrors(
-  stepSchema: RJSFSchema,
-  errors: RJSFValidationError[],
-): RJSFValidationError[] {
-  return errors.map(error => {
-    // The validator names the field as `.key` (a `const` error) or `key` (a `required` one).
-    const propertyKey =
-      error.name === 'required' || error.name === 'const'
-        ? error.property?.replace(/^\./, '')
-        : undefined
-    const property = propertyKey
-      ? stepSchema.properties?.[propertyKey]
-      : undefined
-    if (typeof property !== 'object' || !isMustCheckBoolean(property)) {
-      return error
-    }
-    return { ...error, message: MUST_CHECK_ERROR_MESSAGE }
-  })
-}
 
 export type SchemaStepFormHandle = {
   /** Validates the step's answers, showing errors against invalid fields. */
