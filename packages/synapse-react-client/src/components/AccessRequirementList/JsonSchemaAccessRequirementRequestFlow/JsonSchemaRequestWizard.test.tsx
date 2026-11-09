@@ -64,8 +64,14 @@ vi.mock('@/components/widgets/FileHandleLink', () => ({
   FileHandleLink: (props: {
     fileHandleAssociation?: FileHandleAssociation
     creatorFileHandleId?: string
+    displayValue?: string
+    buttonVariant?: string
   }) => (
-    <div data-testid="FileHandleLink">
+    <div
+      data-testid="FileHandleLink"
+      data-button-variant={props.buttonVariant}
+      data-display-value={props.displayValue}
+    >
       {JSON.stringify(
         props.fileHandleAssociation ?? {
           creatorFileHandleId: props.creatorFileHandleId,
@@ -422,6 +428,13 @@ describe('JsonSchemaRequestWizard', () => {
           associateObjectId: String(clinicalAccessRequirement.id),
         },
       ])
+      // The template download is a call-to-action button
+      const templateLink = screen.getByTestId('FileHandleLink')
+      expect(templateLink).toHaveAttribute('data-button-variant', 'outlined')
+      expect(templateLink).toHaveAttribute(
+        'data-display-value',
+        'Download Template',
+      )
     })
 
     it('saves an uploaded file as the answer and in attachments, and shows it through the request', async () => {

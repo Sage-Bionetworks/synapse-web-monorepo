@@ -66,7 +66,7 @@ export const FileHandleWidget: Widget = (props: WidgetProps) => {
           sx={{ backgroundColor: 'tertiary.100', px: 2, py: 1.5, mb: 2 }}
         >
           <Typography variant="body1">
-            Download the template, complete it, and upload the completed file:
+            Download the template, complete it, and upload the completed file.
           </Typography>
           <FileLink
             fileHandleId={templateFileHandleId}
@@ -74,6 +74,7 @@ export const FileHandleWidget: Widget = (props: WidgetProps) => {
               context?.templateObject,
               templateFileHandleId,
             )}
+            buttonLabel="Download Template"
           />
         </Stack>
       )}
@@ -114,11 +115,24 @@ function toAssociation(
 function FileLink(props: {
   fileHandleId: string
   association: FileHandleAssociation | undefined
+  /** If set, the link is an outlined button with this label. */
+  buttonLabel?: string
 }) {
-  const { fileHandleId, association } = props
+  const { fileHandleId, association, buttonLabel } = props
+  const buttonProps = buttonLabel
+    ? { buttonVariant: 'outlined' as const, displayValue: buttonLabel }
+    : {}
   return association ? (
-    <FileHandleLink fileHandleAssociation={association} showDownloadIcon />
+    <FileHandleLink
+      fileHandleAssociation={association}
+      showDownloadIcon
+      {...buttonProps}
+    />
   ) : (
-    <FileHandleLink creatorFileHandleId={fileHandleId} showDownloadIcon />
+    <FileHandleLink
+      creatorFileHandleId={fileHandleId}
+      showDownloadIcon
+      {...buttonProps}
+    />
   )
 }

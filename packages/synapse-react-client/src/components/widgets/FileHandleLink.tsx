@@ -8,6 +8,7 @@ import {
   BatchFileRequest,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
+import { Button } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
 import IconSvg from '../IconSvg/IconSvg'
 
@@ -15,6 +16,8 @@ type FileHandleLinkProps = {
   redirect?: boolean
   showDownloadIcon: boolean
   displayValue?: string
+  /** If set, the link is rendered as a MUI Button of this variant (a call to action) instead of a text link. */
+  buttonVariant?: 'outlined' | 'contained'
 } & (
   | {
       /** Downloads the file handle as it is associated with a Synapse object. */
@@ -38,6 +41,7 @@ export const FileHandleLink = (props: FileHandleLinkProps): React.ReactNode => {
     showDownloadIcon,
     redirect = false,
     displayValue,
+    buttonVariant,
   } = props
   const { accessToken } = useSynapseContext()
   const fileHandleId =
@@ -83,13 +87,28 @@ export const FileHandleLink = (props: FileHandleLinkProps): React.ReactNode => {
     },
   })
 
+  const onClick = () => {
+    if (accessToken) {
+      openFile()
+    }
+  }
+
+  if (buttonVariant) {
+    return (
+      <Button
+        variant={buttonVariant}
+        onClick={onClick}
+        className={SynapseConstants.SRC_SIGN_IN_CLASS}
+        startIcon={showDownloadIcon ? <IconSvg icon="download" /> : undefined}
+      >
+        {displayValue ?? fileName ?? fileHandleId}
+      </Button>
+    )
+  }
+
   return (
     <button
-      onClick={() => {
-        if (accessToken) {
-          openFile()
-        }
-      }}
+      onClick={onClick}
       className={`SRC-primary-text-color ${SynapseConstants.SRC_SIGN_IN_CLASS}`}
       type="button"
       style={{ padding: 0 }}
