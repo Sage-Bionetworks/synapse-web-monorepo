@@ -87,6 +87,10 @@ export const FileHandleLink = (props: FileHandleLinkProps): React.ReactNode => {
     },
   })
 
+  const label = displayValue ?? fileName ?? fileHandleId
+  const downloadIcon = showDownloadIcon && (
+    <IconSvg icon="download" wrap={buttonVariant === undefined} />
+  )
   const onClick = () => {
     if (accessToken) {
       openFile()
@@ -96,18 +100,14 @@ export const FileHandleLink = (props: FileHandleLinkProps): React.ReactNode => {
   if (buttonVariant) {
     return (
       <Button
-        variant={buttonVariant}
         onClick={onClick}
         className={SynapseConstants.SRC_SIGN_IN_CLASS}
+        variant={buttonVariant}
         size="small"
-        endIcon={
-          showDownloadIcon ? (
-            <IconSvg icon="download" wrap={false} />
-          ) : undefined
-        }
+        endIcon={downloadIcon || undefined}
         sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}
       >
-        {displayValue ?? fileName ?? fileHandleId}
+        {label}
       </Button>
     )
   }
@@ -119,8 +119,8 @@ export const FileHandleLink = (props: FileHandleLinkProps): React.ReactNode => {
       type="button"
       style={{ padding: 0 }}
     >
-      {displayValue ?? fileName ?? fileHandleId}
-      {showDownloadIcon && <IconSvg icon="download" />}
+      {label}
+      {downloadIcon}
     </button>
   )
 }
