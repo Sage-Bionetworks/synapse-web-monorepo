@@ -1,4 +1,5 @@
 import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
+import GridAgentSidebar from '@/components/DataGrid/components/GridAgentSidebar/GridAgentSidebar'
 import DraggableDialog from '@/components/DraggableDialog/DraggableDialog'
 import SynapseChat from '@/components/SynapseChat/SynapseChat'
 import { useChatState } from '@/components/SynapseChat/useChatState'
@@ -18,14 +19,32 @@ const suggestedPrompts = [
 export type GridAgentChatProps = {
   gridSessionId: string
   usersReplicaId: number
-  /** The agent's name, shown as the chat title and in the composer's placeholder and disclaimer */
+  /**
+   * The agent's name, shown in the composer's placeholder and disclaimer, and as the title of the
+   * dialog variant. The sidebar variant is titled "AI Assistant".
+   */
   chatbotName?: string
   initialMessage?: string
   open: boolean
   onClose: () => void
   /** Optional ID to use a different agent registered in Synapse */
   agentRegistrationId?: string
-}
+} & (
+  | {
+      /**
+       * `dialog` shows the chat in a draggable dialog, which the caller opens. `sidebar` docks it in
+       * a GridAgentSidebar, so render it in the `sidebar` slot of SynapseGridLayout.
+       * @default 'dialog'
+       */
+      variant?: 'dialog'
+      onOpen?: never
+    }
+  | {
+      variant: 'sidebar'
+      /** Called from the button that reopens the closed sidebar */
+      onOpen: () => void
+    }
+)
 
 /**
  * Chat with the grid agent about a grid session. The agent session is created when the user sends
@@ -42,6 +61,8 @@ export const GridAgentChat = memo(function GridAgentChat({
   open,
   onClose,
   agentRegistrationId,
+  variant,
+  onOpen,
 }: GridAgentChatProps) {
   // Storing state for the chat session here preserves chat history while the dialog is opened and closed.
   const [agentSession, setAgentSession] = useState<AgentSession | undefined>()
@@ -60,25 +81,38 @@ export const GridAgentChat = memo(function GridAgentChat({
     [gridSessionId, usersReplicaId],
   )
 
+  const chat = (
+    <SynapseChat
+      agentAvatar={<CurieAvatarHead width={35} height="auto" />}
+      agentRegistrationId={agentRegistrationId}
+      chatbotName={chatbotName}
+      initialMessage={initialMessage}
+      sessionContext={sessionContext}
+      // The dialog's content padding sits below the composer, which sticks to the bottom
+      textboxPositionOffset={variant === 'sidebar' ? undefined : '16px'}
+      hideTitle={true}
+      showAccessLevelMenu={false}
+      defaultAgentAccessLevel={AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA}
+      // lift state: allow GridAgentChat to control the agent session and interactions
+      externalSession={agentSession}
+      setExternalSession={setAgentSession}
+      externalChatState={chatState}
+      suggestedPrompts={suggestedPrompts}
+      allowAttachments={true}
+    />
+  )
+
+  if (variant === 'sidebar') {
+    return (
+      <GridAgentSidebar open={open} onOpen={onOpen} onClose={onClose}>
+        {chat}
+      </GridAgentSidebar>
+    )
+  }
+
   return (
     <DraggableDialog open={open} onClose={onClose} title={chatbotName}>
-      <SynapseChat
-        agentAvatar={<CurieAvatarHead width={35} height="auto" />}
-        agentRegistrationId={agentRegistrationId}
-        chatbotName={chatbotName}
-        initialMessage={initialMessage}
-        sessionContext={sessionContext}
-        textboxPositionOffset="16px"
-        hideTitle={true}
-        showAccessLevelMenu={false}
-        defaultAgentAccessLevel={AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA}
-        // lift state: allow GridAgentChat to control the agent session and interactions
-        externalSession={agentSession}
-        setExternalSession={setAgentSession}
-        externalChatState={chatState}
-        suggestedPrompts={suggestedPrompts}
-        allowAttachments={true}
-      />
+      {chat}
     </DraggableDialog>
   )
 })
