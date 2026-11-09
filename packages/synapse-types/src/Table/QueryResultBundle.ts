@@ -15,6 +15,7 @@ export interface QueryResultBundle {
   columnModels?: ColumnModel[] // The list of ColumnModels for the table. Use mask = 0x10 to include in the bundle.
   facets?: FacetColumnResult[] // The list of facets for the search results
   facetPostProcessingApplied?: boolean // True when a facet post-processing algorithm (rounding or noise) was applied to the returned facets, so facet counts are approximate. Absent or false when facet counts are exact.
+  queryCountPostProcessingApplied?: boolean // True when a facet post-processing algorithm (rounding or noise) was applied to the queryCount, so the count is approximate. With rounding, the queryCount is the inclusive lower bound of its bin. Absent or false when the queryCount is exact.
   sumFileSizes?: SumFileSizes
   lastUpdatedOn?: string
   combinedSql?: string //The SQL that is combination of a the input SQL, FacetRequests, AdditionalFilters, Sorting, and Pagination. Use mask = 0x100 to include in the bundle.

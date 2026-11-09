@@ -7,6 +7,7 @@ import {
   BUNDLE_MASK_QUERY_SELECT_COLUMNS,
   DEFAULT_PAGE_SIZE,
 } from '@/utils/SynapseConstants'
+import { formatQueryCount } from '@/utils/functions/queryCountUtils'
 import { Typography } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
@@ -85,9 +86,11 @@ export function CohortFilesPanel(props: CohortFilesPanelProps) {
     [filesTableId, getCurrentQueryRequest, handOff],
   )
 
-  // The participant count is exact, so a cohort the server would reject as too large is not sent.
+  // An exact participant count shows a cohort the server would reject as too large without sending it. An obscured
+  // count can't, so the server's COHORT_TOO_LARGE error decides instead.
   const isCohortTooLarge =
     handOff !== undefined &&
+    !participantMetadata.queryCountPostProcessingApplied &&
     (participantMetadata.queryCount ?? 0) > MAX_COHORT_PARTICIPANTS
 
   return (
@@ -179,7 +182,7 @@ function CohortFilesResults() {
   return (
     <>
       <Typography variant="body1" className={styles.count}>
-        {count.toLocaleString()}{' '}
+        {formatQueryCount(filesMetadata)}{' '}
         {count === 1 ? 'file or dataset' : FILES_AND_DATASETS}
       </Typography>
       <SynapseErrorBoundary>
