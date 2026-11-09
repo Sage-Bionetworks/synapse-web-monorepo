@@ -1,5 +1,5 @@
 import { defaultRangeExtractor, useVirtualizer } from '@tanstack/react-virtual'
-import React, { ReactNode, RefObject, useEffect } from 'react'
+import React, { ReactNode, RefObject, useCallback, useEffect } from 'react'
 import {
   Cell,
   Column,
@@ -64,12 +64,10 @@ export const Grid = <T,>({
   stopEditing: (opts?: { nextRow?: boolean }) => void
   onScroll?: React.UIEventHandler<HTMLDivElement>
 }) => {
-  const rowVirtualizer = useVirtualizer({
-    count: data.length,
-    getScrollElement: () => outerRef.current,
-    paddingStart: headerRowHeight,
-    estimateSize: index => rowHeight(index).height,
-    getItemKey: (index: number): React.Key => {
+  // The virtualizer measures every row again whenever getItemKey changes, so
+  // it keeps its identity across renders that leave the rows unchanged.
+  const getRowKey = useCallback(
+    (index: number): React.Key => {
       if (rowKey && index > 0) {
         const row = data[index - 1]
         if (typeof rowKey === 'function') {
@@ -87,6 +85,15 @@ export const Grid = <T,>({
       }
       return index
     },
+    [data, rowKey],
+  )
+
+  const rowVirtualizer = useVirtualizer({
+    count: data.length,
+    getScrollElement: () => outerRef.current,
+    paddingStart: headerRowHeight,
+    estimateSize: index => rowHeight(index).height,
+    getItemKey: getRowKey,
     overscan: 5,
   })
 

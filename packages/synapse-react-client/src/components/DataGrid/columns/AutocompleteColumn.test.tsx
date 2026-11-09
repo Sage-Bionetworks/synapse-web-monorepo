@@ -1,6 +1,7 @@
 import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { ComponentType } from 'react'
 import { vi } from 'vitest'
 import {
   areAutocompleteCellPropsEqual,
@@ -614,6 +615,55 @@ describe('AutocompleteColumn', () => {
       render(<AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />)
       expect(screen.getByRole('combobox')).toHaveValue('2')
     })
+  })
+})
+
+describe('autocompleteColumn cell', () => {
+  const Cell = autocompleteColumn({
+    choices: ['option1', 'option2'],
+    clearValue: undefined,
+  }).component as ComponentType<Partial<AutocompleteCellProps>>
+
+  it('shows the value without mounting the editor until the cell is reached', () => {
+    render(
+      <Cell
+        rowData="option1"
+        active={false}
+        focus={false}
+        setRowData={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByText('option1')).toBeInTheDocument()
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
+  })
+
+  it('mounts the editor with the same value when the pointer moves over the cell', () => {
+    render(
+      <Cell
+        rowData="option1"
+        active={false}
+        focus={false}
+        setRowData={vi.fn()}
+      />,
+    )
+
+    fireEvent.pointerMove(screen.getByText('option1'))
+
+    expect(screen.getByRole('combobox')).toHaveValue('option1')
+  })
+
+  it('mounts the editor when the cell is activated', () => {
+    render(
+      <Cell
+        rowData="option1"
+        active={true}
+        focus={false}
+        setRowData={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByRole('combobox')).toHaveValue('option1')
   })
 })
 

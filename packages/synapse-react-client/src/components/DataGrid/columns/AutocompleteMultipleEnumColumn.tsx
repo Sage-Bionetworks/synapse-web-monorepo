@@ -26,6 +26,10 @@ import {
 import { GridAutocompleteChip } from './GridAutocompleteChip'
 import isNil from 'lodash-es/isNil'
 import isEqual from 'lodash-es/isEqual'
+import CancelIcon from '@mui/icons-material/Cancel'
+import classNames from 'classnames'
+import styles from './GridCellDisplay.module.scss'
+import { LazyCellEditor } from './LazyCellEditor'
 import { useGridAutocompleteState } from './useGridAutocompleteState'
 
 // Static styles extracted to avoid recreation on every render
@@ -310,10 +314,44 @@ export function areAutocompleteMultipleEnumCellPropsEqual(
   )
 }
 
-const MemoizedAutocompleteMultipleEnumCell = memo(
+export const MemoizedAutocompleteMultipleEnumCell = memo(
   AutocompleteMultipleEnumCell,
   areAutocompleteMultipleEnumCellPropsEqual,
 )
+
+/**
+ * Shows a multiple-value cell's values the way the inactive editor does: a chip
+ * for each of the first `limitTags` values, then a count of the rest.
+ */
+export function AutocompleteMultipleEnumCellDisplay({
+  rowData,
+  limitTags,
+}: {
+  rowData: AutocompleteMultipleEnumOption
+  limitTags: number
+}) {
+  const values = createSafeRowData(rowData)
+  const hiddenCount = values.length - limitTags
+  return (
+    <span className={classNames(styles.display, styles.multipleValues)}>
+      {values.slice(0, limitTags).map((value, index) => (
+        <span key={index} className={styles.chip}>
+          <span className={styles.chipLabel}>
+            {castCellValueToString(value)}
+          </span>
+          <span className={styles.chipDeleteIcon} aria-hidden>
+            <CancelIcon fontSize="inherit" />
+          </span>
+        </span>
+      ))}
+      {hiddenCount > 0 && (
+        <span className={classNames(styles.inputText, styles.moreTags)}>
+          +{hiddenCount}
+        </span>
+      )}
+    </span>
+  )
+}
 
 export type AutocompleteMultipleEnumColumnProps = {
   choices: AutocompleteMultipleEnumOption[]
@@ -334,12 +372,23 @@ export function autocompleteMultipleEnumColumn({
     component: ((
       props: Omit<AutocompleteMultipleEnumCellProps, 'choices' | 'limitTags'>,
     ) => (
-      <MemoizedAutocompleteMultipleEnumCell
-        {...props}
-        choices={choices}
-        colType={colType}
-        limitTags={limitTags}
-        clearValue={clearValue}
+      <LazyCellEditor
+        active={props.active}
+        display={
+          <AutocompleteMultipleEnumCellDisplay
+            rowData={props.rowData}
+            limitTags={limitTags}
+          />
+        }
+        renderEditor={() => (
+          <MemoizedAutocompleteMultipleEnumCell
+            {...props}
+            choices={choices}
+            colType={colType}
+            limitTags={limitTags}
+            clearValue={clearValue}
+          />
+        )}
       />
     )) as CellComponent,
     copyValue: ({ rowData }) => {
