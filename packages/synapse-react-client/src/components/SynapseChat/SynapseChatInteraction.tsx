@@ -17,6 +17,7 @@ import {
   useTheme,
 } from '@mui/material'
 import { TraceEvent } from '@sage-bionetworks/synapse-types'
+import classNames from 'classnames'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import styles from './SynapseChatInteraction.module.scss'
@@ -25,6 +26,10 @@ import {
   ChatAttachmentStrip,
 } from './components/ChatAttachmentStrip/ChatAttachmentStrip'
 import { AgentChatAttachmentStatus } from '@sage-bionetworks/synapse-client'
+import {
+  ChatScrollBlock,
+  scrollElementIntoPageView,
+} from './utils/scrollChatElementIntoView'
 
 /**
  * A chat attachment to display on a sent/pending turn. Only `fileHandleId` is guaranteed --
@@ -43,6 +48,11 @@ export type SynapseChatInteractionProps = {
   chatResponseText?: string
   chatResponseTrace?: TraceEvent[]
   scrollIntoView?: boolean
+  /**
+   * Scrolls this interaction's elements when `scrollIntoView` is set. Defaults to the browser's
+   * scrollIntoView, which also scrolls the page.
+   */
+  scrollToElement?: (element: HTMLElement, block: ChatScrollBlock) => void
   chatErrorReason?: string
   onSendChat?: (message: string) => void
   agentAvatar: React.ReactNode
@@ -84,6 +94,7 @@ export function SynapseChatInteraction({
   chatErrorReason,
   chatResponseTrace,
   scrollIntoView = false,
+  scrollToElement = scrollElementIntoPageView,
   onSendChat,
   agentAvatar,
   userAvatar,
@@ -103,18 +114,18 @@ export function SynapseChatInteraction({
   useEffect(() => {
     // on mount, scroll into view if instructed. This brings the "Thinking..." row to the top so
     // the answer's opening lines are usually visible as soon as it starts streaming in.
-    if (scrollIntoView) {
-      userMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (scrollIntoView && userMessageRef.current) {
+      scrollToElement(userMessageRef.current, 'start')
     }
-  }, [scrollIntoView])
+  }, [scrollIntoView, scrollToElement])
 
   useEffect(() => {
     // once the response (or an error) arrives, scroll all the way to the bottom so the full
     // answer - which may be taller than the viewport - is brought into view.
-    if (scrollIntoView && !isLoading) {
-      responseRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    if (scrollIntoView && !isLoading && responseRef.current) {
+      scrollToElement(responseRef.current, 'end')
     }
-  }, [scrollIntoView, isLoading])
+  }, [scrollIntoView, scrollToElement, isLoading])
 
   const traceMessages = useMemo(
     () =>
@@ -309,7 +320,11 @@ export function SynapseChatInteraction({
             )}
           </Box>
           {(textContent || (onSendChat && guidePrompts.length > 0)) && (
-            <Box className={animateEntry ? styles.entryAnimation : undefined}>
+            <Box
+              className={classNames(styles.response, {
+                [styles.entryAnimation]: animateEntry,
+              })}
+            >
               {textContent && <MarkdownSynapse markdown={textContent} />}
               {onSendChat && guidePrompts.length > 0 && (
                 <Stack direction="row" flexWrap="wrap" gap={1} mt={1}>
