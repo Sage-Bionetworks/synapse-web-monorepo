@@ -1,8 +1,8 @@
 import katex from 'katex'
 import { RefObject } from 'react'
 import { MarkdownSynapseProps } from './MarkdownSynapse'
-import MarkdownIt from 'markdown-it'
 import { truncateString } from '@/utils/functions/StringUtils'
+import { synapseMarkdownIt } from './synapseMarkdownIt'
 import {
   htmlToDOM,
   Element as DomElement,
@@ -179,20 +179,35 @@ export function transformStringIntoMarkdownProps(
 // optional because search-index descriptions can be truncated mid-widget.
 const SYNAPSE_WIDGET_REGEX = /\$\{[^}]*\}?/g
 
-// HTML must be parsed (not escaped) so comments and tags are dropped by stripHTML
-// rather than surfacing as literal text.
-const md = new MarkdownIt({ html: true })
+// Line-level Synapse syntax. The renderer already handles these in normal
+// markdown, but markdown-it emits them as literal text when they sit inside a
+// raw HTML block (lines following an HTML tag without a blank line between),
+// so they are removed before rendering.
+const LINE_SYNTAX_REGEXES = [
+  // heading markers, including Synapse's `#!` (no-TOC) and no-space variants
+  /^[ \t]*#{1,6}!?/gm,
+  // centered text: ->text<-
+  /^[ \t]*->/gm,
+  /<-[ \t]*$/gm,
+  // layout containers: {row}, {column width=N}
+  /^[ \t]*\{(?:row|column)[^}\n]*\}[ \t]*$/gm,
+]
 
 /**
  * Converts Synapse markdown to a single line of plain text, removing Synapse
- * widgets, HTML tags, and HTML comments.
+ * widgets, Synapse markdown syntax (centered text, `#!` headings, `{row}` and
+ * `{column}` containers, tables), HTML tags, and HTML comments.
  */
 export const markdownToPlainText = (markdown: string, maxLength?: number) => {
   if (!markdown) {
     return ''
   }
 
-  const html = md.render(markdown.replaceAll(SYNAPSE_WIDGET_REGEX, ''))
+  const withoutSynapseSyntax = LINE_SYNTAX_REGEXES.reduce(
+    (text, regex) => text.replaceAll(regex, ''),
+    markdown.replaceAll(SYNAPSE_WIDGET_REGEX, ''),
+  )
+  const html = synapseMarkdownIt.render(withoutSynapseSyntax)
   const plainText = stripHTML(html).replaceAll(/\s+/g, ' ').trim()
 
   return maxLength ? truncateString(plainText, maxLength) : plainText
