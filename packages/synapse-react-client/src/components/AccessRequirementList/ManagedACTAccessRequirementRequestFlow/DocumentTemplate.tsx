@@ -1,10 +1,11 @@
 import { useGetFileBatch } from '@/synapse-queries/file/useFiles'
-import { Box, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
 import { ReactNode } from 'react'
 import DirectDownloadButton from '../../DirectDownloadButton'
 import IconSvg from '../../IconSvg/IconSvg'
 import { longFieldLabelSx } from './styles'
+import TemplateDownloadBar from './TemplateDownloadBar'
 
 export type DownloadDocumentTemplateProps = {
   title: ReactNode
@@ -44,30 +45,22 @@ export default function DocumentTemplate(props: DownloadDocumentTemplateProps) {
       <Typography variant={'smallText1'} sx={{ my: 0.5 }}>
         <strong>{fileName}</strong>
       </Typography>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-          gap: 2,
-          backgroundColor: 'tertiary.100',
-          p: 2.5,
-          my: 2,
-          flexWrap: { xs: 'nowrap', md: 'wrap-reverse' },
-        }}
+      <TemplateDownloadBar
+        button={
+          <DirectDownloadButton
+            variant={'outlined'}
+            fileHandleAssociation={fileHandleAssociation}
+            fileName={downloadButtonText}
+            endIcon={<IconSvg icon={'download'} wrap={false} />}
+            sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+          />
+        }
       >
-        <DirectDownloadButton
-          variant={'outlined'}
-          fileHandleAssociation={fileHandleAssociation}
-          fileName={downloadButtonText}
-          endIcon={<IconSvg icon={'download'} wrap={false} />}
-          sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}
-        />
         <Typography variant={'body1'}>
           You must fill out and upload this exact version of the template.{' '}
           <strong>No other versions will be accepted.</strong>
         </Typography>
-      </Box>
+      </TemplateDownloadBar>
     </>
   )
 }

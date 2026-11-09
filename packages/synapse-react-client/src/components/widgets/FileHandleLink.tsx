@@ -99,7 +99,13 @@ export const FileHandleLink = (props: FileHandleLinkProps): React.ReactNode => {
         variant={buttonVariant}
         onClick={onClick}
         className={SynapseConstants.SRC_SIGN_IN_CLASS}
-        startIcon={showDownloadIcon ? <IconSvg icon="download" /> : undefined}
+        size="small"
+        endIcon={
+          showDownloadIcon ? (
+            <IconSvg icon="download" wrap={false} />
+          ) : undefined
+        }
+        sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}
       >
         {displayValue ?? fileName ?? fileHandleId}
       </Button>

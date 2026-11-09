@@ -1,3 +1,4 @@
+import TemplateDownloadBar from '@/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/TemplateDownloadBar'
 import { UploadDocumentField } from '@/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/UploadDocumentField'
 import {
   CustomFormContext,
@@ -59,24 +60,22 @@ export const FileHandleWidget: Widget = (props: WidgetProps) => {
   return (
     <Box id={id}>
       {typeof templateFileHandleId === 'string' && templateFileHandleId && (
-        <Stack
-          direction="row"
-          spacing={1.5}
-          alignItems="center"
-          sx={{ backgroundColor: 'tertiary.100', px: 2, py: 1.5, mb: 2 }}
+        <TemplateDownloadBar
+          button={
+            <FileLink
+              fileHandleId={templateFileHandleId}
+              association={toAssociation(
+                context?.templateObject,
+                templateFileHandleId,
+              )}
+              buttonLabel="Download Template"
+            />
+          }
         >
           <Typography variant="body1">
             Download the template, complete it, and upload the completed file.
           </Typography>
-          <FileLink
-            fileHandleId={templateFileHandleId}
-            association={toAssociation(
-              context?.templateObject,
-              templateFileHandleId,
-            )}
-            buttonLabel="Download Template"
-          />
-        </Stack>
+        </TemplateDownloadBar>
       )}
       <UploadDocumentField
         id={`${id}-upload`}
