@@ -102,3 +102,48 @@ export const Empty: Story = {
     template: template([]),
   },
 }
+
+export const MultiSelectField: Story = {
+  args: {
+    template: template([
+      {
+        title: 'Basics',
+        fields: [{ schemaPath: '/colors', uiDefinition: {} }],
+      },
+    ]),
+    jsonSchema: {
+      ...schema,
+      properties: {
+        ...schema.properties,
+        colors: {
+          type: 'array',
+          title: 'Favorite colors',
+          items: { type: 'string', enum: ['Red', 'Blue', 'Green'] },
+          uniqueItems: true,
+        },
+      },
+    },
+  },
+}
+
+export const YesNoField: Story = {
+  args: {
+    template: template([
+      {
+        title: 'Basics',
+        fields: [{ schemaPath: '/hasIrbApproval', uiDefinition: {} }],
+      },
+    ]),
+    jsonSchema: {
+      ...schema,
+      properties: {
+        ...schema.properties,
+        hasIrbApproval: {
+          type: 'boolean',
+          title: 'IRB approval obtained',
+          description: 'Has an IRB approved this research?',
+        },
+      },
+    },
+  },
+}

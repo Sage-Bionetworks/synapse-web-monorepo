@@ -96,6 +96,9 @@ export function FormTemplateEditorForm({
   const [saveError, setSaveError] = useState<
     FormTemplateFieldValidationError[] | null
   >(null)
+  const [nameTouched, setNameTouched] = useState(false)
+  const trimmedName = name.trim()
+  const showNameError = nameTouched && !trimmedName
 
   const validationErrors = useMemo(
     () => validateFormTemplateFields(toFormTemplateSteps(steps), jsonSchema),
@@ -103,12 +106,14 @@ export function FormTemplateEditorForm({
   )
 
   const handleSave = async () => {
+    setNameTouched(true)
+    if (!trimmedName) return
     setSaveError(null)
     try {
       const result = await save({
         initialTemplate,
         initialJsonSchema,
-        name,
+        name: trimmedName,
         jsonSchema,
         steps,
       })
@@ -157,7 +162,7 @@ export function FormTemplateEditorForm({
     usedPaths.has(propertyKeyToPointer(editingPropertyKey))
 
   const templateSchemaName = resolveFormTemplateSchemaName(
-    name,
+    trimmedName,
     initialTemplate?.schema$id,
   )
   const idleSaveButtonText = initialTemplate
@@ -177,9 +182,16 @@ export function FormTemplateEditorForm({
           label="Internal Name"
           value={name}
           onChange={e => setName(e.target.value)}
+          onBlur={() => setNameTouched(true)}
+          required
+          error={showNameError}
           size="small"
           fullWidth
-          helperText="Used by ACT to identify and find this template. Not shown to requesters."
+          helperText={
+            showNameError
+              ? 'Name is required'
+              : 'Used by ACT to identify and find this template. Not shown to requesters.'
+          }
           sx={{ mb: 1 }}
         />
         <Typography
@@ -209,6 +221,7 @@ export function FormTemplateEditorForm({
               jsonSchema={jsonSchema}
               unboundProperties={unboundProperties}
               formTemplateId={initialTemplate?.id}
+              validationErrors={validationErrors}
               onStepsChange={setSteps}
               onBindField={bindField}
             />
@@ -270,7 +283,7 @@ export function FormTemplateEditorForm({
           <Button
             variant="contained"
             onClick={() => void handleSave()}
-            disabled={!name || isSaving || validationErrors.length > 0}
+            disabled={isSaving || validationErrors.length > 0}
           >
             {isSaving ? 'Saving…' : idleSaveButtonText}
           </Button>
