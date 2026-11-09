@@ -1,8 +1,13 @@
 import { describe, it, expect, vi } from 'vitest'
 import { Model } from 'json-joy/lib/json-crdt'
 import { s } from 'json-joy/lib/json-crdt-patch'
-import { enrichRowsWithChangeInfo } from './enrichRowsWithChangeInfo'
+import { applyModelChange } from './applyModelChange'
+import {
+  createChangeInfoCache,
+  enrichRowsWithChangeInfo,
+} from './enrichRowsWithChangeInfo'
 import createTestModel from './createTestModel'
+import modelRowsToGrid, { createGridRowCache } from './modelRowsToGrid'
 import type { DataGridRow, GridModel } from '../DataGridTypes'
 import type { ReplicaUserInfo } from '../hooks/useGridReplicaUsers'
 
@@ -252,7 +257,8 @@ describe('enrichRowsWithChangeInfo', () => {
     expect(result[1].__cellChangeInfo?.c1).toBe(sharedInfo)
   })
 
-  it('looks up each row in the model once, not once per cell', () => {
+  it('reads the rows array once instead of resolving each row by its path', () => {
+    // Resolving rows/<index>/data for every row is quadratic in the row count
     const sid = 42
     const nRows = 5
     const nCols = 4
@@ -260,10 +266,97 @@ describe('enrichRowsWithChangeInfo', () => {
     const snapshot = model.api.getSnapshot()
     const rows: DataGridRow[] = Array.from({ length: nRows }, () => ({}))
     const replicaUserMap = new Map([[sid, makeReplicaUserInfo('self', sid)]])
+    const arrSpy = vi.spyOn(model.api, 'arr')
     const vecSpy = vi.spyOn(model.api, 'vec')
 
     enrichRowsWithChangeInfo(rows, model, snapshot, replicaUserMap)
 
-    expect(vecSpy).toHaveBeenCalledTimes(nRows)
+    expect(arrSpy).toHaveBeenCalledTimes(1)
+    expect(vecSpy).not.toHaveBeenCalled()
+  })
+
+  describe('with a cache', () => {
+    const sid = 42
+
+    it('returns the previous array for the same rows and replicas', () => {
+      const model = createTestModel(2, 2, sid)
+      const rows = modelRowsToGrid(model, model.api.getSnapshot())
+      const replicaUserMap = new Map([[sid, makeReplicaUserInfo('self', sid)]])
+      const cache = createChangeInfoCache()
+      const before = enrichRowsWithChangeInfo(
+        rows,
+        model,
+        model.api.getSnapshot(),
+        replicaUserMap,
+        cache,
+      )
+
+      const after = enrichRowsWithChangeInfo(
+        [...rows],
+        model,
+        model.api.getSnapshot(),
+        replicaUserMap,
+        cache,
+      )
+
+      expect(after).toBe(before)
+    })
+
+    it('enriches only rows it has not seen', () => {
+      const model = createTestModel(2, 2, sid)
+      const rowCache = createGridRowCache()
+      const replicaUserMap = new Map([[sid, makeReplicaUserInfo('self', sid)]])
+      const cache = createChangeInfoCache()
+      const before = enrichRowsWithChangeInfo(
+        modelRowsToGrid(model, model.api.getSnapshot(), rowCache),
+        model,
+        model.api.getSnapshot(),
+        replicaUserMap,
+        cache,
+      )
+
+      applyModelChange(
+        model,
+        { type: 'UPDATE', rowIndex: 1, updatedData: { c0: 'edited' } },
+        {},
+      )
+      const snapshot = model.api.getSnapshot()
+      const after = enrichRowsWithChangeInfo(
+        modelRowsToGrid(model, snapshot, rowCache),
+        model,
+        snapshot,
+        replicaUserMap,
+        cache,
+      )
+
+      expect(after[0]).toBe(before[0])
+      expect(after[1]).not.toBe(before[1])
+      expect(after[1].c0).toBe('edited')
+      expect(after[1].__cellChangeInfo?.c0?.category).toBe('self')
+    })
+
+    it('enriches every row again when the replicas change', () => {
+      const model = createTestModel(1, 2, sid)
+      const rows = modelRowsToGrid(model, model.api.getSnapshot())
+      const cache = createChangeInfoCache()
+      const before = enrichRowsWithChangeInfo(
+        rows,
+        model,
+        model.api.getSnapshot(),
+        new Map([[sid, makeReplicaUserInfo('self', sid)]]),
+        cache,
+      )
+
+      const after = enrichRowsWithChangeInfo(
+        rows,
+        model,
+        model.api.getSnapshot(),
+        new Map([[sid, makeReplicaUserInfo('other-user', sid)]]),
+        cache,
+      )
+
+      expect(before[0].__cellChangeInfo?.c0?.category).toBe('self')
+      expect(after[0].__cellChangeInfo?.c0?.category).toBe('other-user')
+    })
   })
 })

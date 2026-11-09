@@ -11,7 +11,9 @@ import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid
 import SyncGridWithSourceButton from '@/components/DataGrid/SyncGridWithSourceButton'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import { getNamedColumnIndices } from '@/components/DataGrid/utils/getNamedColumnIndices'
-import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
+import modelRowsToGrid, {
+  createGridRowCache,
+} from '@/components/DataGrid/utils/modelRowsToGrid'
 import { ErrorFallbackComponent } from '@/components/error/ErrorBanner'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
 import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
@@ -19,6 +21,7 @@ import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
 import { useGetEntity } from '@/synapse-queries/index'
 import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
+import { useConstant } from '@/utils/hooks/useConstant'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import HelpOutline from '@mui/icons-material/HelpOutline'
 import {
@@ -65,7 +68,10 @@ import { StartGridSession, StartGridSessionHandle } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { applyModelChange, ModelChange } from './utils/applyModelChange'
 import { removeNoOpOperations } from './utils/DataGridUtils'
-import { enrichRowsWithChangeInfo } from './utils/enrichRowsWithChangeInfo'
+import {
+  createChangeInfoCache,
+  enrichRowsWithChangeInfo,
+} from './utils/enrichRowsWithChangeInfo'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 import CurieAvatarHead from '@/assets/mui_components/CurieAvatarHead'
 
@@ -265,17 +271,29 @@ function SynapseGridInner({
     [columnNames, modelSnapshot?.columnOrder],
   )
 
+  // Every model change, including a selection move, produces a new snapshot. The caches keep the row objects of rows the
+  // change did not touch, so a change rebuilds only the rows it wrote to.
+  const gridRowCache = useConstant(createGridRowCache)
+  const changeInfoCache = useConstant(createChangeInfoCache)
+
   // Transform the model view rows and columns to DataSheetGrid format
   const rowValues = useMemo(
-    () => (modelSnapshot ? modelRowsToGrid(model, modelSnapshot) : []),
-    [model, modelSnapshot],
+    () =>
+      modelSnapshot ? modelRowsToGrid(model, modelSnapshot, gridRowCache) : [],
+    [model, modelSnapshot, gridRowCache],
   )
 
   // Enrich rows with per-cell change attribution for CSS indicators and tooltips
   const enrichedRowValues = useMemo(
     () =>
-      enrichRowsWithChangeInfo(rowValues, model, modelSnapshot, replicaUserMap),
-    [rowValues, model, modelSnapshot, replicaUserMap],
+      enrichRowsWithChangeInfo(
+        rowValues,
+        model,
+        modelSnapshot,
+        replicaUserMap,
+        changeInfoCache,
+      ),
+    [rowValues, model, modelSnapshot, replicaUserMap, changeInfoCache],
   )
 
   const commit = useCallback(() => {
