@@ -193,6 +193,30 @@ describe('SynapseChat - suggestedPrompts', () => {
   })
 })
 
+/** Replaces the Add Files dialog with one whose button simulates uploading `report.pdf` */
+function mockAddFilesDialogUpload() {
+  mockAddFilesDialog.mockImplementation(
+    ({ open, onAttachmentUploaded }: AddFilesDialogProps) => (
+      <>
+        {open && (
+          <div>
+            <span>Add files dialog</span>
+            <button
+              onClick={() =>
+                onAttachmentUploaded(
+                  mockChatAttachment({ fileName: 'report.pdf' }),
+                )
+              }
+            >
+              Simulate attachment uploaded
+            </button>
+          </div>
+        )}
+      </>
+    ),
+  )
+}
+
 describe('SynapseChat - allowAttachments', () => {
   beforeAll(() => {
     window.HTMLElement.prototype.scrollIntoView = vi.fn()
@@ -201,26 +225,7 @@ describe('SynapseChat - allowAttachments', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockUseChatState.mockReturnValue(defaultMockChatState)
-    mockAddFilesDialog.mockImplementation(
-      ({ open, onAttachmentUploaded }: AddFilesDialogProps) => (
-        <>
-          {open && (
-            <div>
-              <span>Add files dialog</span>
-              <button
-                onClick={() =>
-                  onAttachmentUploaded(
-                    mockChatAttachment({ fileName: 'report.pdf' }),
-                  )
-                }
-              >
-                Simulate attachment uploaded
-              </button>
-            </div>
-          )}
-        </>
-      ),
-    )
+    mockAddFilesDialogUpload()
   })
 
   it('does not render the attach button when allowAttachments is false (default)', () => {
@@ -400,6 +405,96 @@ describe('SynapseChat - allowAttachments', () => {
 
     expect(screen.getByText('report.pdf')).toBeInTheDocument()
     expect(screen.queryByText('4242424')).not.toBeInTheDocument()
+  })
+})
+
+describe('SynapseChat - createSessionOnFirstMessage', () => {
+  beforeAll(() => {
+    window.HTMLElement.prototype.scrollIntoView = vi.fn()
+  })
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUseChatState.mockReturnValue(defaultMockChatState)
+    mockAddFilesDialogUpload()
+  })
+
+  /** Registers a session creation handler and returns a live count of its requests */
+  function countSessionCreation() {
+    const sessionCreation = { count: 0 }
+    server.use(
+      http.post(`${repoOrigin}${AGENT_SESSION}`, () => {
+        sessionCreation.count++
+        return HttpResponse.json(mockAgentSession, { status: 201 })
+      }),
+    )
+    return sessionCreation
+  }
+
+  function renderWithoutSession(props?: Partial<SynapseChatProps>) {
+    return renderComponent({
+      externalSession: undefined,
+      createSessionOnFirstMessage: true,
+      ...props,
+    })
+  }
+
+  it('does not create a session on mount, and the composer and prompts are usable', async () => {
+    const sessionCreation = countSessionCreation()
+
+    renderWithoutSession({ suggestedPrompts: mockPrompts })
+    // Let any effect that would create the session run
+    await act(async () => {})
+
+    expect(sessionCreation.count).toBe(0)
+    expect(screen.getByRole('textbox')).toBeEnabled()
+    mockPrompts.forEach(prompt => {
+      expect(screen.getByRole('button', { name: prompt })).not.toHaveAttribute(
+        'aria-disabled',
+      )
+    })
+  })
+
+  it('creates the session when the first message is sent, then sends the message', async () => {
+    const sessionCreation = countSessionCreation()
+    const { user } = renderWithoutSession()
+
+    await user.type(screen.getByRole('textbox'), 'hello')
+    await user.click(screen.getByRole('button', { name: 'Send message' }))
+
+    await waitFor(() =>
+      expect(mockSendChat).toHaveBeenCalledExactlyOnceWith('hello', undefined),
+    )
+    expect(sessionCreation.count).toBe(1)
+    expect(screen.getByRole('textbox')).toHaveValue('')
+  })
+
+  it('sends the first message with its attachments once the session exists', async () => {
+    countSessionCreation()
+    const { user } = renderWithoutSession({ allowAttachments: true })
+
+    await user.click(screen.getByRole('button', { name: 'Add files' }))
+    await user.click(
+      screen.getByRole('button', { name: 'Simulate attachment uploaded' }),
+    )
+    await user.type(screen.getByRole('textbox'), 'hello')
+    await user.click(screen.getByRole('button', { name: 'Send message' }))
+
+    await waitFor(() => expect(mockSendChat).toHaveBeenCalledTimes(1))
+    const [message, attachments] = mockSendChat.mock.calls[0]
+    expect(message).toBe('hello')
+    expect(attachments).toHaveLength(1)
+  })
+
+  it('creates the session on mount when there is an initial message', async () => {
+    const sessionCreation = countSessionCreation()
+
+    renderWithoutSession({ initialMessage: 'Start here' })
+
+    await waitFor(() =>
+      expect(mockSendChat).toHaveBeenCalledExactlyOnceWith('Start here'),
+    )
+    expect(sessionCreation.count).toBe(1)
   })
 })
 
