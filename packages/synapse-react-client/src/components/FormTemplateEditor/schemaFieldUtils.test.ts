@@ -84,6 +84,14 @@ describe('choiceOptionProblems', () => {
       'duplicate',
     ])
   })
+
+  it('treats choices that differ only in surrounding whitespace as duplicates', () => {
+    expect(choiceOptionProblems(['Red', ' Red ', 'Blue'])).toEqual([
+      'duplicate',
+      'duplicate',
+      null,
+    ])
+  })
 })
 
 describe('fieldTypeLabel', () => {
