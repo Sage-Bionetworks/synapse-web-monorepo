@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";function t(e){return`≈ ${e.toLocaleString()}`}function n(e){let{queryCount:n,queryCountPostProcessingApplied:r}=e;if(n!==void 0)return r?t(n):n.toLocaleString()}function r(){return(r=e((()=>{})))()}export{n,r,t};

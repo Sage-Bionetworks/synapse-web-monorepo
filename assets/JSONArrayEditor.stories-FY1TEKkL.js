@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./JSONArrayEditorModal-NFLopmKP.js";var r,i,a,o;function s(){return(s=e((()=>{t(),{fn:r}=__STORYBOOK_MODULE_TEST__,i={title:`UI/JSONArrayEditor`,component:n},a={args:{isShowingModal:!0,onConfirm:r(),onCancel:r()}},o=[`Modal`]})))()}s();export{a as Modal,o as __namedExportsOrder,i as default};
