@@ -3,6 +3,7 @@ import ExportCsvFromGridButton from '@/components/DataGrid/components/ExportCsvF
 import GridLoadingState from '@/components/DataGrid/components/GridLoadingState'
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import ReorderColumnsButton from '@/components/DataGrid/components/ReorderColumnsButton'
+import SynapseGridLayout from '@/components/DataGrid/components/SynapseGridLayout'
 import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
 import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid'
 import SyncGridWithSourceButton from '@/components/DataGrid/SyncGridWithSourceButton'
@@ -37,6 +38,7 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { ClickableJsonCrdt } from 'clickable-json'
 import {
+  ReactNode,
   Ref,
   useCallback,
   useEffect,
@@ -68,6 +70,10 @@ const EMPTY_COLUMN_NAMES: string[] = []
 export type SynapseGridProps = {
   agentRegistrationId?: string
   showDebugInfo?: boolean
+  /** Content shown above the grid, such as the page title */
+  header?: ReactNode
+  /** Class name for the container around the grid content, which excludes `header` */
+  contentClassName?: string
   ref?: Ref<SynapseGridHandle>
 }
 
@@ -79,6 +85,8 @@ export type SynapseGridHandle = {
 function SynapseGridInner({
   agentRegistrationId,
   showDebugInfo = false,
+  header,
+  contentClassName,
   ref,
 }: SynapseGridProps) {
   const [session, setSession] = useState<GridSession | null>(null)
@@ -383,11 +391,15 @@ function SynapseGridInner({
   )
 
   if (!isLoading && !userBundle?.isCertified) {
-    return <CertificationRequirement />
+    return (
+      <SynapseGridLayout header={header} contentClassName={contentClassName}>
+        <CertificationRequirement />
+      </SynapseGridLayout>
+    )
   }
 
   return (
-    <div>
+    <SynapseGridLayout header={header} contentClassName={contentClassName}>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, xl: 8 }}>
           <StartGridSession
@@ -617,7 +629,7 @@ function SynapseGridInner({
           </>
         )}
       </Grid>
-    </div>
+    </SynapseGridLayout>
   )
 }
 
