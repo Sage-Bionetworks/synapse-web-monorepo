@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t}from"./SkeletonButton-h0PTjyde.js";import{n}from"./SkeletonInlineBlock-nGp78_l9.js";import{n as r}from"./SkeletonTable-oOU77P6h.js";import{n as i}from"./SkeletonParagraph--9C-KZTs.js";function a(){return(a=e((()=>{t(),n(),r(),i()})))()}export{a as t};
