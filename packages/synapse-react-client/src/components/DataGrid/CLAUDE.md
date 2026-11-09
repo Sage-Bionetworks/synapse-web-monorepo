@@ -70,7 +70,7 @@ When you change code on these paths, test with a large grid (several thousand ro
 - `utils/`: helpers. Most are pure: `applyModelChange`, `splitPatch`, `modelRowsToGrid`, selection conversion, column factories, paste parsing.
 - `hooks/`: undo and redo, remote selections, replica users, grid schema loading, CSV export, column resize.
 - `columns/`: custom DSG column types (autocomplete, date-time, number), and `LazyCellEditor`, which defers mounting their editors.
-- `components/`: toolbar buttons, dialogs, the loading state, and the context menu.
+- `components/`: toolbar buttons, dialogs, the loading state, and the context menu. Also `SynapseGridLayout`, which places the page header, the grid content, and a docked sidebar, and `GridAgentChat`, the chat with the grid agent. With the `GRID_AGENT_SIDEBAR` feature flag on, the chat docks in `GridAgentSidebar`; with it off, it opens in a dialog from the toolbar.
 
 ## Testing
 

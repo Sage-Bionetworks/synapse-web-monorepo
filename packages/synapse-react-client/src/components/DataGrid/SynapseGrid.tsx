@@ -1,6 +1,8 @@
 import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
 import ExportCsvFromGridButton from '@/components/DataGrid/components/ExportCsvFromGridButton'
 import GridAgentChat from '@/components/DataGrid/components/GridAgentChat/GridAgentChat'
+import OpenGridAgentSidebarButton from '@/components/DataGrid/components/GridAgentSidebar/OpenGridAgentSidebarButton'
+import useGridAgentSidebarOpen from '@/components/DataGrid/components/GridAgentSidebar/useGridAgentSidebarOpen'
 import GridLoadingState from '@/components/DataGrid/components/GridLoadingState'
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import ReorderColumnsButton from '@/components/DataGrid/components/ReorderColumnsButton'
@@ -13,8 +15,10 @@ import { getNamedColumnIndices } from '@/components/DataGrid/utils/getNamedColum
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { ErrorFallbackComponent } from '@/components/error/ErrorBanner'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
+import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
 import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
 import { useGetEntity } from '@/synapse-queries/index'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import HelpOutline from '@mui/icons-material/HelpOutline'
@@ -91,7 +95,17 @@ function SynapseGridInner({
 }: SynapseGridProps) {
   const [session, setSession] = useState<GridSession | null>(null)
   const [replicaId, setReplicaId] = useState<number | null>(null)
+  const isAgentSidebarEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.GRID_AGENT_SIDEBAR,
+  )
+  const {
+    isOpen: isAgentSidebarOpen,
+    openSidebar: openAgentSidebar,
+    closeSidebar: closeAgentSidebar,
+  } = useGridAgentSidebarOpen()
+  // The "Open Curie" dialog, used while the sidebar's feature flag is off
   const [chatOpen, setChatOpen] = useState(false)
+  const closeChat = useCallback(() => setChatOpen(false), [])
   const [lastSelection, setLastSelection] = useState<SelectionWithId | null>(
     null,
   )
@@ -398,8 +412,31 @@ function SynapseGridInner({
     )
   }
 
+  const agentSidebar = isAgentSidebarEnabled &&
+    session &&
+    hasCompletedInitialLoad && (
+      <>
+        {!isAgentSidebarOpen && (
+          <OpenGridAgentSidebarButton onClick={openAgentSidebar} />
+        )}
+        <GridAgentChat
+          variant="sidebar"
+          agentRegistrationId={agentRegistrationId}
+          open={isAgentSidebarOpen}
+          onClose={closeAgentSidebar}
+          gridSessionId={session.sessionId!}
+          usersReplicaId={replicaId!}
+          chatbotName="Curie"
+        />
+      </>
+    )
+
   return (
-    <SynapseGridLayout header={header} contentClassName={contentClassName}>
+    <SynapseGridLayout
+      header={header}
+      contentClassName={contentClassName}
+      sidebar={agentSidebar}
+    >
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, xl: 8 }}>
           <StartGridSession
@@ -504,7 +541,9 @@ function SynapseGridInner({
                   <Stack
                     direction={'row'}
                     spacing={1}
-                    sx={{ justifyContent: 'flex-end' }}
+                    useFlexGap
+                    // Wraps when the AI Assistant sidebar leaves too little width for every action
+                    sx={{ justifyContent: 'flex-end', flexWrap: 'wrap' }}
                   >
                     {/* Keep this sync indicator first in the stack, otherwise it will cause other buttons to shift */}
                     {isSyncing && (
@@ -541,21 +580,25 @@ function SynapseGridInner({
                       canRemoveColumns={isRecordSet}
                       onReorder={handleReorderColumns}
                     />
-                    <GridMenuButton
-                      variant={'outlined'}
-                      onClick={() => setChatOpen(true)}
-                      startIcon={<CurieAvatarHead />}
-                    >
-                      Open Curie
-                    </GridMenuButton>
-                    <GridAgentChat
-                      agentRegistrationId={agentRegistrationId}
-                      open={chatOpen}
-                      onClose={() => setChatOpen(false)}
-                      gridSessionId={session.sessionId!}
-                      usersReplicaId={replicaId!}
-                      chatbotName="Curie"
-                    />
+                    {!isAgentSidebarEnabled && (
+                      <>
+                        <GridMenuButton
+                          variant={'outlined'}
+                          onClick={() => setChatOpen(true)}
+                          startIcon={<CurieAvatarHead />}
+                        >
+                          Open Curie
+                        </GridMenuButton>
+                        <GridAgentChat
+                          agentRegistrationId={agentRegistrationId}
+                          open={chatOpen}
+                          onClose={closeChat}
+                          gridSessionId={session.sessionId!}
+                          usersReplicaId={replicaId!}
+                          chatbotName="Curie"
+                        />
+                      </>
+                    )}
                     {session.sourceEntityId && (
                       <UploadCsvToGridButton
                         sourceEntityId={session.sourceEntityId}

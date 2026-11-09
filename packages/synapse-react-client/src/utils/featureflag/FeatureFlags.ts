@@ -46,6 +46,9 @@ export enum FeatureFlagEnum {
   // If enabled, the ADKP and ELITE portals' Cohort Builder pages show the Cohort Builder 2.0 (CohortBuilder component)
   COHORT_BUILDER_V2 = 'COHORT_BUILDER_V2',
 
+  // If enabled, the Curator grid docks Curie in a resizable AI Assistant sidebar instead of the "Open Curie" dialog
+  GRID_AGENT_SIDEBAR = 'GRID_AGENT_SIDEBAR',
+
   // Reserved for unit tests. Not configured in Stack Builder; do not use in production code.
   TEST_ONLY = 'TEST_ONLY',
   TEST_ONLY_2 = 'TEST_ONLY_2',
@@ -103,6 +106,10 @@ export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
     displayName: 'Query Builder for Tables and Views',
   },
   [FeatureFlagEnum.COHORT_BUILDER_V2]: { scopes: [] },
+  [FeatureFlagEnum.GRID_AGENT_SIDEBAR]: {
+    scopes: ['SYNAPSE'],
+    displayName: 'Curator AI Assistant Sidebar',
+  },
   [FeatureFlagEnum.TEST_ONLY]: { scopes: [] },
   [FeatureFlagEnum.TEST_ONLY_2]: { scopes: ['TEST'] },
   [FeatureFlagEnum.TEST_ONLY_ACT_MEMBERS]: {
