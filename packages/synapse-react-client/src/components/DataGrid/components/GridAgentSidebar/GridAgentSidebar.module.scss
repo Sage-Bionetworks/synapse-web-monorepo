@@ -1,11 +1,37 @@
 // Stretches to the docking layout's height, so the panel can stay in view while the page scrolls
 // past the layout. At least as tall as the viewport, so a short grid still gets a full-height chat.
 .sidebar {
+  position: relative;
   flex-shrink: 0;
   align-self: stretch;
   min-height: 100dvh;
   background-color: var(--synapse-white);
   border-left: 1px solid var(--synapse-v2-gray-200);
+}
+
+// Spans the sidebar's full height, so the part of it that is on screen can be grabbed
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -4px;
+  width: 8px;
+  z-index: 1;
+  cursor: col-resize;
+  touch-action: none;
+
+  &:hover,
+  &:focus-visible,
+  &.dragging {
+    outline: none;
+    background: linear-gradient(
+      to right,
+      transparent 3px,
+      var(--synapse-primary-action-color) 3px,
+      var(--synapse-primary-action-color) 5px,
+      transparent 5px
+    );
+  }
 }
 
 // Stuck to the top of the viewport and sized by script to the part of the sidebar that is on
