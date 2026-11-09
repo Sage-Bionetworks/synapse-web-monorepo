@@ -1,13 +1,13 @@
+import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
+import DraggableDialog from '@/components/DraggableDialog/DraggableDialog'
+import SynapseChat from '@/components/SynapseChat/SynapseChat'
 import { useChatState } from '@/components/SynapseChat/useChatState'
 import {
   AgentSession,
   GridAgentSessionContext,
 } from '@sage-bionetworks/synapse-client'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
-import { useState } from 'react'
-import DraggableDialog from '../DraggableDialog/DraggableDialog'
-import { SynapseChat } from './index'
-import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
+import { memo, useMemo, useState } from 'react'
 
 const suggestedPrompts = [
   'Help me fill this out',
@@ -18,6 +18,7 @@ const suggestedPrompts = [
 export type GridAgentChatProps = {
   gridSessionId: string
   usersReplicaId: number
+  /** The agent's name, shown as the chat title and in the composer's placeholder and disclaimer */
   chatbotName?: string
   initialMessage?: string
   open: boolean
@@ -26,7 +27,14 @@ export type GridAgentChatProps = {
   agentRegistrationId?: string
 }
 
-export function GridAgentChat({
+/**
+ * Chat with the grid agent about a grid session. The agent session is created when the user sends
+ * their first message, and the conversation is kept while the chat is closed and reopened.
+ *
+ * Memoized because it renders inside SynapseGrid, which re-renders on every grid model change,
+ * including selection moves; the chat only needs to re-render when its own props change.
+ */
+export const GridAgentChat = memo(function GridAgentChat({
   gridSessionId,
   usersReplicaId,
   chatbotName = 'Grid Assistant',
@@ -39,14 +47,18 @@ export function GridAgentChat({
   const [agentSession, setAgentSession] = useState<AgentSession | undefined>()
   const chatState = useChatState(agentSession)
 
-  // Create session context for grid sessions
-  const sessionContext: GridAgentSessionContext = {
-    concreteType:
-      'org.sagebionetworks.repo.model.agent.GridAgentSessionContext',
-    gridSessionId,
-    usersReplicaId,
-    experimental: true,
-  }
+  // SynapseChat creates its agent session with this context, so it keeps the same reference across
+  // renders that don't change it
+  const sessionContext: GridAgentSessionContext = useMemo(
+    () => ({
+      concreteType:
+        'org.sagebionetworks.repo.model.agent.GridAgentSessionContext',
+      gridSessionId,
+      usersReplicaId,
+      experimental: true,
+    }),
+    [gridSessionId, usersReplicaId],
+  )
 
   return (
     <DraggableDialog open={open} onClose={onClose} title={chatbotName}>
@@ -56,6 +68,7 @@ export function GridAgentChat({
         chatbotName={chatbotName}
         initialMessage={initialMessage}
         sessionContext={sessionContext}
+        createSessionOnFirstMessage={true}
         textboxPositionOffset="16px"
         hideTitle={true}
         showAccessLevelMenu={false}
@@ -69,6 +82,6 @@ export function GridAgentChat({
       />
     </DraggableDialog>
   )
-}
+})
 
 export default GridAgentChat
