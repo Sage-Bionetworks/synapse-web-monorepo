@@ -35,6 +35,8 @@ export type QueryContextType = {
   hasFacetedSelectColumn: boolean
   /** Returns true iff the current request has resettable filters applied via facet filters or additionalFilters. Excludes filters applied to a locked column */
   hasResettableFilters: boolean
+  /** True while a query saved in the URL is being restored. Until then, the current query is the initial query. */
+  isRestoringQueryFromUrl: ImmutableTableQueryResult['isRestoringQueryFromUrl']
   /** Combines two faceted columns into a single inclusive range selector */
   combineRangeFacetConfig?: ReadonlyDeep<CombineRangeFacetConfig>
 

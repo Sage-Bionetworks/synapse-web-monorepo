@@ -24,6 +24,7 @@ import {
 } from '../QueryWrapper/AggregateQueryErrorNotice'
 import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
 import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
+import { WaitForQueryRestoreFromUrl } from '../QueryWrapper/WaitForQueryRestoreFromUrl'
 import { useGetAddToDownloadListRequestForCurrentQuery } from '../QueryWrapper/useGetAddToDownloadListRequestForCurrentQuery'
 import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
@@ -46,12 +47,16 @@ export const COHORT_FILES_ZERO_COUNT_TEXT =
   'No files or datasets for the selected cohort'
 export const COHORT_TOO_LARGE_TEXT = `This cohort is too large to list its files and datasets. Narrow it to ${MAX_COHORT_PARTICIPANTS.toLocaleString()} participants or fewer.`
 const FILES_AND_DATASETS = 'files and datasets'
+/** The participant query uses the default component index, 0. */
+const COHORT_FILES_COMPONENT_INDEX = 1
 
 export type CohortFilesPanelProps = {
   /** The Files/Datasets VirtualTable: one row per file or dataset, grouped from the participant ⋈ file/dataset rows. */
   filesTableId: string
   /** The participant VirtualTable that the cohort is selected from. */
   participantsTableId: string
+  /** When true, the files query's filters, sorting and paging are saved in the URL, and restored from it. */
+  shouldDeepLink?: boolean
 }
 
 /**
@@ -59,7 +64,7 @@ export type CohortFilesPanelProps = {
  * cohort is sent as a request-scoped cohort, so participant identifiers never reach the browser.
  */
 export function CohortFilesPanel(props: CohortFilesPanelProps) {
-  const { filesTableId, participantsTableId } = props
+  const { filesTableId, participantsTableId, shouldDeepLink } = props
   const titleId = useId()
   const { getCurrentQueryRequest } = useQueryContext()
   const { data: participantMetadata } = useSuspenseGetQueryMetadata()
@@ -111,19 +116,23 @@ export function CohortFilesPanel(props: CohortFilesPanelProps) {
           key={JSON.stringify(filesRequest)}
           initQueryRequest={filesRequest}
           isRowSelectionVisible
+          shouldDeepLink={shouldDeepLink}
+          componentIndex={COHORT_FILES_COMPONENT_INDEX}
         >
-          {/* The files query is derived from the cohort, so it can't be searched, shared as a link, or re-run from SQL. */}
-          <QueryVisualizationWrapper
-            unitDescription="file"
-            hideSearchBarControl
-            hideCopyToClipboard
-          >
-            <CohortFilesErrorBoundary>
-              <Suspense fallback={<QueryWrapperLoadingScreen />}>
-                <CohortFilesResults />
-              </Suspense>
-            </CohortFilesErrorBoundary>
-          </QueryVisualizationWrapper>
+          <WaitForQueryRestoreFromUrl>
+            {/* The files query is derived from the cohort, so it can't be searched, copied, or re-run from SQL. */}
+            <QueryVisualizationWrapper
+              unitDescription="file"
+              hideSearchBarControl
+              hideCopyToClipboard
+            >
+              <CohortFilesErrorBoundary>
+                <Suspense fallback={<QueryWrapperLoadingScreen />}>
+                  <CohortFilesResults />
+                </Suspense>
+              </CohortFilesErrorBoundary>
+            </QueryVisualizationWrapper>
+          </WaitForQueryRestoreFromUrl>
         </QueryWrapper>
       )}
     </section>

@@ -166,6 +166,18 @@ export async function updateUrlWithNewSearchParam(
 }
 
 /**
+ * Whether the URL holds a query for the component, in the current or the legacy search param format.
+ * @param componentIndex
+ */
+export function hasQueryRequestInLink(componentIndex: number): boolean {
+  const searchParams = new URLSearchParams(window.location.search)
+  return (
+    searchParams.has(getComponentSearchHashId('qw', componentIndex)) ||
+    searchParams.has(getComponentSearchHashId('QueryWrapper', componentIndex))
+  )
+}
+
+/**
  * Retrieves a query request from the URL by applying the stored diff to the initial query.
  * @param componentIndex
  * @param initQuery - The initial query to apply the diff to

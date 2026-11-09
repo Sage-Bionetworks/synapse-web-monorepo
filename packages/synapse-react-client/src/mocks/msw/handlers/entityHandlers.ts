@@ -11,6 +11,7 @@ import {
   ENTITY_SCHEMA_VALIDATION,
 } from '@/utils/APIConstants'
 import { normalizeSynPrefix } from '@/utils/functions/EntityTypeUtils'
+import { normalizeNumericId } from '@/utils/functions/StringUtils'
 import {
   ErrorResponse,
   UploadDestination,
@@ -25,6 +26,8 @@ import {
   PaginatedResults,
   ProjectHeaderList,
   Reference,
+  RestrictionInformationBatchRequest,
+  RestrictionInformationBatchResponse,
   UserEntityPermissions,
   VersionableEntity,
   VersionInfo,
@@ -248,6 +251,19 @@ export const getEntityHandlers = (backendOrigin: string) => [
   http.post(`${backendOrigin}/repo/v1/restrictionInformation`, () => {
     return HttpResponse.json(mockOpenRestrictionInformation, { status: 200 })
   }),
+  http.post<never, RestrictionInformationBatchRequest>(
+    `${backendOrigin}/repo/v1/restrictionInformation/batch`,
+    async ({ request }) => {
+      const { objectIds } = await request.json()
+      const response: RestrictionInformationBatchResponse = {
+        restrictionInformation: objectIds.map(objectId => ({
+          ...mockOpenRestrictionInformation,
+          objectId: normalizeNumericId(objectId),
+        })),
+      }
+      return HttpResponse.json(response, { status: 200 })
+    },
+  ),
   http.get(
     `${backendOrigin}${ENTITY_JSON(':entityId')}`,
 

@@ -7,13 +7,20 @@ import {
   BUNDLE_MASK_QUERY_COUNT,
   BUNDLE_MASK_QUERY_FACETS,
 } from '@/utils/SynapseConstants'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnSingleValueFilterOperator,
+  FILTER_GROUP_CONCRETE_TYPE_VALUE,
+  QueryBundleRequest,
+} from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Suspense } from 'react'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
-import { QueryBuilderControls } from './QueryBuilderControls'
+import {
+  QB_INEXPRESSIBLE_APPLIED_CONDITIONS_TEXT,
+  QueryBuilderControls,
+} from './QueryBuilderControls'
 import {
   FILTER_LIMIT_VIOLATION_MESSAGES,
   MAX_FILTER_GROUP_DEPTH,
@@ -41,9 +48,12 @@ function nestedTree(depth: number, innermost: QBNode): QBGroup {
   return node as QBGroup
 }
 
-function renderQueryBuilder(tree: QBGroup | null) {
+function renderQueryBuilder(
+  tree: QBGroup | null,
+  initQueryRequest: QueryBundleRequest = queryRequest,
+) {
   render(
-    <QueryWrapper initQueryRequest={queryRequest}>
+    <QueryWrapper initQueryRequest={initQueryRequest}>
       <QueryVisualizationWrapper>
         <Suspense fallback={null}>
           <QueryBuilderControls tree={tree} onTreeChange={vi.fn()} />
@@ -103,5 +113,35 @@ describe('QueryBuilderControls', () => {
     expect(screen.getByRole('combobox', { name: 'Property' })).toBe(
       propertyInput,
     )
+  })
+
+  it('warns, and starts from an empty tree, when it cannot show the applied conditions exactly', async () => {
+    // A LIKE pattern with an inner wildcard has no Query Builder operator.
+    renderQueryBuilder(null, {
+      ...queryRequest,
+      query: {
+        ...queryRequest.query,
+        additionalFilters: [
+          {
+            concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+            operator: 'AND',
+            children: [
+              {
+                concreteType:
+                  'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                columnName: 'sex',
+                operator: ColumnSingleValueFilterOperator.LIKE,
+                values: ['F%e'],
+              },
+            ],
+          },
+        ],
+      },
+    })
+
+    expect(
+      await screen.findByText(QB_INEXPRESSIBLE_APPLIED_CONDITIONS_TEXT),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: 'Property' })).toHaveValue('')
   })
 })

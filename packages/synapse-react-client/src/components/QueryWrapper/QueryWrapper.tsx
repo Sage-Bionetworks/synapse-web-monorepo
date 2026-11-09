@@ -117,6 +117,7 @@ function QueryWrapperInternalWithSession(props: QueryWrapperProps) {
     goToPage,
     pageSize,
     setPageSize,
+    isRestoringQueryFromUrl,
   } = immutableTableQueryResult
 
   const lastQueryRequest = useMemo(() => {
@@ -182,6 +183,7 @@ function QueryWrapperInternalWithSession(props: QueryWrapperProps) {
     executeQueryRequest: setQuery,
     hasFacetedSelectColumn,
     hasResettableFilters,
+    isRestoringQueryFromUrl,
     removeSelectedFacet,
     removeValueFromSelectedFacet,
     resetQuery,

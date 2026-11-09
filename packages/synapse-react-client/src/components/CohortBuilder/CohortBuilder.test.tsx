@@ -13,7 +13,10 @@ import {
 } from '@/mocks/msw/handlers/cohortBuilderHandlers'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
 import { server } from '@/mocks/msw/server'
-import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  createWrapper,
+  createWrapperAndQueryClient,
+} from '@/testutils/TestingLibraryUtils'
 import { ENTITY_PERMISSIONS } from '@/utils/APIConstants'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 import {
@@ -92,7 +95,7 @@ function renderCohortBuilder(
   server.use(
     ...getCohortBuilderHandlers({ profile: ELITE_MOCK_PROFILE, access }),
   )
-  render(
+  return render(
     <CohortBuilder participantsTableId={participantsTableId} {...props} />,
     {
       wrapper: createWrapper(
@@ -410,6 +413,124 @@ describe('CohortBuilder', () => {
           name: 'Filter condition on mortalityStatus',
         }),
       ).toBeInTheDocument()
+    })
+  })
+
+  describe('deep linking', { timeout: 30_000 }, () => {
+    const conditions: CohortBuilderProps['sampleQueries'] = {
+      'Methylation data, female': {
+        combinator: 'AND',
+        children: [
+          {
+            columnName: 'assay',
+            op: 'is_any_of',
+            values: ['methylationArray'],
+          },
+          { columnName: 'sex', op: 'is_any_of', values: ['Female'] },
+        ],
+      },
+    }
+
+    const { asyncUtilTimeout } = getConfig()
+    beforeAll(() => configure({ asyncUtilTimeout: 5_000 }))
+    afterAll(() => configure({ asyncUtilTimeout }))
+    afterEach(() => {
+      window.history.replaceState(null, '', '/')
+    })
+
+    it('saves the applied Query Builder conditions in the URL, and restores them into the Query Builder', async () => {
+      const user = userEvent.setup()
+      const { unmount } = renderCohortBuilder({
+        sampleQueries: conditions,
+        shouldDeepLink: true,
+      })
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
+      await user.click(
+        await screen.findByRole('combobox', { name: /^Try a sample query/ }),
+      )
+      await user.click(
+        await screen.findByRole('option', { name: 'Methylation data, female' }),
+      )
+      await user.click(screen.getByRole('button', { name: 'Update Results' }))
+
+      let appliedFilters: QueryBundleRequest['query']['additionalFilters']
+      await waitFor(() => {
+        expect(window.location.search).toContain('qw0=')
+        appliedFilters = sentRequests.find(
+          request => request.query.additionalFilters,
+        )?.query.additionalFilters
+        expect(appliedFilters).toBeDefined()
+      })
+      const deepLink = window.location.pathname + window.location.search
+      unmount()
+      sentRequests = []
+      window.history.replaceState(null, '', deepLink)
+
+      renderCohortBuilder({ sampleQueries: conditions, shouldDeepLink: true })
+
+      expect(
+        await screen.findByRole('group', { name: 'Filter condition on assay' }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('group', { name: 'Filter condition on sex' }),
+      ).toBeInTheDocument()
+      await waitFor(() =>
+        expect(
+          sentRequests.find(request => request.query.additionalFilters)?.query
+            .additionalFilters,
+        ).toEqual(appliedFilters),
+      )
+    })
+
+    it("restores the files panel's page from the URL, even when the results of the initial query are cached", async () => {
+      const user = userEvent.setup()
+      const filesTableId = ELITE_MOCK_PROFILE.dataVirtualTableId
+      const isFilesRowsRequest = (request: QueryBundleRequest) =>
+        request.entityId === filesTableId &&
+        (request.partMask & BUNDLE_MASK_QUERY_RESULTS) !== 0 &&
+        request.query.cohorts !== undefined
+      server.use(...getCohortBuilderHandlers({ profile: ELITE_MOCK_PROFILE }))
+      // One query cache for both renders, as when returning to the page in the same session.
+      const { wrapperFn } = createWrapperAndQueryClient()
+      const cohortBuilder = (
+        <CohortBuilder
+          participantsTableId={participantsTableId}
+          filesTableId={filesTableId}
+          sampleQueries={{
+            Female: {
+              combinator: 'AND',
+              children: [
+                { columnName: 'sex', op: 'is_any_of', values: ['Female'] },
+              ],
+            },
+          }}
+          shouldDeepLink
+        />
+      )
+      const { unmount } = render(cohortBuilder, { wrapper: wrapperFn })
+      await user.click(
+        await screen.findByRole('combobox', { name: /^Try a sample query/ }),
+      )
+      await user.click(await screen.findByRole('option', { name: 'Female' }))
+      await user.click(screen.getByRole('button', { name: 'Update Results' }))
+      await waitFor(() =>
+        expect(sentRequests.some(isFilesRowsRequest)).toBe(true),
+      )
+      await user.click(
+        await screen.findByRole('button', { name: 'Go to page 2' }),
+      )
+      await waitFor(() => expect(window.location.search).toContain('qw1='))
+      const deepLink = window.location.pathname + window.location.search
+      unmount()
+      sentRequests = []
+      window.history.replaceState(null, '', deepLink)
+
+      render(cohortBuilder, { wrapper: wrapperFn })
+
+      expect(
+        await screen.findByRole('button', { name: 'page 2' }),
+      ).toHaveAttribute('aria-current', 'page')
+      await waitFor(() => expect(window.location.search).toContain('qw1='))
     })
   })
 

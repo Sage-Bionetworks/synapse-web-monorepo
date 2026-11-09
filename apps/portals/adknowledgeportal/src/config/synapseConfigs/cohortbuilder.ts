@@ -145,6 +145,7 @@ export const cohortBuilderV2Props: CohortBuilderProps = {
   participantsTableId: cohortBuilderV2ParticipantsTableId,
   filesTableId: cohortBuilderV2FilesTableId,
   participantsSourceTableId: cohortBuilderV2ParticipantsSourceTableId,
+  shouldDeepLink: true,
   sampleQueries: {
     'Hippocampal Multiome Across All Braak Stages': {
       combinator: 'AND',

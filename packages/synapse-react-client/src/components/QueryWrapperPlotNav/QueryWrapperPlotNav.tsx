@@ -44,10 +44,7 @@ import PlotsContainer, {
 import FacetFilterControls, {
   FacetFilterControlsProps,
 } from '../widgets/query-filter/FacetFilterControls'
-import {
-  defaultQBGroup,
-  hasCompleteCondition,
-} from '../QueryBuilder/queryBuilderOperations'
+import { hasCompleteCondition } from '../QueryBuilder/queryBuilderOperations'
 import {
   qbNodeToApiFilter,
   selectedFacetsToQBGroup,
@@ -223,7 +220,8 @@ export function QueryWrapperPlotNavContents(
   const [showQueryBuilder, setShowQueryBuilder] = useState(
     defaultShowQueryBuilder,
   )
-  const [qbTree, setQbTree] = useState<QBGroup>(() => defaultQBGroup())
+  // Null until the user edits the tree: the Query Builder then shows the applied conditions.
+  const [qbTree, setQbTree] = useState<QBGroup | null>(null)
   const [isConfirmingHideQb, setIsConfirmingHideQb] = useState(false)
   const { hasFacetedSelectColumn: isFaceted, queryMetadataQueryOptions } =
     queryContext
@@ -231,6 +229,15 @@ export function QueryWrapperPlotNavContents(
   const { isLoading: isLoadingQueryMetadata, data: queryMetadata } = useQuery(
     queryMetadataQueryOptions,
   )
+  const hasFilterGroupApplied =
+    queryContext.currentQueryRequest.query.additionalFilters?.some(
+      isFilterGroup,
+    ) ?? false
+  // Conditions that arrive with the query (e.g. from a deep link) open the Query Builder, so they can be seen and edited.
+  const isShowingQueryBuilder =
+    showQueryBuilder ||
+    ((showQueryBuilderControl || defaultShowQueryBuilder) &&
+      hasFilterGroupApplied)
 
   // Facets ↔ QB transitions: switching FF → QB silently translates
   // selectedFacets into the QB tree and swaps them for a FilterGroup in
@@ -266,7 +273,7 @@ export function QueryWrapperPlotNavContents(
   }
 
   const exitQueryBuilder = () => {
-    setQbTree(defaultQBGroup())
+    setQbTree(null)
     executeQueryRequest(prev => ({
       ...prev,
       query: {
@@ -280,15 +287,11 @@ export function QueryWrapperPlotNavContents(
   }
 
   const handleToggleQueryBuilder = () => {
-    if (!showQueryBuilder) {
+    if (!isShowingQueryBuilder) {
       enterQueryBuilder()
       return
     }
-    const hasFilterGroupApplied =
-      queryContext.currentQueryRequest.query.additionalFilters?.some(
-        isFilterGroup,
-      ) ?? false
-    if (hasCompleteCondition(qbTree) || hasFilterGroupApplied) {
+    if ((qbTree && hasCompleteCondition(qbTree)) || hasFilterGroupApplied) {
       setIsConfirmingHideQb(true)
       return
     }
@@ -320,12 +323,13 @@ export function QueryWrapperPlotNavContents(
         return (
           <Box
             className={`QueryWrapperPlotNav ${
-              queryVisualizationContext.showFacetFilter && !showQueryBuilder
+              queryVisualizationContext.showFacetFilter &&
+              !isShowingQueryBuilder
                 ? QUERY_FILTERS_EXPANDED_CSS
                 : QUERY_FILTERS_COLLAPSED_CSS
             } ${isRowSelectionVisible ? HAS_SELECTED_ROWS_CSS : ''} ${
               hideTopLevelControls ? 'isHidingTopLevelControls' : ''
-            } ${showQueryBuilder ? 'isShowingQueryBuilder' : ''}`}
+            } ${isShowingQueryBuilder ? 'isShowingQueryBuilder' : ''}`}
             sx={{
               '*': {
                 cursor: isLoadingQueryMetadata ? 'wait' : undefined,
@@ -364,7 +368,7 @@ export function QueryWrapperPlotNavContents(
                       hideProgrammaticOptionsMenuItem
                     }
                     hideQueryCount={hideQueryCount}
-                    hideFacetFilterControl={!isFaceted || showQueryBuilder}
+                    hideFacetFilterControl={!isFaceted || isShowingQueryBuilder}
                     hideVisualizationsControl={
                       !isFaceted || hideVisualizationsControl
                     }
@@ -373,12 +377,12 @@ export function QueryWrapperPlotNavContents(
                     remount={remount}
                     customControls={customControls}
                     showQueryBuilderControl={showQueryBuilderControl}
-                    showQueryBuilder={showQueryBuilder}
+                    showQueryBuilder={isShowingQueryBuilder}
                     onToggleQueryBuilder={handleToggleQueryBuilder}
                   />
                 </SynapseErrorBoundary>
               )}
-              {showQueryBuilder ? (
+              {isShowingQueryBuilder ? (
                 <Suspense fallback={null}>
                   <div className="QueryBuilderControls">
                     <QueryBuilderControls
@@ -414,7 +418,7 @@ export function QueryWrapperPlotNavContents(
                   initialPlotTypeByFacetColumnName
                 }
                 defaultPlotType={defaultPlotType}
-                disableFiltering={showQueryBuilder}
+                disableFiltering={isShowingQueryBuilder}
               />
               <RowSetView
                 tableConfiguration={tableConfiguration}

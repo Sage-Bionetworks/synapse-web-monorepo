@@ -5,7 +5,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { cloneDeep, isEqual } from 'lodash-es'
 import * as React from 'react'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ReadonlyDeep } from 'type-fest'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import * as DeepLinkingUtils from '../../functions/deepLinkingUtils'
@@ -75,6 +75,11 @@ export type ImmutableTableQueryResult = {
   onConfirmChange: () => void
   /** If `isConfirmingChange` is true, invoke this function to cancel the query change */
   onCancelChange: () => void
+  /**
+   * True while a query saved in the URL is being restored (only when `shouldDeepLink` is true and the URL holds a query
+   * for this component). Until then, the current query is the initial query.
+   */
+  isRestoringQueryFromUrl: boolean
 
   /**
    * TODO: This hook could handle all potential query transformations, such as
@@ -109,6 +114,7 @@ export const DEBOUNCE_DELAY_MS = 750
  * @param setQuery - callback used to update the current query
  * @param initQueryRequest - the initial query request passed via props
  * @param currentQueryRequest - the query request that is currently used
+ * @returns whether a query saved in the URL is still being restored
  */
 function useSynchronizeQueryWithUrl(
   shouldDeepLink: boolean,
@@ -119,14 +125,20 @@ function useSynchronizeQueryWithUrl(
   ) => void,
   initQueryRequest: QueryBundleRequest,
   currentQueryRequest: QueryBundleRequest,
-) {
+): boolean {
+  // Checked synchronously so that a page without a saved query never waits for the restore.
+  const [isRestoringQueryFromUrl, setIsRestoringQueryFromUrl] = useState(
+    () =>
+      shouldDeepLink && DeepLinkingUtils.hasQueryRequestInLink(componentIndex),
+  )
+
   /**
    * Inspect the URL on mount to see if we have a particular query request that we must show.
    */
   useEffect(() => {
     // Only run this effect if deep linking is enabled
     if (shouldDeepLink) {
-      DeepLinkingUtils.getQueryRequestFromLink(
+      void DeepLinkingUtils.getQueryRequestFromLink(
         componentIndex,
         initQueryRequest.query,
       ).then(queryRequestFromLink => {
@@ -140,6 +152,7 @@ function useSynchronizeQueryWithUrl(
             },
           }))
         }
+        setIsRestoringQueryFromUrl(false)
       })
     }
     // should only run on mount, or if the component index changes
@@ -181,6 +194,8 @@ function useSynchronizeQueryWithUrl(
       }
     }
   }, [componentIndex, currentQueryRequest, initQueryRequest, shouldDeepLink])
+
+  return isRestoringQueryFromUrl
 }
 
 /**
@@ -261,7 +276,7 @@ export default function useImmutableTableQuery(
     [dispatch],
   )
 
-  useSynchronizeQueryWithUrl(
+  const isRestoringQueryFromUrl = useSynchronizeQueryWithUrl(
     shouldDeepLink,
     componentIndex,
     setQuery,
@@ -421,6 +436,7 @@ export default function useImmutableTableQuery(
     isConfirmingChange,
     onConfirmChange,
     onCancelChange,
+    isRestoringQueryFromUrl,
     addValueToSelectedFacet,
     setRangeFacetValue,
   }

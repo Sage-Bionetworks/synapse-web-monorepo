@@ -18,6 +18,7 @@ import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/Query
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
 import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
+import { WaitForQueryRestoreFromUrl } from '../QueryWrapper/WaitForQueryRestoreFromUrl'
 import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import PlotsContainer from '../widgets/facet-nav/PlotsContainer'
@@ -68,6 +69,11 @@ export type CohortBuilderProps = {
   auditNotice?: ReactNode
   /** Sample queries, by name, that users can load into the Query Builder. Listed in insertion order. */
   sampleQueries?: Record<string, QBGroupDefinition>
+  /**
+   * When true, the participant query (including the Query Builder conditions) and the files query's filters, sorting
+   * and paging are saved in the URL search parameters, and a URL with a saved query restores them.
+   */
+  shouldDeepLink?: boolean
 }
 
 /**
@@ -84,6 +90,7 @@ export function CohortBuilder(props: CohortBuilderProps) {
     unitDescription = 'participant',
     auditNotice = DEFAULT_COHORT_BUILDER_AUDIT_NOTICE,
     sampleQueries,
+    shouldDeepLink,
   } = props
   const { isAuthenticated } = useSynapseContext()
 
@@ -113,6 +120,7 @@ export function CohortBuilder(props: CohortBuilderProps) {
     <QueryWrapper
       key={JSON.stringify(initQueryRequest)}
       initQueryRequest={initQueryRequest}
+      shouldDeepLink={shouldDeepLink}
     >
       <QueryVisualizationWrapper
         unitDescription={unitDescription}
@@ -130,17 +138,21 @@ export function CohortBuilder(props: CohortBuilderProps) {
               sourceTableId={participantsSourceTableId}
             />
           )}
-          <CohortQueryBuilder sampleQueries={sampleQueries} />
-          {/* Only the results are replaced by an error or withheld-result notice, so the cohort stays editable. */}
-          <QueryWrapperErrorBoundary>
-            <Suspense fallback={<QueryWrapperLoadingScreen />}>
-              <CohortResults
-                facetsToPlot={facetsToPlot}
-                participantsTableId={participantsTableId}
-                filesTableId={filesTableId}
-              />
-            </Suspense>
-          </QueryWrapperErrorBoundary>
+          {/* A cohort restored from the URL fills the Query Builder and the files panel's query, so neither starts from the initial query. */}
+          <WaitForQueryRestoreFromUrl>
+            <CohortQueryBuilder sampleQueries={sampleQueries} />
+            {/* Only the results are replaced by an error or withheld-result notice, so the cohort stays editable. */}
+            <QueryWrapperErrorBoundary>
+              <Suspense fallback={<QueryWrapperLoadingScreen />}>
+                <CohortResults
+                  facetsToPlot={facetsToPlot}
+                  participantsTableId={participantsTableId}
+                  filesTableId={filesTableId}
+                  shouldDeepLink={shouldDeepLink}
+                />
+              </Suspense>
+            </QueryWrapperErrorBoundary>
+          </WaitForQueryRestoreFromUrl>
         </div>
       </QueryVisualizationWrapper>
     </QueryWrapper>
@@ -203,8 +215,10 @@ function CohortResults(props: {
   facetsToPlot?: string[]
   participantsTableId: string
   filesTableId?: string
+  shouldDeepLink?: boolean
 }) {
-  const { facetsToPlot, participantsTableId, filesTableId } = props
+  const { facetsToPlot, participantsTableId, filesTableId, shouldDeepLink } =
+    props
   const { data: queryMetadata } = useSuspenseGetQueryMetadata()
   const { unitDescription } = useQueryVisualizationContext()
   const count = queryMetadata.queryCount ?? 0
@@ -231,6 +245,7 @@ function CohortResults(props: {
         <CohortFilesPanel
           filesTableId={filesTableId}
           participantsTableId={participantsTableId}
+          shouldDeepLink={shouldDeepLink}
         />
       )}
     </>
