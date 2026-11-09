@@ -7,11 +7,13 @@ import {
   DataAccessRequestType,
   FormTemplate,
 } from '@sage-bionetworks/synapse-client'
+import TuneIcon from '@mui/icons-material/Tune'
 import {
   Box,
   Checkbox,
   FormControlLabel,
   Paper,
+  Stack,
   Step,
   StepButton,
   Stepper,
@@ -20,9 +22,9 @@ import {
   Typography,
 } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
-import { useMemo, useRef, useState } from 'react'
+import { ReactNode, useId, useMemo, useRef, useState } from 'react'
 
-export const VALIDATE_RESPONSES_LABEL = 'Validate responses'
+export const VALIDATE_PREVIEW_RESPONSES_LABEL = 'Validate preview responses'
 
 type FormTemplatePreviewProps = {
   template: FormTemplate
@@ -32,7 +34,8 @@ type FormTemplatePreviewProps = {
 /**
  * Renders a live preview of how a FormTemplate + its referenced JSON Schema will appear to a
  * requester. Computed client-side against the unsaved draft, purely to give ACT instant feedback
- * while editing.
+ * while editing. The preview controls sit above, outside the preview itself, since a requester
+ * never sees them.
  */
 export function FormTemplatePreview({
   template,
@@ -58,13 +61,13 @@ export function FormTemplatePreview({
 
   if (steps.length === 0) {
     return (
-      <Paper variant="outlined" sx={{ p: 2 }}>
+      <LivePreview>
         <Box sx={{ py: 4, textAlign: 'center' }}>
           <Typography variant="body2" color="text.secondary">
             Add at least one step with a bound field to preview the form.
           </Typography>
         </Box>
-      </Paper>
+      </LivePreview>
     )
   }
 
@@ -82,71 +85,140 @@ export function FormTemplatePreview({
   }
 
   return (
-    <Paper variant="outlined" sx={{ p: 2 }}>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: 2,
-          mb: 2,
-        }}
-      >
-        <ToggleButtonGroup
-          value={requestType}
-          exclusive
-          size="small"
-          onChange={(_, next: DataAccessRequestType | null) => {
-            if (next) setRequestType(next)
-          }}
-        >
-          <ToggleButton value={DataAccessRequestType.REQUEST}>
-            Request
-          </ToggleButton>
-          <ToggleButton value={DataAccessRequestType.RENEWAL}>
-            Renewal
-          </ToggleButton>
-        </ToggleButtonGroup>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={validateResponses}
-              onChange={event => setValidateResponses(event.target.checked)}
-            />
-          }
-          label={VALIDATE_RESPONSES_LABEL}
-        />
-      </Box>
-
-      {steps.length > 1 && (
-        <Stepper activeStep={safeIndex} nonLinear sx={{ mb: 2 }}>
-          {steps.map((step, index) => (
-            <Step key={index}>
-              <StepButton onClick={() => goToStep(index)}>
-                {getStepTitle(step, index + 1)}
-              </StepButton>
-            </Step>
-          ))}
-        </Stepper>
-      )}
-
-      <SchemaStepForm
-        // Each step is a separate form, as it is for a requester
-        key={safeIndex}
-        ref={schemaStepFormRef}
-        step={currentStep}
-        schemaData={schemaData}
-        onSchemaDataChange={setSchemaData}
-        onValid={() => {
-          if (pendingStepRef.current !== null) {
-            setActiveStep(pendingStepRef.current)
-            pendingStepRef.current = null
-          }
-        }}
-        onInvalid={() => {
-          pendingStepRef.current = null
-        }}
+    <Stack gap={2}>
+      <PreviewControls
+        requestType={requestType}
+        onRequestTypeChange={setRequestType}
+        validateResponses={validateResponses}
+        onValidateResponsesChange={setValidateResponses}
       />
-    </Paper>
+      <LivePreview>
+        {steps.length > 1 && (
+          <Stepper activeStep={safeIndex} nonLinear sx={{ mb: 2 }}>
+            {steps.map((step, index) => (
+              <Step key={index}>
+                <StepButton onClick={() => goToStep(index)}>
+                  {getStepTitle(step, index + 1)}
+                </StepButton>
+              </Step>
+            ))}
+          </Stepper>
+        )}
+
+        <SchemaStepForm
+          // Each step is a separate form, as it is for a requester
+          key={safeIndex}
+          ref={schemaStepFormRef}
+          step={currentStep}
+          schemaData={schemaData}
+          onSchemaDataChange={setSchemaData}
+          onValid={() => {
+            if (pendingStepRef.current !== null) {
+              setActiveStep(pendingStepRef.current)
+              pendingStepRef.current = null
+            }
+          }}
+          onInvalid={() => {
+            pendingStepRef.current = null
+          }}
+        />
+      </LivePreview>
+    </Stack>
+  )
+}
+
+function LivePreview({ children }: { children: ReactNode }) {
+  return (
+    <Box>
+      <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+        Live Preview
+      </Typography>
+      <Paper variant="outlined" sx={{ p: 2 }}>
+        {children}
+      </Paper>
+    </Box>
+  )
+}
+
+type PreviewControlsProps = {
+  requestType: DataAccessRequestType
+  onRequestTypeChange: (requestType: DataAccessRequestType) => void
+  validateResponses: boolean
+  onValidateResponsesChange: (validateResponses: boolean) => void
+}
+
+// Tall enough for the small toggle group, so both controls sit on the same line under their captions
+const controlRowSx = { height: 40, display: 'flex', alignItems: 'center' }
+
+function PreviewControls({
+  requestType,
+  onRequestTypeChange,
+  validateResponses,
+  onValidateResponsesChange,
+}: PreviewControlsProps) {
+  const titleId = useId()
+  return (
+    <Box
+      component="section"
+      aria-labelledby={titleId}
+      sx={{
+        bgcolor: 'grey.50',
+        border: 1,
+        borderColor: 'grey.200',
+        borderRadius: 1,
+        p: 2,
+      }}
+    >
+      <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1.5 }}>
+        <TuneIcon fontSize="small" color="action" />
+        <Typography id={titleId} variant="subtitle2">
+          Preview controls
+        </Typography>
+      </Stack>
+      <Stack direction="row" flexWrap="wrap" columnGap={4} rowGap={2}>
+        <Box>
+          <Typography variant="caption" color="text.secondary" component="div">
+            Show the form for a
+          </Typography>
+          <Box sx={controlRowSx}>
+            <ToggleButtonGroup
+              value={requestType}
+              exclusive
+              size="small"
+              onChange={(_, next: DataAccessRequestType | null) => {
+                if (next) onRequestTypeChange(next)
+              }}
+            >
+              <ToggleButton value={DataAccessRequestType.REQUEST}>
+                Request
+              </ToggleButton>
+              <ToggleButton value={DataAccessRequestType.RENEWAL}>
+                Renewal
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
+        </Box>
+        <Box>
+          <Typography variant="caption" color="text.secondary" component="div">
+            Between steps
+          </Typography>
+          <Box sx={controlRowSx}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={validateResponses}
+                  onChange={event =>
+                    onValidateResponsesChange(event.target.checked)
+                  }
+                />
+              }
+              label={VALIDATE_PREVIEW_RESPONSES_LABEL}
+              // The theme's bottom margin would pull the checkbox above the toggle group's center line
+              sx={{ m: 0 }}
+            />
+          </Box>
+        </Box>
+      </Stack>
+    </Box>
   )
 }

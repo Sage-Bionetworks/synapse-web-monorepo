@@ -9,7 +9,7 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
 import {
   FormTemplatePreview,
-  VALIDATE_RESPONSES_LABEL,
+  VALIDATE_PREVIEW_RESPONSES_LABEL,
 } from './FormTemplatePreview'
 
 const schema: RJSFSchema = {
@@ -101,7 +101,9 @@ function queryFieldLabel(title: string) {
   return screen.queryByText(title, { selector: 'label' })
 }
 function getValidateCheckbox() {
-  return screen.getByRole('checkbox', { name: VALIDATE_RESPONSES_LABEL })
+  return screen.getByRole('checkbox', {
+    name: VALIDATE_PREVIEW_RESPONSES_LABEL,
+  })
 }
 
 describe('FormTemplatePreview', () => {
@@ -243,7 +245,7 @@ describe('FormTemplatePreview', () => {
     expect(screen.getByRole('radio', { name: 'Yes' })).not.toBeChecked()
   })
 
-  describe('Validate responses', () => {
+  describe('Validate preview responses', () => {
     it('is offered unchecked, so navigation is free by default', async () => {
       const user = userEvent.setup()
       renderPreview({
