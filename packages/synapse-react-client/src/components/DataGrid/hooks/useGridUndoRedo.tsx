@@ -7,6 +7,16 @@ import { ModelChange } from '../utils/applyModelChange'
 import { convertActionToModelChange } from '../utils/convertActionToModelChange'
 import { useStack } from './useStack'
 
+const GRID_CONTAINER_SELECTOR = '.dsg-container'
+
+function isEditableOutsideGrid(target: EventTarget | null) {
+  return (
+    target instanceof HTMLElement &&
+    (target.isContentEditable || target.matches('input, textarea, select')) &&
+    !target.closest(GRID_CONTAINER_SELECTOR)
+  )
+}
+
 /**
  * Represents a single action in the grid that can be undone or redone
  */
@@ -211,6 +221,10 @@ export function useGridUndoRedo(
   // Keyboard shortcuts for both undo and redo
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      // Text fields outside the grid, such as the chat composer or a dialog's form, keep the browser's own text undo
+      if (isEditableOutsideGrid(event.target)) {
+        return
+      }
       if (
         (event.ctrlKey && event.key === 'z' && !event.shiftKey) ||
         (event.metaKey && event.key === 'z' && !event.shiftKey)
