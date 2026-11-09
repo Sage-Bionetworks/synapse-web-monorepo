@@ -1,6 +1,7 @@
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { BUNDLE_MASK_QUERY_COUNT } from '@/utils/SynapseConstants'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
+import { formatQueryCount } from '@/utils/functions/queryCountUtils'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { Box, Button, ButtonProps } from '@mui/material'
 import NavigateNext from '@mui/icons-material/NavigateNext'
@@ -48,7 +49,7 @@ export function QueryCountButton(props: QueryCountButtonProps) {
 
   const { data: queryResult, isLoading } = useGetQueryResultBundle(request)
 
-  const count = queryResult?.queryCount
+  const count = queryResult && formatQueryCount(queryResult)
 
   const isExternalLink =
     href?.startsWith('http://') || href?.startsWith('https://')
@@ -85,7 +86,7 @@ export function QueryCountButton(props: QueryCountButtonProps) {
     }
 
     if (!isLoading && count !== undefined) {
-      parts.push(count.toLocaleString())
+      parts.push(count)
     }
 
     if (suffixText) {

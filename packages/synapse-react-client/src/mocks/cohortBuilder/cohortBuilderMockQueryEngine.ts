@@ -13,6 +13,7 @@ import { BelowThresholdErrorResponse } from '@sage-bionetworks/synapse-client/ge
 import { ColumnModel } from '@sage-bionetworks/synapse-client/generated/models/ColumnModel'
 import { ErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/ErrorResponse'
 import { FacetColumnResult } from '@sage-bionetworks/synapse-client/generated/models/FacetColumnResult'
+import { FacetPostProcessingConfig } from '@sage-bionetworks/synapse-client/generated/models/FacetPostProcessingConfig'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-client/generated/models/QueryResultBundle'
 import { RowSuppressionErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/RowSuppressionErrorResponse'
 import { TableQueryResult } from '@sage-bionetworks/synapse-client/generated/models/TableQueryResult'
@@ -372,6 +373,49 @@ function addLaplaceNoise(
   return Math.max(0, Math.round(count + noise))
 }
 
+function getRoundingBinSize(
+  postProcessing: FacetPostProcessingConfig | undefined,
+): number | undefined {
+  const parameters = postProcessing?.parameters
+  return postProcessing?.algorithm === 'ROUNDING' &&
+    parameters?.concreteType ===
+      'org.sagebionetworks.repo.model.FacetRoundingParameters'
+    ? (parameters.roundTo ?? 1)
+    : undefined
+}
+
+function getNoiseEpsilon(
+  postProcessing: FacetPostProcessingConfig | undefined,
+): number | undefined {
+  const parameters = postProcessing?.parameters
+  return postProcessing?.algorithm === 'NOISE' &&
+    parameters?.concreteType ===
+      'org.sagebionetworks.repo.model.FacetNoiseParameters'
+    ? (parameters.epsilon ?? 1)
+    : undefined
+}
+
+/** Floors a count to the inclusive lower bound of its bin, like the backend's ROUNDING algorithm. */
+function floorToBin(count: number, binSize: number): number {
+  return Math.floor(count / binSize) * binSize
+}
+
+/** Obscures an aggregate-only query's total count with the same post-processing as its facet counts. */
+function obscureQueryCount(
+  count: number,
+  postProcessing: FacetPostProcessingConfig | undefined,
+  noiseKey: string,
+): number {
+  const binSize = getRoundingBinSize(postProcessing)
+  if (binSize !== undefined) {
+    return floorToBin(count, binSize)
+  }
+  const epsilon = getNoiseEpsilon(postProcessing)
+  return epsilon === undefined
+    ? count
+    : addLaplaceNoise(count, epsilon, noiseKey)
+}
+
 function countFacetValues(
   rows: readonly VirtualTableRow[],
   columnName: string,
@@ -400,13 +444,8 @@ function buildFacet(
       countB - countA || valueA.localeCompare(valueB),
   )
   const postProcessing = aggregateConfig?.facetPostProcessingConfig
-  const parameters = postProcessing?.parameters
-  if (
-    postProcessing?.algorithm === 'ROUNDING' &&
-    parameters?.concreteType ===
-      'org.sagebionetworks.repo.model.FacetRoundingParameters'
-  ) {
-    const binSize = parameters.roundTo ?? 1
+  const binSize = getRoundingBinSize(postProcessing)
+  if (binSize !== undefined) {
     return {
       concreteType:
         'org.sagebionetworks.repo.model.table.FacetColumnResultBinnedValues',
@@ -415,17 +454,12 @@ function buildFacet(
       binSize,
       binnedValues: sortedCounts.map(([value, count]) => ({
         value,
-        binMin: Math.floor(count / binSize) * binSize,
+        binMin: floorToBin(count, binSize),
         isSelected: selectedValues.includes(value),
       })),
     }
   }
-  const epsilon =
-    postProcessing?.algorithm === 'NOISE' &&
-    parameters?.concreteType ===
-      'org.sagebionetworks.repo.model.FacetNoiseParameters'
-      ? (parameters.epsilon ?? 1)
-      : undefined
+  const epsilon = getNoiseEpsilon(postProcessing)
   return {
     concreteType:
       'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
@@ -683,6 +717,14 @@ function toQueryResult(
   }
 }
 
+/** Keys the mock's noise to the query's filters, so re-running the same query shows the same noised counts. */
+function getNoiseKeyPrefix(query: Query): string {
+  return JSON.stringify([
+    query.additionalFilters ?? [],
+    query.selectedFacets ?? [],
+  ])
+}
+
 function buildFacets(
   columnModels: readonly ColumnModel[],
   query: Query,
@@ -690,10 +732,7 @@ function buildFacets(
   aggregateConfig: AggregateDataConfiguration | undefined,
 ): FacetColumnResult[] {
   const selectedFacets = query.selectedFacets ?? []
-  const noiseKeyPrefix = JSON.stringify([
-    query.additionalFilters ?? [],
-    selectedFacets,
-  ])
+  const noiseKeyPrefix = getNoiseKeyPrefix(query)
   return columnModels
     .filter(column => column.facetType === 'enumeration')
     .map(({ name }) => {
@@ -995,7 +1034,13 @@ function executeQuery(
     )
   }
   if (partMask & BUNDLE_MASK_QUERY_COUNT) {
-    bundle.queryCount = matchedRows.rows.length
+    const postProcessing = aggregateConfig?.facetPostProcessingConfig
+    bundle.queryCount = obscureQueryCount(
+      matchedRows.rows.length,
+      postProcessing,
+      `${getNoiseKeyPrefix(query)}\u0000queryCount`,
+    )
+    bundle.queryCountPostProcessingApplied = postProcessing !== undefined
   }
   if (partMask & BUNDLE_MASK_QUERY_SELECT_COLUMNS) {
     bundle.selectColumns = selectColumns

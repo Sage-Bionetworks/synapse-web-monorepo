@@ -1,4 +1,5 @@
 import { EnumerationFacet } from './enumerationFacet'
+import { formatApproximateCount } from './queryCountUtils'
 
 /**
  * Formats a facet value's count for display:
@@ -22,7 +23,7 @@ export function formatFacetValueCount(
     return `${binMin.toLocaleString()}–${binMax.toLocaleString()}`
   }
   if (binSize === undefined && facetPostProcessingApplied) {
-    return `≈ ${count.toLocaleString()}`
+    return formatApproximateCount(count)
   }
   return count.toLocaleString()
 }

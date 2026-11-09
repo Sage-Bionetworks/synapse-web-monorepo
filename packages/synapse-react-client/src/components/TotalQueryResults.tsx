@@ -1,4 +1,5 @@
 import { FacetColumnRequest } from '@sage-bionetworks/synapse-types'
+import { formatQueryCount } from '@/utils/functions/queryCountUtils'
 import pluralize from 'pluralize'
 import { CSSProperties, Suspense } from 'react'
 import { SynapseErrorBoundary } from './error'
@@ -37,7 +38,7 @@ function TotalQueryResults(props: TotalQueryResultsProps) {
       {(hasResettableFilters || !hideIfUnfiltered) && (
         <div className="TotalQueryResults__topbar">
           <span className="SRC-boldText">
-            {frontText} {total?.toLocaleString()}{' '}
+            {frontText} {formatQueryCount(queryMetadata)}{' '}
             {pluralize(unitDescription, total)} {endText}
           </span>
           {showClearAll && (

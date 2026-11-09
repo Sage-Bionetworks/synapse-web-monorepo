@@ -7,6 +7,7 @@ import {
 } from '@/utils/SynapseConstants'
 import { Alert, Typography } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { formatQueryCount } from '@/utils/functions/queryCountUtils'
 import pluralize from 'pluralize'
 import { ReactNode, Suspense, useMemo, useState } from 'react'
 import { SignInPrompt, SynapseErrorBoundary } from '../error/ErrorBanner'
@@ -218,7 +219,7 @@ function CohortResults(props: {
   return (
     <>
       <Typography variant="headline3" component="p" className={styles.count}>
-        {count.toLocaleString()} {pluralize(unitDescription, count)}
+        {formatQueryCount(queryMetadata)} {pluralize(unitDescription, count)}
       </Typography>
       {/* The Query Builder is the only way to change the cohort. */}
       <PlotsContainer

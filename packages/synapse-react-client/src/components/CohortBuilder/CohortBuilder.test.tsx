@@ -71,6 +71,8 @@ vi.mock('@/utils/functions/testDownloadSpeed', () => ({
 
 const participantsTableId = ELITE_MOCK_PROFILE.participantsVirtualTableId
 const allParticipantsCount = (2700).toLocaleString()
+// An aggregate-only caller's counts are obscured. ELITE rounds them down to a multiple of 5, which keeps 2,700.
+const approximateAllParticipantsCount = `≈ ${allParticipantsCount}`
 
 let sentRequests: QueryBundleRequest[]
 const recordQueryRequest = async ({ request }: { request: Request }) => {
@@ -111,11 +113,13 @@ describe('CohortBuilder', () => {
     server.events.removeListener('request:start', recordQueryRequest)
   })
 
-  it('shows the participant count and the logging notice, and never requests participant rows', async () => {
+  it('shows the approximate participant count and the logging notice, and never requests participant rows', async () => {
     renderCohortBuilder()
 
     expect(
-      await screen.findByText(`${allParticipantsCount} participants`),
+      await screen.findByText(
+        `${approximateAllParticipantsCount} participants`,
+      ),
     ).toBeInTheDocument()
     expect(
       screen.getByText(DEFAULT_COHORT_BUILDER_AUDIT_NOTICE),
@@ -167,7 +171,7 @@ describe('CohortBuilder', () => {
 
     expect(await screen.findByRole('progressbar')).toBeInTheDocument()
     pendingQuery.resolve()
-    await screen.findByText(`${allParticipantsCount} participants`)
+    await screen.findByText(`${approximateAllParticipantsCount} participants`)
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
 
     pendingQuery = Promise.withResolvers<void>()
@@ -180,18 +184,19 @@ describe('CohortBuilder', () => {
 
     expect(await screen.findByRole('progressbar')).toBeInTheDocument()
     expect(
-      screen.getByText(`${allParticipantsCount} participants`),
+      screen.getByText(`${approximateAllParticipantsCount} participants`),
     ).not.toBeVisible()
     expect(screen.getByRole('button', { name: 'Update Results' })).toBeVisible()
     pendingQuery.resolve()
-    expect(await screen.findByText('243 participants')).toBeVisible()
+    // 243 participants, rounded down.
+    expect(await screen.findByText('≈ 240 participants')).toBeVisible()
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
   })
 
   it('replaces only the results with a below-threshold notice, and keeps the cohort editable', async () => {
     const user = userEvent.setup()
     renderCohortBuilder()
-    await screen.findByText(`${allParticipantsCount} participants`)
+    await screen.findByText(`${approximateAllParticipantsCount} participants`)
 
     // 7 participants: fewer than the suppression threshold of 20.
     await user.click(screen.getByRole('combobox', { name: 'Property' }))
@@ -210,7 +215,9 @@ describe('CohortBuilder', () => {
     await user.click(screen.getByRole('button', { name: 'Update Results' }))
 
     expect(
-      await screen.findByText(`${allParticipantsCount} participants`),
+      await screen.findByText(
+        `${approximateAllParticipantsCount} participants`,
+      ),
     ).toBeInTheDocument()
     expect(
       screen.queryByText('A minimum of 20 participants is required'),
@@ -309,7 +316,7 @@ describe('CohortBuilder', () => {
 
     it('is not shown when no sample queries are configured', async () => {
       renderCohortBuilder()
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
 
       expect(
         screen.queryByRole('region', { name: SAMPLE_QUERY_TITLE }),
@@ -319,7 +326,7 @@ describe('CohortBuilder', () => {
     it('loads a sample query into the Query Builder, which Update Results applies', async () => {
       const user = userEvent.setup()
       renderCohortBuilder({ sampleQueries })
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
 
       await loadSampleQuery(user, sampleName)
 
@@ -377,7 +384,7 @@ describe('CohortBuilder', () => {
     it('replaces the Query Builder tree, and can reload a sample after it is edited', async () => {
       const user = userEvent.setup()
       renderCohortBuilder({ sampleQueries })
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
       const selector = await screen.findByRole('combobox', {
         name: /^Try a sample query/,
       })
@@ -646,7 +653,7 @@ describe('CohortBuilder', () => {
 
       expect(
         await screen.findByText(
-          `${(2070).toLocaleString()} files and datasets`,
+          `≈ ${(2070).toLocaleString()} files and datasets`,
         ),
       ).toBeInTheDocument()
       expect(filesRequests(profile)).not.toHaveLength(0)
@@ -671,7 +678,7 @@ describe('CohortBuilder', () => {
           () => pendingFilesQuery.promise,
         ),
       )
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
 
       const filesPanel = screen.getByRole('region', {
         name: COHORT_FILES_TITLE,
@@ -680,7 +687,7 @@ describe('CohortBuilder', () => {
       pendingFilesQuery.resolve()
       expect(
         await within(filesPanel).findByText(
-          `${(2070).toLocaleString()} files and datasets`,
+          `≈ ${(2070).toLocaleString()} files and datasets`,
         ),
       ).toBeVisible()
       await within(filesPanel).findByRole('table')
@@ -691,12 +698,12 @@ describe('CohortBuilder', () => {
 
     it("hands the participant cohort to the files query by reference, and lists the cohort's files and datasets", async () => {
       const profile = renderWithFiles()
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
 
       await buildCohort('Race', ['Black or African American'])
 
       expect(
-        await screen.findByText('193 files and datasets'),
+        await screen.findByText('≈ 190 files and datasets'),
       ).toBeInTheDocument()
       const participantRequest = sentRequests.findLast(
         request =>
@@ -726,7 +733,7 @@ describe('CohortBuilder', () => {
 
     it('shows a files-specific notice when a cohort matches fewer files and datasets than the threshold', async () => {
       renderWithFiles()
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
 
       // 1,200 participants, but only 3 datasets.
       await buildCohort('Study', ['LLFS'])
@@ -737,13 +744,13 @@ describe('CohortBuilder', () => {
         ),
       ).toBeInTheDocument()
       expect(
-        screen.getByText(`${(1200).toLocaleString()} participants`),
+        screen.getByText(`≈ ${(1200).toLocaleString()} participants`),
       ).toBeInTheDocument()
     })
 
     it('shows the cohort-too-large state when the server rejects the cohort as too large', async () => {
       renderWithFiles({ maxCohortValues: 1000 })
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
 
       // 1,096 participants: more than this server's maximum of 1,000.
       await buildCohort('Sex', ['Male'])
@@ -751,19 +758,22 @@ describe('CohortBuilder', () => {
       expect(await screen.findByText(COHORT_TOO_LARGE_TEXT)).toBeInTheDocument()
     })
 
-    it('does not send a cohort with more participants than the server allows', async () => {
-      const largeProfile: CohortBuilderMockProfile = {
+    function getLargeProfile(
+      participantCount: number,
+    ): CohortBuilderMockProfile {
+      return {
         ...ELITE_MOCK_PROFILE,
         participantsVirtualTableId: 'syn90000021',
         dataVirtualTableId: 'syn90000022',
-        studies: [
-          {
-            ...ELITE_MOCK_PROFILE.studies[0],
-            participantCount: MAX_COHORT_PARTICIPANTS + 1,
-          },
-        ],
+        studies: [{ ...ELITE_MOCK_PROFILE.studies[0], participantCount }],
       }
-      const profile = renderWithFiles({ profile: largeProfile })
+    }
+
+    it('does not send a cohort whose exact participant count is more than the server allows', async () => {
+      const profile = renderWithFiles({
+        profile: getLargeProfile(MAX_COHORT_PARTICIPANTS + 1),
+        access: 'FULL',
+      })
       const largeCount = `${(MAX_COHORT_PARTICIPANTS + 1).toLocaleString()} participants`
       await screen.findByText(largeCount)
 
@@ -776,6 +786,23 @@ describe('CohortBuilder', () => {
         filesRequests(profile).filter(request => request.query.cohorts),
       ).toEqual([])
       expect(screen.queryByText(COHORT_FILES_ZERO_COUNT_TEXT)).toBeNull()
+    })
+
+    it('sends a cohort whose approximate participant count is over the maximum, and lets the server reject it', async () => {
+      const profile = renderWithFiles({
+        profile: getLargeProfile(MAX_COHORT_PARTICIPANTS + 5),
+      })
+      await screen.findByText(
+        `≈ ${(MAX_COHORT_PARTICIPANTS + 5).toLocaleString()} participants`,
+      )
+
+      // Every participant, as a cohort.
+      await buildCohort('Sex', ['Female', 'Male', 'Unknown'])
+
+      expect(await screen.findByText(COHORT_TOO_LARGE_TEXT)).toBeInTheDocument()
+      expect(
+        filesRequests(profile).filter(request => request.query.cohorts),
+      ).not.toEqual([])
     })
 
     type DownloadListRequest = { path: string; body: unknown }
@@ -801,9 +828,9 @@ describe('CohortBuilder', () => {
       const { downloadListRequests, stop } = recordDownloadListRequests()
       const user = userEvent.setup()
       const profile = renderWithFiles()
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
       await buildCohort('Race', ['Black or African American'])
-      await screen.findByText('193 files and datasets')
+      await screen.findByText('≈ 190 files and datasets')
       const filesQuery = filesRequests(profile).at(-1)!.query
 
       await user.click(screen.getByRole('button', { name: 'Download Options' }))
@@ -859,9 +886,9 @@ describe('CohortBuilder', () => {
       server.events.on('request:start', recordExportRequest)
       const user = userEvent.setup()
       const profile = renderWithFiles()
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
       await buildCohort('Race', ['Black or African American'])
-      await screen.findByText('193 files and datasets')
+      await screen.findByText('≈ 190 files and datasets')
       const filesQuery = filesRequests(profile).at(-1)!.query
 
       await user.click(screen.getByRole('button', { name: 'Download Options' }))
@@ -890,9 +917,9 @@ describe('CohortBuilder', () => {
       const { downloadListRequests, stop } = recordDownloadListRequests()
       const user = userEvent.setup()
       renderWithFiles()
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
       await buildCohort('Race', ['Black or African American'])
-      await screen.findByText('193 files and datasets')
+      await screen.findByText('≈ 190 files and datasets')
 
       const table = await screen.findByRole('table')
       const checkboxes = (

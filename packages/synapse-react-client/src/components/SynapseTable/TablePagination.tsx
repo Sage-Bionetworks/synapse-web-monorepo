@@ -17,6 +17,7 @@ import {
 import React from 'react'
 import { useQueryContext } from '../QueryContext'
 import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
+import { formatQueryCount } from '@/utils/functions/queryCountUtils'
 
 import { usePrefetchTableRows } from './usePrefetchTableData'
 
@@ -28,9 +29,8 @@ export const TablePagination = (): React.ReactNode => {
 
   const prefetchPage = usePrefetchTableRows()
 
-  const {
-    data: { queryCount, maxRowsPerPage },
-  } = useSuspenseGetQueryMetadata()
+  const { data: queryMetadata } = useSuspenseGetQueryMetadata()
+  const { queryCount, maxRowsPerPage } = queryMetadata
 
   const currentLimit = currentQueryRequest.query.limit
   const resolvedPageSize = currentLimit ?? pageSize
@@ -124,7 +124,7 @@ export const TablePagination = (): React.ReactNode => {
         renderItem={renderPaginationItem}
       />
       <Typography variant="body1" style={{ display: 'inline-block' }}>
-        {`${queryCount?.toLocaleString()} total rows /`}
+        {`${formatQueryCount(queryMetadata)} total rows /`}
       </Typography>
       <Select
         name="page size"
