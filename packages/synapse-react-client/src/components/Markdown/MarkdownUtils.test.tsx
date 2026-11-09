@@ -246,5 +246,49 @@ describe('MarkdownUtils DOM', () => {
         markdownToPlainText('# Overview\n\nThe **BraTS** challenge\n\n- one'),
       ).toBe('Overview The BraTS challenge one')
     })
+
+    it('removes Synapse heading syntax', () => {
+      expect(
+        markdownToPlainText('###! Challenge closed\n####!Thanks\n#Overview'),
+      ).toBe('Challenge closed Thanks Overview')
+    })
+
+    it('removes centered text syntax', () => {
+      expect(
+        markdownToPlainText(
+          '#### -> There are ${teammembercount?teamId=1} participants. <-\n\n-> **Join** <-',
+        ),
+      ).toBe('There are participants. Join')
+    })
+
+    it('removes row and column containers', () => {
+      expect(
+        markdownToPlainText(
+          '{row}\n{column width=8}\nLeft\n{column}\n{column width=4}\nRight\n{column}\n{row}',
+        ),
+      ).toBe('Left Right')
+    })
+
+    it('removes Synapse table syntax', () => {
+      expect(
+        markdownToPlainText(
+          '**Challenge** | **Status**\n-- | --\nBraTS 2026 | Open\nBraTS 2025 | Closed',
+        ),
+      ).toBe('Challenge Status BraTS 2026 Open BraTS 2025 Closed')
+    })
+
+    it('removes Synapse syntax inside raw HTML blocks', () => {
+      expect(
+        markdownToPlainText(
+          '<div class="alert">\nChallenges\n### Segmentation\n-> Centered <-\n{row}\n#### ${jointeam?teamId=1}\n</div>',
+        ),
+      ).toBe('Challenges Segmentation Centered')
+    })
+
+    it('removes an HTML comment truncated before its closing marker', () => {
+      expect(
+        markdownToPlainText('Overview\n\n<!--\n{row}\n### Hidden heading'),
+      ).toBe('Overview')
+    })
   })
 })
