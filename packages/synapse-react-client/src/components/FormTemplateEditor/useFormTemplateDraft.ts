@@ -17,6 +17,7 @@ import {
   bindField,
   boundSchemaPaths,
   changeContext,
+  changeFieldType,
   changeRequired,
   createField,
   FormTemplateDraftState,
@@ -25,12 +26,12 @@ import {
   moveStep,
   removeProperty,
   renamePropertyKey,
-  replaceProperty,
   schemaPropertyKeys,
   updateFieldSettings,
   updateProperty,
 } from './formTemplateDraftState'
 import { createNewFormTemplateSchema } from './formTemplateSchema'
+import { SimpleFieldType } from './schemaFieldUtils'
 import {
   createEditableStep,
   EditableFormTemplateStep,
@@ -66,7 +67,7 @@ export interface FormTemplateDraft {
   handleCreateField: () => void
   renamePropertyKey: (oldKey: string, newKey: string) => void
   handleUpdateProperty: (key: string, patch: Partial<RJSFSchema>) => void
-  handleReplaceProperty: (key: string, next: RJSFSchema) => void
+  handleChangeFieldType: (key: string, type: SimpleFieldType) => void
   handleChangeRequired: (key: string, isRequired: boolean) => void
   handleChangeContext: (key: string, context: SchemaPropertyContext) => void
   handleRemoveProperty: (key: string) => void
@@ -128,9 +129,9 @@ export function useFormTemplateDraft(
       setDraft(prev => updateProperty(prev, key, patch)),
     [],
   )
-  const handleReplaceProperty = useCallback(
-    (key: string, next: RJSFSchema) =>
-      setDraft(prev => replaceProperty(prev, key, next)),
+  const handleChangeFieldType = useCallback(
+    (key: string, type: SimpleFieldType) =>
+      setDraft(prev => changeFieldType(prev, key, type)),
     [],
   )
   const handleChangeRequired = useCallback(
@@ -200,7 +201,7 @@ export function useFormTemplateDraft(
     handleCreateField,
     renamePropertyKey: handleRenamePropertyKey,
     handleUpdateProperty,
-    handleReplaceProperty,
+    handleChangeFieldType,
     handleChangeRequired,
     handleChangeContext,
     handleRemoveProperty,

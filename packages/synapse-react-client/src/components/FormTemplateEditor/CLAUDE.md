@@ -30,6 +30,7 @@ A new per-slot setting goes into `FieldSettings`, edited through the `updateFiel
 - Every template schema extends `ACCESS_REQUIREMENT_BASE_SCHEMA_ID`, which declares the reserved `x-synapse-submissionContext` property.
 - A Request-only or Renewal-only property lives in an `allOf` `if`/`then` branch keyed on that property. Read and write properties through the submission-context helpers (`resolveSchemaPropertyAtPointer`, `setSchemaProperty`, `renameSchemaProperty`, ...), never by indexing `properties` directly.
 - `detectFieldType` maps a property to the `SimpleFieldType` the guided editor can author. Anything else (`null`) is "advanced" and editable only in the raw JSON Schema editor.
+- Display hints live in the slot's `uiDefinition`, not the schema; the server checks a `ui:widget` against the property's type (`isUiHintCompatible` mirrors this). Long answer is a plain string whose `uiDefinition` sets `ui:widget: textarea`, so pass the property's `uiDefinition` to `detectFieldType`. A type change goes through `changeFieldType`, which updates the schema and the `uiDefinition` together; `applyFieldTypeUiDefinition` touches only the widget it owns and leaves keys such as `ui:options`.
 - Registered schema versions are immutable: each save that changes the body registers a new version (`getNextSchemaVersion`).
 
 ## Validation

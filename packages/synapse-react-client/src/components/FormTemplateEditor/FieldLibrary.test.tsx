@@ -22,6 +22,7 @@ function renderLibrary(
     <FieldLibrary
       jsonSchema={jsonSchema}
       usedPaths={new Set(['/pi'])}
+      fieldSettings={{}}
       selectedPropertyKey={null}
       onSelectField={onSelectField}
       onCreateField={onCreateField}
