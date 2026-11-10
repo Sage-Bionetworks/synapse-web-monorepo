@@ -263,6 +263,21 @@ describe('JsonSchemaRequestWizard', () => {
     expect(screen.queryByRole('radio')).not.toBeInTheDocument()
   })
 
+  it("renders a long-answer question, set by the slot's uiDefinition, as a multi-line box", async () => {
+    mockRequestServices(
+      genomicsAccessRequirement,
+      createRequest(genomicsAccessRequirement),
+    )
+    const user = userEvent.setup()
+    renderWizard(genomicsAccessRequirement)
+    await advanceToStep(user)
+
+    // The genomics template's intendedDataUse slot sets `ui:widget: textarea` with 5 rows.
+    const answer = await screen.findByRole('textbox')
+    expect(answer.tagName).toBe('TEXTAREA')
+    expect(answer).toHaveAttribute('rows', '5')
+  })
+
   it('does not advance past a step with a missing required answer', async () => {
     const { savedRequests } = mockRequestServices(
       genomicsAccessRequirement,
