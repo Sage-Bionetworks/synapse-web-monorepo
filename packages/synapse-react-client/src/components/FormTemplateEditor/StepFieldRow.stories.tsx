@@ -5,10 +5,11 @@ const meta = {
   title: 'Components/FormTemplateEditor/StepFieldRow',
   component: StepFieldRow,
   args: {
-    sortableId: 'slot:0:0',
+    sortableId: 'slot:/institution',
     sortableIndex: 0,
-    sortableGroup: 'step:0',
-    field: { schemaPath: '/institution', uiDefinition: null },
+    sortableGroup: 'slots:step-0',
+    schemaPath: '/institution',
+    settings: { uiDefinition: null },
     resolvedProperty: { type: 'string', title: 'Institution' },
     context: 'ALWAYS',
     propertyKey: 'institution',
@@ -35,8 +36,8 @@ export const FirstAndLastRow: Story = {
 
 export const SubmissionContextAndPublicBadges: Story = {
   args: {
-    field: {
-      schemaPath: '/summaryOfUse',
+    schemaPath: '/summaryOfUse',
+    settings: {
       uiDefinition: null,
       submissionContext: 'RENEWAL_ONLY',
       isPublic: true,
@@ -51,7 +52,7 @@ export const SubmissionContextAndPublicBadges: Story = {
  * from the schema after this slot was bound to it. */
 export const UnresolvedField: Story = {
   args: {
-    field: { schemaPath: '/deletedProperty', uiDefinition: null },
+    schemaPath: '/deletedProperty',
     resolvedProperty: undefined,
     propertyKey: 'deletedProperty',
   },
@@ -60,7 +61,7 @@ export const UnresolvedField: Story = {
 /** Expand the row (click "Expand field") to reveal the template-file control for this type. */
 export const FileField: Story = {
   args: {
-    field: { schemaPath: '/consentForm', uiDefinition: null },
+    schemaPath: '/consentForm',
     resolvedProperty: { format: 'synapse-filehandle-id' },
     propertyKey: 'consentForm',
   },
@@ -70,11 +71,8 @@ export const FileField: Story = {
  * available. Expand the row to see the control. */
 export const FileFieldWithTemplateOnUnsavedTemplate: Story = {
   args: {
-    field: {
-      schemaPath: '/consentForm',
-      uiDefinition: null,
-      templateFileHandleId: '987654321',
-    },
+    schemaPath: '/consentForm',
+    settings: { uiDefinition: null, templateFileHandleId: '987654321' },
     resolvedProperty: { format: 'synapse-filehandle-id' },
     propertyKey: 'consentForm',
     savedTemplate: undefined,

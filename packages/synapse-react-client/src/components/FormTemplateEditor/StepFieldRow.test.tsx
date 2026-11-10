@@ -1,18 +1,15 @@
 import '@/mocks/msw/server'
-import { FormTemplateField } from '@sage-bionetworks/synapse-client'
 import { RJSFSchema } from '@rjsf/utils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { StepFieldRow } from './StepFieldRow'
+import { FieldSettings } from './utils'
 
 const textProperty: RJSFSchema = { type: 'string', title: 'Institution' }
 const fileProperty: RJSFSchema = { format: 'synapse-filehandle-id' }
 
-const baseField: FormTemplateField = {
-  schemaPath: '/institution',
-  uiDefinition: null,
-}
+const baseSettings: FieldSettings = { uiDefinition: null }
 
 function renderRow(
   overrides: Partial<Parameters<typeof StepFieldRow>[0]> = {},
@@ -26,7 +23,8 @@ function renderRow(
       sortableId="slot:0:0"
       sortableIndex={0}
       sortableGroup="step:0"
-      field={baseField}
+      schemaPath="/institution"
+      settings={baseSettings}
       resolvedProperty={textProperty}
       context="ALWAYS"
       propertyKey="institution"
@@ -59,7 +57,7 @@ describe('StepFieldRow', () => {
   it('appends the submission context when not ALWAYS, and Public when set', () => {
     renderRow({
       context: 'RENEWAL_ONLY',
-      field: { ...baseField, isPublic: true },
+      settings: { ...baseSettings, isPublic: true },
     })
     expect(screen.getByText('Text · Renewal only · Public')).toBeInTheDocument()
   })
@@ -91,7 +89,7 @@ describe('StepFieldRow', () => {
     const user = userEvent.setup()
     const { onChange } = renderRow({
       resolvedProperty: fileProperty,
-      field: { ...baseField, templateFileHandleId: '123' },
+      settings: { ...baseSettings, templateFileHandleId: '123' },
     })
     await user.click(screen.getByRole('button', { name: 'Expand field' }))
     await user.click(
