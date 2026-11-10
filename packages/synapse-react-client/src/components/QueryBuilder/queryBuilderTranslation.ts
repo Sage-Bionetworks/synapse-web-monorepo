@@ -66,8 +66,11 @@ export function classifyLikePattern(pattern: string): {
   text: string
 } {
   const startsPct = pattern.startsWith('%')
-  // Only treat a trailing '%' as a wildcard if it isn't itself escaped
-  const endsPct = /(?<!\\)%$/.test(pattern)
+  // A trailing '%' is a wildcard unless it is escaped, i.e. preceded by an odd number of backslashes (an even number
+  // are escaped backslashes, such as the one escapeLike adds for text ending in '\').
+  const trailingBackslashCount = /(\\*)%$/.exec(pattern)?.[1].length
+  const endsPct =
+    trailingBackslashCount !== undefined && trailingBackslashCount % 2 === 0
   const core = pattern.slice(startsPct ? 1 : 0, endsPct ? -1 : undefined)
   const text = unescapeLike(core)
   if (startsPct && endsPct) return { op: 'contains', text }
@@ -471,28 +474,20 @@ export function selectedFacetsToQBGroup(
   selectedFacets: ReadonlyDeep<FacetColumnRequest[]>,
   columnModels?: ReadonlyDeep<ColumnModel[]>,
 ): QBGroup {
-  const columnTypeByName = new Map(
-    (columnModels ?? []).map(cm => [cm.name, cm.columnType as string]),
-  )
-  return {
+  const group: QBGroup = {
     kind: 'group',
     id: newQBNodeId(),
     combinator: 'AND',
     not: false,
     children: selectedFacets
-      .map(facet =>
-        facetToQBCondition(
-          facet,
-          columnTypeByName.get(facet.columnName) ?? null,
-        ),
-      )
+      .map(facetToQBCondition)
       .filter((c): c is QBCondition => c !== null),
   }
+  return withColumnTypes(group, columnModels ?? [])
 }
 
 function facetToQBCondition(
   facet: ReadonlyDeep<FacetColumnRequest>,
-  columnType: string | null,
 ): QBCondition | null {
   if (isFacetColumnValuesRequest(facet)) {
     if (!facet.facetValues || facet.facetValues.length === 0) return null
@@ -500,7 +495,7 @@ function facetToQBCondition(
       kind: 'condition',
       id: newQBNodeId(),
       columnName: facet.columnName,
-      columnType,
+      columnType: null,
       op: 'is_any_of',
       values: [...facet.facetValues],
       rangeMin: null,
@@ -516,7 +511,7 @@ function facetToQBCondition(
       kind: 'condition' as const,
       id: newQBNodeId(),
       columnName: facet.columnName,
-      columnType,
+      columnType: null,
       values: [],
       text: null,
     }

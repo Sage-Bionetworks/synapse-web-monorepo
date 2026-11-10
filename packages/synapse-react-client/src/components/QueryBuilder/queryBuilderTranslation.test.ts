@@ -115,6 +115,26 @@ describe('classifyLikePattern', () => {
       text: '50%',
     })
   })
+
+  const likeOps = ['contains', 'starts_with', 'ends_with'] as const
+  const specialTexts = [
+    'a\\',
+    '50%',
+    'a_b',
+    String.raw`\%`,
+    String.raw`x\\`,
+    String.raw`%\_`,
+  ]
+  it.each(likeOps.flatMap(op => specialTexts.map(text => [op, text] as const)))(
+    'reads back the %s pattern emitted for the text %j',
+    (op, text) => {
+      const filter = qbNodeToApiFilter(
+        condition({ op, text }),
+      ) as ColumnSingleValueQueryFilter
+
+      expect(classifyLikePattern(filter.values[0])).toEqual({ op, text })
+    },
+  )
 })
 
 describe('qbNodeToApiFilter — conditions', () => {

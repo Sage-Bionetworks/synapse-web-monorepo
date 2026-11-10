@@ -14,7 +14,9 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { cloneDeep } from 'lodash-es'
 import { Suspense } from 'react'
+import { useQueryContext } from '../QueryContext/QueryContext'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
 import {
@@ -143,5 +145,67 @@ describe('QueryBuilderControls', () => {
       await screen.findByText(QB_INEXPRESSIBLE_APPLIED_CONDITIONS_TEXT),
     ).toBeInTheDocument()
     expect(screen.getByRole('combobox', { name: 'Property' })).toHaveValue('')
+  })
+
+  it('keeps the rows of the applied conditions when the query changes in other ways', async () => {
+    const user = userEvent.setup()
+    // Rebuilds the request from scratch, so the applied conditions are equal but no longer the same objects.
+    function ChangeOffsetButton() {
+      const { executeQueryRequest } = useQueryContext()
+      return (
+        <button
+          onClick={() =>
+            executeQueryRequest(prev => ({
+              ...cloneDeep(prev),
+              query: { ...cloneDeep(prev.query), offset: 25 },
+            }))
+          }
+        >
+          Change offset
+        </button>
+      )
+    }
+    render(
+      <QueryWrapper
+        initQueryRequest={{
+          ...queryRequest,
+          query: {
+            ...queryRequest.query,
+            additionalFilters: [
+              {
+                concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+                operator: 'AND',
+                children: [
+                  {
+                    concreteType:
+                      'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                    columnName: 'sex',
+                    operator: ColumnSingleValueFilterOperator.IN,
+                    values: ['Female'],
+                  },
+                ],
+              },
+            ],
+          },
+        }}
+      >
+        <QueryVisualizationWrapper>
+          <ChangeOffsetButton />
+          <Suspense fallback={null}>
+            <QueryBuilderControls tree={null} onTreeChange={vi.fn()} />
+          </Suspense>
+        </QueryVisualizationWrapper>
+      </QueryWrapper>,
+      { wrapper: createWrapper() },
+    )
+    const row = await screen.findByRole('group', {
+      name: 'Filter condition on sex',
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Change offset' }))
+
+    expect(
+      await screen.findByRole('group', { name: 'Filter condition on sex' }),
+    ).toBe(row)
   })
 })

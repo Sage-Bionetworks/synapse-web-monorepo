@@ -342,6 +342,48 @@ describe('QueryWrapper', () => {
       expect(lastQuery.entityId).toBe('syn12345')
       expect(lastQuery.query.sql).toBe(lqr.query.sql)
     })
+
+    it('does not pass the initial query results to onQueryResultBundleChange while restoring, even when they are cached', async () => {
+      const savedQuery = { ...initialQueryRequest.query, offset: 10 }
+      const bundleForSavedQuery = cloneDeep(mockQueryResponseData)
+      bundleForSavedQuery.queryResult.queryResults.rows =
+        bundleForSavedQuery.queryResult.queryResults.rows.slice(10)
+      const onQueryResultBundleChange = vi.fn<(bundleJson: string) => void>()
+      // One wrapper, so one query cache, for both renders: the initial query's results are cached when restoring.
+      const wrapper = createWrapper()
+      const queryWrapper = (
+        <QueryWrapper
+          initQueryRequest={initialQueryRequest}
+          shouldDeepLink
+          onQueryResultBundleChange={onQueryResultBundleChange}
+        >
+          <QueryContextReceiver />
+        </QueryWrapper>
+      )
+      const { unmount } = render(queryWrapper, { wrapper })
+      await waitFor(() => expect(onQueryResultBundleChange).toHaveBeenCalled())
+      unmount()
+      onQueryResultBundleChange.mockClear()
+      window.history.pushState(
+        {},
+        'Page Title',
+        await generateCompressedQueryURL(
+          '/',
+          0,
+          savedQuery,
+          initialQueryRequest.query,
+        ),
+      )
+
+      render(queryWrapper, { wrapper })
+
+      await waitFor(() => expect(onQueryResultBundleChange).toHaveBeenCalled())
+      expect(
+        onQueryResultBundleChange.mock.calls.map(
+          ([bundleJson]) => JSON.parse(bundleJson) as QueryResultBundle,
+        ),
+      ).toEqual([bundleForSavedQuery])
+    })
   })
 
   describe('query change when rows are selected', () => {

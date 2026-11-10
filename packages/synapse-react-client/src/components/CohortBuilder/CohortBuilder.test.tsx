@@ -13,10 +13,7 @@ import {
 } from '@/mocks/msw/handlers/cohortBuilderHandlers'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
 import { server } from '@/mocks/msw/server'
-import {
-  createWrapper,
-  createWrapperAndQueryClient,
-} from '@/testutils/TestingLibraryUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ENTITY_PERMISSIONS } from '@/utils/APIConstants'
 import {
   BUNDLE_MASK_QUERY_RESULTS,
@@ -36,6 +33,7 @@ import {
   configure,
   getConfig,
   render,
+  RenderOptions,
   screen,
   waitFor,
   within,
@@ -486,16 +484,12 @@ describe('CohortBuilder', () => {
       )
     })
 
-    it("restores the files panel's page from the URL, without requesting the initial page, even when the results of the initial query are cached", async () => {
-      const user = userEvent.setup()
+    describe('files panel', () => {
       const filesTableId = ELITE_MOCK_PROFILE.dataVirtualTableId
       const isFilesRowsRequest = (request: QueryBundleRequest) =>
         request.entityId === filesTableId &&
         (request.partMask & BUNDLE_MASK_QUERY_RESULTS) !== 0 &&
         request.query.cohorts !== undefined
-      server.use(...getCohortBuilderHandlers({ profile: ELITE_MOCK_PROFILE }))
-      // One query cache for both renders, as when returning to the page in the same session.
-      const { wrapperFn } = createWrapperAndQueryClient()
       const cohortBuilder = (
         <CohortBuilder
           participantsTableId={participantsTableId}
@@ -511,55 +505,72 @@ describe('CohortBuilder', () => {
           shouldDeepLink
         />
       )
-      const { unmount } = render(cohortBuilder, { wrapper: wrapperFn })
-      await user.click(
-        await screen.findByRole('combobox', { name: /^Try a sample query/ }),
-      )
-      await user.click(await screen.findByRole('option', { name: 'Female' }))
-      await user.click(screen.getByRole('button', { name: 'Update Results' }))
-      await waitFor(() =>
-        expect(sentRequests.some(isFilesRowsRequest)).toBe(true),
-      )
-      await user.click(
-        await screen.findByRole('button', { name: 'Go to page 2' }),
-      )
-      await waitFor(() => expect(window.location.search).toContain('qw1='))
-      const deepLink = window.location.pathname + window.location.search
       // The saved files query, read back onto a stand-in query: only its changes from the initial query are saved.
       const readSavedFilesQuery = () =>
         getQueryRequestFromLink(1, { sql: 'SELECT * FROM syn1' })
-      const savedFilesQuery = await readSavedFilesQuery()
-      unmount()
-      sentRequests = []
-      window.history.replaceState(null, '', deepLink)
 
-      const { unmount: unmountWarm } = render(cohortBuilder, {
-        wrapper: wrapperFn,
+      /**
+       * Builds a cohort and goes to page 2 of its files, then unmounts and puts that page's URL back in the address bar.
+       * Returns the saved files query.
+       */
+      async function saveFilesPageTwoLink(
+        wrapper: NonNullable<RenderOptions['wrapper']>,
+      ) {
+        const user = userEvent.setup()
+        const { unmount } = render(cohortBuilder, { wrapper })
+        await user.click(
+          await screen.findByRole('combobox', { name: /^Try a sample query/ }),
+        )
+        await user.click(await screen.findByRole('option', { name: 'Female' }))
+        await user.click(screen.getByRole('button', { name: 'Update Results' }))
+        await waitFor(() =>
+          expect(sentRequests.some(isFilesRowsRequest)).toBe(true),
+        )
+        await user.click(
+          await screen.findByRole('button', { name: 'Go to page 2' }),
+        )
+        await waitFor(() => expect(window.location.search).toContain('qw1='))
+        const deepLink = window.location.pathname + window.location.search
+        const savedFilesQuery = await readSavedFilesQuery()
+        unmount()
+        sentRequests = []
+        window.history.replaceState(null, '', deepLink)
+        return { savedFilesQuery }
+      }
+
+      beforeEach(() => {
+        server.use(...getCohortBuilderHandlers({ profile: ELITE_MOCK_PROFILE }))
       })
 
-      expect(
-        await screen.findByRole('button', { name: 'page 2' }),
-      ).toHaveAttribute('aria-current', 'page')
-      await waitFor(async () =>
-        expect(await readSavedFilesQuery()).toEqual(savedFilesQuery),
-      )
+      it('restores the saved page from the URL when the results of the initial query are cached', async () => {
+        // One wrapper, so one query cache, for both renders, as when returning to the page in the same session.
+        const wrapper = createWrapper()
+        const { savedFilesQuery } = await saveFilesPageTwoLink(wrapper)
 
-      // With nothing cached, only the saved page is requested.
-      unmountWarm()
-      sentRequests = []
-      window.history.replaceState(null, '', deepLink)
-      render(cohortBuilder, {
-        wrapper: createWrapperAndQueryClient().wrapperFn,
+        render(cohortBuilder, { wrapper })
+
+        expect(
+          await screen.findByRole('button', { name: 'page 2' }),
+        ).toHaveAttribute('aria-current', 'page')
+        await waitFor(async () =>
+          expect(await readSavedFilesQuery()).toEqual(savedFilesQuery),
+        )
       })
 
-      expect(
-        await screen.findByRole('button', { name: 'page 2' }),
-      ).toHaveAttribute('aria-current', 'page')
-      expect(
-        sentRequests
-          .filter(isFilesRowsRequest)
-          .map(request => request.query.offset),
-      ).toEqual([DEFAULT_PAGE_SIZE])
+      it('requests only the saved page when nothing is cached', async () => {
+        await saveFilesPageTwoLink(createWrapper())
+
+        render(cohortBuilder, { wrapper: createWrapper() })
+
+        expect(
+          await screen.findByRole('button', { name: 'page 2' }),
+        ).toHaveAttribute('aria-current', 'page')
+        expect(
+          sentRequests
+            .filter(isFilesRowsRequest)
+            .map(request => request.query.offset),
+        ).toEqual([DEFAULT_PAGE_SIZE])
+      })
     })
   })
 

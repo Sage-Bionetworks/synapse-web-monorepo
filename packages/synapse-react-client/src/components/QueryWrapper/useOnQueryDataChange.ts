@@ -4,10 +4,8 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import {
-  disableTableQueryUseQueryOptions,
-  useTableQueryUseQueryOptions,
-} from './TableQueryUseQueryOptions'
+import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
+import { useTableQueryUseQueryOptions } from './TableQueryUseQueryOptions'
 import { useEffect, useRef, useState } from 'react'
 
 type UseOnQueryDataChangeOptions = {
@@ -25,11 +23,8 @@ export default function useOnQueryDataChange(
   options: UseOnQueryDataChangeOptions,
 ) {
   const { queryBundleRequest, onChange, isEnabled = true } = options
-  const tableQueryUseQueryOptions =
-    useTableQueryUseQueryOptions(queryBundleRequest)
-  const { rowDataQueryOptions, queryMetadataQueryOptions } = isEnabled
-    ? tableQueryUseQueryOptions
-    : disableTableQueryUseQueryOptions(tableQueryUseQueryOptions)
+  const { rowDataQueryOptions, queryMetadataQueryOptions } =
+    useTableQueryUseQueryOptions(queryBundleRequest, undefined, isEnabled)
 
   const { data: rowData, isLoading: rowDataIsLoading } = useQuery({
     ...rowDataQueryOptions,
@@ -42,7 +37,7 @@ export default function useOnQueryDataChange(
   // SWC requires the entire QueryResultBundle to enable editing table data, so merge the data back into one object before
   // passing it to the onChange callback. A request without rows produces a metadata-only bundle.
   const isRowDataRequested =
-    tableQueryUseQueryOptions.rowDataQueryOptions.enabled !== false
+    (queryBundleRequest.partMask & BUNDLE_MASK_QUERY_RESULTS) !== 0
   const [mergedData, setMergedData] = useState<QueryResultBundle>()
   useEffect(() => {
     if (

@@ -17,6 +17,8 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { generateCompressedQueryURL } from '@/utils/functions/deepLinkingUtils'
+import { isFilterGroup } from '@/utils/types/IsType'
 import { QUERY_BUILDER_CONDITIONS_PILL_TEXT } from '../widgets/facet-nav/SelectionCriteriaPills'
 import QueryWrapperPlotNav, {
   QueryWrapperPlotNavProps,
@@ -182,5 +184,62 @@ describe('QueryWrapperPlotNav Query Builder conditions', () => {
         name: QUERY_BUILDER_CONDITIONS_PILL_TEXT,
       }),
     ).not.toBeInTheDocument()
+  })
+
+  it('always shows the Query Builder, without a toggle, when it is shown by default and has no control', async () => {
+    renderQueryWrapperPlotNav({
+      defaultShowQueryBuilder: true,
+      showQueryBuilderControl: false,
+    })
+
+    expect(
+      await screen.findByRole('group', {
+        name: 'Filter condition on referenceType',
+      }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /Query Builder$/ }),
+    ).not.toBeInTheDocument()
+  })
+
+  describe('deep linking', () => {
+    const initialQuery: Query = { sql, limit: 5 }
+
+    afterEach(() => {
+      window.history.replaceState(null, '', '/')
+    })
+
+    it('restores Query Builder conditions saved in the URL without requesting the initial query', async () => {
+      window.history.replaceState(
+        null,
+        '',
+        await generateCompressedQueryURL(
+          '/',
+          0,
+          queryWithConditions,
+          initialQuery,
+        ),
+      )
+
+      // With the Query Builder off, nothing requests the table without the conditions (its value lookup would).
+      renderQueryWrapperPlotNav({
+        initQueryJson: JSON.stringify(initialQuery),
+        shouldDeepLink: true,
+        showQueryBuilderControl: false,
+      })
+
+      expect(
+        await screen.findByRole('button', {
+          name: QUERY_BUILDER_CONDITIONS_PILL_TEXT,
+        }),
+      ).toBeInTheDocument()
+      await screen.findByText('DATASET')
+      expect(sentRequests).not.toEqual([])
+      expect(
+        sentRequests.filter(
+          request => !request.query.additionalFilters?.some(isFilterGroup),
+        ),
+      ).toEqual([])
+    })
   })
 })

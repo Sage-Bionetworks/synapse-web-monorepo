@@ -15,10 +15,7 @@ import {
   QueryContextProvider,
   QueryContextType,
 } from '../QueryContext/QueryContext'
-import {
-  disableTableQueryUseQueryOptions,
-  useTableQueryUseQueryOptions,
-} from './TableQueryUseQueryOptions'
+import { useTableQueryUseQueryOptions } from './TableQueryUseQueryOptions'
 import {
   isRowSelectionUIFloatingAtom,
   isRowSelectionVisibleAtom,
@@ -127,22 +124,16 @@ function QueryWrapperInternalWithSession(props: QueryWrapperProps) {
     return getCurrentQueryRequest()
   }, [getCurrentQueryRequest])
 
-  const tableQueryUseQueryOptions = useTableQueryUseQueryOptions(
-    lastQueryRequest,
-    lockedColumn,
-  )
   // Results of the initial query would be discarded once the saved query is restored, so they aren't requested. The
   // components that suspend on them wait for the restore instead (see WaitForQueryRestoreFromUrl).
   const {
     rowDataQueryOptions,
     rowDataInfiniteQueryOptions,
     queryMetadataQueryOptions,
-  } = useMemo(
-    () =>
-      isRestoringQueryFromUrl
-        ? disableTableQueryUseQueryOptions(tableQueryUseQueryOptions)
-        : tableQueryUseQueryOptions,
-    [isRestoringQueryFromUrl, tableQueryUseQueryOptions],
+  } = useTableQueryUseQueryOptions(
+    lastQueryRequest,
+    lockedColumn,
+    !isRestoringQueryFromUrl,
   )
 
   const hasFacetedSelectColumn = useHasFacetedSelectColumn(

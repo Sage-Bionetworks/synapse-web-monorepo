@@ -82,11 +82,8 @@ export function defaultQBGroup(): QBGroup {
  */
 export function qbGroupFromDefinition(
   definition: QBGroupDefinition,
-  columnModels: readonly ColumnModel[],
+  columnModels: ReadonlyDeep<ColumnModel[]>,
 ): QBGroup {
-  const columnTypeByName = new Map<string, string>(
-    columnModels.map(cm => [cm.name, cm.columnType]),
-  )
   const toGroup = (group: QBGroupDefinition): QBGroup => ({
     kind: 'group',
     id: newQBNodeId(),
@@ -102,7 +99,7 @@ export function qbGroupFromDefinition(
       kind: 'condition',
       id: newQBNodeId(),
       columnName: node.columnName,
-      columnType: columnTypeByName.get(node.columnName) ?? null,
+      columnType: null,
       op: node.op,
       values: node.values ?? [],
       rangeMin: node.rangeMin ?? null,
@@ -110,7 +107,7 @@ export function qbGroupFromDefinition(
       text: node.text ?? null,
     }
   }
-  return toGroup(definition)
+  return withColumnTypes(toGroup(definition), columnModels)
 }
 
 /**

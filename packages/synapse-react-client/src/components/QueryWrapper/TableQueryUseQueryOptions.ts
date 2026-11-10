@@ -114,7 +114,7 @@ export function getTableQueryUseQueryOptions(
  * Returns the options with every query disabled, so `useQuery` and `useInfiniteQuery` don't request them.
  * `useSuspenseQuery` ignores `enabled`, so suspending consumers still request the metadata.
  */
-export function disableTableQueryUseQueryOptions(
+function disableTableQueryUseQueryOptions(
   options: TableQueryUseQueryOptions,
 ): TableQueryUseQueryOptions {
   // UseSuspenseQueryOptions has no `enabled`; the non-suspense hooks that receive these options do read it.
@@ -137,21 +137,23 @@ export function disableTableQueryUseQueryOptions(
  * @param queryBundleRequest
  * @param lockedColumn - remove a particular facet name (e.g. study) and all possible values based on the parameter
  * specified in the url this is to remove the facet from the charts, search and filter.
+ * @param isEnabled - when false, `useQuery` and `useInfiniteQuery` don't request the data. `useSuspenseQuery` ignores
+ * this and still requests the metadata. Defaults to true.
  */
 export function useTableQueryUseQueryOptions(
   queryBundleRequest: QueryBundleRequest,
   lockedColumn?: LockedColumn,
+  isEnabled = true,
 ): TableQueryUseQueryOptions {
   const { keyFactory, accessToken } = useSynapseContext()
 
-  return useMemo(
-    () =>
-      getTableQueryUseQueryOptions(
-        queryBundleRequest,
-        lockedColumn,
-        keyFactory,
-        accessToken,
-      ),
-    [keyFactory, accessToken, queryBundleRequest, lockedColumn],
-  )
+  return useMemo(() => {
+    const options = getTableQueryUseQueryOptions(
+      queryBundleRequest,
+      lockedColumn,
+      keyFactory,
+      accessToken,
+    )
+    return isEnabled ? options : disableTableQueryUseQueryOptions(options)
+  }, [keyFactory, accessToken, queryBundleRequest, lockedColumn, isEnabled])
 }

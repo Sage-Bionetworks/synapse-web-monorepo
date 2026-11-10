@@ -236,9 +236,10 @@ export function QueryWrapperPlotNavContents(
     ) ?? false
   // Conditions that arrive with the query (e.g. from a deep link) open the Query Builder, so they can be seen and edited.
   // It then stays open, as if the user had opened it, until the user hides it.
-  const [hadFilterGroupApplied, setHadFilterGroupApplied] = useState(false)
-  if (hasFilterGroupApplied !== hadFilterGroupApplied) {
-    setHadFilterGroupApplied(hasFilterGroupApplied)
+  const [prevHasFilterGroupApplied, setPrevHasFilterGroupApplied] =
+    useState(false)
+  if (hasFilterGroupApplied !== prevHasFilterGroupApplied) {
+    setPrevHasFilterGroupApplied(hasFilterGroupApplied)
     if (
       hasFilterGroupApplied &&
       (showQueryBuilderControl || defaultShowQueryBuilder)
