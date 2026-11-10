@@ -5,11 +5,18 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { cloneDeep, isEqual } from 'lodash-es'
 import * as React from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+} from 'react'
 import { ReadonlyDeep } from 'type-fest'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import * as DeepLinkingUtils from '../../functions/deepLinkingUtils'
 import { removeEmptyQueryParams } from '../../functions/queryUtils'
+import { useConstant } from '../useConstant'
 import { parseEntityIdAndVersionFromSqlStatement } from '../../functions/SqlFunctions'
 import { DEFAULT_PAGE_SIZE } from '../../SynapseConstants'
 import {
@@ -107,6 +114,8 @@ export type UseImmutableTableQueryOptions = {
 // When changing the query with the debounce option, the amount of time to wait for additional debounced changes before updating the query
 export const DEBOUNCE_DELAY_MS = 750
 
+// The saved query is read once, so there is nothing to subscribe to.
+const subscribeToNothing = () => () => {}
 /**
  * Utility to synchronize the URL with the current query request. Synchronization only occurs if `shouldDeepLink` is true.
  * @param shouldDeepLink whether the query should be synchronized with the URL
@@ -126,11 +135,22 @@ function useSynchronizeQueryWithUrl(
   initQueryRequest: QueryBundleRequest,
   currentQueryRequest: QueryBundleRequest,
 ): boolean {
-  // Checked synchronously so that a page without a saved query never waits for the restore.
-  const [isRestoringQueryFromUrl, setIsRestoringQueryFromUrl] = useState(
+  // Captured on the first client render, so a page without a saved query never waits for the restore. The URL sync
+  // below rewrites the param, but only the URL the page was opened with matters.
+  const hasQueryInUrlOnMount = useConstant(
     () =>
-      shouldDeepLink && DeepLinkingUtils.hasQueryRequestInLink(componentIndex),
+      typeof window !== 'undefined' &&
+      shouldDeepLink &&
+      DeepLinkingUtils.hasQueryRequestInLink(componentIndex),
   )
+  // A prerendered page has no URL to read, so it renders (and hydrates) as if there were no saved query. React then
+  // re-renders with the client value.
+  const hasQueryInUrl = useSyncExternalStore(
+    subscribeToNothing,
+    () => hasQueryInUrlOnMount,
+    () => false,
+  )
+  const [isQueryFromUrlApplied, setIsQueryFromUrlApplied] = useState(false)
 
   /**
    * Inspect the URL on mount to see if we have a particular query request that we must show.
@@ -152,7 +172,7 @@ function useSynchronizeQueryWithUrl(
             },
           }))
         }
-        setIsRestoringQueryFromUrl(false)
+        setIsQueryFromUrlApplied(true)
       })
     }
     // should only run on mount, or if the component index changes
@@ -195,7 +215,7 @@ function useSynchronizeQueryWithUrl(
     }
   }, [componentIndex, currentQueryRequest, initQueryRequest, shouldDeepLink])
 
-  return isRestoringQueryFromUrl
+  return hasQueryInUrl && !isQueryFromUrlApplied
 }
 
 /**
