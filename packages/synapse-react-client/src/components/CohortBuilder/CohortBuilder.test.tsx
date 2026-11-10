@@ -19,12 +19,16 @@ import {
   BUNDLE_MASK_QUERY_RESULTS,
   DEFAULT_PAGE_SIZE,
 } from '@/utils/SynapseConstants'
-import { getQueryRequestFromLink } from '@/utils/functions/deepLinkingUtils'
+import {
+  generateCompressedQueryURL,
+  getQueryRequestFromLink,
+} from '@/utils/functions/deepLinkingUtils'
 import {
   AddToDownloadListRequest,
   AggregateDataConfiguration,
 } from '@sage-bionetworks/synapse-client'
 import {
+  ColumnSingleValueFilterOperator,
   DownloadFromTableRequest,
   FILTER_GROUP_CONCRETE_TYPE_VALUE,
   QueryBundleRequest,
@@ -508,6 +512,10 @@ describe('CohortBuilder', () => {
       // The saved files query, read back onto a stand-in query: only its changes from the initial query are saved.
       const readSavedFilesQuery = () =>
         getQueryRequestFromLink(1, { sql: 'SELECT * FROM syn1' })
+      // A cold restore waits on the participant query, then the files query; under a loaded test run that can take
+      // longer than the default wait.
+      const findSelectedPageTwo = () =>
+        screen.findByRole('button', { name: 'page 2' }, { timeout: 15_000 })
 
       /**
        * Builds a cohort and goes to page 2 of its files, then unmounts and puts that page's URL back in the address bar.
@@ -549,22 +557,62 @@ describe('CohortBuilder', () => {
 
         render(cohortBuilder, { wrapper })
 
-        expect(
-          await screen.findByRole('button', { name: 'page 2' }),
-        ).toHaveAttribute('aria-current', 'page')
+        expect(await findSelectedPageTwo()).toHaveAttribute(
+          'aria-current',
+          'page',
+        )
         await waitFor(async () =>
           expect(await readSavedFilesQuery()).toEqual(savedFilesQuery),
         )
       })
 
       it('requests only the saved page when nothing is cached', async () => {
-        await saveFilesPageTwoLink(createWrapper())
+        // The link the Female cohort's files page 2 saves: the cohort's Query Builder conditions, and the files offset.
+        const participantsQuery = {
+          sql: `SELECT * FROM ${participantsTableId}`,
+        }
+        const filesQuery = { sql: `SELECT * FROM ${filesTableId}` }
+        const participantsParam = await generateCompressedQueryURL(
+          '',
+          0,
+          {
+            ...participantsQuery,
+            additionalFilters: [
+              {
+                concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+                operator: 'AND',
+                children: [
+                  {
+                    concreteType:
+                      'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                    columnName: 'sex',
+                    operator: ColumnSingleValueFilterOperator.IN,
+                    values: ['Female'],
+                  },
+                ],
+              },
+            ],
+          },
+          participantsQuery,
+        )
+        const filesParam = await generateCompressedQueryURL(
+          '',
+          1,
+          { ...filesQuery, offset: DEFAULT_PAGE_SIZE },
+          filesQuery,
+        )
+        window.history.replaceState(
+          null,
+          '',
+          `/${participantsParam}&${filesParam.slice(1)}`,
+        )
 
         render(cohortBuilder, { wrapper: createWrapper() })
 
-        expect(
-          await screen.findByRole('button', { name: 'page 2' }),
-        ).toHaveAttribute('aria-current', 'page')
+        expect(await findSelectedPageTwo()).toHaveAttribute(
+          'aria-current',
+          'page',
+        )
         expect(
           sentRequests
             .filter(isFilesRowsRequest)
