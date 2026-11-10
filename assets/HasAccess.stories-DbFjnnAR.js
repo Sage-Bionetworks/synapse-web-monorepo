@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./HasAccessV2-C9CxT0LW.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`Governance/HasAccess`,component:n},i={args:{entityId:`syn12664802`}},a=[`HasAccessDemo`]})))()}o();export{i as HasAccessDemo,a as __namedExportsOrder,r as default};
