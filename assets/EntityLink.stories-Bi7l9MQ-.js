@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./EntityLink-D80de1Xp.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`Components/EntityLink`,component:n},i={args:{entity:`syn32846102`}},a=[`Private`]})))()}o();export{i as Private,a as __namedExportsOrder,r as default};
