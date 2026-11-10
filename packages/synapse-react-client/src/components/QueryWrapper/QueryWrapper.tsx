@@ -117,17 +117,24 @@ function QueryWrapperInternalWithSession(props: QueryWrapperProps) {
     goToPage,
     pageSize,
     setPageSize,
+    isRestoringQueryFromUrl,
   } = immutableTableQueryResult
 
   const lastQueryRequest = useMemo(() => {
     return getCurrentQueryRequest()
   }, [getCurrentQueryRequest])
 
+  // Results of the initial query would be discarded once the saved query is restored, so they aren't requested. The
+  // components that suspend on them wait for the restore instead (see WaitForQueryRestoreFromUrl).
   const {
     rowDataQueryOptions,
     rowDataInfiniteQueryOptions,
     queryMetadataQueryOptions,
-  } = useTableQueryUseQueryOptions(lastQueryRequest, lockedColumn)
+  } = useTableQueryUseQueryOptions(
+    lastQueryRequest,
+    lockedColumn,
+    !isRestoringQueryFromUrl,
+  )
 
   const hasFacetedSelectColumn = useHasFacetedSelectColumn(
     queryMetadataQueryOptions,
@@ -169,6 +176,7 @@ function QueryWrapperInternalWithSession(props: QueryWrapperProps) {
   useOnQueryDataChange({
     queryBundleRequest: getCurrentQueryRequest(),
     onChange: onChangeCallback,
+    isEnabled: !isRestoringQueryFromUrl,
   })
 
   const context: QueryContextType = useDeepCompareMemoize({
@@ -182,6 +190,7 @@ function QueryWrapperInternalWithSession(props: QueryWrapperProps) {
     executeQueryRequest: setQuery,
     hasFacetedSelectColumn,
     hasResettableFilters,
+    isRestoringQueryFromUrl,
     removeSelectedFacet,
     removeValueFromSelectedFacet,
     resetQuery,

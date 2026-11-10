@@ -15,6 +15,7 @@ import {
   QueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import {
+  apiFilterGroupToQBGroup,
   apiFilterToQBNode,
   classifyLikePattern,
   escapeLike,
@@ -114,6 +115,26 @@ describe('classifyLikePattern', () => {
       text: '50%',
     })
   })
+
+  const likeOps = ['contains', 'starts_with', 'ends_with'] as const
+  const specialTexts = [
+    'a\\',
+    '50%',
+    'a_b',
+    String.raw`\%`,
+    String.raw`x\\`,
+    String.raw`%\_`,
+  ]
+  it.each(likeOps.flatMap(op => specialTexts.map(text => [op, text] as const)))(
+    'reads back the %s pattern emitted for the text %j',
+    (op, text) => {
+      const filter = qbNodeToApiFilter(
+        condition({ op, text }),
+      ) as ColumnSingleValueQueryFilter
+
+      expect(classifyLikePattern(filter.values[0])).toEqual({ op, text })
+    },
+  )
 })
 
 describe('qbNodeToApiFilter — conditions', () => {
@@ -626,6 +647,124 @@ describe('apiFilterToQBNode', () => {
       op: 'is_any_of',
       values: ['a', 'b'],
     })
+  })
+})
+
+describe('apiFilterGroupToQBGroup', () => {
+  const columnModels: ColumnModel[] = [
+    { id: '1', name: 'assay', columnType: 'STRING_LIST' },
+    { id: '2', name: 'sex', columnType: 'STRING' },
+  ]
+
+  it('round-trips the FilterGroup the Query Builder applies, using the column types', () => {
+    const applied = qbNodeToApiFilter(
+      group({
+        children: [
+          condition({
+            columnName: 'assay',
+            columnType: 'STRING_LIST',
+            op: 'is_any_of',
+            values: ['rnaSeq', 'wgs'],
+          }),
+          group({
+            combinator: 'OR',
+            not: true,
+            children: [
+              condition({
+                columnName: 'sex',
+                columnType: 'STRING',
+                op: 'is_any_of',
+                values: ['Female'],
+              }),
+              condition({
+                columnName: 'assay',
+                columnType: 'STRING_LIST',
+                op: 'is_all_of',
+                values: ['rnaSeq', 'wgs'],
+              }),
+            ],
+          }),
+        ],
+      }),
+    ) as FilterGroup
+
+    expect(
+      qbNodeToApiFilter(apiFilterGroupToQBGroup(applied, columnModels)!),
+    ).toEqual(applied)
+  })
+
+  it('keeps the root a group when its children have the shape is_all_of emits', () => {
+    const applied = qbNodeToApiFilter(
+      group({
+        children: [
+          condition({
+            columnName: 'assay',
+            columnType: 'STRING_LIST',
+            op: 'is_any_of',
+            values: ['rnaSeq'],
+          }),
+          condition({
+            columnName: 'assay',
+            columnType: 'STRING_LIST',
+            op: 'is_any_of',
+            values: ['wgs'],
+          }),
+        ],
+      }),
+    ) as FilterGroup
+
+    const root = apiFilterGroupToQBGroup(applied, columnModels)
+
+    expect(root).toMatchObject({
+      kind: 'group',
+      children: [
+        { kind: 'condition', op: 'is_any_of', values: ['rnaSeq'] },
+        { kind: 'condition', op: 'is_any_of', values: ['wgs'] },
+      ],
+    })
+    expect(qbNodeToApiFilter(root!)).toEqual(applied)
+  })
+
+  it.each<[string, QueryFilter]>([
+    [
+      'a text-matches filter',
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
+        searchExpression: 'female',
+      },
+    ],
+    [
+      'HAS on a column that is not a list',
+      {
+        concreteType:
+          COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+        columnName: 'sex',
+        function: ColumnMultiValueFunction.HAS,
+        _function: ColumnMultiValueFunction.HAS,
+        values: ['Female'],
+      },
+    ],
+    [
+      'a LIKE pattern with an inner wildcard',
+      {
+        concreteType: COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+        columnName: 'sex',
+        operator: ColumnSingleValueFilterOperator.LIKE,
+        values: ['F%e'],
+      },
+    ],
+  ])('returns undefined for a FilterGroup holding %s', (_case, child) => {
+    expect(
+      apiFilterGroupToQBGroup(
+        {
+          concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+          operator: 'AND',
+          children: [child],
+        },
+        columnModels,
+      ),
+    ).toBeUndefined()
   })
 })
 

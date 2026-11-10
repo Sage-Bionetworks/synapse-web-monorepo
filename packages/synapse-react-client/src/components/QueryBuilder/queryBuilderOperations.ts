@@ -1,4 +1,5 @@
 import { ColumnModel } from '@sage-bionetworks/synapse-types'
+import { ReadonlyDeep } from 'type-fest'
 import { newQBNodeId } from './queryBuilderId'
 import {
   isQBGroup,
@@ -81,11 +82,8 @@ export function defaultQBGroup(): QBGroup {
  */
 export function qbGroupFromDefinition(
   definition: QBGroupDefinition,
-  columnModels: readonly ColumnModel[],
+  columnModels: ReadonlyDeep<ColumnModel[]>,
 ): QBGroup {
-  const columnTypeByName = new Map<string, string>(
-    columnModels.map(cm => [cm.name, cm.columnType]),
-  )
   const toGroup = (group: QBGroupDefinition): QBGroup => ({
     kind: 'group',
     id: newQBNodeId(),
@@ -101,7 +99,7 @@ export function qbGroupFromDefinition(
       kind: 'condition',
       id: newQBNodeId(),
       columnName: node.columnName,
-      columnType: columnTypeByName.get(node.columnName) ?? null,
+      columnType: null,
       op: node.op,
       values: node.values ?? [],
       rangeMin: node.rangeMin ?? null,
@@ -109,7 +107,31 @@ export function qbGroupFromDefinition(
       text: node.text ?? null,
     }
   }
-  return toGroup(definition)
+  return withColumnTypes(toGroup(definition), columnModels)
+}
+
+/**
+ * Sets each condition's `columnType` from the column model with its name, or to null when the query has no such
+ * column. Node IDs are kept. Meant for trees translated from elsewhere, whose column types are not yet known.
+ */
+export function withColumnTypes<T extends QBNode>(
+  node: T,
+  columnModels: ReadonlyDeep<ColumnModel[]>,
+): T {
+  const columnTypeByName = new Map<string, string>(
+    columnModels.map(cm => [cm.name, cm.columnType]),
+  )
+  const visit = (n: QBNode): QBNode =>
+    isQBGroup(n)
+      ? { ...n, children: n.children.map(visit) }
+      : {
+          ...n,
+          columnType:
+            n.columnName === null
+              ? null
+              : (columnTypeByName.get(n.columnName) ?? null),
+        }
+  return visit(node) as T
 }
 
 // -----------------------------------------------------------------------------

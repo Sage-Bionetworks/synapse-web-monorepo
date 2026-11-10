@@ -151,6 +151,7 @@ export const cohortBuilderV2Props: CohortBuilderProps = {
   participantsTableId: cohortBuilderV2ParticipantsTableId,
   filesTableId: cohortBuilderV2FilesTableId,
   participantsSourceTableId: cohortBuilderV2ParticipantsSourceTableId,
+  shouldDeepLink: true,
   sampleQueries: {
     'Longevity Cohort, age 60+': {
       combinator: 'AND',

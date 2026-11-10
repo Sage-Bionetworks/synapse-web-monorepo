@@ -44,10 +44,7 @@ import PlotsContainer, {
 import FacetFilterControls, {
   FacetFilterControlsProps,
 } from '../widgets/query-filter/FacetFilterControls'
-import {
-  defaultQBGroup,
-  hasCompleteCondition,
-} from '../QueryBuilder/queryBuilderOperations'
+import { hasCompleteCondition } from '../QueryBuilder/queryBuilderOperations'
 import {
   qbNodeToApiFilter,
   selectedFacetsToQBGroup,
@@ -58,6 +55,7 @@ import { isFilterGroup } from '../../utils/types/IsType'
 import { QueryWrapperSynapsePlotProps } from './QueryWrapperSynapsePlot'
 import { RowSetView } from './RowSetView'
 import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
+import { WaitForQueryRestoreFromUrl } from '../QueryWrapper/WaitForQueryRestoreFromUrl'
 
 /**
  * The Query Builder is hidden on every tab that renders this nav until the
@@ -223,7 +221,8 @@ export function QueryWrapperPlotNavContents(
   const [showQueryBuilder, setShowQueryBuilder] = useState(
     defaultShowQueryBuilder,
   )
-  const [qbTree, setQbTree] = useState<QBGroup>(() => defaultQBGroup())
+  // Null until the user edits the tree: the Query Builder then shows the applied conditions.
+  const [qbTree, setQbTree] = useState<QBGroup | null>(null)
   const [isConfirmingHideQb, setIsConfirmingHideQb] = useState(false)
   const { hasFacetedSelectColumn: isFaceted, queryMetadataQueryOptions } =
     queryContext
@@ -231,6 +230,23 @@ export function QueryWrapperPlotNavContents(
   const { isLoading: isLoadingQueryMetadata, data: queryMetadata } = useQuery(
     queryMetadataQueryOptions,
   )
+  const hasFilterGroupApplied =
+    queryContext.currentQueryRequest.query.additionalFilters?.some(
+      isFilterGroup,
+    ) ?? false
+  // Conditions that arrive with the query (e.g. from a deep link) open the Query Builder, so they can be seen and edited.
+  // It then stays open, as if the user had opened it, until the user hides it.
+  const [prevHasFilterGroupApplied, setPrevHasFilterGroupApplied] =
+    useState(false)
+  if (hasFilterGroupApplied !== prevHasFilterGroupApplied) {
+    setPrevHasFilterGroupApplied(hasFilterGroupApplied)
+    if (
+      hasFilterGroupApplied &&
+      (showQueryBuilderControl || defaultShowQueryBuilder)
+    ) {
+      setShowQueryBuilder(true)
+    }
+  }
 
   // Facets ↔ QB transitions: switching FF → QB silently translates
   // selectedFacets into the QB tree and swaps them for a FilterGroup in
@@ -266,7 +282,7 @@ export function QueryWrapperPlotNavContents(
   }
 
   const exitQueryBuilder = () => {
-    setQbTree(defaultQBGroup())
+    setQbTree(null)
     executeQueryRequest(prev => ({
       ...prev,
       query: {
@@ -284,11 +300,7 @@ export function QueryWrapperPlotNavContents(
       enterQueryBuilder()
       return
     }
-    const hasFilterGroupApplied =
-      queryContext.currentQueryRequest.query.additionalFilters?.some(
-        isFilterGroup,
-      ) ?? false
-    if (hasCompleteCondition(qbTree) || hasFilterGroupApplied) {
+    if ((qbTree && hasCompleteCondition(qbTree)) || hasFilterGroupApplied) {
       setIsConfirmingHideQb(true)
       return
     }
@@ -538,39 +550,45 @@ export default function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
       key={queryWrapperKey}
       isInfinite={isInfinite}
     >
-      <Suspense fallback={<QueryWrapperLoadingScreen />}>
-        <QueryVisualizationWrapper
-          unitDescription={unitDescription}
-          rgbIndex={props.rgbIndex}
-          columnAliases={props.columnAliases}
-          renderFacetValue={props.renderFacetValue}
-          dataUseModifiersColumnName={
-            props.cardConfiguration?.genericCardSchema
-              ?.dataUseModifiersColumnName
-          }
-          helpConfiguration={helpConfiguration}
-          visibleColumnCount={props.visibleColumnCount}
-          hiddenColumns={props.hiddenColumns}
-          defaultShowPlots={props.defaultShowPlots}
-          hideCopyToClipboard={props.hideCopyToClipboard}
-          defaultShowSearchBar={
-            (props.defaultShowSearchBox || isFullTextSearchEnabled) &&
-            !props.hideSearchBarControl
-          }
-          lockTextMatchesQueryFilterPill={props.lockTextMatchesQueryFilterPill}
-          hideSearchBarControl={props.hideSearchBarControl}
-          showLastUpdatedOn={showLastUpdatedOn}
-          noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}
-          hasCustomPlots={Array.isArray(customPlots) && customPlots.length > 0}
-          enabledExternalAnalysisPlatforms={enabledExternalAnalysisPlatforms}
-        >
-          <QueryWrapperPlotNavContents
-            {...props}
-            isFullTextSearchEnabled={isFullTextSearchEnabled}
-            remount={remount}
-          />
-        </QueryVisualizationWrapper>
-      </Suspense>
+      <WaitForQueryRestoreFromUrl>
+        <Suspense fallback={<QueryWrapperLoadingScreen />}>
+          <QueryVisualizationWrapper
+            unitDescription={unitDescription}
+            rgbIndex={props.rgbIndex}
+            columnAliases={props.columnAliases}
+            renderFacetValue={props.renderFacetValue}
+            dataUseModifiersColumnName={
+              props.cardConfiguration?.genericCardSchema
+                ?.dataUseModifiersColumnName
+            }
+            helpConfiguration={helpConfiguration}
+            visibleColumnCount={props.visibleColumnCount}
+            hiddenColumns={props.hiddenColumns}
+            defaultShowPlots={props.defaultShowPlots}
+            hideCopyToClipboard={props.hideCopyToClipboard}
+            defaultShowSearchBar={
+              (props.defaultShowSearchBox || isFullTextSearchEnabled) &&
+              !props.hideSearchBarControl
+            }
+            lockTextMatchesQueryFilterPill={
+              props.lockTextMatchesQueryFilterPill
+            }
+            hideSearchBarControl={props.hideSearchBarControl}
+            showLastUpdatedOn={showLastUpdatedOn}
+            noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}
+            hasCustomPlots={
+              Array.isArray(customPlots) && customPlots.length > 0
+            }
+            enabledExternalAnalysisPlatforms={enabledExternalAnalysisPlatforms}
+          >
+            <QueryWrapperPlotNavContents
+              {...props}
+              isFullTextSearchEnabled={isFullTextSearchEnabled}
+              remount={remount}
+            />
+          </QueryVisualizationWrapper>
+        </Suspense>
+      </WaitForQueryRestoreFromUrl>
     </QueryWrapper>
   )
 }

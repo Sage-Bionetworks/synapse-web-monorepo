@@ -15,12 +15,20 @@ import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ENTITY_PERMISSIONS } from '@/utils/APIConstants'
-import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
+import {
+  BUNDLE_MASK_QUERY_RESULTS,
+  DEFAULT_PAGE_SIZE,
+} from '@/utils/SynapseConstants'
+import {
+  generateCompressedQueryURL,
+  getQueryRequestFromLink,
+} from '@/utils/functions/deepLinkingUtils'
 import {
   AddToDownloadListRequest,
   AggregateDataConfiguration,
 } from '@sage-bionetworks/synapse-client'
 import {
+  ColumnSingleValueFilterOperator,
   DownloadFromTableRequest,
   FILTER_GROUP_CONCRETE_TYPE_VALUE,
   QueryBundleRequest,
@@ -29,6 +37,7 @@ import {
   configure,
   getConfig,
   render,
+  RenderOptions,
   screen,
   waitFor,
   within,
@@ -92,7 +101,7 @@ function renderCohortBuilder(
   server.use(
     ...getCohortBuilderHandlers({ profile: ELITE_MOCK_PROFILE, access }),
   )
-  render(
+  return render(
     <CohortBuilder participantsTableId={participantsTableId} {...props} />,
     {
       wrapper: createWrapper(
@@ -410,6 +419,206 @@ describe('CohortBuilder', () => {
           name: 'Filter condition on mortalityStatus',
         }),
       ).toBeInTheDocument()
+    })
+  })
+
+  describe('deep linking', { timeout: 30_000 }, () => {
+    const conditions: CohortBuilderProps['sampleQueries'] = {
+      'Methylation data, female': {
+        combinator: 'AND',
+        children: [
+          {
+            columnName: 'assay',
+            op: 'is_any_of',
+            values: ['methylationArray'],
+          },
+          { columnName: 'sex', op: 'is_any_of', values: ['Female'] },
+        ],
+      },
+    }
+
+    const { asyncUtilTimeout } = getConfig()
+    beforeAll(() => configure({ asyncUtilTimeout: 5_000 }))
+    afterAll(() => configure({ asyncUtilTimeout }))
+    afterEach(() => {
+      window.history.replaceState(null, '', '/')
+    })
+
+    it('saves the applied Query Builder conditions in the URL, and restores them into the Query Builder', async () => {
+      const user = userEvent.setup()
+      const { unmount } = renderCohortBuilder({
+        sampleQueries: conditions,
+        shouldDeepLink: true,
+      })
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
+      await user.click(
+        await screen.findByRole('combobox', { name: /^Try a sample query/ }),
+      )
+      await user.click(
+        await screen.findByRole('option', { name: 'Methylation data, female' }),
+      )
+      await user.click(screen.getByRole('button', { name: 'Update Results' }))
+
+      let appliedFilters: QueryBundleRequest['query']['additionalFilters']
+      await waitFor(() => {
+        expect(window.location.search).toContain('qw0=')
+        appliedFilters = sentRequests.find(
+          request => request.query.additionalFilters,
+        )?.query.additionalFilters
+        expect(appliedFilters).toBeDefined()
+      })
+      const deepLink = window.location.pathname + window.location.search
+      unmount()
+      sentRequests = []
+      window.history.replaceState(null, '', deepLink)
+
+      renderCohortBuilder({ sampleQueries: conditions, shouldDeepLink: true })
+
+      expect(
+        await screen.findByRole('group', { name: 'Filter condition on assay' }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('group', { name: 'Filter condition on sex' }),
+      ).toBeInTheDocument()
+      await waitFor(() =>
+        expect(
+          sentRequests.find(request => request.query.additionalFilters)?.query
+            .additionalFilters,
+        ).toEqual(appliedFilters),
+      )
+    })
+
+    describe('files panel', () => {
+      const filesTableId = ELITE_MOCK_PROFILE.dataVirtualTableId
+      const isFilesRowsRequest = (request: QueryBundleRequest) =>
+        request.entityId === filesTableId &&
+        (request.partMask & BUNDLE_MASK_QUERY_RESULTS) !== 0 &&
+        request.query.cohorts !== undefined
+      const cohortBuilder = (
+        <CohortBuilder
+          participantsTableId={participantsTableId}
+          filesTableId={filesTableId}
+          sampleQueries={{
+            Female: {
+              combinator: 'AND',
+              children: [
+                { columnName: 'sex', op: 'is_any_of', values: ['Female'] },
+              ],
+            },
+          }}
+          shouldDeepLink
+        />
+      )
+      // The saved files query, read back onto a stand-in query: only its changes from the initial query are saved.
+      const readSavedFilesQuery = () =>
+        getQueryRequestFromLink(1, { sql: 'SELECT * FROM syn1' })
+      // A cold restore waits on the participant query, then the files query; under a loaded test run that can take
+      // longer than the default wait.
+      const findSelectedPageTwo = () =>
+        screen.findByRole('button', { name: 'page 2' }, { timeout: 15_000 })
+
+      /**
+       * Builds a cohort and goes to page 2 of its files, then unmounts and puts that page's URL back in the address bar.
+       * Returns the saved files query.
+       */
+      async function saveFilesPageTwoLink(
+        wrapper: NonNullable<RenderOptions['wrapper']>,
+      ) {
+        const user = userEvent.setup()
+        const { unmount } = render(cohortBuilder, { wrapper })
+        await user.click(
+          await screen.findByRole('combobox', { name: /^Try a sample query/ }),
+        )
+        await user.click(await screen.findByRole('option', { name: 'Female' }))
+        await user.click(screen.getByRole('button', { name: 'Update Results' }))
+        await waitFor(() =>
+          expect(sentRequests.some(isFilesRowsRequest)).toBe(true),
+        )
+        await user.click(
+          await screen.findByRole('button', { name: 'Go to page 2' }),
+        )
+        await waitFor(() => expect(window.location.search).toContain('qw1='))
+        const deepLink = window.location.pathname + window.location.search
+        const savedFilesQuery = await readSavedFilesQuery()
+        unmount()
+        sentRequests = []
+        window.history.replaceState(null, '', deepLink)
+        return { savedFilesQuery }
+      }
+
+      beforeEach(() => {
+        server.use(...getCohortBuilderHandlers({ profile: ELITE_MOCK_PROFILE }))
+      })
+
+      it('restores the saved page from the URL when the results of the initial query are cached', async () => {
+        // One wrapper, so one query cache, for both renders, as when returning to the page in the same session.
+        const wrapper = createWrapper()
+        const { savedFilesQuery } = await saveFilesPageTwoLink(wrapper)
+
+        render(cohortBuilder, { wrapper })
+
+        expect(await findSelectedPageTwo()).toHaveAttribute(
+          'aria-current',
+          'page',
+        )
+        await waitFor(async () =>
+          expect(await readSavedFilesQuery()).toEqual(savedFilesQuery),
+        )
+      })
+
+      it('requests only the saved page when nothing is cached', async () => {
+        // The link the Female cohort's files page 2 saves: the cohort's Query Builder conditions, and the files offset.
+        const participantsQuery = {
+          sql: `SELECT * FROM ${participantsTableId}`,
+        }
+        const filesQuery = { sql: `SELECT * FROM ${filesTableId}` }
+        const participantsParam = await generateCompressedQueryURL(
+          '',
+          0,
+          {
+            ...participantsQuery,
+            additionalFilters: [
+              {
+                concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+                operator: 'AND',
+                children: [
+                  {
+                    concreteType:
+                      'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                    columnName: 'sex',
+                    operator: ColumnSingleValueFilterOperator.IN,
+                    values: ['Female'],
+                  },
+                ],
+              },
+            ],
+          },
+          participantsQuery,
+        )
+        const filesParam = await generateCompressedQueryURL(
+          '',
+          1,
+          { ...filesQuery, offset: DEFAULT_PAGE_SIZE },
+          filesQuery,
+        )
+        window.history.replaceState(
+          null,
+          '',
+          `/${participantsParam}&${filesParam.slice(1)}`,
+        )
+
+        render(cohortBuilder, { wrapper: createWrapper() })
+
+        expect(await findSelectedPageTwo()).toHaveAttribute(
+          'aria-current',
+          'page',
+        )
+        expect(
+          sentRequests
+            .filter(isFilesRowsRequest)
+            .map(request => request.query.offset),
+        ).toEqual([DEFAULT_PAGE_SIZE])
+      })
     })
   })
 

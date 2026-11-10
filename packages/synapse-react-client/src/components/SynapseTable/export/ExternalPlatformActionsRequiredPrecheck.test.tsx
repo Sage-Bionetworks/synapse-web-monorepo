@@ -90,6 +90,7 @@ const mockQueryContext: QueryContextType = {
   // The component under test mutates the request it receives, so hand out a fresh copy on each call
   getCurrentQueryRequest: vi.fn(() => cloneDeep(queryRequest)),
   hasResettableFilters: false,
+  isRestoringQueryFromUrl: false,
   fileIdColumnName: mockFileIdColumnName,
   fileVersionColumnName: mockFileVersionColumnName,
   fileNameColumnName: mockFileNameColumnName,

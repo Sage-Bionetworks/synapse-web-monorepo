@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   ToggleButton,
   ToggleButtonGroup,
@@ -7,12 +8,16 @@ import {
 import { DragDropProvider } from '@dnd-kit/react'
 import { ReactNode, useCallback, useId, useMemo, useState } from 'react'
 import { useConstant } from '@/utils/hooks/useConstant'
+import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { isFilterGroup } from '../../utils/types/IsType'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { FilterGroupNode } from './FilterGroupNode'
 import { useQueryBuilderDrag } from './queryBuilderDnd'
-import { qbNodeToApiFilter } from './queryBuilderTranslation'
+import {
+  apiFilterGroupToQBGroup,
+  qbNodeToApiFilter,
+} from './queryBuilderTranslation'
 import { qbTreeToReadable } from './qbTreeToReadable'
 import { QueryBuilderInternalContextProvider } from './QueryBuilderInternalContext'
 import {
@@ -36,8 +41,14 @@ import { useQBCombinedSql } from './useQBCombinedSql'
 import { useQBFacetSourceMetadata } from './useQBFacetSourceMetadata'
 import { useQBValueDisplayName } from './useQBValueDisplayName'
 
+export const QB_INEXPRESSIBLE_APPLIED_CONDITIONS_TEXT =
+  "The Query Builder can't show the conditions applied to these results. Updating the results replaces them."
+
 export type QueryBuilderControlsProps = {
-  /** The QB tree. When null, an empty default tree is rendered. */
+  /**
+   * The QB tree. When null, the tree of the applied `FilterGroup` (e.g. one restored from a deep link) is rendered, or
+   * an empty default tree when none is applied or the QB can't express the applied one exactly.
+   */
   tree: QBGroup | null
   /** Called with the next tree after any dispatched edit. */
   onTreeChange: (next: QBGroup) => void
@@ -60,11 +71,24 @@ type SummaryMode = 'plain-english' | 'sql'
 export function QueryBuilderControls(props: QueryBuilderControlsProps) {
   const { tree, onTreeChange, onlyFacetedColumns = false } = props
   const { columnModels, facetResults } = useQBFacetSourceMetadata()
-  const { executeQueryRequest, getCurrentQueryRequest } = useQueryContext()
+  const { executeQueryRequest, getCurrentQueryRequest, currentQueryRequest } =
+    useQueryContext()
 
   // Created once: defaultQBGroup() makes new node IDs, which would remount every row on each render.
   const defaultTree = useConstant(defaultQBGroup)
-  const activeTree = tree ?? defaultTree
+  // Deep-compared so unrelated query changes keep the hydrated tree's node IDs.
+  const appliedFilterGroup = useDeepCompareMemoize(
+    currentQueryRequest.query.additionalFilters?.find(isFilterGroup),
+  )
+  const appliedTree = useMemo(
+    () =>
+      appliedFilterGroup &&
+      apiFilterGroupToQBGroup(appliedFilterGroup, columnModels),
+    [appliedFilterGroup, columnModels],
+  )
+  const isAppliedFilterGroupInexpressible =
+    appliedFilterGroup !== undefined && appliedTree === undefined
+  const activeTree = tree ?? appliedTree ?? defaultTree
   const filterGroup = useMemo(() => qbNodeToApiFilter(activeTree), [activeTree])
 
   // Validate everything Update Results would send: non-QB filters count toward the server's limits too.
@@ -214,6 +238,11 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
     <QueryBuilderInternalContextProvider value={contextValue}>
       <DragDropProvider {...dragHandlers}>
         <div className={styles.root}>
+          {isAppliedFilterGroupInexpressible && (
+            <Alert severity="warning">
+              {QB_INEXPRESSIBLE_APPLIED_CONDITIONS_TEXT}
+            </Alert>
+          )}
           <div className={styles.summaryBar}>
             <div className={styles.summaryHeader}>
               <span className={styles.summaryLabel}>Query Summary</span>
