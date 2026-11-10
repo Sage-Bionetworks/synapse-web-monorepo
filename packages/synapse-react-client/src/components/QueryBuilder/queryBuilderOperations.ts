@@ -1,4 +1,5 @@
 import { ColumnModel } from '@sage-bionetworks/synapse-types'
+import { ReadonlyDeep } from 'type-fest'
 import { newQBNodeId } from './queryBuilderId'
 import {
   isQBGroup,
@@ -110,6 +111,30 @@ export function qbGroupFromDefinition(
     }
   }
   return toGroup(definition)
+}
+
+/**
+ * Sets each condition's `columnType` from the column model with its name, or to null when the query has no such
+ * column. Node IDs are kept. Meant for trees translated from elsewhere, whose column types are not yet known.
+ */
+export function withColumnTypes<T extends QBNode>(
+  node: T,
+  columnModels: ReadonlyDeep<ColumnModel[]>,
+): T {
+  const columnTypeByName = new Map<string, string>(
+    columnModels.map(cm => [cm.name, cm.columnType]),
+  )
+  const visit = (n: QBNode): QBNode =>
+    isQBGroup(n)
+      ? { ...n, children: n.children.map(visit) }
+      : {
+          ...n,
+          columnType:
+            n.columnName === null
+              ? null
+              : (columnTypeByName.get(n.columnName) ?? null),
+        }
+  return visit(node) as T
 }
 
 // -----------------------------------------------------------------------------

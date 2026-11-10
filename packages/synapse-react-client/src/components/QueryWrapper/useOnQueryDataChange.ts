@@ -4,12 +4,17 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { useTableQueryUseQueryOptions } from './TableQueryUseQueryOptions'
+import {
+  disableTableQueryUseQueryOptions,
+  useTableQueryUseQueryOptions,
+} from './TableQueryUseQueryOptions'
 import { useEffect, useRef, useState } from 'react'
 
 type UseOnQueryDataChangeOptions = {
   queryBundleRequest: QueryBundleRequest
   onChange: (data: QueryResultBundle) => void
+  /** When false, the query data is not requested, and `onChange` is not called. Defaults to true. */
+  isEnabled?: boolean
 }
 
 /**
@@ -19,9 +24,12 @@ type UseOnQueryDataChangeOptions = {
 export default function useOnQueryDataChange(
   options: UseOnQueryDataChangeOptions,
 ) {
-  const { queryBundleRequest, onChange } = options
-  const { rowDataQueryOptions, queryMetadataQueryOptions } =
+  const { queryBundleRequest, onChange, isEnabled = true } = options
+  const tableQueryUseQueryOptions =
     useTableQueryUseQueryOptions(queryBundleRequest)
+  const { rowDataQueryOptions, queryMetadataQueryOptions } = isEnabled
+    ? tableQueryUseQueryOptions
+    : disableTableQueryUseQueryOptions(tableQueryUseQueryOptions)
 
   const { data: rowData, isLoading: rowDataIsLoading } = useQuery({
     ...rowDataQueryOptions,
@@ -33,10 +41,12 @@ export default function useOnQueryDataChange(
 
   // SWC requires the entire QueryResultBundle to enable editing table data, so merge the data back into one object before
   // passing it to the onChange callback. A request without rows produces a metadata-only bundle.
-  const isRowDataRequested = rowDataQueryOptions.enabled !== false
+  const isRowDataRequested =
+    tableQueryUseQueryOptions.rowDataQueryOptions.enabled !== false
   const [mergedData, setMergedData] = useState<QueryResultBundle>()
   useEffect(() => {
     if (
+      isEnabled &&
       (rowData || !isRowDataRequested) &&
       queryMetadata &&
       !rowDataIsLoading &&
@@ -48,6 +58,7 @@ export default function useOnQueryDataChange(
       })
     }
   }, [
+    isEnabled,
     isRowDataRequested,
     queryMetadata,
     queryMetadataIsLoading,

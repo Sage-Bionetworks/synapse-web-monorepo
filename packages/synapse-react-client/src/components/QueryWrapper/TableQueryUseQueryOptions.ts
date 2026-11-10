@@ -111,6 +111,28 @@ export function getTableQueryUseQueryOptions(
 }
 
 /**
+ * Returns the options with every query disabled, so `useQuery` and `useInfiniteQuery` don't request them.
+ * `useSuspenseQuery` ignores `enabled`, so suspending consumers still request the metadata.
+ */
+export function disableTableQueryUseQueryOptions(
+  options: TableQueryUseQueryOptions,
+): TableQueryUseQueryOptions {
+  // UseSuspenseQueryOptions has no `enabled`; the non-suspense hooks that receive these options do read it.
+  const queryMetadataQueryOptions = {
+    ...options.queryMetadataQueryOptions,
+    enabled: false,
+  }
+  return {
+    rowDataQueryOptions: { ...options.rowDataQueryOptions, enabled: false },
+    rowDataInfiniteQueryOptions: {
+      ...options.rowDataInfiniteQueryOptions,
+      enabled: false,
+    },
+    queryMetadataQueryOptions,
+  }
+}
+
+/**
  * Return the UseQueryOptions used to retrieve a table query's row data and query metadata.
  * @param queryBundleRequest
  * @param lockedColumn - remove a particular facet name (e.g. study) and all possible values based on the parameter

@@ -141,7 +141,10 @@ function useSynchronizeQueryWithUrl(
     () =>
       typeof window !== 'undefined' &&
       shouldDeepLink &&
-      DeepLinkingUtils.hasQueryRequestInLink(componentIndex),
+      DeepLinkingUtils.hasQueryRequestInLink(
+        componentIndex,
+        window.location.search,
+      ),
   )
   // A prerendered page has no URL to read, so it renders (and hydrates) as if there were no saved query. React then
   // re-renders with the client value.
@@ -151,29 +154,40 @@ function useSynchronizeQueryWithUrl(
     () => false,
   )
   const [isQueryFromUrlApplied, setIsQueryFromUrlApplied] = useState(false)
+  // Read from the captured value, not the hydration snapshot, so the URL is also left alone while hydrating.
+  const isRestorePending = hasQueryInUrlOnMount && !isQueryFromUrlApplied
 
   /**
    * Inspect the URL on mount to see if we have a particular query request that we must show.
    */
   useEffect(() => {
     // Only run this effect if deep linking is enabled
-    if (shouldDeepLink) {
-      void DeepLinkingUtils.getQueryRequestFromLink(
-        componentIndex,
-        initQueryRequest.query,
-      ).then(queryRequestFromLink => {
-        if (queryRequestFromLink?.query) {
-          setQuery(prevState => ({
-            ...prevState,
-            ...queryRequestFromLink,
-            query: {
-              ...prevState.query,
-              ...queryRequestFromLink.query,
-            },
-          }))
-        }
-        setIsQueryFromUrlApplied(true)
-      })
+    if (!shouldDeepLink) {
+      return
+    }
+    // StrictMode runs this effect twice; only the restore that is still mounted may apply its result.
+    let isCancelled = false
+    void DeepLinkingUtils.getQueryRequestFromLink(
+      componentIndex,
+      initQueryRequest.query,
+    ).then(queryRequestFromLink => {
+      if (isCancelled) {
+        return
+      }
+      if (queryRequestFromLink?.query) {
+        setQuery(prevState => ({
+          ...prevState,
+          ...queryRequestFromLink,
+          query: {
+            ...prevState.query,
+            ...queryRequestFromLink.query,
+          },
+        }))
+      }
+      setIsQueryFromUrlApplied(true)
+    })
+    return () => {
+      isCancelled = true
     }
     // should only run on mount, or if the component index changes
     // oxlint-disable-next-line react-hooks/exhaustive-deps
@@ -181,39 +195,46 @@ function useSynchronizeQueryWithUrl(
 
   // If `shouldDeepLink` is true, synchronize the URL
   useEffect(() => {
-    if (shouldDeepLink) {
-      if (isEqual(initQueryRequest, currentQueryRequest)) {
-        void DeepLinkingUtils.updateUrlWithNewSearchParam(
-          'qw',
-          componentIndex,
-          null,
-          null,
-        ).catch(error => {
-          console.error('Failed to update URL with search param:', error)
-        })
-      } else {
-        void DeepLinkingUtils.updateUrlWithNewSearchParam(
-          'qw',
-          componentIndex,
-          currentQueryRequest.query,
-          initQueryRequest.query,
-        ).catch(error => {
-          console.error('Failed to update URL with search param:', error)
-        })
-      }
+    // Until the saved query is applied, the current query is the initial one: writing it would remove the saved query
+    // from the URL before a remount (e.g. under StrictMode) could read it.
+    if (!shouldDeepLink || isRestorePending) {
+      return
+    }
+    if (isEqual(initQueryRequest, currentQueryRequest)) {
+      void DeepLinkingUtils.updateUrlWithNewSearchParam(
+        DeepLinkingUtils.QUERY_SEARCH_PARAM_PREFIX,
+        componentIndex,
+        null,
+        null,
+      ).catch(error => {
+        console.error('Failed to update URL with search param:', error)
+      })
+    } else {
+      void DeepLinkingUtils.updateUrlWithNewSearchParam(
+        DeepLinkingUtils.QUERY_SEARCH_PARAM_PREFIX,
+        componentIndex,
+        currentQueryRequest.query,
+        initQueryRequest.query,
+      ).catch(error => {
+        console.error('Failed to update URL with search param:', error)
+      })
     }
     // Clean up the URL param when this component unmounts or deep linking is disabled
     return () => {
-      if (shouldDeepLink) {
-        DeepLinkingUtils.updateUrlWithNewSearchParam(
-          'qw',
-          componentIndex,
-          null,
-          initQueryRequest.query,
-        )
-      }
+      void DeepLinkingUtils.updateUrlWithNewSearchParam(
+        DeepLinkingUtils.QUERY_SEARCH_PARAM_PREFIX,
+        componentIndex,
+        null,
+        initQueryRequest.query,
+      )
     }
-  }, [componentIndex, currentQueryRequest, initQueryRequest, shouldDeepLink])
+  }, [
+    componentIndex,
+    currentQueryRequest,
+    initQueryRequest,
+    shouldDeepLink,
+    isRestorePending,
+  ])
 
   return hasQueryInUrl && !isQueryFromUrlApplied
 }

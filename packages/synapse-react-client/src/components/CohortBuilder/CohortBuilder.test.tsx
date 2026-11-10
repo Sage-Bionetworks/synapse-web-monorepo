@@ -18,7 +18,11 @@ import {
   createWrapperAndQueryClient,
 } from '@/testutils/TestingLibraryUtils'
 import { ENTITY_PERMISSIONS } from '@/utils/APIConstants'
-import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
+import {
+  BUNDLE_MASK_QUERY_RESULTS,
+  DEFAULT_PAGE_SIZE,
+} from '@/utils/SynapseConstants'
+import { getQueryRequestFromLink } from '@/utils/functions/deepLinkingUtils'
 import {
   AddToDownloadListRequest,
   AggregateDataConfiguration,
@@ -482,7 +486,7 @@ describe('CohortBuilder', () => {
       )
     })
 
-    it("restores the files panel's page from the URL, even when the results of the initial query are cached", async () => {
+    it("restores the files panel's page from the URL, without requesting the initial page, even when the results of the initial query are cached", async () => {
       const user = userEvent.setup()
       const filesTableId = ELITE_MOCK_PROFILE.dataVirtualTableId
       const isFilesRowsRequest = (request: QueryBundleRequest) =>
@@ -521,16 +525,41 @@ describe('CohortBuilder', () => {
       )
       await waitFor(() => expect(window.location.search).toContain('qw1='))
       const deepLink = window.location.pathname + window.location.search
+      // The saved files query, read back onto a stand-in query: only its changes from the initial query are saved.
+      const readSavedFilesQuery = () =>
+        getQueryRequestFromLink(1, { sql: 'SELECT * FROM syn1' })
+      const savedFilesQuery = await readSavedFilesQuery()
       unmount()
       sentRequests = []
       window.history.replaceState(null, '', deepLink)
 
-      render(cohortBuilder, { wrapper: wrapperFn })
+      const { unmount: unmountWarm } = render(cohortBuilder, {
+        wrapper: wrapperFn,
+      })
 
       expect(
         await screen.findByRole('button', { name: 'page 2' }),
       ).toHaveAttribute('aria-current', 'page')
-      await waitFor(() => expect(window.location.search).toContain('qw1='))
+      await waitFor(async () =>
+        expect(await readSavedFilesQuery()).toEqual(savedFilesQuery),
+      )
+
+      // With nothing cached, only the saved page is requested.
+      unmountWarm()
+      sentRequests = []
+      window.history.replaceState(null, '', deepLink)
+      render(cohortBuilder, {
+        wrapper: createWrapperAndQueryClient().wrapperFn,
+      })
+
+      expect(
+        await screen.findByRole('button', { name: 'page 2' }),
+      ).toHaveAttribute('aria-current', 'page')
+      expect(
+        sentRequests
+          .filter(isFilesRowsRequest)
+          .map(request => request.query.offset),
+      ).toEqual([DEFAULT_PAGE_SIZE])
     })
   })
 

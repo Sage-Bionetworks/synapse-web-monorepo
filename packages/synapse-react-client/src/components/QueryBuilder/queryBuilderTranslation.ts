@@ -9,7 +9,7 @@ import {
   FilterGroup,
   QueryFilter,
 } from '@sage-bionetworks/synapse-types'
-import { isEqual } from 'lodash-es'
+import { isEqualTreatUndefinedAsMissing } from '@/utils/functions/IsEqualTreatUndefinedAsMissing'
 import { ReadonlyDeep } from 'type-fest'
 import {
   isColumnMultiValueFunctionQueryFilter,
@@ -18,6 +18,7 @@ import {
   isFacetColumnValuesRequest,
   isFilterGroup,
 } from '../../utils/types/IsType'
+import { withColumnTypes } from './queryBuilderOperations'
 import { isQBGroup, QBCondition, QBGroup, QBNode } from './QueryBuilderTypes'
 import { newQBNodeId } from './queryBuilderId'
 
@@ -300,20 +301,8 @@ function rangeBoundFilter(
 // API → QB (hydration)
 // -----------------------------------------------------------------------------
 
-type ColumnTypeLookup = (columnName: string) => string | null
-
-function getColumnTypeLookup(
-  columnModels: ReadonlyDeep<ColumnModel[]>,
-): ColumnTypeLookup {
-  const columnTypeByName = new Map<string, string>(
-    columnModels.map(cm => [cm.name, cm.columnType]),
-  )
-  return columnName => columnTypeByName.get(columnName) ?? null
-}
-
 /**
- * Convert an API `QueryFilter` back into a QB node. Each condition's column type is resolved from `columnModels`, so
- * a condition on a list column translates back to `HAS` rather than `IN`.
+ * Convert an API `QueryFilter` back into a QB node. Column types are left null; see `withColumnTypes`.
  *
  * Some conversions are lossy — an AND group of single-value `HAS` predicates
  * on one column (the shape `is_all_of` emits) deserializes as `is_all_of`, any
@@ -322,52 +311,20 @@ function getColumnTypeLookup(
  * Users can adjust the operator picker.
  */
 export function apiFilterToQBNode(
-  filter: QueryFilter,
-  columnModels: ReadonlyDeep<ColumnModel[]> = [],
-): QBNode | null {
-  return toQBNode(filter, getColumnTypeLookup(columnModels))
-}
-
-/**
- * Convert an applied `FilterGroup` (such as one restored from a deep link) into a QB root group, with the same
- * conversions as {@link apiFilterToQBNode}. The result is always a group, even when the `FilterGroup` has the shape
- * that `is_all_of` emits.
- *
- * Returns `undefined` when the QB can't express the `FilterGroup` exactly (e.g. it holds a text-matches filter, or a
- * `HAS` on a column that isn't a list), because applying the converted tree would change the filter.
- */
-export function apiFilterGroupToQBGroup(
-  group: ReadonlyDeep<FilterGroup>,
-  columnModels: ReadonlyDeep<ColumnModel[]> = [],
-): QBGroup | undefined {
-  const root = filterGroupToQBGroup(group, getColumnTypeLookup(columnModels))
-  // Compared as JSON, where an undefined property and a missing one are the same.
-  const isExact = isEqual(
-    JSON.parse(JSON.stringify(qbNodeToApiFilter(root))),
-    JSON.parse(JSON.stringify(group)),
-  )
-  return isExact ? root : undefined
-}
-
-function toQBNode(
   filter: ReadonlyDeep<QueryFilter>,
-  columnTypeOf: ColumnTypeLookup,
 ): QBNode | null {
   if (isFilterGroup(filter)) {
-    return (
-      allOfGroupToCondition(filter, columnTypeOf) ??
-      filterGroupToQBGroup(filter, columnTypeOf)
-    )
+    return allOfGroupToCondition(filter) ?? filterGroupToQBGroup(filter)
   }
   if (isColumnSingleValueQueryFilter(filter)) {
-    return singleValueToCondition(filter, columnTypeOf)
+    return singleValueToCondition(filter)
   }
   if (isColumnMultiValueFunctionQueryFilter(filter)) {
     return {
       kind: 'condition',
       id: newQBNodeId(),
       columnName: filter.columnName,
-      columnType: columnTypeOf(filter.columnName),
+      columnType: null,
       op: 'is_any_of',
       values: [...filter.values],
       rangeMin: null,
@@ -380,24 +337,39 @@ function toQBNode(
   return null
 }
 
-function filterGroupToQBGroup(
+/**
+ * Convert an applied `FilterGroup` (such as one restored from a deep link) into a QB root group, with the same
+ * conversions as {@link apiFilterToQBNode} and each condition's column type taken from `columnModels` (so a condition
+ * on a list column translates back to `HAS` rather than `IN`). The result is always a group, even when the
+ * `FilterGroup` has the shape that `is_all_of` emits.
+ *
+ * Returns `undefined` when the QB can't express the `FilterGroup` exactly (e.g. it holds a text-matches filter, or a
+ * `HAS` on a column that isn't a list), because applying the converted tree would change the filter.
+ */
+export function apiFilterGroupToQBGroup(
   group: ReadonlyDeep<FilterGroup>,
-  columnTypeOf: ColumnTypeLookup,
-): QBGroup {
+  columnModels: ReadonlyDeep<ColumnModel[]>,
+): QBGroup | undefined {
+  const root = withColumnTypes(filterGroupToQBGroup(group), columnModels)
+  return isEqualTreatUndefinedAsMissing(qbNodeToApiFilter(root), group)
+    ? root
+    : undefined
+}
+
+function filterGroupToQBGroup(group: ReadonlyDeep<FilterGroup>): QBGroup {
   return {
     kind: 'group',
     id: newQBNodeId(),
     combinator: group.operator ?? 'AND',
     not: group.not ?? false,
     children: (group.children ?? [])
-      .map(child => toQBNode(child, columnTypeOf))
+      .map(apiFilterToQBNode)
       .filter((n): n is QBNode => n !== null),
   }
 }
 
 function allOfGroupToCondition(
   group: ReadonlyDeep<FilterGroup>,
-  columnTypeOf: ColumnTypeLookup,
 ): QBCondition | null {
   const children = group.children ?? []
   if (group.not || (group.operator ?? 'AND') !== 'AND' || children.length < 2) {
@@ -421,7 +393,7 @@ function allOfGroupToCondition(
     kind: 'condition',
     id: newQBNodeId(),
     columnName,
-    columnType: columnTypeOf(columnName),
+    columnType: null,
     op: 'is_all_of',
     values: hasPredicates.map(child => child.values[0]),
     rangeMin: null,
@@ -432,13 +404,12 @@ function allOfGroupToCondition(
 
 function singleValueToCondition(
   filter: ReadonlyDeep<ColumnSingleValueQueryFilter>,
-  columnTypeOf: ColumnTypeLookup,
 ): QBCondition {
   const base = {
     kind: 'condition' as const,
     id: newQBNodeId(),
     columnName: filter.columnName,
-    columnType: columnTypeOf(filter.columnName),
+    columnType: null,
     values: [] as string[],
     rangeMin: null as string | null,
     rangeMax: null as string | null,

@@ -14,6 +14,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QUERY_BUILDER_CONDITIONS_PILL_TEXT } from '../widgets/facet-nav/SelectionCriteriaPills'
@@ -99,6 +100,58 @@ describe('QueryWrapperPlotNav Query Builder conditions', () => {
     expect(
       screen.getByRole('button', { name: 'Hide Query Builder' }),
     ).toBeInTheDocument()
+  })
+
+  it('keeps the Query Builder open after the conditions it opened with are removed', async () => {
+    const user = userEvent.setup()
+    renderQueryWrapperPlotNav({ showQueryBuilderControl: true })
+
+    const pill = await screen.findByRole('button', {
+      name: QUERY_BUILDER_CONDITIONS_PILL_TEXT,
+    })
+    pill.focus()
+    await user.keyboard('{Delete}')
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('button', {
+          name: QUERY_BUILDER_CONDITIONS_PILL_TEXT,
+        }),
+      ).not.toBeInTheDocument(),
+    )
+    expect(
+      screen.getByRole('button', { name: 'Hide Query Builder' }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Update Results' })).toBeVisible()
+  })
+
+  it('asks before hiding a Query Builder with applied conditions, and removes them when hidden', async () => {
+    const user = userEvent.setup()
+    renderQueryWrapperPlotNav({ showQueryBuilderControl: true })
+    await user.click(
+      await screen.findByRole('button', { name: 'Hide Query Builder' }),
+    )
+
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Hide Query Builder?',
+    })
+    await user.click(
+      within(dialog).getByRole('button', { name: 'Hide Query Builder' }),
+    )
+
+    expect(
+      await screen.findByRole('button', { name: 'Show Query Builder' }),
+    ).toBeInTheDocument()
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('button', {
+          name: QUERY_BUILDER_CONDITIONS_PILL_TEXT,
+        }),
+      ).not.toBeInTheDocument(),
+    )
+    expect(
+      screen.queryByRole('button', { name: 'Update Results' }),
+    ).not.toBeInTheDocument()
   })
 
   it('shows the conditions as a removable pill when the Query Builder is turned off', async () => {
