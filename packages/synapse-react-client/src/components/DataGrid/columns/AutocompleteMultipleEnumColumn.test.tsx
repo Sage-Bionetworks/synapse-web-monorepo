@@ -315,6 +315,28 @@ describe('autocompleteMultipleEnumColumn', () => {
       expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
     })
 
+    it('shows every value as a chip when limitTags is negative, as the editor does', () => {
+      const UnlimitedCell = autocompleteMultipleEnumColumn({
+        choices: ['a', 'b', 'c'],
+        limitTags: -1,
+      }).component as React.ComponentType<
+        Partial<AutocompleteMultipleEnumCellProps>
+      >
+      render(
+        <UnlimitedCell
+          rowData={['a', 'b', 'c']}
+          active={false}
+          focus={false}
+          setRowData={vi.fn()}
+        />,
+      )
+
+      expect(screen.getByText('a')).toBeInTheDocument()
+      expect(screen.getByText('b')).toBeInTheDocument()
+      expect(screen.getByText('c')).toBeInTheDocument()
+      expect(screen.queryByText(/^\+\d+$/)).not.toBeInTheDocument()
+    })
+
     it('mounts the editor with the same chips when the pointer moves over the cell', () => {
       render(
         <Cell

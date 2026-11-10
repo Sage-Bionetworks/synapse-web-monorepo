@@ -1,5 +1,5 @@
 import { createRef } from 'react'
-import { test, expect, vi } from 'vitest'
+import { afterEach, test, expect, vi } from 'vitest'
 import { act, render } from '@testing-library/react'
 import {
   Column,
@@ -14,6 +14,10 @@ vi.mock('react-resize-detector', () => ({
 }))
 
 type Row = { id: string; name: string }
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 const columns: Column[] = [keyColumn('name', textColumn)]
 
@@ -33,4 +37,32 @@ test('does not compute every row key again when a render leaves the rows unchang
   act(() => ref.current?.setActiveCell({ col: 0, row: 1 }))
 
   expect(rowKey.mock.calls.length).toBeLessThan(rows.length)
+})
+
+test('moves the rows when their height changes', () => {
+  // jsdom has no layout, so give the grid's scroll container a size for the
+  // virtualizer to fill with rows
+  vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(600)
+  vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(800)
+  const rows: Row[] = Array.from({ length: 20 }, (_, index) => ({
+    id: `row-${index}`,
+    name: `Name ${index}`,
+  }))
+  const renderGrid = (rowHeight: number) => (
+    <DataSheetGrid
+      value={rows}
+      columns={columns}
+      rowHeight={rowHeight}
+      headerRowHeight={40}
+    />
+  )
+  const { container, rerender } = render(renderGrid(40))
+  const secondRow = () =>
+    container.querySelectorAll<HTMLElement>('.dsg-row:not(.dsg-row-header)')[1]
+  expect(secondRow().style.top).toBe('80px')
+
+  rerender(renderGrid(60))
+
+  expect(secondRow().style.top).toBe('100px')
+  expect(secondRow().style.height).toBe('60px')
 })

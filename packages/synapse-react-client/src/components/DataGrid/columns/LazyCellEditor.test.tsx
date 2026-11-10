@@ -1,6 +1,6 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
-import { LazyCellEditor } from './LazyCellEditor'
+import { act, fireEvent, render, screen } from '@testing-library/react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { LazyCellEditor, POINTER_REST_MS } from './LazyCellEditor'
 
 function renderCell(active: boolean) {
   const cell = (isActive: boolean) => (
@@ -33,16 +33,44 @@ describe('LazyCellEditor', () => {
     expect(screen.queryByText('Display value')).not.toBeInTheDocument()
   })
 
-  it('does not mount the editor when the cell scrolls under a stationary pointer', () => {
-    // Scrolling fires pointerover and pointerenter, but not pointermove
-    renderCell(false)
+  describe('under a stationary pointer', () => {
+    // Scrolling moves cells under the pointer, which fires pointerenter and
+    // pointerleave on them but not pointermove
+    afterEach(() => {
+      vi.useRealTimers()
+    })
 
-    fireEvent.pointerOver(screen.getByText('Display value'))
-    fireEvent.pointerEnter(screen.getByText('Display value'))
+    it('does not mount the editor for a cell that passes under the pointer', () => {
+      vi.useFakeTimers()
+      renderCell(false)
 
-    expect(
-      screen.queryByRole('textbox', { name: 'Editor' }),
-    ).not.toBeInTheDocument()
+      fireEvent.pointerEnter(screen.getByText('Display value'))
+      act(() => {
+        vi.advanceTimersByTime(POINTER_REST_MS - 1)
+      })
+      fireEvent.pointerLeave(screen.getByText('Display value'))
+      act(() => {
+        vi.advanceTimersByTime(POINTER_REST_MS)
+      })
+
+      expect(
+        screen.queryByRole('textbox', { name: 'Editor' }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('mounts the editor once the pointer has rested on the cell', () => {
+      vi.useFakeTimers()
+      renderCell(false)
+
+      fireEvent.pointerEnter(screen.getByText('Display value'))
+      act(() => {
+        vi.advanceTimersByTime(POINTER_REST_MS)
+      })
+
+      expect(
+        screen.getByRole('textbox', { name: 'Editor' }),
+      ).toBeInTheDocument()
+    })
   })
 
   it('mounts the editor when the cell is activated', () => {

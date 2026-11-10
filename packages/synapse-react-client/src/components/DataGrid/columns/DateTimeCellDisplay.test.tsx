@@ -1,7 +1,10 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { ComponentType } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import {
+  dateTimeColumn,
   DateTimeCell,
   DateTimeCellDisplay,
   type DateTimeCellProps,
@@ -94,5 +97,23 @@ describe('DateTimeCellDisplay', () => {
     renderDisplay('next Tuesday')
 
     expect(screen.getByText('next Tuesday')).toBeInTheDocument()
+  })
+})
+
+describe('dateTimeColumn cell', () => {
+  it('opens the date picker with one click after a cell stops under a stationary pointer', async () => {
+    const Cell = dateTimeColumn({ format: FULL_DATE_FORMAT_NAME })
+      .component as ComponentType<Partial<DateTimeCellProps>>
+    render(<Cell rowData="2026-12-25" active={false} setRowData={vi.fn()} />, {
+      wrapper: createWrapper(),
+    })
+
+    // A cell that scrolls under the pointer gets pointerenter but no pointermove
+    fireEvent.pointerEnter(screen.getByText('12/25/2026'))
+    await userEvent.click(
+      await screen.findByRole('button', { name: /choose date/i }),
+    )
+
+    expect(await screen.findByRole('dialog')).toBeInTheDocument()
   })
 })

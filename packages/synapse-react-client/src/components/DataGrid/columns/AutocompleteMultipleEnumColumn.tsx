@@ -321,7 +321,8 @@ export const MemoizedAutocompleteMultipleEnumCell = memo(
 
 /**
  * Shows a multiple-value cell's values the way the inactive editor does: a chip
- * for each of the first `limitTags` values, then a count of the rest.
+ * for each of the first `limitTags` values, then a count of the rest. A
+ * negative `limitTags` shows every value, as it does for MUI Autocomplete.
  */
 export function AutocompleteMultipleEnumCellDisplay({
   rowData,
@@ -331,10 +332,11 @@ export function AutocompleteMultipleEnumCellDisplay({
   limitTags: number
 }) {
   const values = createSafeRowData(rowData)
-  const hiddenCount = values.length - limitTags
+  const shownValues = limitTags < 0 ? values : values.slice(0, limitTags)
+  const hiddenCount = values.length - shownValues.length
   return (
     <span className={classNames(styles.display, styles.multipleValues)}>
-      {values.slice(0, limitTags).map((value, index) => (
+      {shownValues.map((value, index) => (
         <span key={index} className={styles.chip}>
           <span className={styles.chipLabel}>
             {castCellValueToString(value)}

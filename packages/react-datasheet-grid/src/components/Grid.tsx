@@ -65,7 +65,9 @@ export const Grid = <T,>({
   onScroll?: React.UIEventHandler<HTMLDivElement>
 }) => {
   // The virtualizer measures every row again whenever getItemKey changes, so
-  // it keeps its identity across renders that leave the rows unchanged.
+  // it keeps its identity across renders that leave the rows and their heights
+  // unchanged. rowHeight is a dependency only to make the virtualizer measure
+  // the rows again when their heights change.
   const getRowKey = useCallback(
     (index: number): React.Key => {
       if (rowKey && index > 0) {
@@ -85,7 +87,8 @@ export const Grid = <T,>({
       }
       return index
     },
-    [data, rowKey],
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- rowHeight makes the virtualizer measure the rows again
+    [data, rowKey, rowHeight],
   )
 
   const rowVirtualizer = useVirtualizer({
