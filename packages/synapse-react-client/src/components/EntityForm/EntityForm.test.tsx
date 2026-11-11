@@ -176,6 +176,31 @@ describe('EntityForm', () => {
     expect(writes.map(w => w.method)).toEqual(['PUT'])
   })
 
+  it('does not save when Enter is pressed; only the host submits', async () => {
+    // With a single text field, browsers submit the form on Enter even without a submit button
+    server.use(
+      ...getEntityFormHandlers(REPO_ORIGIN, {
+        fileContent: {
+          [MOCK_FORM_SCHEMA_ID]: {
+            title: mockFormSchema.title,
+            type: 'object',
+            properties: { teamName: mockFormSchema.properties.teamName },
+          },
+          [MOCK_FORM_UI_SCHEMA_ID]: {},
+        },
+      }),
+    )
+    const { synIdCallback } = renderForm()
+
+    await userEvent.type(
+      await screen.findByLabelText(/Team name/),
+      'My Team{Enter}',
+    )
+
+    expect(SynapseClient.uploadFile).not.toHaveBeenCalled()
+    expect(synIdCallback).not.toHaveBeenCalled()
+  })
+
   it('keeps the answers and allows a retry when saving fails', async () => {
     server.use(...getEntityFormHandlers(REPO_ORIGIN))
     recordEntityWrites()

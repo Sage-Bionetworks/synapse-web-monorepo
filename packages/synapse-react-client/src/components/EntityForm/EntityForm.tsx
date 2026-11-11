@@ -21,7 +21,7 @@ import {
   FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Ref, useImperativeHandle, useMemo, useRef } from 'react'
+import { KeyboardEvent, Ref, useImperativeHandle, useMemo, useRef } from 'react'
 
 export type EntityFormHandle = {
   /** Validates the form and, if valid, saves the user's answers. Does nothing while a save is in progress. */
@@ -256,18 +256,27 @@ export default function EntityForm(props: EntityFormProps) {
       )}
       <ErrorBanner error={saveError} />
       {isSaving && <LoadingIndicator text="Saving" />}
-      {/* Stay mounted while saving so the answers survive a failed save and can be resubmitted */}
-      <Form
-        ref={formRef}
-        validator={validator}
-        schema={formSchemaQuery.data}
-        uiSchema={uiSchema}
-        formData={existingFileContentQuery.data}
-        disabled={isSaving}
-        onSubmit={({ formData }) => saveFormData(formData)}
-      />
+      {/* Only the host submits (via `submitForm`); block the browser's implicit submit on Enter */}
+      <div role="presentation" onKeyDown={preventImplicitSubmit}>
+        {/* Stay mounted while saving so the answers survive a failed save and can be resubmitted */}
+        <Form
+          ref={formRef}
+          validator={validator}
+          schema={formSchemaQuery.data}
+          uiSchema={uiSchema}
+          formData={existingFileContentQuery.data}
+          disabled={isSaving}
+          onSubmit={({ formData }) => saveFormData(formData)}
+        />
+      </div>
     </>
   )
+}
+
+function preventImplicitSubmit(event: KeyboardEvent<HTMLDivElement>) {
+  if (event.key === 'Enter' && !(event.target instanceof HTMLTextAreaElement)) {
+    event.preventDefault()
+  }
 }
 
 function LoadingIndicator(props: { text: string }) {
