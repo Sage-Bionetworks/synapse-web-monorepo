@@ -80,14 +80,16 @@ export default function EntityForm(props: EntityFormProps) {
   })
   const userFolderId = userFolderQuery.data
 
-  const formSchema = useGetJsonFileEntityContent<RJSFSchema>(
-    isAuthenticated ? formSchemaEntityId : undefined,
-  )
-  const uiSchema = useGetJsonFileEntityContent<UiSchema>(
-    isAuthenticated ? formUiSchemaEntityId : undefined,
-  )
-  const fileName = formSchema.data?.title
-    ? `${formSchema.data.title}.json`
+  const { entityQuery: formSchemaEntityQuery, contentQuery: formSchemaQuery } =
+    useGetJsonFileEntityContent<RJSFSchema>(
+      isAuthenticated ? formSchemaEntityId : undefined,
+    )
+  const { entityQuery: uiSchemaEntityQuery, contentQuery: uiSchemaQuery } =
+    useGetJsonFileEntityContent<UiSchema>(
+      isAuthenticated ? formUiSchemaEntityId : undefined,
+    )
+  const fileName = formSchemaQuery.data?.title
+    ? `${formSchemaQuery.data.title}.json`
     : undefined
 
   // The user's previously saved answers, if any
@@ -99,10 +101,12 @@ export default function EntityForm(props: EntityFormProps) {
     enabled: userFolderId != null && fileName != null,
   })
   // The entity is needed even when not pre-filling, to update the existing file rather than create a duplicate
-  const existingFile = useGetJsonFileEntityContent(
-    existingFileQuery.data ?? undefined,
-    { fetchContent: initFormData },
-  )
+  const {
+    entityQuery: existingFileEntityQuery,
+    contentQuery: existingFileContentQuery,
+  } = useGetJsonFileEntityContent(existingFileQuery.data ?? undefined, {
+    fetchContent: initFormData,
+  })
 
   const { mutateAsync: uploadFile } = useSynapseMultipartUpload()
   const { mutateAsync: createEntity } = useCreateEntity()
@@ -123,9 +127,9 @@ export default function EntityForm(props: EntityFormProps) {
         storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
         abortController: undefined,
       })
-      if (existingFile.entity) {
+      if (existingFileEntityQuery.data) {
         return updateEntity({
-          ...existingFile.entity,
+          ...existingFileEntityQuery.data,
           dataFileHandleId: fileHandleId,
         })
       }
@@ -166,14 +170,17 @@ export default function EntityForm(props: EntityFormProps) {
 
   let setupError: Error | null | undefined =
     userProfileError ??
-    formSchema.error ??
-    uiSchema.error ??
+    formSchemaEntityQuery.error ??
+    formSchemaQuery.error ??
+    uiSchemaEntityQuery.error ??
+    uiSchemaQuery.error ??
     userFolderQuery.error ??
     existingFileQuery.error ??
-    existingFile.error
+    existingFileEntityQuery.error ??
+    existingFileContentQuery.error
   for (const [schemaEntityId, schema] of [
-    [formSchemaEntityId, formSchema.data],
-    [formUiSchemaEntityId, uiSchema.data],
+    [formSchemaEntityId, formSchemaQuery.data],
+    [formUiSchemaEntityId, uiSchemaQuery.data],
   ] as const) {
     const isNonObject =
       schema !== undefined && (schema === null || typeof schema !== 'object')
@@ -186,15 +193,15 @@ export default function EntityForm(props: EntityFormProps) {
       `Your submission folder has not been set up yet. The challenge organizers must create a folder named "${userProfile.ownerId}" in ${parentContainerId} that you can edit.`,
     )
   }
-  if (!setupError && formSchema.data && !fileName) {
+  if (!setupError && formSchemaQuery.data && !fileName) {
     setupError = new Error(
       `The form JSON schema (${formSchemaEntityId}) must define a "title". It is used to name the file that stores the form data.`,
     )
   }
   if (
     !setupError &&
-    existingFile.entity &&
-    !isFileEntity(existingFile.entity)
+    existingFileEntityQuery.data &&
+    !isFileEntity(existingFileEntityQuery.data)
   ) {
     setupError = new Error(
       `${fileName} in your submission folder (${userFolderId}) is not a file. Ask the challenge organizers to remove it.`,
@@ -207,11 +214,11 @@ export default function EntityForm(props: EntityFormProps) {
   const hasExistingFile = existingFileQuery.data != null
   const isExistingFileLoaded =
     !hasExistingFile ||
-    (existingFile.entity != null &&
-      (!initFormData || existingFile.data !== undefined))
+    (existingFileEntityQuery.data != null &&
+      (!initFormData || existingFileContentQuery.data !== undefined))
   const isLoaded =
-    formSchema.data != null &&
-    uiSchema.data != null &&
+    formSchemaQuery.data != null &&
+    uiSchemaQuery.data != null &&
     userFolderId != null &&
     existingFileQuery.isSuccess &&
     isExistingFileLoaded
@@ -228,13 +235,13 @@ export default function EntityForm(props: EntityFormProps) {
       <Form
         ref={formRef}
         validator={validator}
-        schema={formSchema.data!}
+        schema={formSchemaQuery.data}
         // Submission is triggered by the host via `submitForm`
         uiSchema={{
-          ...uiSchema.data,
+          ...uiSchemaQuery.data,
           'ui:submitButtonOptions': { norender: true },
         }}
-        formData={existingFile.data}
+        formData={existingFileContentQuery.data}
         disabled={isSaving}
         onSubmit={({ formData }) => saveFormData(formData)}
       />

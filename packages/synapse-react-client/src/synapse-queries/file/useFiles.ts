@@ -294,6 +294,7 @@ export function useGetJsonContentFromFHA<T = unknown>(
 
 /**
  * Fetches a FileEntity and, unless `fetchContent` is false, its content parsed as JSON.
+ * Returns both query results; the content query stays pending (disabled) until the entity has loaded.
  */
 export function useGetJsonFileEntityContent<T = unknown>(
   entityId: string | undefined,
@@ -311,9 +312,5 @@ export function useGetJsonFileEntityContent<T = unknown>(
     false,
     { enabled: fetchContent && entity != null },
   )
-  return {
-    entity,
-    data: contentQuery.data,
-    error: entityQuery.error ?? contentQuery.error,
-  }
+  return { entityQuery, contentQuery }
 }
