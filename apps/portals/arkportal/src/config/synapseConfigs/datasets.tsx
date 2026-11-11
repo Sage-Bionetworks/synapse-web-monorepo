@@ -1,3 +1,4 @@
+import { Chip } from '@mui/material'
 import experimentalDataSvg from '@/config/style/experimentalData.svg?url'
 import publicationDataSvg from '@/config/style/publicationData.svg?url'
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
@@ -42,7 +43,7 @@ export const datasetSchema: TableToGenericCardMapping = {
   title: 'name',
   subTitle: 'program',
   description: 'description',
-  secondaryLabels: ['project', 'programPhase', 'assay', 'datasetType', 'id'],
+  secondaryLabels: ['project', 'programPhase', 'assay', 'datasetVersion', 'id'],
   icon: 'datasetType',
   includeCitation: true,
   defaultCitationFormat: 'nature',
@@ -53,6 +54,14 @@ export const datasetColumnAliases: Record<string, string> = {
 }
 export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
+  CardTypeAdornment: ({ schema, data }) => {
+    const datasetType = data[schema['datasetType']]
+    if (!datasetType) return null
+    // Opaque so the chip stays gray on the colored detail-page header
+    return (
+      <Chip label={datasetType} size="small" sx={{ bgcolor: 'grey.300' }} />
+    )
+  },
   genericCardSchema: datasetSchema,
   titleLinkConfig: {
     urlParamStyle: 'path-segment',
