@@ -216,6 +216,103 @@ describe('SynapseSessionManager', () => {
       expect(signOutSpy).toHaveBeenCalledWith('42')
     })
 
+    describe('requireAuthenticationInDefaultRealm', () => {
+      const ARCUS_REALM_ID = '1'
+      const ARCUS_REALM_PRINCIPAL: RealmPrincipal = {
+        realmId: ARCUS_REALM_ID,
+        anonymousUser: '999',
+      }
+      const MOCK_INTROSPECTION_ARCUS_ANONYMOUS: OAuthTokenIntrospectionResponse =
+        { ...MOCK_INTROSPECTION_ANONYMOUS, sub: '999' }
+
+      it('signs out a user authenticated in another realm, leaving an anonymous session in the default realm', async () => {
+        mockGetAccessToken
+          .mockResolvedValueOnce(MOCK_ACCESS_TOKEN)
+          .mockResolvedValueOnce(MOCK_ANONYMOUS_TOKEN)
+        mockPostAuthV1Oauth2Introspect
+          .mockResolvedValueOnce(MOCK_INTROSPECTION_AUTHENTICATED)
+          .mockResolvedValueOnce(MOCK_INTROSPECTION_ARCUS_ANONYMOUS)
+        mockGetRepoV1RealmPrincipals
+          .mockResolvedValueOnce(MOCK_REALM_PRINCIPAL)
+          .mockResolvedValueOnce(ARCUS_REALM_PRINCIPAL)
+
+        const manager = createManager({
+          defaultRealm: ARCUS_REALM_ID,
+          requireAuthenticationInDefaultRealm: true,
+        })
+        const listener = vi.fn()
+        manager.subscribe(listener)
+        await manager.refreshSession()
+
+        expect(signOutSpy).toHaveBeenCalledTimes(1)
+        expect(signOutSpy).toHaveBeenCalledWith(ARCUS_REALM_ID)
+        // The other-realm session must never be published as authenticated
+        expect(listener).toHaveBeenCalledTimes(1)
+        expect(manager.getSnapshot()).toEqual({
+          token: MOCK_ANONYMOUS_TOKEN,
+          realmId: ARCUS_REALM_ID,
+          userId: '999',
+          isAuthenticated: false,
+          hasInitializedSession: true,
+        } satisfies SessionState)
+      })
+
+      it('keeps a user authenticated in the default realm signed in', async () => {
+        mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+        mockPostAuthV1Oauth2Introspect.mockResolvedValue(
+          MOCK_INTROSPECTION_AUTHENTICATED,
+        )
+        mockGetRepoV1RealmPrincipals.mockResolvedValue(ARCUS_REALM_PRINCIPAL)
+
+        const manager = createManager({
+          defaultRealm: ARCUS_REALM_ID,
+          requireAuthenticationInDefaultRealm: true,
+        })
+        await manager.refreshSession()
+
+        expect(signOutSpy).not.toHaveBeenCalled()
+        expect(manager.getSnapshot()).toEqual(
+          expect.objectContaining({
+            realmId: ARCUS_REALM_ID,
+            isAuthenticated: true,
+          }),
+        )
+      })
+
+      it('leaves an anonymous session from another realm unchanged', async () => {
+        mockGetAccessToken.mockResolvedValue(MOCK_ANONYMOUS_TOKEN)
+        mockPostAuthV1Oauth2Introspect.mockResolvedValue(
+          MOCK_INTROSPECTION_ANONYMOUS,
+        )
+
+        const manager = createManager({
+          defaultRealm: ARCUS_REALM_ID,
+          requireAuthenticationInDefaultRealm: true,
+        })
+        await manager.refreshSession()
+
+        expect(signOutSpy).not.toHaveBeenCalled()
+        expect(manager.getSnapshot()).toEqual(
+          expect.objectContaining({ realmId: '0', isAuthenticated: false }),
+        )
+      })
+
+      it('keeps a user authenticated in another realm signed in when not set', async () => {
+        mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+        mockPostAuthV1Oauth2Introspect.mockResolvedValue(
+          MOCK_INTROSPECTION_AUTHENTICATED,
+        )
+
+        const manager = createManager({ defaultRealm: ARCUS_REALM_ID })
+        await manager.refreshSession()
+
+        expect(signOutSpy).not.toHaveBeenCalled()
+        expect(manager.getSnapshot()).toEqual(
+          expect.objectContaining({ realmId: '0', isAuthenticated: true }),
+        )
+      })
+    })
+
     it('initializes session when Terms of Service error occurs', async () => {
       mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
       mockPostAuthV1Oauth2Introspect.mockResolvedValue(

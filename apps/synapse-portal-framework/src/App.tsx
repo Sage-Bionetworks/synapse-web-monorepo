@@ -22,7 +22,7 @@ import {
 export type AppProps = PropsWithChildren<{
   /** The default realm ID to use for the application */
   defaultRealmId?: string
-  /** If true, redirects unauthenticated users to OneSage login after session initialization */
+  /** If true, redirects unauthenticated users to OneSage login after session initialization. Users signed in to a realm other than `defaultRealmId` are signed out first, so they are redirected as well. */
   requireAuthentication?: boolean
 }>
 

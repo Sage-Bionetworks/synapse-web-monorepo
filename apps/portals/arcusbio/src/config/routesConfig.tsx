@@ -8,7 +8,7 @@ import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSy
 import HomePage from '../pages/HomePage'
 import { dataQueryWrapperPlotNavProps } from './synapseConfigs/data'
 
-const ARCUS_BIO_REALM_ID = '0' // replace me!
+const ARCUS_BIO_REALM_ID = '1'
 
 const routes: RouteObject[] = [
   {
