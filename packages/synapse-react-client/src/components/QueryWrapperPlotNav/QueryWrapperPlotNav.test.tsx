@@ -243,3 +243,26 @@ describe('QueryWrapperPlotNav Query Builder conditions', () => {
     })
   })
 })
+
+describe('QueryWrapperPlotNav facet filter visibility', () => {
+  it('shows the facet filters by default', async () => {
+    renderQueryWrapperPlotNav({})
+
+    expect(
+      await screen.findByRole('button', { name: 'Hide filters' }),
+    ).toBeInTheDocument()
+  })
+
+  it('hides the facet filters until requested when defaultShowFacetFilter is false', async () => {
+    const user = userEvent.setup()
+    renderQueryWrapperPlotNav({ defaultShowFacetFilter: false })
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Show filters' }),
+    )
+
+    expect(
+      screen.getByRole('button', { name: 'Hide filters' }),
+    ).toBeInTheDocument()
+  })
+})

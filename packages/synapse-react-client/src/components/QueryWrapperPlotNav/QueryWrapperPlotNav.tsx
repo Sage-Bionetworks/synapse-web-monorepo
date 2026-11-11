@@ -132,6 +132,7 @@ type QueryWrapperPlotNavOwnProps = {
   Pick<
     QueryVisualizationWrapperProps,
     | 'defaultShowPlots'
+    | 'defaultShowFacetFilter'
     | 'visibleColumnCount'
     | 'hiddenColumns'
     | 'columnAliases'
@@ -565,6 +566,7 @@ export default function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
             visibleColumnCount={props.visibleColumnCount}
             hiddenColumns={props.hiddenColumns}
             defaultShowPlots={props.defaultShowPlots}
+            defaultShowFacetFilter={props.defaultShowFacetFilter}
             hideCopyToClipboard={props.hideCopyToClipboard}
             defaultShowSearchBar={
               (props.defaultShowSearchBox || isFullTextSearchEnabled) &&
