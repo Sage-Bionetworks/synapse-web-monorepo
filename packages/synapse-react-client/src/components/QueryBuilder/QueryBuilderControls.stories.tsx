@@ -8,6 +8,7 @@ import {
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { Suspense, useState } from 'react'
+import { userEvent, within } from 'storybook/test'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
 import { QueryBuilderControls } from './QueryBuilderControls'
@@ -97,5 +98,43 @@ export const ExceedsMaximumNestingDepth: Story = {
       op: 'is_all_of',
       values: ['CSV', 'VCF'],
     }),
+  },
+}
+
+/** The Query Summary shows the formatted SQL for nested conditions. */
+export const SqlSummary: Story = {
+  args: {
+    initialTree: {
+      ...newEmptyGroup(),
+      children: [
+        {
+          ...newBlankCondition('study', 'STRING'),
+          op: 'is_any_of',
+          values: ['LLFS'],
+        },
+        {
+          ...newEmptyGroup(),
+          combinator: 'OR',
+          not: true,
+          children: [
+            {
+              ...newBlankCondition('sex', 'STRING'),
+              op: 'is_any_of',
+              values: ['Male'],
+            },
+            {
+              ...newBlankCondition('fileFormat', 'STRING_LIST'),
+              op: 'is_all_of',
+              values: ['CSV', 'VCF'],
+            },
+          ],
+        },
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: 'Show SQL' }),
+    )
   },
 }

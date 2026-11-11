@@ -117,6 +117,56 @@ describe('QueryBuilderControls', () => {
     )
   })
 
+  it('shows the SQL for the conditions with one clause and condition per line', async () => {
+    const user = userEvent.setup()
+    renderQueryBuilder(null, {
+      ...queryRequest,
+      query: {
+        ...queryRequest.query,
+        additionalFilters: [
+          {
+            concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+            operator: 'AND',
+            children: [
+              {
+                concreteType:
+                  'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                columnName: 'sex',
+                operator: ColumnSingleValueFilterOperator.IN,
+                values: ['Female'],
+              },
+              {
+                concreteType:
+                  'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                columnName: 'sex',
+                operator: ColumnSingleValueFilterOperator.IS_NOT_NULL,
+                values: [],
+              },
+            ],
+          },
+        ],
+      },
+    })
+    await screen.findAllByRole('group', { name: 'Filter condition on sex' })
+
+    await user.click(screen.getByRole('button', { name: 'Show SQL' }))
+
+    const sql = await screen.findByRole('code')
+    expect(sql.textContent).toBe(
+      [
+        'SELECT',
+        '  *',
+        'FROM',
+        `  ${participantsTableId}`,
+        'WHERE',
+        '  (',
+        `    "sex" IN ('Female')`,
+        '    AND "sex" IS NOT NULL',
+        '  )',
+      ].join('\n'),
+    )
+  })
+
   it('warns, and starts from an empty tree, when it cannot show the applied conditions exactly', async () => {
     // A LIKE pattern with an inner wildcard has no Query Builder operator.
     renderQueryBuilder(null, {

@@ -15,12 +15,12 @@ import { QBGroup } from './QueryBuilderTypes'
  * tab in the summary bar.
  */
 export function useQBCombinedSql(
-  tree: QBGroup | null,
+  tree: QBGroup,
 ): UseQueryResult<string | undefined> {
   const { getCurrentQueryRequest } = useQueryContext()
 
   const request: QueryBundleRequest = useMemo(() => {
-    const translated = tree ? qbNodeToApiFilter(tree) : null
+    const translated = qbNodeToApiFilter(tree)
     const currentQueryRequest = getCurrentQueryRequest()
     // Reuse the current query's SQL + entity so the backend combines the QB
     // filters against the same base view, but ask only for combinedSql.
