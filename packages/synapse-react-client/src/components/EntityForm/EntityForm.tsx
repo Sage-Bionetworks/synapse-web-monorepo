@@ -21,7 +21,14 @@ import {
   FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { KeyboardEvent, Ref, useImperativeHandle, useMemo, useRef } from 'react'
+import { Ref, useImperativeHandle, useRef } from 'react'
+
+/**
+ * Replaces RJSF's submit button: only the host submits, via `submitForm`. Per the HTML spec, a disabled default
+ * button also stops the browser from submitting the form when Enter is pressed.
+ * Module-level so its identity is stable: RJSF recomputes its state from props when they change.
+ */
+const HOST_SUBMITS_ONLY = <button type="submit" disabled hidden />
 
 export type EntityFormHandle = {
   /** Validates the form and, if valid, saves the user's answers. Does nothing while a save is in progress. */
@@ -223,15 +230,6 @@ export default function EntityForm(props: EntityFormProps) {
     [isLoaded, isSaving],
   )
 
-  // Submission is triggered by the host via `submitForm`
-  const uiSchema = useMemo(
-    () => ({
-      ...uiSchemaQuery.data,
-      'ui:submitButtonOptions': { norender: true },
-    }),
-    [uiSchemaQuery.data],
-  )
-
   if (!isAuthenticated) {
     return (
       <Alert severity="info">
@@ -256,27 +254,20 @@ export default function EntityForm(props: EntityFormProps) {
       )}
       <ErrorBanner error={saveError} />
       {isSaving && <LoadingIndicator text="Saving" />}
-      {/* Only the host submits (via `submitForm`); block the browser's implicit submit on Enter */}
-      <div role="presentation" onKeyDown={preventImplicitSubmit}>
-        {/* Stay mounted while saving so the answers survive a failed save and can be resubmitted */}
-        <Form
-          ref={formRef}
-          validator={validator}
-          schema={formSchemaQuery.data}
-          uiSchema={uiSchema}
-          formData={existingFileContentQuery.data}
-          disabled={isSaving}
-          onSubmit={({ formData }) => saveFormData(formData)}
-        />
-      </div>
+      {/* Stay mounted while saving so the answers survive a failed save and can be resubmitted */}
+      <Form
+        ref={formRef}
+        validator={validator}
+        schema={formSchemaQuery.data}
+        uiSchema={uiSchemaQuery.data}
+        formData={existingFileContentQuery.data}
+        disabled={isSaving}
+        onSubmit={({ formData }) => saveFormData(formData)}
+      >
+        {HOST_SUBMITS_ONLY}
+      </Form>
     </>
   )
-}
-
-function preventImplicitSubmit(event: KeyboardEvent<HTMLDivElement>) {
-  if (event.key === 'Enter' && !(event.target instanceof HTMLTextAreaElement)) {
-    event.preventDefault()
-  }
 }
 
 function LoadingIndicator(props: { text: string }) {
