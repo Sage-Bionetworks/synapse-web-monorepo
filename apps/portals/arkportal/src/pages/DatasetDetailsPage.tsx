@@ -94,6 +94,7 @@ function DatasetDetailsPageContent(props: { id: string }) {
           defaultShowPlots={false}
           searchParams={{ id: associatedDatasetIds }}
           sqlOperator={ColumnSingleValueFilterOperator.IN}
+          lockedColumn={{ columnName: 'id' }}
         />
       ),
     })
