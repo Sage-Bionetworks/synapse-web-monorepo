@@ -99,9 +99,9 @@ export default function EntityForm(props: EntityFormProps) {
     enabled: userFolderId != null && fileName != null,
   })
   // The entity is needed even when not pre-filling, to update the existing file rather than create a duplicate
-  const existingFile = useGetJsonFileEntityContent<unknown>(
+  const existingFile = useGetJsonFileEntityContent(
     existingFileQuery.data ?? undefined,
-    { fetchContent: initFormData, requireObject: false },
+    { fetchContent: initFormData },
   )
 
   const { mutateAsync: uploadFile } = useSynapseMultipartUpload()
@@ -140,7 +140,7 @@ export default function EntityForm(props: EntityFormProps) {
     onSuccess: (savedEntity: FileEntity, formData) => {
       // Seed the content cache so pre-filling doesn't re-download the answers that were just saved
       queryClient.setQueryData(
-        keyFactory.getPresignedUrlFromFHAContentQueryKey(
+        keyFactory.getPresignedUrlFromFHAJsonContentQueryKey(
           {
             associateObjectId: savedEntity.id!,
             associateObjectType: FileHandleAssociateType.FileEntity,
@@ -148,7 +148,7 @@ export default function EntityForm(props: EntityFormProps) {
           },
           false,
         ),
-        JSON.stringify(formData),
+        formData,
       )
       synIdCallback(savedEntity.id!)
     },
@@ -171,6 +171,16 @@ export default function EntityForm(props: EntityFormProps) {
     userFolderQuery.error ??
     existingFileQuery.error ??
     existingFile.error
+  for (const [schemaEntityId, schema] of [
+    [formSchemaEntityId, formSchema.data],
+    [formUiSchemaEntityId, uiSchema.data],
+  ] as const) {
+    const isNonObject =
+      schema !== undefined && (schema === null || typeof schema !== 'object')
+    if (!setupError && isNonObject) {
+      setupError = new Error(`${schemaEntityId} does not contain a JSON object`)
+    }
+  }
   if (!setupError && userProfile && userFolderId === null) {
     setupError = new Error(
       `Your submission folder has not been set up yet. The challenge organizers must create a folder named "${userProfile.ownerId}" in ${parentContainerId} that you can edit.`,

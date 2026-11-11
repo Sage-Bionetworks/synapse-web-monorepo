@@ -18,7 +18,7 @@ import {
   UseQueryResult,
 } from '@tanstack/react-query'
 import { cloneDeep } from 'lodash-es'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 
 export type StablePresignedUrl = {
   dataUrl?: string
@@ -101,6 +101,25 @@ export function useGetPresignedUrlContent(
   })
 }
 
+async function getPresignedUrlContentFromFHA(
+  fileHandleAssociation: FileHandleAssociation,
+  accessToken: string | undefined,
+) {
+  const batchFileResult = await SynapseClient.getFiles(
+    {
+      requestedFiles: [fileHandleAssociation],
+      includeFileHandles: true,
+      includePreSignedURLs: true,
+      includePreviewPreSignedURLs: false,
+    },
+    accessToken,
+  )
+  return SynapseClient.getFileHandleContent(
+    batchFileResult.requestedFiles[0].fileHandle!,
+    batchFileResult.requestedFiles[0].preSignedURL!,
+  )
+}
+
 export function useGetPresignedUrlContentFromFHA(
   fileHandleAssociation: FileHandleAssociation,
   forceAnonymous: boolean = false,
@@ -109,30 +128,17 @@ export function useGetPresignedUrlContentFromFHA(
   >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  const queryFn = async () => {
-    const batchFileResult = await SynapseClient.getFiles(
-      {
-        requestedFiles: [fileHandleAssociation],
-        includeFileHandles: true,
-        includePreSignedURLs: true,
-        includePreviewPreSignedURLs: false,
-      },
-      forceAnonymous ? undefined : accessToken,
-    )
-
-    const data = await SynapseClient.getFileHandleContent(
-      batchFileResult.requestedFiles[0].fileHandle!,
-      batchFileResult.requestedFiles[0].preSignedURL!,
-    )
-    return data
-  }
   return useQuery<string, SynapseClientError>({
     ...options,
     queryKey: keyFactory.getPresignedUrlFromFHAContentQueryKey(
       fileHandleAssociation,
       forceAnonymous,
     ),
-    queryFn,
+    queryFn: () =>
+      getPresignedUrlContentFromFHA(
+        fileHandleAssociation,
+        forceAnonymous ? undefined : accessToken,
+      ),
     staleTime: Infinity,
   })
 }
@@ -249,17 +255,54 @@ export function useFileContent(
 }
 
 /**
- * Fetches a FileEntity and, unless `fetchContent` is false, parses its content as JSON.
- * With `requireObject`, content that is not a JSON object (e.g. `null`) is reported as an error.
+ * Get the content of a file and parse it as JSON. Parsing happens in the `queryFn` so that invalid JSON fails the
+ * query, and the parsed value is what gets cached.
  */
-export function useGetJsonFileEntityContent<T>(
-  entityId: string | undefined,
-  options: { fetchContent?: boolean; requireObject?: boolean } = {},
+export function useGetJsonContentFromFHA<T = unknown>(
+  fileHandleAssociation: FileHandleAssociation,
+  forceAnonymous: boolean = false,
+  options?: Partial<
+    Omit<
+      UseQueryOptions<T, SynapseClientError | Error>,
+      'staleTime' | 'queryKey' | 'queryFn'
+    >
+  >,
 ) {
-  const { fetchContent = true, requireObject = true } = options
+  const { accessToken, keyFactory } = useSynapseContext()
+  return useQuery<T, SynapseClientError | Error>({
+    ...options,
+    queryKey: keyFactory.getPresignedUrlFromFHAJsonContentQueryKey(
+      fileHandleAssociation,
+      forceAnonymous,
+    ),
+    queryFn: async () => {
+      const content = await getPresignedUrlContentFromFHA(
+        fileHandleAssociation,
+        forceAnonymous ? undefined : accessToken,
+      )
+      try {
+        return JSON.parse(content) as T
+      } catch (e) {
+        throw new Error(
+          `${fileHandleAssociation.associateObjectId} does not contain valid JSON: ${String(e)}`,
+        )
+      }
+    },
+    staleTime: Infinity,
+  })
+}
+
+/**
+ * Fetches a FileEntity and, unless `fetchContent` is false, its content parsed as JSON.
+ */
+export function useGetJsonFileEntityContent<T = unknown>(
+  entityId: string | undefined,
+  options: { fetchContent?: boolean } = {},
+) {
+  const { fetchContent = true } = options
   const entityQuery = useGetEntity<FileEntity>(entityId)
   const entity = entityQuery.data
-  const contentQuery = useGetPresignedUrlContentFromFHA(
+  const contentQuery = useGetJsonContentFromFHA<T>(
     {
       associateObjectId: entity?.id ?? '',
       associateObjectType: FileHandleAssociateType.FileEntity,
@@ -268,29 +311,9 @@ export function useGetJsonFileEntityContent<T>(
     false,
     { enabled: fetchContent && entity != null },
   )
-  const content = contentQuery.data
-  const parsed = useMemo((): { data?: T; error?: Error } => {
-    if (content == null) {
-      return {}
-    }
-    let data: unknown
-    try {
-      data = JSON.parse(content)
-    } catch (e) {
-      return {
-        error: new Error(
-          `${entityId} does not contain valid JSON: ${String(e)}`,
-        ),
-      }
-    }
-    if (requireObject && (data == null || typeof data !== 'object')) {
-      return { error: new Error(`${entityId} does not contain a JSON object`) }
-    }
-    return { data: data as T }
-  }, [content, entityId, requireObject])
   return {
     entity,
-    data: parsed.data,
-    error: entityQuery.error ?? contentQuery.error ?? parsed.error,
+    data: contentQuery.data,
+    error: entityQuery.error ?? contentQuery.error,
   }
 }
