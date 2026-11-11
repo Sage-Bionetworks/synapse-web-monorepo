@@ -2,26 +2,26 @@ import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 import { SYNAPSE_STORAGE_LOCATION_ID } from '@/synapse-client/SynapseClient'
 import {
   useCreateEntity,
-  useGetEntity,
   useGetEntityLookupQueryOptions,
   useUpdateEntity,
 } from '@/synapse-queries/entity/useEntity'
-import { useGetPresignedUrlContentFromFHA } from '@/synapse-queries/file/useFiles'
+import { useGetJsonFileEntityContent } from '@/synapse-queries/file/useFiles'
 import { useSynapseMultipartUpload } from '@/synapse-queries/file/useSynapseMultipartUpload'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
+import { ErrorBanner } from '@/components/error/ErrorBanner'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { isFileEntity } from '@/utils/types/IsType'
 import { Alert, Stack, Typography } from '@mui/material'
 import Form from '@rjsf/core'
 import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'
 import {
+  FILE_ENTITY_CONCRETE_TYPE_VALUE,
   FileEntity,
   FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { Ref, useImperativeHandle, useMemo, useRef } from 'react'
-
-const FILE_ENTITY_CONCRETE_TYPE = 'org.sagebionetworks.repo.model.FileEntity'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Ref, useImperativeHandle, useRef } from 'react'
 
 export type EntityFormHandle = {
   /** Validates the form and, if valid, saves the user's answers. No-op until the form has loaded. */
@@ -46,41 +46,6 @@ export type EntityFormProps = {
   synIdCallback: (synId: string) => void
 }
 
-/** Fetches a FileEntity and parses its content as JSON. */
-function useGetJsonFileEntityContent<T>(entityId: string | undefined) {
-  const entityQuery = useGetEntity<FileEntity>(entityId)
-  const entity = entityQuery.data
-  const contentQuery = useGetPresignedUrlContentFromFHA(
-    {
-      associateObjectId: entity?.id ?? '',
-      associateObjectType: FileHandleAssociateType.FileEntity,
-      fileHandleId: entity?.dataFileHandleId ?? '',
-    },
-    false,
-    { enabled: entity != null },
-  )
-  const content = contentQuery.data
-  const parsed = useMemo((): { data?: T; error?: Error } => {
-    if (content == null) {
-      return {}
-    }
-    try {
-      return { data: JSON.parse(content) as T }
-    } catch (e) {
-      return {
-        error: new Error(
-          `${entityId} does not contain valid JSON: ${String(e)}`,
-        ),
-      }
-    }
-  }, [content, entityId])
-  return {
-    entity,
-    data: parsed.data,
-    error: entityQuery.error ?? contentQuery.error ?? parsed.error,
-  }
-}
-
 export default function EntityForm(props: EntityFormProps) {
   const {
     ref,
@@ -90,11 +55,16 @@ export default function EntityForm(props: EntityFormProps) {
     initFormData,
     synIdCallback,
   } = props
-  const { isAuthenticated } = useSynapseContext()
+  const { isAuthenticated, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
   const formRef = useRef<Form>(null)
 
   useImperativeHandle(ref, () => ({
-    submitForm: () => formRef.current?.submit(),
+    submitForm: () => {
+      if (!isSavingRef.current) {
+        formRef.current?.submit()
+      }
+    },
   }))
 
   const { data: userProfile, error: userProfileError } =
@@ -128,12 +98,10 @@ export default function EntityForm(props: EntityFormProps) {
     }),
     enabled: userFolderId != null && fileName != null,
   })
+  // The entity is needed even when not pre-filling, to update the existing file rather than create a duplicate
   const existingFile = useGetJsonFileEntityContent<unknown>(
-    initFormData ? (existingFileQuery.data ?? undefined) : undefined,
-  )
-  // When not pre-filling, we still need the entity to update it rather than create a duplicate
-  const { data: existingFileEntity } = useGetEntity<FileEntity>(
     existingFileQuery.data ?? undefined,
+    { fetchContent: initFormData, requireObject: false },
   )
 
   const { mutateAsync: uploadFile } = useSynapseMultipartUpload()
@@ -155,24 +123,38 @@ export default function EntityForm(props: EntityFormProps) {
         storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
         abortController: undefined,
       })
-      if (existingFileEntity) {
+      if (existingFile.entity) {
         return updateEntity({
-          ...existingFileEntity,
+          ...existingFile.entity,
           dataFileHandleId: fileHandleId,
         })
       }
       const newFileEntity: FileEntity = {
         parentId: userFolderId!,
         name: fileName!,
-        concreteType: FILE_ENTITY_CONCRETE_TYPE,
+        concreteType: FILE_ENTITY_CONCRETE_TYPE_VALUE,
         dataFileHandleId: fileHandleId,
       }
-      return createEntity(newFileEntity)
+      return (await createEntity(newFileEntity)) as FileEntity
     },
-    onSuccess: savedEntity => {
+    onSuccess: (savedEntity: FileEntity, formData) => {
+      // Seed the content cache so pre-filling doesn't re-download the answers that were just saved
+      queryClient.setQueryData(
+        keyFactory.getPresignedUrlFromFHAContentQueryKey(
+          {
+            associateObjectId: savedEntity.id!,
+            associateObjectType: FileHandleAssociateType.FileEntity,
+            fileHandleId: savedEntity.dataFileHandleId,
+          },
+          false,
+        ),
+        JSON.stringify(formData),
+      )
       synIdCallback(savedEntity.id!)
     },
   })
+  const isSavingRef = useRef(isSaving)
+  isSavingRef.current = isSaving
 
   if (!isAuthenticated) {
     return (
@@ -182,61 +164,79 @@ export default function EntityForm(props: EntityFormProps) {
     )
   }
 
-  let error: Error | null | undefined =
+  let setupError: Error | null | undefined =
     userProfileError ??
     formSchema.error ??
     uiSchema.error ??
     userFolderQuery.error ??
     existingFileQuery.error ??
-    existingFile.error ??
-    saveError
-  if (!error && userProfile && userFolderId === null) {
-    error = new Error(
+    existingFile.error
+  if (!setupError && userProfile && userFolderId === null) {
+    setupError = new Error(
       `Your submission folder has not been set up yet. The challenge organizers must create a folder named "${userProfile.ownerId}" in ${parentContainerId} that you can edit.`,
     )
   }
-  if (!error && formSchema.data && !fileName) {
-    error = new Error(
+  if (!setupError && formSchema.data && !fileName) {
+    setupError = new Error(
       `The form JSON schema (${formSchemaEntityId}) must define a "title". It is used to name the file that stores the form data.`,
     )
   }
-  if (error) {
-    return <Alert severity="error">{error.message}</Alert>
+  if (
+    !setupError &&
+    existingFile.entity &&
+    !isFileEntity(existingFile.entity)
+  ) {
+    setupError = new Error(
+      `${fileName} in your submission folder (${userFolderId}) is not a file. Ask the challenge organizers to remove it.`,
+    )
+  }
+  if (setupError) {
+    return <ErrorBanner error={setupError} />
   }
 
+  const hasExistingFile = existingFileQuery.data != null
+  const isExistingFileLoaded =
+    !hasExistingFile ||
+    (existingFile.entity != null &&
+      (!initFormData || existingFile.data !== undefined))
   const isLoaded =
     formSchema.data != null &&
     uiSchema.data != null &&
     userFolderId != null &&
     existingFileQuery.isSuccess &&
-    (existingFileQuery.data == null || existingFileEntity != null) &&
-    (!initFormData ||
-      existingFileQuery.data == null ||
-      existingFile.data !== undefined)
+    isExistingFileLoaded
 
-  if (!isLoaded || isSaving) {
-    return (
-      <Stack direction="row" alignItems="center" gap={1} sx={{ my: 2 }}>
-        <SynapseSpinner margin="0" />
-        <Typography variant="body1">
-          {isSaving ? 'Saving' : 'Loading form'}&hellip;
-        </Typography>
-      </Stack>
-    )
+  if (!isLoaded) {
+    return <LoadingIndicator text="Loading form" />
   }
 
   return (
-    <Form
-      ref={formRef}
-      validator={validator}
-      schema={formSchema.data!}
-      // Submission is triggered by the host via `submitForm`
-      uiSchema={{
-        ...uiSchema.data,
-        'ui:submitButtonOptions': { norender: true },
-      }}
-      formData={existingFile.data}
-      onSubmit={({ formData }) => saveFormData(formData)}
-    />
+    <>
+      <ErrorBanner error={saveError} />
+      {isSaving && <LoadingIndicator text="Saving" />}
+      {/* Stay mounted while saving so the answers survive a failed save and can be resubmitted */}
+      <Form
+        ref={formRef}
+        validator={validator}
+        schema={formSchema.data!}
+        // Submission is triggered by the host via `submitForm`
+        uiSchema={{
+          ...uiSchema.data,
+          'ui:submitButtonOptions': { norender: true },
+        }}
+        formData={existingFile.data}
+        disabled={isSaving}
+        onSubmit={({ formData }) => saveFormData(formData)}
+      />
+    </>
+  )
+}
+
+function LoadingIndicator(props: { text: string }) {
+  return (
+    <Stack direction="row" alignItems="center" gap={1} sx={{ my: 2 }}>
+      <SynapseSpinner margin="0" />
+      <Typography variant="body1">{props.text}&hellip;</Typography>
+    </Stack>
   )
 }

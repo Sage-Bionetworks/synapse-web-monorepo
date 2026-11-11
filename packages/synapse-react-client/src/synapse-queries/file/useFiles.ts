@@ -2,10 +2,13 @@ import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { fetchBlob, useCreateUrlForData } from '@/utils/hooks'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { useGetEntity } from '../entity/useEntity'
 import {
   BatchFileRequest,
   BatchFileResult,
+  FileEntity,
   FileHandle,
+  FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 import {
@@ -15,7 +18,7 @@ import {
   UseQueryResult,
 } from '@tanstack/react-query'
 import { cloneDeep } from 'lodash-es'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 export type StablePresignedUrl = {
   dataUrl?: string
@@ -243,4 +246,51 @@ export function useFileContent(
     queryKey: keyFactory.getFileContentKey(fileURL),
     queryFn,
   })
+}
+
+/**
+ * Fetches a FileEntity and, unless `fetchContent` is false, parses its content as JSON.
+ * With `requireObject`, content that is not a JSON object (e.g. `null`) is reported as an error.
+ */
+export function useGetJsonFileEntityContent<T>(
+  entityId: string | undefined,
+  options: { fetchContent?: boolean; requireObject?: boolean } = {},
+) {
+  const { fetchContent = true, requireObject = true } = options
+  const entityQuery = useGetEntity<FileEntity>(entityId)
+  const entity = entityQuery.data
+  const contentQuery = useGetPresignedUrlContentFromFHA(
+    {
+      associateObjectId: entity?.id ?? '',
+      associateObjectType: FileHandleAssociateType.FileEntity,
+      fileHandleId: entity?.dataFileHandleId ?? '',
+    },
+    false,
+    { enabled: fetchContent && entity != null },
+  )
+  const content = contentQuery.data
+  const parsed = useMemo((): { data?: T; error?: Error } => {
+    if (content == null) {
+      return {}
+    }
+    let data: unknown
+    try {
+      data = JSON.parse(content)
+    } catch (e) {
+      return {
+        error: new Error(
+          `${entityId} does not contain valid JSON: ${String(e)}`,
+        ),
+      }
+    }
+    if (requireObject && (data == null || typeof data !== 'object')) {
+      return { error: new Error(`${entityId} does not contain a JSON object`) }
+    }
+    return { data: data as T }
+  }, [content, entityId, requireObject])
+  return {
+    entity,
+    data: parsed.data,
+    error: entityQuery.error ?? contentQuery.error ?? parsed.error,
+  }
 }
