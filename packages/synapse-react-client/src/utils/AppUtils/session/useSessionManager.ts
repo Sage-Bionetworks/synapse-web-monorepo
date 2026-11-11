@@ -21,6 +21,8 @@ export type UseSessionManagerOptions = {
   defaultRealm?: string
   /* If defined, specifies the allowable elapsed time in seconds since the last time the End-User was actively authenticated. If the elapsed time is greater than this value, the session will be cleared and the user will have to re-authenticate. */
   maxAge?: number
+  /** If true, a user who is signed in to a realm other than `defaultRealm` is signed out, leaving an anonymous session in `defaultRealm`. */
+  requireAuthenticationInDefaultRealm?: boolean
   /** Called if the user is not authenticated when the session is initialized. Can be used to trigger an error if authentication is expected. */
   onMissingExpectedAuthentication?: () => void
   /*
@@ -57,6 +59,7 @@ export function useSessionManager(
   const {
     defaultRealm = '0',
     maxAge,
+    requireAuthenticationInDefaultRealm,
     onMissingExpectedAuthentication,
     onTwoFactorAuthResetThroughSSO,
   } = options
@@ -78,6 +81,7 @@ export function useSessionManager(
       new SynapseSessionManager({
         defaultRealm,
         maxAge,
+        requireAuthenticationInDefaultRealm,
         onMissingExpectedAuthentication: () => {
           onMissingExpectedAuthenticationRef.current?.()
         },

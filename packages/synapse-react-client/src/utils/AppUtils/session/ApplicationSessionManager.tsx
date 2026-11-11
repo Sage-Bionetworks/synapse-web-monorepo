@@ -29,7 +29,7 @@ export type ApplicationSessionManagerProps = PropsWithChildren<{
     twoFaResetToken: string,
   ) => void
   appId?: SynapseContextType['appId']
-  /* If true, redirects unauthenticated users to OneSage login after session initialization */
+  /* If true, redirects unauthenticated users to OneSage login after session initialization. Users signed in to a realm other than `defaultRealmId` are signed out first, so they are redirected as well. */
   requireAuthentication?: boolean
 }>
 
@@ -61,6 +61,7 @@ export function ApplicationSessionManager(
   const { sessionContext, token } = useSessionManager({
     ...hookOptions,
     defaultRealm: defaultRealmId,
+    requireAuthenticationInDefaultRealm: requireAuthentication,
   })
   // The experimental mode cookie cannot exist while prerendering, so reading it
   // during the first hydrating render would be a hydration mismatch in every
