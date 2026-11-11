@@ -2597,6 +2597,7 @@ export const getFileHandleContent = (
         .then(text => {
           resolve(text)
         })
+        .catch(reject)
     } else {
       reject(
         new Error(

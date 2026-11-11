@@ -1,7 +1,7 @@
 // EntityForm:
 import SynapseClient from '@/synapse-client'
-import { getFileHandleContent } from '@/synapse-client/SynapseClient'
 import { SynapseContext } from '@/utils/context/SynapseContext'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 // Will generate a Form (based on your schema files).
 // Gathers user input (including files)
 // Will give you the Synapse ID of the FileEntity that contains the user form data.
@@ -13,7 +13,9 @@ import {
   FileEntity,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
+import { Alert, Stack, Typography } from '@mui/material'
 import { Component, ContextType, createRef } from 'react'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 
 export type EntityFormProps = {
   // Provide the parent container (folder/project), that should contain a folder (named <user_id>) that this user can write to.
@@ -24,8 +26,9 @@ export type EntityFormProps = {
   synIdCallback: (synId: string) => void // callback.  Once the form output has been saved to a FileEntity, will send synID back
 }
 type EntityFormState = {
-  error?: any
-  isLoading?: boolean
+  error?: Error
+  isLoading: boolean // loading the schemas and the user's target folder
+  isSaving: boolean // uploading the user's form data
   successfullyUploaded: boolean
   containerId?: string
   userprofile?: UserProfile
@@ -40,12 +43,14 @@ export class EntityForm extends Component<EntityFormProps, EntityFormState> {
   declare context: NonNullable<ContextType<typeof SynapseContext>>
 
   formRef: any
+  hasStartedLoading = false
 
   constructor(props: EntityFormProps) {
     super(props)
     this.formRef = createRef()
     this.state = {
       isLoading: true,
+      isSaving: false,
       successfullyUploaded: false,
     }
   }
@@ -54,149 +59,129 @@ export class EntityForm extends Component<EntityFormProps, EntityFormState> {
     this.refresh()
   }
 
+  componentDidUpdate() {
+    // The session may not be available on the first render
+    if (!this.hasStartedLoading) {
+      this.refresh()
+    }
+  }
+
   submitForm = () => {
-    this.formRef.current.submit()
+    // No-op until the form has loaded (or while it is saving)
+    this.formRef.current?.submit()
   }
 
   refresh = () => {
-    if (this.context.isAuthenticated && this.context.accessToken) {
-      const promises = [
-        SynapseClient.getUserProfile(this.context.accessToken),
-        SynapseClient.getEntity(
-          this.context.accessToken,
+    const { isAuthenticated, accessToken } = this.context
+    if (!isAuthenticated || !accessToken) {
+      return
+    }
+    this.hasStartedLoading = true
+    this.loadForm(accessToken).catch(error => {
+      this.onError(error)
+    })
+  }
+
+  loadForm = async (accessToken: string) => {
+    const [userprofile, formSchemaFileEntity, formUiSchemaFileEntity] =
+      await Promise.all([
+        SynapseClient.getUserProfile(accessToken),
+        SynapseClient.getEntity<FileEntity>(
+          accessToken,
           this.props.formSchemaEntityId,
         ),
-        SynapseClient.getEntity(
-          this.context.accessToken,
+        SynapseClient.getEntity<FileEntity>(
+          accessToken,
           this.props.formUiSchemaEntityId,
         ),
-      ] as Promise<any>[]
-      Promise.all(promises)
-        .then(values => {
-          const userprofile: UserProfile = values[0]
-          this.getTargetContainer(userprofile, this.context.accessToken!).then(
-            // @ts-expect-error
-            (targetContainerId: string) => {
-              const formSchemaFileEntity: FileEntity = values[1]
-              const formUiSchemaFileEntity: FileEntity = values[2]
-              this.getSchemaFileContent(
-                targetContainerId,
-                formSchemaFileEntity,
-                formUiSchemaFileEntity,
-              )
-            },
-          )
-        })
-        .catch(error => {
-          this.onError(error)
-        })
+      ])
+    const targetContainerId = await this.getTargetContainer(
+      userprofile,
+      accessToken,
+    )
+    const [formSchemaContent, formUiSchemaContent] = await Promise.all([
+      this.getJsonFileContent(formSchemaFileEntity, accessToken),
+      this.getJsonFileContent(formUiSchemaFileEntity, accessToken),
+    ])
+    if (!formSchemaContent?.title) {
+      throw new Error(
+        `The form JSON schema (${this.props.formSchemaEntityId}) must define a "title". It is used to name the file that stores the form data.`,
+      )
+    }
+    const { currentFileEntity, formData } = await this.getExistingFileData(
+      targetContainerId,
+      formSchemaContent,
+      accessToken,
+    )
+    this.setState({
+      isLoading: false,
+      formData,
+      currentFileEntity,
+      formSchema: formSchemaContent,
+      formUiSchema: formUiSchemaContent,
+    })
+  }
+
+  getJsonFileContent = async (fileEntity: FileEntity, accessToken: string) => {
+    const fileResult = await SynapseClient.getFileResult(
+      fileEntity,
+      accessToken,
+      true,
+      true,
+    )
+    const content = await SynapseClient.getFileHandleContent(
+      fileResult.fileHandle!,
+      fileResult.preSignedURL!,
+    )
+    try {
+      return JSON.parse(content)
+    } catch (e) {
+      throw new Error(`${fileEntity.id} does not contain valid JSON: ${e}`)
     }
   }
 
-  getSchemaFileContent = (
+  getExistingFileData = async (
     targetFolderId: string,
-    formSchemaFileEntity: FileEntity,
-    formUiSchemaFileEntity: FileEntity,
-  ) => {
-    const promises = [
-      SynapseClient.getFileResult(
-        formSchemaFileEntity,
-        this.context.accessToken,
-        true,
-        true,
-      ),
-      SynapseClient.getFileResult(
-        formUiSchemaFileEntity,
-        this.context.accessToken,
-        true,
-        true,
-      ),
-    ]
-
-    Promise.all(promises)
-      .then(async values => {
-        let fileContent: Promise<string>[]
-        try {
-          fileContent = values.map(el => {
-            return getFileHandleContent(el.fileHandle!, el.preSignedURL!)
-          })
-        } catch (e) {
-          console.log('getSchemaFileContent: Error getting schema content', e)
-          return
-        }
-        try {
-          const el = await Promise.all(fileContent)
-          const formSchemaContent = JSON.parse(el[0])
-          const formUiSchemaContent = JSON.parse(el[1])
-          this.getExistingFileData(
-            targetFolderId,
-            formSchemaContent,
-            formUiSchemaContent,
-          )
-        } catch (e) {
-          console.log('getSchemaFileContent: Error getting form content', e)
-        }
-      })
-      .catch(error => {
-        this.onError(error)
-      })
-  }
-
-  getExistingFileData = (
-    targetFolderId: string,
-    formSchemaContent: any,
-    formUiSchemaContent: any,
-  ) => {
+    formSchemaContent: { title: string },
+    accessToken: string,
+  ): Promise<{ currentFileEntity?: FileEntity; formData?: unknown }> => {
     // if data already exists, save a reference to the existing entity and prefill the form
-    const fileName = `${formSchemaContent.title}.json`
-    const entityLookupRequest = {
-      entityName: fileName,
+    const entityLookupRequest: EntityLookupRequest = {
+      entityName: `${formSchemaContent.title}.json`,
       parentId: targetFolderId,
     }
-    let formData: any
-    let currentFileEntity: FileEntity
-    SynapseClient.lookupChildEntity(
-      entityLookupRequest,
-      this.context.accessToken,
+    let entityId: EntityId
+    try {
+      entityId = await SynapseClient.lookupChildEntity(
+        entityLookupRequest,
+        accessToken,
+      )
+    } catch (error) {
+      if (error instanceof SynapseClientError && error.status === 404) {
+        // first submission, no existing data
+        return {}
+      }
+      throw error
+    }
+    const currentFileEntity = await SynapseClient.getEntity<FileEntity>(
+      accessToken,
+      entityId.id,
     )
-      .then((entityId: EntityId) => {
-        // ok, found the existing file
-        return SynapseClient.getEntity<FileEntity>(
-          this.context.accessToken,
-          entityId.id,
-        )
-      })
-      .then(async entity => {
-        currentFileEntity = entity
-        if (this.props.initFormData) {
-          const existingFileData = await SynapseClient.getFileResult(
-            currentFileEntity,
-            this.context.accessToken,
-            true,
-            true,
-          )
-          try {
-            const fileContent = await getFileHandleContent(
-              existingFileData.fileHandle!,
-              existingFileData.preSignedURL!,
-            )
-            formData = JSON.parse(fileContent)
-          } catch (e) {
-            console.log('getExistingFileData: Error setting form data', e)
-          }
-        }
-      })
-      .finally(() => {
-        this.setState({
-          formData,
-          currentFileEntity,
-          formSchema: formSchemaContent,
-          formUiSchema: formUiSchemaContent,
-        })
-      })
+    let formData: unknown
+    if (this.props.initFormData) {
+      try {
+        formData = await this.getJsonFileContent(currentFileEntity, accessToken)
+      } catch (e) {
+        console.log('getExistingFileData: Error setting form data', e)
+      }
+    }
+    return { currentFileEntity, formData }
   }
 
-  getTargetContainer = async (userprofile: UserProfile, token: string) => {
+  getTargetContainer = async (
+    userprofile: UserProfile,
+    token: string,
+  ): Promise<string> => {
     const entityLookupRequest: EntityLookupRequest = {
       entityName: userprofile.ownerId,
       parentId: this.props.parentContainerId,
@@ -206,47 +191,40 @@ export class EntityForm extends Component<EntityFormProps, EntityFormState> {
         entityLookupRequest,
         token,
       )
-      // ok, found an entity of the same name.
-      console.log(
-        `EntityForm uploading to https://www.synapse.org/Synapse:${entityId.id}`,
-      )
       this.setState({
         userprofile,
         containerId: entityId.id,
-        isLoading: false,
       })
       return entityId.id
     } catch (error) {
-      if (error.status === 404) {
-        return this.onError(
-          new Error(
-            'Your folder has not yet been set up, please retry in a few minutes.',
-          ),
+      if (error instanceof SynapseClientError && error.status === 404) {
+        throw new Error(
+          `Your submission folder has not been set up yet. The challenge organizers must create a folder named "${userprofile.ownerId}" in ${this.props.parentContainerId} that you can edit.`,
         )
       }
-      // else
-      return this.onError(error)
+      throw error
     }
   }
 
   finishedProcessing = () => {
     this.setState({
-      isLoading: false,
+      isSaving: false,
       successfullyUploaded: true,
     })
   }
 
-  onError = (error: any) => {
+  onError = (error: unknown) => {
     this.setState({
-      error,
+      error: error instanceof Error ? error : new Error(String(error)),
       isLoading: false,
+      isSaving: false,
       successfullyUploaded: false,
     })
   }
 
   onSubmit = ({ formData }: any) => {
     this.setState({
-      isLoading: true,
+      isSaving: true,
       successfullyUploaded: false,
     })
 
@@ -298,7 +276,7 @@ export class EntityForm extends Component<EntityFormProps, EntityFormState> {
           this.props.synIdCallback(fileEntity.id!)
         }
       })
-      .catch((error: any) => {
+      .catch((error: unknown) => {
         this.onError(error)
       })
   }
@@ -307,20 +285,16 @@ export class EntityForm extends Component<EntityFormProps, EntityFormState> {
     return (
       <div>
         {this.state.error && (
-          <div className="panel panel-danger errors">
-            <div className="panel-heading">
-              <h3 className="panel-title">Error</h3>
-            </div>
-            <ul className="list-group">
-              <li className="list-group-item text-danger">
-                {this.state.error.name} {this.state.error.reason}
-                {this.state.error.message}
-              </li>
-            </ul>
-          </div>
+          <Alert severity="error">{this.state.error.message}</Alert>
         )}
-        {this.context.accessToken &&
+        {!this.context.isAuthenticated && (
+          <Alert severity="info">
+            You must be signed in to fill out this form.
+          </Alert>
+        )}
+        {this.context.isAuthenticated &&
           !this.state.isLoading &&
+          !this.state.isSaving &&
           !this.state.successfullyUploaded &&
           this.state.formSchema &&
           this.state.formUiSchema &&
@@ -341,12 +315,14 @@ export class EntityForm extends Component<EntityFormProps, EntityFormState> {
             </Form>
           )}
         {!this.state.error &&
-          this.context.accessToken &&
-          this.state.isLoading && (
-            <>
-              <span>Saving&hellip;</span>
-              <span style={{ marginLeft: '2px' }} className={'spinner'} />
-            </>
+          this.context.isAuthenticated &&
+          (this.state.isLoading || this.state.isSaving) && (
+            <Stack direction="row" alignItems="center" gap={1} sx={{ my: 2 }}>
+              <SynapseSpinner margin="0" />
+              <Typography variant="body1">
+                {this.state.isSaving ? 'Saving' : 'Loading form'}&hellip;
+              </Typography>
+            </Stack>
           )}
       </div>
     )
