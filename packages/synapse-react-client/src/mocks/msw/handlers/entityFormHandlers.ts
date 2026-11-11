@@ -10,7 +10,8 @@ import {
   BatchFileResult,
   EntityLookupRequest,
   FileEntity,
-} from '@sage-bionetworks/synapse-types'
+} from '@sage-bionetworks/synapse-client'
+import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 import { delay, http, HttpResponse } from 'msw'
 
 export const MOCK_FORM_PARENT_CONTAINER_ID = 'syn10000'
@@ -18,7 +19,8 @@ export const MOCK_FORM_USER_FOLDER_ID = 'syn10001'
 export const MOCK_FORM_SCHEMA_ID = 'syn10002'
 export const MOCK_FORM_UI_SCHEMA_ID = 'syn10003'
 export const MOCK_FORM_SAVED_FILE_ID = 'syn10004'
-const MOCK_PRESIGNED_URL_ORIGIN = 'https://mock-presigned-url.test'
+export const MOCK_FORM_NEW_FILE_HANDLE_ID = 'new-file-handle'
+export const MOCK_PRESIGNED_URL_ORIGIN = 'https://mock-presigned-url.test'
 
 export const mockFormSchema = {
   title: 'Challenge Registration',
@@ -89,7 +91,7 @@ export function getEntityFormHandlers(
         etag: 'etag',
         parentId: MOCK_FORM_PARENT_CONTAINER_ID,
         dataFileHandleId: `fh-${id}`,
-        concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+        concreteType: FILE_ENTITY_CONCRETE_TYPE_VALUE,
       } satisfies FileEntity)
     }),
     http.post<never, BatchFileRequest>(
@@ -97,7 +99,7 @@ export function getEntityFormHandlers(
       async ({ request }) => {
         const { requestedFiles } = await request.json()
         return HttpResponse.json({
-          requestedFiles: requestedFiles.map(fha => ({
+          requestedFiles: (requestedFiles ?? []).map(fha => ({
             fileHandleId: fha.fileHandleId,
             fileHandle: {
               id: fha.fileHandleId,

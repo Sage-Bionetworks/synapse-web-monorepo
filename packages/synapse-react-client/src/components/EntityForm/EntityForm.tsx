@@ -21,10 +21,10 @@ import {
   FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Ref, useImperativeHandle, useRef } from 'react'
+import { Ref, useImperativeHandle, useMemo, useRef } from 'react'
 
 export type EntityFormHandle = {
-  /** Validates the form and, if valid, saves the user's answers. No-op until the form has loaded. */
+  /** Validates the form and, if valid, saves the user's answers. Does nothing while a save is in progress. */
   submitForm: () => void
 }
 
@@ -33,6 +33,7 @@ export type EntityFormHandle = {
  * `<schema title>.json` in the folder named `<user ID>` inside `parentContainerId`.
  */
 export type EntityFormProps = {
+  /** Set to the form's handle once it has loaded and can be submitted; null while loading or on a setup error. */
   ref?: Ref<EntityFormHandle>
   /** The container (folder/project) that holds a folder named `<user ID>` that the user can write to. */
   parentContainerId: string
@@ -58,14 +59,6 @@ export default function EntityForm(props: EntityFormProps) {
   const { isAuthenticated, keyFactory } = useSynapseContext()
   const queryClient = useQueryClient()
   const formRef = useRef<Form>(null)
-
-  useImperativeHandle(ref, () => ({
-    submitForm: () => {
-      if (!isSavingRef.current) {
-        formRef.current?.submit()
-      }
-    },
-  }))
 
   const { data: userProfile, error: userProfileError } =
     useGetCurrentUserProfile({ enabled: isAuthenticated })
@@ -157,17 +150,6 @@ export default function EntityForm(props: EntityFormProps) {
       synIdCallback(savedEntity.id!)
     },
   })
-  const isSavingRef = useRef(isSaving)
-  isSavingRef.current = isSaving
-
-  if (!isAuthenticated) {
-    return (
-      <Alert severity="info">
-        You must be signed in to fill out this form.
-      </Alert>
-    )
-  }
-
   let setupError: Error | null | undefined =
     userProfileError ??
     formSchemaEntityQuery.error ??
@@ -176,8 +158,7 @@ export default function EntityForm(props: EntityFormProps) {
     uiSchemaQuery.error ??
     userFolderQuery.error ??
     existingFileQuery.error ??
-    existingFileEntityQuery.error ??
-    existingFileContentQuery.error
+    existingFileEntityQuery.error
   for (const [schemaEntityId, schema] of [
     [formSchemaEntityId, formSchemaQuery.data],
     [formUiSchemaEntityId, uiSchemaQuery.data],
@@ -207,28 +188,72 @@ export default function EntityForm(props: EntityFormProps) {
       `${fileName} in your submission folder (${userFolderId}) is not a file. Ask the challenge organizers to remove it.`,
     )
   }
-  if (setupError) {
-    return <ErrorBanner error={setupError} />
-  }
 
+  // Previous answers that can't be loaded don't block the form: the user starts over, and saving replaces them
+  const isPreviousAnswersError = existingFileContentQuery.isError
   const hasExistingFile = existingFileQuery.data != null
   const isExistingFileLoaded =
     !hasExistingFile ||
     (existingFileEntityQuery.data != null &&
-      (!initFormData || existingFileContentQuery.data !== undefined))
+      (!initFormData ||
+        existingFileContentQuery.data !== undefined ||
+        isPreviousAnswersError))
   const isLoaded =
+    isAuthenticated &&
+    !setupError &&
     formSchemaQuery.data != null &&
     uiSchemaQuery.data != null &&
     userFolderId != null &&
     existingFileQuery.isSuccess &&
     isExistingFileLoaded
 
+  // The handle is null until the form can be submitted, so the host can tell the user the form is not ready
+  useImperativeHandle<EntityFormHandle | null, EntityFormHandle | null>(
+    ref,
+    () =>
+      isLoaded
+        ? {
+            submitForm: () => {
+              if (!isSaving) {
+                formRef.current?.submit()
+              }
+            },
+          }
+        : null,
+    [isLoaded, isSaving],
+  )
+
+  // Submission is triggered by the host via `submitForm`
+  const uiSchema = useMemo(
+    () => ({
+      ...uiSchemaQuery.data,
+      'ui:submitButtonOptions': { norender: true },
+    }),
+    [uiSchemaQuery.data],
+  )
+
+  if (!isAuthenticated) {
+    return (
+      <Alert severity="info">
+        You must be signed in to fill out this form.
+      </Alert>
+    )
+  }
+  if (setupError) {
+    return <ErrorBanner error={setupError} />
+  }
   if (!isLoaded) {
     return <LoadingIndicator text="Loading form" />
   }
 
   return (
     <>
+      {isPreviousAnswersError && (
+        <Alert severity="warning">
+          Your previously saved answers could not be loaded. Saving will replace
+          them.
+        </Alert>
+      )}
       <ErrorBanner error={saveError} />
       {isSaving && <LoadingIndicator text="Saving" />}
       {/* Stay mounted while saving so the answers survive a failed save and can be resubmitted */}
@@ -236,11 +261,7 @@ export default function EntityForm(props: EntityFormProps) {
         ref={formRef}
         validator={validator}
         schema={formSchemaQuery.data}
-        // Submission is triggered by the host via `submitForm`
-        uiSchema={{
-          ...uiSchemaQuery.data,
-          'ui:submitButtonOptions': { norender: true },
-        }}
+        uiSchema={uiSchema}
         formData={existingFileContentQuery.data}
         disabled={isSaving}
         onSubmit={({ formData }) => saveFormData(formData)}

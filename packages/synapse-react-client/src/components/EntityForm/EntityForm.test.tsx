@@ -4,7 +4,9 @@ import {
   MOCK_FORM_SAVED_FILE_ID,
   MOCK_FORM_SCHEMA_ID,
   MOCK_FORM_UI_SCHEMA_ID,
+  MOCK_FORM_NEW_FILE_HANDLE_ID,
   MOCK_FORM_USER_FOLDER_ID,
+  MOCK_PRESIGNED_URL_ORIGIN,
   mockFormSchema,
   mockFormUiSchema,
 } from '@/mocks/msw/handlers/entityFormHandlers'
@@ -12,8 +14,13 @@ import { server } from '@/mocks/msw/server'
 import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ENTITY, ENTITY_ID, FILE_HANDLE_BATCH } from '@/utils/APIConstants'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
-import { FileEntity, FileUploadComplete } from '@sage-bionetworks/synapse-types'
+import {
+  FileEntity,
+  FileUploadComplete,
+  FOLDER_CONCRETE_TYPE_VALUE,
+} from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
@@ -23,7 +30,6 @@ import EntityForm, { EntityFormHandle } from './EntityForm'
 const REPO_ORIGIN = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 const EXISTING_FILE_ID = 'syn10005'
 const userFolderPath = `${MOCK_FORM_PARENT_CONTAINER_ID}/${mockUserProfileData.ownerId}`
-const PRESIGNED_URL_ORIGIN = 'https://mock-presigned-url.test'
 
 /** Handlers where the user folder already holds answers saved by a previous submission */
 function getHandlersWithExistingFile() {
@@ -46,7 +52,7 @@ function recordEntityWrites() {
   const writes: { method: string; body: FileEntity }[] = []
   server.use(
     http.post<never, FileEntity>(
-      `${REPO_ORIGIN}/repo/v1/entity`,
+      `${REPO_ORIGIN}${ENTITY}`,
       async ({ request }) => {
         const body = await request.json()
         writes.push({ method: 'POST', body })
@@ -57,7 +63,7 @@ function recordEntityWrites() {
       },
     ),
     http.put<never, FileEntity>(
-      `${REPO_ORIGIN}/repo/v1/entity/:id`,
+      `${REPO_ORIGIN}${ENTITY_ID(':id')}`,
       async ({ request }) => {
         const body = await request.json()
         writes.push({ method: 'PUT', body })
@@ -102,7 +108,7 @@ function renderForm(
 describe('EntityForm', () => {
   beforeEach(() => {
     vi.spyOn(SynapseClient, 'uploadFile').mockResolvedValue({
-      fileHandleId: 'new-file-handle',
+      fileHandleId: MOCK_FORM_NEW_FILE_HANDLE_ID,
     } as FileUploadComplete)
   })
 
@@ -124,7 +130,7 @@ describe('EntityForm', () => {
         body: expect.objectContaining({
           parentId: MOCK_FORM_USER_FOLDER_ID,
           name: `${mockFormSchema.title}.json`,
-          dataFileHandleId: 'new-file-handle',
+          dataFileHandleId: MOCK_FORM_NEW_FILE_HANDLE_ID,
         }),
       },
     ])
@@ -148,7 +154,7 @@ describe('EntityForm', () => {
         method: 'PUT',
         body: expect.objectContaining({
           id: EXISTING_FILE_ID,
-          dataFileHandleId: 'new-file-handle',
+          dataFileHandleId: MOCK_FORM_NEW_FILE_HANDLE_ID,
         }),
       },
     ])
@@ -192,24 +198,27 @@ describe('EntityForm', () => {
     )
   })
 
-  it('refuses to overwrite a non-file entity that has the answers file name', async () => {
-    server.use(...getHandlersWithExistingFile())
-    server.use(
-      http.get(`${REPO_ORIGIN}/repo/v1/entity/${EXISTING_FILE_ID}`, () =>
-        HttpResponse.json({
-          id: EXISTING_FILE_ID,
-          name: `${mockFormSchema.title}.json`,
-          concreteType: 'org.sagebionetworks.repo.model.Folder',
-        }),
-      ),
-    )
-    renderForm()
+  it.each([false, true])(
+    'refuses to overwrite a non-file entity that has the answers file name (initFormData: %s)',
+    async initFormData => {
+      server.use(...getHandlersWithExistingFile())
+      server.use(
+        http.get(`${REPO_ORIGIN}${ENTITY_ID(EXISTING_FILE_ID)}`, () =>
+          HttpResponse.json({
+            id: EXISTING_FILE_ID,
+            name: `${mockFormSchema.title}.json`,
+            concreteType: FOLDER_CONCRETE_TYPE_VALUE,
+          }),
+        ),
+      )
+      renderForm({ initFormData })
 
-    expect(
-      await screen.findByText(/in your submission folder .* is not a file/),
-    ).toBeInTheDocument()
-    expect(screen.queryByLabelText(/Team name/)).not.toBeInTheDocument()
-  })
+      expect(
+        await screen.findByText(/in your submission folder .* is not a file/),
+      ).toBeInTheDocument()
+      expect(screen.queryByLabelText(/Team name/)).not.toBeInTheDocument()
+    },
+  )
 
   it('explains the missing per-user folder instead of loading forever', async () => {
     server.use(...getEntityFormHandlers(REPO_ORIGIN, { children: {} }))
@@ -243,7 +252,7 @@ describe('EntityForm', () => {
   ])('reports a schema file that is %s', async (_, content, message) => {
     server.use(...getEntityFormHandlers(REPO_ORIGIN))
     server.use(
-      http.get(`${PRESIGNED_URL_ORIGIN}/${MOCK_FORM_UI_SCHEMA_ID}`, () =>
+      http.get(`${MOCK_PRESIGNED_URL_ORIGIN}/${MOCK_FORM_UI_SCHEMA_ID}`, () =>
         HttpResponse.text(content),
       ),
     )
@@ -259,7 +268,7 @@ describe('EntityForm', () => {
   it('reports a schema file whose download fails', async () => {
     server.use(...getEntityFormHandlers(REPO_ORIGIN))
     server.use(
-      http.get(`${PRESIGNED_URL_ORIGIN}/${MOCK_FORM_UI_SCHEMA_ID}`, () =>
+      http.get(`${MOCK_PRESIGNED_URL_ORIGIN}/${MOCK_FORM_UI_SCHEMA_ID}`, () =>
         HttpResponse.error(),
       ),
     )
@@ -268,6 +277,68 @@ describe('EntityForm', () => {
     expect(await screen.findByRole('alert')).toBeInTheDocument()
     expect(screen.queryByText(/Loading form/)).not.toBeInTheDocument()
   })
+
+  it('explains a schema file the user is not allowed to download', async () => {
+    server.use(...getEntityFormHandlers(REPO_ORIGIN))
+    server.use(
+      http.post(`${REPO_ORIGIN}${FILE_HANDLE_BATCH}`, () =>
+        HttpResponse.json({
+          requestedFiles: [
+            {
+              fileHandleId: `fh-${MOCK_FORM_SCHEMA_ID}`,
+              failureCode: 'UNAUTHORIZED',
+            },
+          ],
+        }),
+      ),
+    )
+    renderForm()
+
+    expect(
+      await screen.findByText(
+        `Could not download ${MOCK_FORM_SCHEMA_ID}: UNAUTHORIZED`,
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it.each([
+    ['invalid JSON', () => HttpResponse.text('not json')],
+    ['a failed download', () => HttpResponse.error()],
+  ])(
+    'shows an empty form when previously saved answers are %s, and replaces them on save',
+    async (_, previousAnswersResponse) => {
+      server.use(...getHandlersWithExistingFile())
+      server.use(
+        http.get(
+          `${MOCK_PRESIGNED_URL_ORIGIN}/${EXISTING_FILE_ID}`,
+          previousAnswersResponse,
+        ),
+      )
+      const writes = recordEntityWrites()
+      const { synIdCallback, ref } = renderForm({ initFormData: true })
+
+      expect(
+        await screen.findByText(/previously saved answers could not be loaded/),
+      ).toBeInTheDocument()
+      const input = screen.getByLabelText(/Team name/)
+      expect(input).toHaveValue('')
+      await userEvent.type(input, 'New Team')
+      ref.current!.submitForm()
+
+      await vi.waitFor(() =>
+        expect(synIdCallback).toHaveBeenCalledWith(EXISTING_FILE_ID),
+      )
+      expect(writes).toEqual([
+        {
+          method: 'PUT',
+          body: expect.objectContaining({
+            id: EXISTING_FILE_ID,
+            dataFileHandleId: MOCK_FORM_NEW_FILE_HANDLE_ID,
+          }),
+        },
+      ])
+    },
+  )
 
   it('shows a sign-in prompt, not a spinner, when a token is present but isAuthenticated is false', () => {
     // SWC's legacy JSNI context passed an access token without isAuthenticated (SWC-8118)
@@ -279,16 +350,64 @@ describe('EntityForm', () => {
     expect(screen.queryByText(/Saving|Loading form/)).not.toBeInTheDocument()
   })
 
-  it('ignores submit requests made before the form has loaded', async () => {
+  it('exposes no handle until the form can be submitted', async () => {
     server.use(...getEntityFormHandlers(REPO_ORIGIN))
-    const { synIdCallback, ref } = renderForm()
+    const { ref } = renderForm()
     expect(screen.getByText(/Loading form/)).toBeInTheDocument()
+    expect(ref.current).toBeNull()
 
-    ref.current!.submitForm()
     await screen.findByLabelText(/Team name/)
+    expect(ref.current).not.toBeNull()
+  })
 
-    expect(SynapseClient.uploadFile).not.toHaveBeenCalled()
-    expect(screen.queryByText(/Saving/)).not.toBeInTheDocument()
-    expect(synIdCallback).not.toHaveBeenCalled()
+  it('exposes no handle when the form cannot load', async () => {
+    server.use(...getEntityFormHandlers(REPO_ORIGIN, { children: {} }))
+    const { ref } = renderForm()
+
+    await screen.findByText(/submission folder has not been set up/)
+    expect(ref.current).toBeNull()
+  })
+
+  it('disables the form while saving and ignores another submit', async () => {
+    server.use(...getEntityFormHandlers(REPO_ORIGIN))
+    recordEntityWrites()
+    let finishUpload!: (value: FileUploadComplete) => void
+    vi.mocked(SynapseClient.uploadFile).mockReturnValueOnce(
+      new Promise(resolve => {
+        finishUpload = resolve
+      }),
+    )
+    const { synIdCallback, ref } = renderForm()
+
+    await userEvent.type(await screen.findByLabelText(/Team name/), 'My Team')
+    ref.current!.submitForm()
+
+    expect(await screen.findByText(/Saving/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/Team name/)).toBeDisabled()
+    ref.current!.submitForm()
+    finishUpload({
+      fileHandleId: MOCK_FORM_NEW_FILE_HANDLE_ID,
+    } as FileUploadComplete)
+
+    await vi.waitFor(() =>
+      expect(synIdCallback).toHaveBeenCalledWith(MOCK_FORM_SAVED_FILE_ID),
+    )
+    expect(SynapseClient.uploadFile).toHaveBeenCalledTimes(1)
+  })
+
+  it('updates the file it created when saved a second time', async () => {
+    server.use(...getEntityFormHandlers(REPO_ORIGIN))
+    const writes = recordEntityWrites()
+    const { synIdCallback, ref } = renderForm()
+
+    await userEvent.type(await screen.findByLabelText(/Team name/), 'My Team')
+    ref.current!.submitForm()
+    await vi.waitFor(() => expect(synIdCallback).toHaveBeenCalledTimes(1))
+    await vi.waitFor(() => expect(ref.current).not.toBeNull())
+    ref.current!.submitForm()
+
+    await vi.waitFor(() => expect(synIdCallback).toHaveBeenCalledTimes(2))
+    expect(writes.map(w => w.method)).toEqual(['POST', 'PUT'])
+    expect(synIdCallback).toHaveBeenLastCalledWith(MOCK_FORM_SAVED_FILE_ID)
   })
 })

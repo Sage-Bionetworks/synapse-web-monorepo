@@ -2,6 +2,7 @@ import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { fetchBlob, useCreateUrlForData } from '@/utils/hooks'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { isFileEntity } from '@/utils/types/IsType'
 import { useGetEntity } from '../entity/useEntity'
 import {
   BatchFileRequest,
@@ -18,7 +19,7 @@ import {
   UseQueryResult,
 } from '@tanstack/react-query'
 import { cloneDeep } from 'lodash-es'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 export type StablePresignedUrl = {
   dataUrl?: string
@@ -114,10 +115,14 @@ async function getPresignedUrlContentFromFHA(
     },
     accessToken,
   )
-  return SynapseClient.getFileHandleContent(
-    batchFileResult.requestedFiles[0].fileHandle!,
-    batchFileResult.requestedFiles[0].preSignedURL!,
-  )
+  const { fileHandle, preSignedURL, failureCode } =
+    batchFileResult.requestedFiles[0] ?? {}
+  if (!fileHandle || !preSignedURL) {
+    throw new Error(
+      `Could not download ${fileHandleAssociation.associateObjectId}: ${failureCode ?? 'no file handle returned'}`,
+    )
+  }
+  return SynapseClient.getFileHandleContent(fileHandle, preSignedURL)
 }
 
 export function useGetPresignedUrlContentFromFHA(
@@ -294,7 +299,7 @@ export function useGetJsonContentFromFHA<T = unknown>(
 
 /**
  * Fetches a FileEntity and, unless `fetchContent` is false, its content parsed as JSON.
- * Returns both query results; the content query stays pending (disabled) until the entity has loaded.
+ * Returns both query results; the content query stays pending (disabled) until a FileEntity has loaded.
  */
 export function useGetJsonFileEntityContent<T = unknown>(
   entityId: string | undefined,
@@ -303,14 +308,21 @@ export function useGetJsonFileEntityContent<T = unknown>(
   const { fetchContent = true } = options
   const entityQuery = useGetEntity<FileEntity>(entityId)
   const entity = entityQuery.data
-  const contentQuery = useGetJsonContentFromFHA<T>(
-    {
-      associateObjectId: entity?.id ?? '',
+  const entityIdOrEmpty = entity?.id ?? ''
+  const fileHandleId = entity?.dataFileHandleId ?? ''
+  const fileHandleAssociation = useMemo(
+    () => ({
+      associateObjectId: entityIdOrEmpty,
       associateObjectType: FileHandleAssociateType.FileEntity,
-      fileHandleId: entity?.dataFileHandleId ?? '',
-    },
+      fileHandleId,
+    }),
+    [entityIdOrEmpty, fileHandleId],
+  )
+  const contentQuery = useGetJsonContentFromFHA<T>(
+    fileHandleAssociation,
     false,
-    { enabled: fetchContent && entity != null },
+    // Only a FileEntity has content; e.g. a Folder with the same name is reported by the caller
+    { enabled: fetchContent && entity != null && isFileEntity(entity) },
   )
   return { entityQuery, contentQuery }
 }
