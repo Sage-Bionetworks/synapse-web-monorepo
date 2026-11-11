@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{r as t,zt as n}from"./useLogin-Bg7SleTv.js";import{X as r,t as i}from"./dist-B-Zx1Tok.js";var a;function o(){return(o=e((()=>{t(),i(),a=(e,t)=>{let i={associateObjectId:t,associateObjectType:r.TableEntity,fileHandleId:e||``};return n(i,!1,{enabled:!!e})?.dataUrl}})))()}export{a as n,o as t};

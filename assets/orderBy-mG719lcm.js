@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{Fa as t,Pa as n}from"./useLogin-DZEkWKh4.js";import{n as r,t as i}from"./isArray-iRy6oq9C.js";function a(e,t,i,a){return e==null?[]:(r(t)||(t=t==null?[]:[t]),i=a?void 0:i,r(i)||(i=i==null?[]:[i]),n(e,t,i))}function o(){return(o=e((()=>{t(),i()})))()}export{a as n,o as t};
