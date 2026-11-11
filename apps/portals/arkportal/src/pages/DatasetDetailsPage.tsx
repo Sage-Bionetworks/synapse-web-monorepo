@@ -89,9 +89,10 @@ function DatasetDetailsPageContent(props: { id: string }) {
       element: (
         <QueryWrapperPlotNav
           {...datasetQueryWrapperPlotNavProps}
-          name={'Associated Datasets'}
+          name={''}
           shouldDeepLink={false}
           defaultShowPlots={false}
+          defaultShowFacetFilter={false}
           searchParams={{ id: associatedDatasetIds }}
           sqlOperator={ColumnSingleValueFilterOperator.IN}
           lockedColumn={{ columnName: 'id' }}
