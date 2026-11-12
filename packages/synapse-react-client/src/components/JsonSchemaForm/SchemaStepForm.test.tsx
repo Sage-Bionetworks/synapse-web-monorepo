@@ -72,7 +72,7 @@ describe('SchemaStepForm', () => {
     const { ref, onValid, onInvalid } = renderStep()
     act(() => ref.current?.submit())
     expect(await screen.findAllByText(/required/i)).not.toHaveLength(0)
-    expect(onInvalid).toHaveBeenCalled()
+    expect(onInvalid).toHaveBeenCalledTimes(1)
     expect(onValid).not.toHaveBeenCalled()
   })
 

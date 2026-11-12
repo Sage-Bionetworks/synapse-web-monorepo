@@ -23,6 +23,7 @@ import {
 } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
 import { ReactNode, useId, useMemo, useRef, useState } from 'react'
+import styles from './FormTemplatePreview.module.scss'
 
 export const VALIDATE_PREVIEW_RESPONSES_LABEL = 'Validate preview responses'
 
@@ -47,7 +48,7 @@ export function FormTemplatePreview({
   const [requestType, setRequestType] = useState<DataAccessRequestType>(
     DataAccessRequestType.REQUEST,
   )
-  // Off by default so ACT can move freely between steps; on, steps are gated as in the request wizard
+  // Off by default so ACT can move freely between steps; on, moving forward is gated as in the request wizard
   const [validateResponses, setValidateResponses] = useState(false)
   const schemaStepFormRef = useRef<SchemaStepFormHandle>(null)
   // The step a step-button click asked for, until validation settles; Enter in a field also submits, and must not
@@ -59,15 +60,29 @@ export function FormTemplatePreview({
     [template, jsonSchema, requestType],
   )
 
+  const controls = (
+    <PreviewControls
+      requestType={requestType}
+      onRequestTypeChange={setRequestType}
+      validateResponses={validateResponses}
+      onValidateResponsesChange={setValidateResponses}
+    />
+  )
+
   if (steps.length === 0) {
+    // The controls stay available: when every field belongs to the other request type, this view has no
+    // steps, and the Request/Renewal toggle is the only way to reach them
     return (
-      <LivePreview>
-        <Box sx={{ py: 4, textAlign: 'center' }}>
-          <Typography variant="body2" color="text.secondary">
-            Add at least one step with a bound field to preview the form.
-          </Typography>
-        </Box>
-      </LivePreview>
+      <Stack gap={2}>
+        {controls}
+        <LivePreview>
+          <Box sx={{ py: 4, textAlign: 'center' }}>
+            <Typography variant="body2" color="text.secondary">
+              Add at least one step with a bound field to preview the form.
+            </Typography>
+          </Box>
+        </LivePreview>
+      </Stack>
     )
   }
 
@@ -75,7 +90,9 @@ export function FormTemplatePreview({
   const currentStep = steps[safeIndex]
 
   function goToStep(index: number) {
-    if (!validateResponses) {
+    if (index === safeIndex) return
+    // The request wizard's Back button never validates, so going back is never gated
+    if (!validateResponses || index < safeIndex) {
       setActiveStep(index)
       return
     }
@@ -86,12 +103,7 @@ export function FormTemplatePreview({
 
   return (
     <Stack gap={2}>
-      <PreviewControls
-        requestType={requestType}
-        onRequestTypeChange={setRequestType}
-        validateResponses={validateResponses}
-        onValidateResponsesChange={setValidateResponses}
-      />
+      {controls}
       <LivePreview>
         {steps.length > 1 && (
           <Stepper activeStep={safeIndex} nonLinear sx={{ mb: 2 }}>
@@ -147,9 +159,6 @@ type PreviewControlsProps = {
   onValidateResponsesChange: (validateResponses: boolean) => void
 }
 
-// Tall enough for the small toggle group, so both controls sit on the same line under their captions
-const controlRowSx = { height: 40, display: 'flex', alignItems: 'center' }
-
 function PreviewControls({
   requestType,
   onRequestTypeChange,
@@ -158,17 +167,7 @@ function PreviewControls({
 }: PreviewControlsProps) {
   const titleId = useId()
   return (
-    <Box
-      component="section"
-      aria-labelledby={titleId}
-      sx={{
-        bgcolor: 'grey.50',
-        border: 1,
-        borderColor: 'grey.200',
-        borderRadius: 1,
-        p: 2,
-      }}
-    >
+    <section aria-labelledby={titleId} className={styles.controls}>
       <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1.5 }}>
         <TuneIcon fontSize="small" color="action" />
         <Typography id={titleId} variant="subtitle2">
@@ -176,49 +175,56 @@ function PreviewControls({
         </Typography>
       </Stack>
       <Stack direction="row" flexWrap="wrap" columnGap={4} rowGap={2}>
-        <Box>
-          <Typography variant="caption" color="text.secondary" component="div">
-            Show the form for a
-          </Typography>
-          <Box sx={controlRowSx}>
-            <ToggleButtonGroup
-              value={requestType}
-              exclusive
-              size="small"
-              onChange={(_, next: DataAccessRequestType | null) => {
-                if (next) onRequestTypeChange(next)
-              }}
-            >
-              <ToggleButton value={DataAccessRequestType.REQUEST}>
-                Request
-              </ToggleButton>
-              <ToggleButton value={DataAccessRequestType.RENEWAL}>
-                Renewal
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
-        </Box>
-        <Box>
-          <Typography variant="caption" color="text.secondary" component="div">
-            Between steps
-          </Typography>
-          <Box sx={controlRowSx}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={validateResponses}
-                  onChange={event =>
-                    onValidateResponsesChange(event.target.checked)
-                  }
-                />
-              }
-              label={VALIDATE_PREVIEW_RESPONSES_LABEL}
-              // The theme's bottom margin would pull the checkbox above the toggle group's center line
-              sx={{ m: 0 }}
-            />
-          </Box>
-        </Box>
+        <PreviewControl caption="Show the form for a">
+          <ToggleButtonGroup
+            value={requestType}
+            exclusive
+            size="small"
+            onChange={(_, next: DataAccessRequestType | null) => {
+              if (next) onRequestTypeChange(next)
+            }}
+          >
+            <ToggleButton value={DataAccessRequestType.REQUEST}>
+              Request
+            </ToggleButton>
+            <ToggleButton value={DataAccessRequestType.RENEWAL}>
+              Renewal
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </PreviewControl>
+        <PreviewControl caption="Between steps">
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={validateResponses}
+                onChange={event =>
+                  onValidateResponsesChange(event.target.checked)
+                }
+              />
+            }
+            label={VALIDATE_PREVIEW_RESPONSES_LABEL}
+            // The theme's bottom margin would pull the checkbox above the toggle group's center line
+            sx={{ m: 0 }}
+          />
+        </PreviewControl>
       </Stack>
-    </Box>
+    </section>
+  )
+}
+
+function PreviewControl({
+  caption,
+  children,
+}: {
+  caption: string
+  children: ReactNode
+}) {
+  return (
+    <div>
+      <Typography variant="caption" color="text.secondary" component="div">
+        {caption}
+      </Typography>
+      <div className={styles.controlRow}>{children}</div>
+    </div>
   )
 }
