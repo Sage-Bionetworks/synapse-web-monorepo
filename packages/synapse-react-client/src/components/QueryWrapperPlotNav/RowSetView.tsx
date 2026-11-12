@@ -10,6 +10,7 @@ import { useQueryContext } from '../QueryContext'
 import { Box } from '@mui/material'
 import { TablePagination } from '../SynapseTable/TablePagination'
 import { ViewMoreQueryResultsButton } from '../QueryWrapper/ViewMoreQueryResultsButton'
+import { getAggregateQueryError } from '../QueryWrapper/AggregateQueryErrorNotice'
 import { useRowSet } from './UseRowSet'
 
 export type RowSetViewProps = {
@@ -52,8 +53,9 @@ export function RowSetView(props: RowSetViewProps) {
     hasNextPageOfInfiniteData,
     error,
   } = useRowSet(initialLimitIsApplied ? initialLimit : undefined)
-  // A failed row query has no rows to page through, e.g. when row results are withheld from an aggregate-only caller.
-  const isRowSetUnavailable = error != null && rowSet === undefined
+  // Rows withheld from an aggregate-only caller are withheld from every page, so there is nothing to page through. Other
+  // failures keep the paging controls, so the user can leave a page that failed to load.
+  const areRowsWithheld = getAggregateQueryError(error) !== undefined
 
   return (
     <SynapseErrorBoundary>
@@ -81,12 +83,12 @@ export function RowSetView(props: RowSetViewProps) {
           </>
         )}
         <Suspense fallback={<></>}>
-          {!isInfinite && !isRowSetUnavailable && (
+          {!isInfinite && !areRowsWithheld && (
             <Box sx={{ mt: 2, textAlign: 'right' }}>
               <TablePagination />
             </Box>
           )}
-          {isInfinite && !isRowSetUnavailable && (
+          {isInfinite && !areRowsWithheld && (
             <ViewMoreQueryResultsButton
               initialLimit={initialLimit}
               initialLimitIsApplied={initialLimitIsApplied}

@@ -80,8 +80,9 @@ export type GraphData = {
 }
 
 /**
- * @param countDisplayOptions the QueryResultBundle that the facet belongs to. When its facet counts are post-processed,
- * counts are shown as approximate (see `formatFacetValueCount`) and pie percentages are omitted.
+ * @param countDisplayOptions the QueryResultBundle that the facet belongs to. Counts are shown as formatted by
+ * `formatFacetValueCount`. When the facet counts are post-processed, or any count is suppressed, hover text shows that
+ * formatted count instead of the exact value and pie percentages are omitted; a suppressed count is plotted as 0.
  */
 export async function extractPlotDataArray(
   facetToPlot: EnumerationFacet,
