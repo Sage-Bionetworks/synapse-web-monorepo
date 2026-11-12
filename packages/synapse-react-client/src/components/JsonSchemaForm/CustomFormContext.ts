@@ -28,6 +28,11 @@ export type FileHandleWidgetContext = {
    * case they are downloaded as file handles that the current user created.
    */
   templateObject?: FileHandleAssociateObject
+  /**
+   * If set, only these template files can be downloaded through `templateObject`; any other is downloaded as a file
+   * handle that the current user created. If unset, every template file is downloaded through `templateObject`.
+   */
+  templateFileHandleIds?: string[]
   /** Whether the user can upload, replace, or clear a file */
   canEdit: boolean
   /** Invoked when an upload of a field's file starts and when it finishes. Its identity must not change. */

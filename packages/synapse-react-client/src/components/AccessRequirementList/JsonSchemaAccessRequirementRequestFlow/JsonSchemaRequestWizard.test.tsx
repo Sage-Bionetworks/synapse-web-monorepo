@@ -457,7 +457,7 @@ describe('JsonSchemaRequestWizard', () => {
       )
     }
 
-    it('offers the template file through the access requirement', async () => {
+    it('offers the template file through the form template, showing its file name', async () => {
       mockRequestServices(
         clinicalAccessRequirement,
         createRequest(clinicalAccessRequirement),
@@ -469,18 +469,16 @@ describe('JsonSchemaRequestWizard', () => {
       expect(getFileLinks()).toEqual([
         {
           fileHandleId: MOCK_FILE_HANDLE_ID,
-          associateObjectType:
-            FileHandleAssociateType.AccessRequirementAttachment,
-          associateObjectId: String(clinicalAccessRequirement.id),
+          associateObjectType: FileHandleAssociateType.FormTemplateAttachment,
+          associateObjectId:
+            clinicalAccessRequirement.formTemplateRef.templateId,
         },
       ])
-      // The template download is a call-to-action button
+      // The template download is a call-to-action button that shows the file name, which FileHandleLink looks up
+      // when no display value is given
       const templateLink = screen.getByTestId('FileHandleLink')
       expect(templateLink).toHaveAttribute('data-button-variant', 'outlined')
-      expect(templateLink).toHaveAttribute(
-        'data-display-value',
-        'Download Template',
-      )
+      expect(templateLink).not.toHaveAttribute('data-display-value')
     })
 
     it('saves an uploaded file as the answer and in attachments, and shows it through the request', async () => {

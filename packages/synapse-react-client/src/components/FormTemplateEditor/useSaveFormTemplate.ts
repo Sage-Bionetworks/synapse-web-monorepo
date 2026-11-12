@@ -20,7 +20,11 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { EditableFormTemplateStep, toFormTemplateSteps } from './utils'
+import {
+  EditableFormTemplateStep,
+  getFormTemplateAttachments,
+  toFormTemplateSteps,
+} from './utils'
 import {
   formatSchema$id,
   getNextSchemaVersion,
@@ -120,6 +124,7 @@ export function useSaveFormTemplate(
         name: params.name,
         schema$id,
         steps: formTemplateSteps,
+        attachments: getFormTemplateAttachments(formTemplateSteps),
       }
 
       const template = params.initialTemplate?.id
