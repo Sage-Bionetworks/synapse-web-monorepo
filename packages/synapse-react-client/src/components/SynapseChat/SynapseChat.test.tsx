@@ -21,7 +21,10 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { FileHandleAssociateType } from '@sage-bionetworks/synapse-client'
+import {
+  CreateAgentSessionRequest,
+  FileHandleAssociateType,
+} from '@sage-bionetworks/synapse-client'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
@@ -419,30 +422,38 @@ describe('SynapseChat - createSessionOnFirstMessage', () => {
     mockAddFilesDialogUpload()
   })
 
-  /** Registers a session creation handler and returns a live count of its requests */
-  function countSessionCreation() {
+  let renderCount = 0
+
+  /**
+   * Renders without a session and returns a live count of the session requests this render makes.
+   * Requests from other tests can still be in flight under load, so each render uses its own agent
+   * registration ID and only requests with that ID are counted.
+   */
+  function renderWithoutSession(props?: Partial<SynapseChatProps>) {
+    const agentRegistrationId = `first-message-agent-${++renderCount}`
     const sessionCreation = { count: 0 }
     server.use(
-      http.post(`${repoOrigin}${AGENT_SESSION}`, () => {
-        sessionCreation.count++
+      http.post(`${repoOrigin}${AGENT_SESSION}`, async ({ request }) => {
+        const body = (await request.json()) as CreateAgentSessionRequest
+        if (body.agentRegistrationId === agentRegistrationId) {
+          sessionCreation.count++
+        }
         return HttpResponse.json(mockAgentSession, { status: 201 })
       }),
     )
-    return sessionCreation
-  }
-
-  function renderWithoutSession(props?: Partial<SynapseChatProps>) {
-    return renderComponent({
+    const result = renderComponent({
       externalSession: undefined,
       createSessionOnFirstMessage: true,
+      agentRegistrationId,
       ...props,
     })
+    return { sessionCreation, ...result }
   }
 
   it('does not create a session on mount, and the composer and prompts are usable', async () => {
-    const sessionCreation = countSessionCreation()
-
-    renderWithoutSession({ suggestedPrompts: mockPrompts })
+    const { sessionCreation } = renderWithoutSession({
+      suggestedPrompts: mockPrompts,
+    })
     // Let any effect that would create the session run
     await act(async () => {})
 
@@ -456,8 +467,7 @@ describe('SynapseChat - createSessionOnFirstMessage', () => {
   })
 
   it('creates the session when the first message is sent, then sends the message', async () => {
-    const sessionCreation = countSessionCreation()
-    const { user } = renderWithoutSession()
+    const { user, sessionCreation } = renderWithoutSession()
 
     await user.type(screen.getByRole('textbox'), 'hello')
     await user.click(screen.getByRole('button', { name: 'Send message' }))
@@ -470,7 +480,6 @@ describe('SynapseChat - createSessionOnFirstMessage', () => {
   })
 
   it('sends the first message with its attachments once the session exists', async () => {
-    countSessionCreation()
     const { user } = renderWithoutSession({ allowAttachments: true })
 
     await user.click(screen.getByRole('button', { name: 'Add files' }))
@@ -487,9 +496,9 @@ describe('SynapseChat - createSessionOnFirstMessage', () => {
   })
 
   it('creates the session on mount when there is an initial message', async () => {
-    const sessionCreation = countSessionCreation()
-
-    renderWithoutSession({ initialMessage: 'Start here' })
+    const { sessionCreation } = renderWithoutSession({
+      initialMessage: 'Start here',
+    })
 
     await waitFor(() =>
       expect(mockSendChat).toHaveBeenCalledExactlyOnceWith('Start here'),
