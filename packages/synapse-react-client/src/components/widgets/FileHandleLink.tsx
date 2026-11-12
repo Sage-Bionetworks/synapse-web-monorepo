@@ -8,6 +8,7 @@ import {
   BatchFileRequest,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
+import { Button } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
 import IconSvg from '../IconSvg/IconSvg'
 
@@ -15,6 +16,8 @@ type FileHandleLinkProps = {
   redirect?: boolean
   showDownloadIcon: boolean
   displayValue?: string
+  /** If set, the link is rendered as a MUI Button of this variant (a call to action) instead of a text link. */
+  buttonVariant?: 'outlined' | 'contained'
 } & (
   | {
       /** Downloads the file handle as it is associated with a Synapse object. */
@@ -38,6 +41,7 @@ export const FileHandleLink = (props: FileHandleLinkProps): React.ReactNode => {
     showDownloadIcon,
     redirect = false,
     displayValue,
+    buttonVariant,
   } = props
   const { accessToken } = useSynapseContext()
   const fileHandleId =
@@ -61,7 +65,7 @@ export const FileHandleLink = (props: FileHandleLinkProps): React.ReactNode => {
     { enabled: shouldLookUpFileName && !!creatorFileHandleId },
   )
   const fileName = fileHandleAssociation
-    ? batchFileResult?.requestedFiles[0].fileHandle?.fileName
+    ? batchFileResult?.requestedFiles[0]?.fileHandle?.fileName
     : creatorFileHandle?.fileName
 
   const { mutate: openFile } = useMutation({
@@ -83,19 +87,40 @@ export const FileHandleLink = (props: FileHandleLinkProps): React.ReactNode => {
     },
   })
 
+  const label = displayValue ?? fileName ?? fileHandleId
+  const downloadIcon = showDownloadIcon && (
+    <IconSvg icon="download" wrap={buttonVariant === undefined} />
+  )
+  const onClick = () => {
+    if (accessToken) {
+      openFile()
+    }
+  }
+
+  if (buttonVariant) {
+    return (
+      <Button
+        onClick={onClick}
+        className={SynapseConstants.SRC_SIGN_IN_CLASS}
+        variant={buttonVariant}
+        size="small"
+        endIcon={downloadIcon || undefined}
+        sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+      >
+        {label}
+      </Button>
+    )
+  }
+
   return (
     <button
-      onClick={() => {
-        if (accessToken) {
-          openFile()
-        }
-      }}
+      onClick={onClick}
       className={`SRC-primary-text-color ${SynapseConstants.SRC_SIGN_IN_CLASS}`}
       type="button"
       style={{ padding: 0 }}
     >
-      {displayValue ?? fileName ?? fileHandleId}
-      {showDownloadIcon && <IconSvg icon="download" />}
+      {label}
+      {downloadIcon}
     </button>
   )
 }

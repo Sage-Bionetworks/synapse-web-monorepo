@@ -7,10 +7,30 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
+import { SYNAPSE_FILE_HANDLE_ID_FORMAT } from '@/utils/jsonschema/schemaData'
+import {
+  FileHandleAssociateType,
+  FileHandleAssociation,
+} from '@sage-bionetworks/synapse-types'
 import {
   FormTemplatePreview,
   VALIDATE_PREVIEW_RESPONSES_LABEL,
 } from './FormTemplatePreview'
+
+vi.mock('@/components/widgets/FileHandleLink', () => ({
+  FileHandleLink: (props: {
+    fileHandleAssociation?: FileHandleAssociation
+    creatorFileHandleId?: string
+  }) => (
+    <div data-testid="FileHandleLink">
+      {JSON.stringify(
+        props.fileHandleAssociation ?? {
+          creatorFileHandleId: props.creatorFileHandleId,
+        },
+      )}
+    </div>
+  ),
+}))
 
 const schema: RJSFSchema = {
   type: 'object',
@@ -276,6 +296,93 @@ describe('FormTemplatePreview', () => {
     await user.click(screen.getByRole('radio', { name: 'No' }))
     expect(screen.getByRole('radio', { name: 'No' })).toBeChecked()
     expect(screen.getByRole('radio', { name: 'Yes' })).not.toBeChecked()
+  })
+
+  describe('file field', () => {
+    const fileSchema: RJSFSchema = {
+      type: 'object',
+      properties: {
+        agreement: {
+          type: 'number',
+          title: 'Signed agreement',
+          format: SYNAPSE_FILE_HANDLE_ID_FORMAT,
+        },
+      },
+    }
+    const fileTemplate = template([
+      {
+        title: 'Files',
+        fields: [
+          {
+            schemaPath: '/agreement',
+            uiDefinition: {},
+            templateFileHandleId: '1234',
+          },
+        ],
+      },
+    ])
+
+    it('offers a saved template’s file for download but does not allow uploading', () => {
+      render(
+        <FormTemplatePreview
+          template={fileTemplate}
+          jsonSchema={fileSchema}
+          formTemplateId="template-1"
+        />,
+        { wrapper: createWrapper() },
+      )
+
+      expect(
+        JSON.parse(screen.getByTestId('FileHandleLink').textContent ?? ''),
+      ).toEqual({
+        fileHandleId: '1234',
+        associateObjectType:
+          FileHandleAssociateType.AccessRequirementAttachment,
+        associateObjectId: 'template-1',
+      })
+      expect(
+        screen.getByRole('button', { name: 'Upload Signed agreement' }),
+      ).toBeDisabled()
+    })
+
+    it('offers an unsaved template’s file as one that the current user created', () => {
+      render(
+        <FormTemplatePreview template={fileTemplate} jsonSchema={fileSchema} />,
+        { wrapper: createWrapper() },
+      )
+
+      expect(
+        JSON.parse(screen.getByTestId('FileHandleLink').textContent ?? ''),
+      ).toEqual({ creatorFileHandleId: '1234' })
+    })
+
+    it('does not block moving on at a required file question, which cannot be answered in the preview', async () => {
+      const user = userEvent.setup()
+      renderPreview({
+        template: template([
+          fileTemplate.steps[0],
+          {
+            title: 'Basics',
+            fields: [{ schemaPath: '/institution', uiDefinition: {} }],
+          },
+        ]),
+        jsonSchema: {
+          ...schema,
+          properties: {
+            ...schema.properties,
+            ...fileSchema.properties,
+          },
+          required: [...(schema.required ?? []), 'agreement'],
+        },
+      })
+      await user.click(getValidateCheckbox())
+
+      await user.click(screen.getByRole('button', { name: 'Basics' }))
+
+      expect(
+        await screen.findByText('Institution', { selector: 'label' }),
+      ).toBeInTheDocument()
+    })
   })
 
   describe('Validate preview responses', () => {

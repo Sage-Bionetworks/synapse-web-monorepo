@@ -12,6 +12,8 @@ export type FileUploadProps = {
   label?: string
   buttonProps?: ButtonProps
   onUploadStart?: () => void
+  /** Invoked as the file is uploaded */
+  onProgress?: (progress: ProgressCallback) => void
   onComplete?: (response: UploadCallbackResp) => void
 }
 
@@ -21,6 +23,7 @@ export function FileUpload(props: FileUploadProps) {
     buttonProps = { variant: 'contained' },
     label = 'Browse...',
     onUploadStart,
+    onProgress,
     onComplete,
   } = props
   const { accessToken } = useSynapseContext()
@@ -38,11 +41,8 @@ export function FileUpload(props: FileUploadProps) {
         onUploadStart()
       }
       const file = e.target.files[0]
-      const progressCallback: (
-        progress: ProgressCallback,
-      ) => void = progress => {
-        console.log(`Progress: ${progress.value} / ${progress.total}`)
-      }
+      // Without this, choosing the same file again (to retry a failed upload, or after clearing it) fires no change
+      e.target.value = ''
       try {
         const resp: FileUploadComplete = await uploadFile(
           accessToken,
@@ -50,7 +50,7 @@ export function FileUpload(props: FileUploadProps) {
           file,
           undefined,
           undefined,
-          progressCallback,
+          onProgress,
         )
         if (onComplete) {
           onComplete({

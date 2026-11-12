@@ -231,6 +231,7 @@ export function FormTemplateEditorForm({
               <FormTemplatePreview
                 template={previewTemplate}
                 jsonSchema={jsonSchema}
+                formTemplateId={initialTemplate?.id}
               />
             </Box>
           </Grid>

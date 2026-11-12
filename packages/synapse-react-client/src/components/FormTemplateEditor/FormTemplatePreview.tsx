@@ -1,3 +1,4 @@
+import { FileHandleWidgetContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import SchemaStepForm, {
   SchemaStepFormHandle,
 } from '@/components/JsonSchemaForm/SchemaStepForm'
@@ -22,6 +23,7 @@ import {
   Typography,
 } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
+import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { ReactNode, useId, useMemo, useRef, useState } from 'react'
 import styles from './FormTemplatePreview.module.scss'
 
@@ -30,6 +32,8 @@ export const VALIDATE_PREVIEW_RESPONSES_LABEL = 'Validate preview responses'
 type FormTemplatePreviewProps = {
   template: FormTemplate
   jsonSchema: RJSFSchema
+  /** The ID of the saved template, if it has been saved. Used to download the template files of file fields. */
+  formTemplateId?: string
 }
 
 /**
@@ -41,6 +45,7 @@ type FormTemplatePreviewProps = {
 export function FormTemplatePreview({
   template,
   jsonSchema,
+  formTemplateId,
 }: FormTemplatePreviewProps) {
   const [activeStep, setActiveStep] = useState(0)
   // Kept across steps and request types so ACT can see how answers carry through the form
@@ -58,6 +63,25 @@ export function FormTemplatePreview({
   const { steps } = useMemo(
     () => generateDataAccessSchema(template, jsonSchema, requestType),
     [template, jsonSchema, requestType],
+  )
+
+  // The preview has no request, so a requester's files cannot be uploaded or shown here
+  const fileHandleWidgetContext = useMemo<FileHandleWidgetContext>(
+    () => ({
+      answerFileHandleIds: [],
+      templateObject: formTemplateId
+        ? {
+            // AccessRequirementAttachment is a stand-in: a FormTemplate is not an
+            // AccessRequirement, so the server may not authorize this download.
+            // Supported FormTemplate template-file downloads are tracked in PLFM-10013.
+            associateObjectType:
+              FileHandleAssociateType.AccessRequirementAttachment,
+            associateObjectId: formTemplateId,
+          }
+        : undefined,
+      canEdit: false,
+    }),
+    [formTemplateId],
   )
 
   const controls = (
@@ -124,6 +148,9 @@ export function FormTemplatePreview({
           step={currentStep}
           schemaData={schemaData}
           onSchemaDataChange={setSchemaData}
+          fileHandleWidgetContext={fileHandleWidgetContext}
+          // Files cannot be uploaded here, so a required file question must not block the step
+          ignoreRequiredFileAnswers
           onValid={() => {
             if (pendingStepRef.current !== null) {
               setActiveStep(pendingStepRef.current)

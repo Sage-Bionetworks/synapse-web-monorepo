@@ -1,6 +1,9 @@
 import { AccessType, Renewal, Request } from '@sage-bionetworks/synapse-types'
 import { mockManagedACTAccessRequirement } from '../accessRequirement/mockAccessRequirements'
-import { mockJsonSchemaAR1 } from '../accessRequirement/mockJsonSchemaAccessRequirements'
+import {
+  mockJsonSchemaAR1,
+  mockJsonSchemaAR2,
+} from '../accessRequirement/mockJsonSchemaAccessRequirements'
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import {
   MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_1_FILE_HANDLE_ID,
@@ -84,4 +87,13 @@ export const MOCK_JSON_SCHEMA_DATA_ACCESS_REQUEST: Request = {
   etag: '0',
   accessRequirementId: String(mockJsonSchemaAR1.id),
   concreteType: 'org.sagebionetworks.repo.model.dataaccess.Request',
+}
+
+export const MOCK_CLINICAL_JSON_SCHEMA_DATA_ACCESS_REQUEST_ID = '7710002'
+
+/** An in-progress request for {@link mockJsonSchemaAR2}, which has no saved answers. */
+export const MOCK_CLINICAL_JSON_SCHEMA_DATA_ACCESS_REQUEST: Request = {
+  ...MOCK_JSON_SCHEMA_DATA_ACCESS_REQUEST,
+  id: MOCK_CLINICAL_JSON_SCHEMA_DATA_ACCESS_REQUEST_ID,
+  accessRequirementId: String(mockJsonSchemaAR2.id),
 }
