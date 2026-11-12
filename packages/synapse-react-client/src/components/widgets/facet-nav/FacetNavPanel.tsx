@@ -2,7 +2,10 @@ import StyledFormControl from '@/components/styled/StyledFormControl'
 import SynapseClient from '@/synapse-client'
 import { SynapseConstants } from '@/utils'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { formatFacetValueCount } from '@/utils/functions/facetCountUtils'
+import {
+  FacetCountDisplayOptions,
+  formatFacetValueCount,
+} from '@/utils/functions/facetCountUtils'
 import { getCorrespondingColumnForFacet } from '@/utils/functions/queryUtils'
 import InfoOutlined from '@mui/icons-material/InfoOutlined'
 import {
@@ -77,8 +80,8 @@ export type GraphData = {
 }
 
 /**
- * @param facetPostProcessingApplied the QueryResultBundle's `facetPostProcessingApplied`. When set, counts are shown as
- * approximate (see `formatFacetValueCount`) and pie percentages are omitted.
+ * @param countDisplayOptions the QueryResultBundle that the facet belongs to. When its facet counts are post-processed,
+ * counts are shown as approximate (see `formatFacetValueCount`) and pie percentages are omitted.
  */
 export async function extractPlotDataArray(
   facetToPlot: EnumerationFacet,
@@ -86,7 +89,7 @@ export async function extractPlotDataArray(
   index: number,
   plotType: PlotType,
   accessToken?: string,
-  facetPostProcessingApplied?: boolean,
+  countDisplayOptions: FacetCountDisplayOptions = {},
 ) {
   const colorPalette = getContrastColorPalette(
     // Use only the odd palette, using the same offset for all plots until palettes are improved.
@@ -143,7 +146,7 @@ export async function extractPlotDataArray(
       countText: formatFacetValueCount(
         facetValue.count,
         facetToPlot,
-        facetPostProcessingApplied,
+        countDisplayOptions,
       ),
     }))
   }
@@ -210,7 +213,8 @@ export async function extractPlotDataArray(
     exactHoverCount = '%{x}'
   }
   const isHoveredAsCountText =
-    facetPostProcessingApplied === true || isAnyCountSuppressed
+    countDisplayOptions.facetPostProcessingApplied === true ||
+    isAnyCountSuppressed
   const hoverCount = isHoveredAsCountText ? '%{customdata}' : exactHoverCount
   const singleChartData: Plotly.Data = {
     values: plotType === 'PIE' ? counts : undefined,
@@ -401,6 +405,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
       plotType,
       accessToken,
       queryMetadata?.facetPostProcessingApplied,
+      queryMetadata?.suppressionThreshold,
     ],
 
     queryFn: () =>
@@ -410,7 +415,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
         index,
         plotType,
         accessToken,
-        queryMetadata?.facetPostProcessingApplied,
+        queryMetadata,
       ),
 
     enabled: !!facetToPlot,

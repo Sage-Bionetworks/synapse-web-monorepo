@@ -6,7 +6,6 @@ import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '@/utils'
 import { SUPPRESSED_FACET_VALUE_COUNT } from '@/utils/functions/enumerationFacet'
-import { SUPPRESSED_FACET_VALUE_COUNT_TEXT } from '@/utils/functions/facetCountUtils'
 import {
   ColumnTypeEnum,
   FacetColumnResultValues,
@@ -284,7 +283,7 @@ describe('extractPlotDataArray', () => {
       0,
       'PIE',
       undefined,
-      true,
+      { facetPostProcessingApplied: true },
     )
 
     expect(plotData.labels.map(label => label.countText)).toEqual([
@@ -330,7 +329,7 @@ describe('extractPlotDataArray', () => {
     })
   })
 
-  it('draws a suppressed count as an empty bar and shows it as suppressed, even without post-processing', async () => {
+  it('draws a suppressed count as an empty bar and shows it as below k, even without post-processing', async () => {
     const plotData = await extractPlotDataArray(
       {
         ...facet,
@@ -346,15 +345,17 @@ describe('extractPlotDataArray', () => {
       ColumnTypeEnum.STRING,
       0,
       'HORIZONTAL_BAR',
+      undefined,
+      { suppressionThreshold: 20 },
     )
 
     expect(plotData.labels.map(label => label.countText)).toEqual([
       '10',
-      SUPPRESSED_FACET_VALUE_COUNT_TEXT,
+      '< 20',
     ])
     expect(plotData.data[0]).toMatchObject({
       x: [10, 0],
-      customdata: ['10', SUPPRESSED_FACET_VALUE_COUNT_TEXT],
+      customdata: ['10', '< 20'],
       hovertemplate: '<b>%{text}: </b><br>%{customdata} <br><extra></extra>',
     })
   })

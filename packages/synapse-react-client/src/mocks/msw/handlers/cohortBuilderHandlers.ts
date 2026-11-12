@@ -186,8 +186,8 @@ export function getCohortBuilderHandlers(
     profile = ELITE_MOCK_PROFILE,
     access = 'AGGREGATE_ONLY',
     isSourceAdministrator = false,
+    maxCohortValues,
     backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
-    ...queryOptions
   } = options
   const data = getCohortBuilderSyntheticData(profile)
 
@@ -248,7 +248,7 @@ export function getCohortBuilderHandlers(
             // QueryBundleRequest, whose shape matches what the client sends.
             request as unknown as QueryBundleRequest,
             access,
-            queryOptions,
+            { maxCohortValues },
           )
           return result.status === 200
             ? result.body
@@ -298,7 +298,7 @@ export function getCohortBuilderHandlers(
           : query,
       },
       access,
-      queryOptions,
+      { maxCohortValues },
     )
     // A count-only request returns a bundle with queryCount; anything else is an error body.
     return 'queryCount' in result.body

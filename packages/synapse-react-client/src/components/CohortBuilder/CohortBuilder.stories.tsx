@@ -2,15 +2,13 @@ import {
   ADKP_MOCK_PROFILE,
   CohortBuilderMockProfile,
   ELITE_MOCK_PROFILE,
+  withMaskedCounts,
 } from '@/mocks/cohortBuilder/cohortBuilderMockProfiles'
 import {
   ADKP_MOCK_SAMPLE_QUERIES,
   ELITE_MOCK_SAMPLE_QUERIES,
 } from '@/mocks/cohortBuilder/cohortBuilderMockSampleQueries'
-import {
-  CohortBuilderAccess,
-  CohortBuilderMockQueryOptions,
-} from '@/mocks/cohortBuilder/cohortBuilderMockQueryEngine'
+import { CohortBuilderAccess } from '@/mocks/cohortBuilder/cohortBuilderMockQueryEngine'
 import { getCohortBuilderStorybookHandlers } from '@/mocks/msw/handlers/cohortBuilderHandlers'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
 import { Meta, StoryObj } from '@storybook/react-vite'
@@ -33,7 +31,7 @@ type Story = StoryObj<typeof meta>
 function getMockParameters(
   profile: CohortBuilderMockProfile,
   access: CohortBuilderAccess,
-  queryOptions: CohortBuilderMockQueryOptions = {},
+  maxCohortValues?: number,
 ) {
   return {
     stack: 'mock',
@@ -41,11 +39,14 @@ function getMockParameters(
       handlers: getCohortBuilderStorybookHandlers({
         profile,
         access,
-        ...queryOptions,
+        maxCohortValues,
       }),
     },
   }
 }
+
+const ELITE_MASKING_MOCK_PROFILE = withMaskedCounts(ELITE_MOCK_PROFILE)
+const ADKP_MASKING_MOCK_PROFILE = withMaskedCounts(ADKP_MOCK_PROFILE)
 
 /** A play function that builds the cohort "`property` is any of `value`" with the Query Builder. */
 function buildCohort(property: string, value: string): Story['play'] {
@@ -95,9 +96,7 @@ export const EliteWithFilesBelowThreshold: Story = {
 /** ELITE, unapproved user: with a cohort limit of 1,000, the 1,096 male participants are too many to hand off. */
 export const EliteWithFilesCohortTooLarge: Story = {
   args: eliteWithFilesArgs,
-  parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY', {
-    maxCohortValues: 1000,
-  }),
+  parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY', 1000),
   play: buildCohort('Sex', 'Male'),
 }
 
@@ -113,12 +112,10 @@ export const EliteAggregateOnly: Story = {
   parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY'),
 }
 
-/** ELITE, unapproved user: counts below the suppression threshold of 20 are suppressed (PLFM-10107), others binned. */
-export const EliteAggregateOnlySuppressedFacetValues: Story = {
+/** ELITE, unapproved user, masking: facet counts below the suppression threshold of 20 show as "< 20", others binned. */
+export const EliteAggregateOnlyMaskedFacetValues: Story = {
   args: { participantsTableId: ELITE_MOCK_PROFILE.participantsVirtualTableId },
-  parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY', {
-    suppressFacetValuesBelowThreshold: true,
-  }),
+  parameters: getMockParameters(ELITE_MASKING_MOCK_PROFILE, 'AGGREGATE_ONLY'),
 }
 
 /** ADKP synthetic participants, approved user: exact counts. */
@@ -130,7 +127,8 @@ export const AdkpFullAccess: Story = {
 /** ELITE, unapproved user: a cohort of 7 participants is below the suppression threshold of 20. */
 export const EliteAggregateOnlyBelowThreshold: Story = {
   args: { participantsTableId: ELITE_MOCK_PROFILE.participantsVirtualTableId },
-  parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY'),
+  // Masking, rather than excluding, keeps the rare value listed so it can be selected.
+  parameters: getMockParameters(ELITE_MASKING_MOCK_PROFILE, 'AGGREGATE_ONLY'),
   play: buildCohort('Race', 'American Indian or Alaska Native'),
 }
 
@@ -140,12 +138,10 @@ export const AdkpAggregateOnly: Story = {
   parameters: getMockParameters(ADKP_MOCK_PROFILE, 'AGGREGATE_ONLY'),
 }
 
-/** ADKP, unapproved user: counts below the suppression threshold of 20 are suppressed (PLFM-10107), others noised. */
-export const AdkpAggregateOnlySuppressedFacetValues: Story = {
+/** ADKP, unapproved user, masking: facet counts below the suppression threshold of 20 show as "< 20", others noised. */
+export const AdkpAggregateOnlyMaskedFacetValues: Story = {
   args: { participantsTableId: ADKP_MOCK_PROFILE.participantsVirtualTableId },
-  parameters: getMockParameters(ADKP_MOCK_PROFILE, 'AGGREGATE_ONLY', {
-    suppressFacetValuesBelowThreshold: true,
-  }),
+  parameters: getMockParameters(ADKP_MASKING_MOCK_PROFILE, 'AGGREGATE_ONLY'),
 }
 
 /** ELITE, unapproved user: sample queries to load into the Query Builder. */

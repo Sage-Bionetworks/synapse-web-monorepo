@@ -125,6 +125,7 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
       facetsToPlot,
       facetDataArray,
       queryMetadata.facetPostProcessingApplied,
+      queryMetadata.suppressionThreshold,
     ],
     queryFn: async () => {
       if (!facetsToPlot) {
@@ -146,7 +147,7 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
             index + 1, //individual plot rgbIndex
             plotType,
             accessToken,
-            queryMetadata.facetPostProcessingApplied,
+            queryMetadata,
           )
           return plotData
         }),
