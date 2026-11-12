@@ -8,7 +8,10 @@ import userEvent from '@testing-library/user-event'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
 import { SYNAPSE_FILE_HANDLE_ID_FORMAT } from '@/utils/jsonschema/schemaData'
-import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
+import {
+  FileHandleAssociateType,
+  FileHandleAssociation,
+} from '@sage-bionetworks/synapse-types'
 import {
   FormTemplatePreview,
   VALIDATE_PREVIEW_RESPONSES_LABEL,
@@ -331,7 +334,12 @@ describe('FormTemplatePreview', () => {
 
       expect(
         JSON.parse(screen.getByTestId('FileHandleLink').textContent ?? ''),
-      ).toMatchObject({ fileHandleId: '1234', associateObjectId: 'template-1' })
+      ).toEqual({
+        fileHandleId: '1234',
+        associateObjectType:
+          FileHandleAssociateType.AccessRequirementAttachment,
+        associateObjectId: 'template-1',
+      })
       expect(
         screen.getByRole('button', { name: 'Upload Signed agreement' }),
       ).toBeDisabled()

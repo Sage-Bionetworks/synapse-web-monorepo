@@ -35,7 +35,11 @@ export const FileHandleWidget: Widget = (props: WidgetProps) => {
   const [uploadError, setUploadError] = useState<string>()
 
   const canEdit = !!context?.canEdit && !disabled && !readonly
-  const templateFileHandleId: unknown = options[TEMPLATE_FILE_HANDLE_ID_OPTION]
+  const templateOption: unknown = options[TEMPLATE_FILE_HANDLE_ID_OPTION]
+  // Downloaded with the requester's credentials, so only a well-formed ID is requested, as for answers
+  const templateFileHandleId = isFileHandleIdValue(templateOption)
+    ? String(templateOption)
+    : undefined
   const answer = isFileHandleIdValue(value) ? String(value) : undefined
   const answerAssociation = toAssociation(
     context?.answerFileHandleIds.includes(answer ?? '')
@@ -59,7 +63,7 @@ export const FileHandleWidget: Widget = (props: WidgetProps) => {
 
   return (
     <Box id={id}>
-      {typeof templateFileHandleId === 'string' && templateFileHandleId && (
+      {templateFileHandleId && (
         <TemplateDownloadBar
           button={
             <FileLink

@@ -13,6 +13,7 @@ const isOutsideSynapseOrgSpy = vi.spyOn(
 )
 
 const doGetSpy = vi.spyOn(HttpClient, 'doGet')
+const doPostSpy = vi.spyOn(HttpClient, 'doPost')
 
 describe('SynapseClient tests', () => {
   beforeEach(() => {
@@ -180,6 +181,21 @@ describe('SynapseClient tests', () => {
       await expect(
         SynapseClient.getAllOfNextPageTokenPaginatedService(mockFn),
       ).rejects.toBe(originalError)
+    })
+  })
+
+  describe('uploadFile', () => {
+    it('rejects when a part of the file fails to upload', async () => {
+      const partError = new Error('The part could not be uploaded')
+      doPostSpy.mockImplementation(url =>
+        url === '/file/v1/file/multipart'
+          ? Promise.resolve({ uploadId: 'upload-1', partsState: '0' })
+          : Promise.reject(partError),
+      )
+
+      await expect(
+        SynapseClient.uploadFile(undefined, 'a.txt', new Blob(['data'])),
+      ).rejects.toBe(partError)
     })
   })
 })

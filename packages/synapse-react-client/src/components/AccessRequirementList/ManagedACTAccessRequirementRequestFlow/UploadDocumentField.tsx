@@ -78,7 +78,8 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
         }}
         label={`Upload ${documentName}`}
         buttonProps={{
-          disabled: isLoading || disabled,
+          // One upload at a time, so that the file uploaded last is the one that is kept
+          disabled: isLoading || disabled || isUploading,
           variant: uploadBtnVariant,
           endIcon: <IconSvg icon={'upload'} wrap={false} />,
         }}

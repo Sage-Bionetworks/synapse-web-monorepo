@@ -624,6 +624,8 @@ describe('JsonSchemaRequestWizard', () => {
 
       expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
       expect(screen.getByRole('button', { name: 'Back' })).toBeDisabled()
+      // A second upload could finish first and leave the step while the other is still running
+      expect(screen.getByRole('button', { name: UPLOAD_BUTTON })).toBeDisabled()
       act(() => completeHeldUpload?.())
       await waitFor(() =>
         expect(savedRequests.at(-1)?.attachments).toEqual([

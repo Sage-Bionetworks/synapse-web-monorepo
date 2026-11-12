@@ -2265,7 +2265,7 @@ export const uploadFile = (
           getIsCancelled,
           abortController,
         )
-      })
+      }, fileUploadReject)
     },
   )
 }
@@ -2493,7 +2493,7 @@ export const startMultipartUpload = (
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-    .then((status: MultipartUploadStatus) => {
+    .then(async (status: MultipartUploadStatus) => {
       // started the upload
       // keep track of the part state client-side
       const clientSidePartsState: boolean[] = status.partsState
@@ -2509,10 +2509,11 @@ export const startMultipartUpload = (
           })
         }
       }
+      const partUploads: Promise<void>[] = []
       for (let i = 0; i < clientSidePartsState.length; i = i + 1) {
         if (!clientSidePartsState[i]) {
           // upload this part.  note that partNumber is always the index+1
-          processFilePart(
+          const partUpload = processFilePart(
             i + 1,
             status,
             clientSidePartsState,
@@ -2526,6 +2527,7 @@ export const startMultipartUpload = (
             getIsCancelled,
             abortController,
           )
+          partUploads.push(partUpload)
         } else {
           updateProgress()
         }
@@ -2539,9 +2541,14 @@ export const startMultipartUpload = (
         fileUploadResolve,
         fileUploadReject,
       )
+      await Promise.all(partUploads)
     })
-    .catch(error => {
-      fileUploadReject(error)
+    .catch((error: unknown) => {
+      // A failed part fails the upload, so its caller can report it. A cancelled upload stays unsettled, as before: the
+      // callers that cancel uploads track the cancellation themselves.
+      if (!getIsCancelled?.() && !abortController?.signal.aborted) {
+        fileUploadReject(error)
+      }
     })
 }
 

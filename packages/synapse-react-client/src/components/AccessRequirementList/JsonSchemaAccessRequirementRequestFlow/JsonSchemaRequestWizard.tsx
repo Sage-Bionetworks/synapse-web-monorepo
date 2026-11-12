@@ -209,8 +209,9 @@ function JsonSchemaRequestWizardContent(
   function enqueueSave(
     build: (savedRequest: Request | Renewal) => Request | Renewal,
   ): Promise<Request | Renewal | undefined> {
-    setAlertMessage(undefined)
     const save = saveQueueRef.current.then(async () => {
+      // Cleared as this save starts, so that a message left by the save before it is not shown after this one succeeds
+      setAlertMessage(undefined)
       try {
         const saved = await updateRequest(build(savedRequestRef.current))
         savedRequestRef.current = saved
@@ -278,7 +279,7 @@ function JsonSchemaRequestWizardContent(
 
   async function saveAndAdvance(latestSchemaData: SchemaData = schemaData) {
     // Enter in a field also submits the step, so this is guarded as well as the Next button
-    if (isUploading) {
+    if (isUploading || isBusy) {
       return
     }
     const saved = await saveRequest(latestSchemaData)
