@@ -6,7 +6,7 @@ import {
   Typography,
 } from '@mui/material'
 import { DragDropProvider } from '@dnd-kit/react'
-import { ReactNode, useCallback, useId, useMemo, useState } from 'react'
+import { lazy, Suspense, useCallback, useId, useMemo, useState } from 'react'
 import { useConstant } from '@/utils/hooks/useConstant'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { isFilterGroup } from '../../utils/types/IsType'
@@ -36,13 +36,20 @@ import {
   updateCondition,
   updateGroup,
 } from './queryBuilderOperations'
+import { QBSqlPreviewPlaceholder } from './QBSqlPreviewPlaceholder'
 import { QBCondition, QBGroup } from './QueryBuilderTypes'
-import { useQBCombinedSql } from './useQBCombinedSql'
 import { useQBFacetSourceMetadata } from './useQBFacetSourceMetadata'
 import { useQBValueDisplayName } from './useQBValueDisplayName'
 
 export const QB_INEXPRESSIBLE_APPLIED_CONDITIONS_TEXT =
   "The Query Builder can't show the conditions applied to these results. Updating the results replaces them."
+
+// The SQL formatter is only needed once the SQL tab is opened.
+const QBSqlPreview = lazy(() =>
+  import('./QBSqlPreview').then(module => ({
+    default: module.QBSqlPreview,
+  })),
+)
 
 export type QueryBuilderControlsProps = {
   /**
@@ -215,25 +222,6 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
     [activeTree, getColumnDisplayName, getValueDisplayName],
   )
 
-  const {
-    data: combinedSql,
-    isPending: isSqlPending,
-    error: sqlError,
-  } = useQBCombinedSql(summaryMode === 'sql' ? activeTree : null)
-
-  let sqlSummary: ReactNode = (
-    <code className={styles.sqlText}>{combinedSql}</code>
-  )
-  if (sqlError) {
-    sqlSummary = (
-      <span className={styles.sqlError}>
-        Could not load SQL preview: {sqlError.message}
-      </span>
-    )
-  } else if (isSqlPending) {
-    sqlSummary = <span className={styles.sqlPlaceholder}>Loading SQL…</span>
-  }
-
   return (
     <QueryBuilderInternalContextProvider value={contextValue}>
       <DragDropProvider {...dragHandlers}>
@@ -269,7 +257,13 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
               aria-live="polite"
               aria-atomic="true"
             >
-              {summaryMode === 'plain-english' ? readable : sqlSummary}
+              {summaryMode === 'plain-english' ? (
+                readable
+              ) : (
+                <Suspense fallback={<QBSqlPreviewPlaceholder />}>
+                  <QBSqlPreview tree={activeTree} />
+                </Suspense>
+              )}
             </div>
           </div>
 
