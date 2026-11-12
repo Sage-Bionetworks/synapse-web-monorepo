@@ -20,6 +20,7 @@ function renderStep(schemaData: SchemaData = {}) {
   const ref = createRef<SchemaStepFormHandle>()
   const onSchemaDataChange = vi.fn()
   const onValid = vi.fn()
+  const onInvalid = vi.fn()
   render(
     <SchemaStepForm
       ref={ref}
@@ -27,9 +28,10 @@ function renderStep(schemaData: SchemaData = {}) {
       schemaData={schemaData}
       onSchemaDataChange={onSchemaDataChange}
       onValid={onValid}
+      onInvalid={onInvalid}
     />,
   )
-  return { ref, onSchemaDataChange, onValid }
+  return { ref, onSchemaDataChange, onValid, onInvalid }
 }
 
 describe('SchemaStepForm', () => {
@@ -67,17 +69,19 @@ describe('SchemaStepForm', () => {
   })
 
   it('fails validation while a required Yes/No question is unanswered', async () => {
-    const { ref, onValid } = renderStep()
+    const { ref, onValid, onInvalid } = renderStep()
     act(() => ref.current?.submit())
     expect(await screen.findAllByText(/required/i)).not.toHaveLength(0)
+    expect(onInvalid).toHaveBeenCalledTimes(1)
     expect(onValid).not.toHaveBeenCalled()
   })
 
   it('passes validation once a required Yes/No question is answered No', async () => {
     const user = userEvent.setup()
-    const { ref, onValid } = renderStep()
+    const { ref, onValid, onInvalid } = renderStep()
     await user.click(screen.getByRole('radio', { name: 'No' }))
     act(() => ref.current?.submit())
     expect(onValid).toHaveBeenCalledWith({ hasIrbApproval: false })
+    expect(onInvalid).not.toHaveBeenCalled()
   })
 })

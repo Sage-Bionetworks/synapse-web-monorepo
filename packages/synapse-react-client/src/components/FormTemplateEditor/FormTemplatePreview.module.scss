@@ -1,0 +1,14 @@
+// Sets the preview controls apart from the preview itself, since a requester never sees them.
+.controls {
+  padding: 16px;
+  background: var(--synapse-background-color-gray-light);
+  border: 1px solid var(--synapse-border-color-gray);
+  border-radius: 4px;
+}
+
+// Tall enough for the small toggle group, so every control sits on the same line under its caption
+.controlRow {
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
