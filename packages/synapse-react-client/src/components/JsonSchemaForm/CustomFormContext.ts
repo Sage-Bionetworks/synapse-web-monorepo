@@ -28,10 +28,7 @@ export type FileHandleWidgetContext = {
    * case they are downloaded as file handles that the current user created.
    */
   templateObject?: FileHandleAssociateObject
-  /**
-   * Whether the user can upload, replace, or clear a file. If not, a required file question does not fail the step's
-   * validation, since it could not be answered.
-   */
+  /** Whether the user can upload, replace, or clear a file */
   canEdit: boolean
   /** Invoked when an upload of a field's file starts and when it finishes. Its identity must not change. */
   onUploadingChange?: (fieldId: string, isUploading: boolean) => void

@@ -1,5 +1,9 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
-import { SchemaData } from '@/utils/jsonschema/schemaData'
+import {
+  SchemaData,
+  SYNAPSE_FILE_HANDLE_ID_FORMAT,
+} from '@/utils/jsonschema/schemaData'
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createRef } from 'react'
@@ -84,5 +88,56 @@ describe('SchemaStepForm', () => {
     act(() => ref.current?.submit())
     expect(onValid).toHaveBeenCalledWith({ hasIrbApproval: false })
     expect(onInvalid).not.toHaveBeenCalled()
+  })
+
+  describe('a required file question', () => {
+    const fileStep: GeneratedFormStepForRjsf = {
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          agreement: {
+            type: 'number',
+            title: 'Signed agreement',
+            format: SYNAPSE_FILE_HANDLE_ID_FORMAT,
+          },
+        },
+        required: ['agreement'],
+      },
+      uiSchema: {},
+    }
+
+    function submitFileStep(ignoreRequiredFileAnswers?: boolean) {
+      const ref = createRef<SchemaStepFormHandle>()
+      const onValid = vi.fn()
+      const onInvalid = vi.fn()
+      render(
+        <SchemaStepForm
+          ref={ref}
+          step={fileStep}
+          schemaData={{}}
+          onSchemaDataChange={vi.fn()}
+          // The file cannot be changed, as while a request is submitted
+          fileHandleWidgetContext={{ answerFileHandleIds: [], canEdit: false }}
+          ignoreRequiredFileAnswers={ignoreRequiredFileAnswers}
+          onValid={onValid}
+          onInvalid={onInvalid}
+        />,
+        { wrapper: createWrapper() },
+      )
+      act(() => ref.current?.submit())
+      return { onValid, onInvalid }
+    }
+
+    it('fails validation while unanswered, even when the file cannot be changed', () => {
+      const { onValid, onInvalid } = submitFileStep()
+      expect(onInvalid).toHaveBeenCalledTimes(1)
+      expect(onValid).not.toHaveBeenCalled()
+    })
+
+    it('does not fail validation when required file answers are ignored', () => {
+      const { onValid, onInvalid } = submitFileStep(true)
+      expect(onValid).toHaveBeenCalledWith({})
+      expect(onInvalid).not.toHaveBeenCalled()
+    })
   })
 })

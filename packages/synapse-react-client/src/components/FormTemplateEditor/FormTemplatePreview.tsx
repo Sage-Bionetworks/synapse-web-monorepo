@@ -149,6 +149,8 @@ export function FormTemplatePreview({
           schemaData={schemaData}
           onSchemaDataChange={setSchemaData}
           fileHandleWidgetContext={fileHandleWidgetContext}
+          // Files cannot be uploaded here, so a required file question must not block the step
+          ignoreRequiredFileAnswers
           onValid={() => {
             if (pendingStepRef.current !== null) {
               setActiveStep(pendingStepRef.current)

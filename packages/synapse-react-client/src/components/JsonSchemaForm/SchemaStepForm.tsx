@@ -19,10 +19,7 @@ const SCHEMA_STEP_FORM_CONTEXT: CustomFormContext = {
   booleanWidget: 'yesNoRadio',
 }
 
-/**
- * Drops the "required" errors of file questions. Used when files cannot be uploaded (as in the template preview),
- * where a required file question could otherwise never be answered and would block the step.
- */
+/** Drops the "required" errors of file questions. */
 function withoutRequiredFileErrors(
   schema: RJSFSchema,
   errors: RJSFValidationError[],
@@ -56,6 +53,11 @@ export type SchemaStepFormProps = {
   onValid?: (schemaData: SchemaData) => void
   /** Invoked when the step's answers fail validation; the errors are already shown against the fields. */
   onInvalid?: () => void
+  /**
+   * If true, a required file question does not fail validation. For forms where files cannot be uploaded (the
+   * template preview), where such a question could never be answered and would block the step.
+   */
+  ignoreRequiredFileAnswers?: boolean
 }
 
 /**
@@ -71,6 +73,7 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
     onValid,
     onInvalid,
     fileHandleWidgetContext,
+    ignoreRequiredFileAnswers = false,
   } = props
   const formRef = useRef<RJSFForm>(null)
   const formContext = useMemo<CustomFormContext>(
@@ -96,9 +99,9 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
       widgets={{ [SYNAPSE_FILE_HANDLE_ID_FORMAT]: FileHandleWidget }}
       liveValidate={false}
       transformErrors={
-        fileHandleWidgetContext.canEdit
-          ? undefined
-          : errors => withoutRequiredFileErrors(step.jsonSchema, errors)
+        ignoreRequiredFileAnswers
+          ? errors => withoutRequiredFileErrors(step.jsonSchema, errors)
+          : undefined
       }
       onChange={event =>
         onSchemaDataChange({ ...schemaData, ...event.formData })
