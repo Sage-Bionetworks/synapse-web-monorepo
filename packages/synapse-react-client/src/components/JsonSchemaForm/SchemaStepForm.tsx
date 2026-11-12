@@ -32,6 +32,8 @@ export type SchemaStepFormProps = {
   fileHandleWidgetContext: FileHandleWidgetContext
   /** Invoked with the complete answers when the step's answers pass validation. */
   onValid?: (schemaData: SchemaData) => void
+  /** Invoked when the step's answers fail validation; the errors are already shown against the fields. */
+  onInvalid?: () => void
 }
 
 /**
@@ -45,6 +47,7 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
     schemaData,
     onSchemaDataChange,
     onValid,
+    onInvalid,
     fileHandleWidgetContext,
   } = props
   const formRef = useRef<RJSFForm>(null)
@@ -76,6 +79,7 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
       onSubmit={event =>
         onValid?.({ ...schemaData, ...(event.formData as SchemaData) })
       }
+      onError={onInvalid}
     >
       <></>
     </JsonSchemaForm>
