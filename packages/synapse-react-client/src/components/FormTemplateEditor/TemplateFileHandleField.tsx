@@ -17,7 +17,8 @@ import {
 import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
 import { useMemo, useRef, useState } from 'react'
-import { getTemplateDocumentAssociation } from './utils'
+import { getTemplateFileAssociation } from '@/components/JsonSchemaForm/CustomFormContext'
+import { getTemplateFileSource } from './utils'
 
 export type TemplateFileHandleFieldProps = {
   /** The slot's `templateFileHandleId`, if one is attached. */
@@ -49,7 +50,10 @@ export function TemplateFileHandleField({
   const fileHandleAssociation = useMemo<FileHandleAssociation | undefined>(
     () =>
       fileHandleId
-        ? getTemplateDocumentAssociation(savedTemplate, fileHandleId)
+        ? getTemplateFileAssociation(
+            getTemplateFileSource(savedTemplate),
+            fileHandleId,
+          )
         : undefined,
     [fileHandleId, savedTemplate],
   )

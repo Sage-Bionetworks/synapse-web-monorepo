@@ -457,7 +457,7 @@ describe('JsonSchemaRequestWizard', () => {
       )
     }
 
-    it('offers the template file through the form template, showing its file name', async () => {
+    it('offers the template file through the form template, without overriding its file name', async () => {
       mockRequestServices(
         clinicalAccessRequirement,
         createRequest(clinicalAccessRequirement),
