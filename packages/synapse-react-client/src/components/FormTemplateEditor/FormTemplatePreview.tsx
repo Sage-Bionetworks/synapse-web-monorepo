@@ -23,9 +23,9 @@ import {
   Typography,
 } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
-import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { ReactNode, useId, useMemo, useRef, useState } from 'react'
 import styles from './FormTemplatePreview.module.scss'
+import { getTemplateFileSource } from './utils'
 
 export const VALIDATE_PREVIEW_RESPONSES_LABEL = 'Validate preview responses'
 
@@ -69,14 +69,7 @@ export function FormTemplatePreview({
   const fileHandleWidgetContext = useMemo<FileHandleWidgetContext>(
     () => ({
       answerFileHandleIds: [],
-      templateObject: savedTemplate?.id
-        ? {
-            associateObjectType: FileHandleAssociateType.FormTemplateAttachment,
-            associateObjectId: savedTemplate.id,
-          }
-        : undefined,
-      // A file uploaded since the last save is not listed yet
-      templateFileHandleIds: savedTemplate?.attachments ?? [],
+      ...getTemplateFileSource(savedTemplate),
       canEdit: false,
     }),
     [savedTemplate],

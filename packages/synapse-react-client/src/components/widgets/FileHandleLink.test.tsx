@@ -1,3 +1,4 @@
+import { mockFileHandle } from '@/mocks/mock_file_handle'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { FILE_HANDLE_BATCH } from '@/utils/APIConstants'
@@ -39,6 +40,41 @@ describe('FileHandleLink', () => {
     expect(
       screen.getByRole('button', { name: 'Download Template' }),
     ).toHaveClass('MuiButton-root', 'MuiButton-outlined')
+  })
+
+  it('shows the looked-up file name on a button when no display value is given', async () => {
+    server.use(
+      http.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FILE_HANDLE_BATCH}`,
+        () => {
+          const result: BatchFileResult = {
+            requestedFiles: [
+              {
+                fileHandleId: '1234',
+                fileHandle: { ...mockFileHandle, fileName: 'template.docx' },
+              },
+            ],
+          }
+          return HttpResponse.json(result)
+        },
+      ),
+    )
+    render(
+      <FileHandleLink
+        fileHandleAssociation={{
+          fileHandleId: '1234',
+          associateObjectType: FileHandleAssociateType.FormTemplateAttachment,
+          associateObjectId: '42',
+        }}
+        buttonVariant="outlined"
+        showDownloadIcon
+      />,
+      { wrapper: createWrapper() },
+    )
+
+    expect(
+      await screen.findByRole('button', { name: /template\.docx/ }),
+    ).toHaveClass('MuiButton-outlined')
   })
 
   it('falls back to the file handle ID when the file batch returns no entry for the file', async () => {

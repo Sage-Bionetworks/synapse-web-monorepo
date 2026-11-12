@@ -2,10 +2,8 @@ import {
   FormTemplate,
   FormTemplateStep,
 } from '@sage-bionetworks/synapse-client'
-import {
-  FileHandleAssociateType,
-  FileHandleAssociation,
-} from '@sage-bionetworks/synapse-types'
+import { TemplateFileSource } from '@/components/JsonSchemaForm/CustomFormContext'
+import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 
 export { moveItem } from '@/utils/functions/ArrayUtils'
 
@@ -64,19 +62,20 @@ export function getFormTemplateAttachments(
 }
 
 /**
- * The association that downloads a template document through the saved template, or undefined if no saved version of
- * the template lists it yet (e.g. it was uploaded since the last save), in which case only the user who uploaded it
- * can download it.
+ * Where the template documents of a template being edited are downloaded from: through its saved version, which serves
+ * the documents it lists. A document that no saved version lists yet (e.g. one uploaded since the last save) can only
+ * be downloaded by the user who uploaded it.
  */
-export function getTemplateDocumentAssociation(
+export function getTemplateFileSource(
   savedTemplate: FormTemplate | undefined,
-  fileHandleId: string,
-): FileHandleAssociation | undefined {
-  return savedTemplate?.id && savedTemplate.attachments?.includes(fileHandleId)
-    ? {
-        fileHandleId,
-        associateObjectType: FileHandleAssociateType.FormTemplateAttachment,
-        associateObjectId: savedTemplate.id,
-      }
-    : undefined
+): TemplateFileSource {
+  return {
+    templateObject: savedTemplate?.id
+      ? {
+          associateObjectType: FileHandleAssociateType.FormTemplateAttachment,
+          associateObjectId: savedTemplate.id,
+        }
+      : undefined,
+    templateFileHandleIds: savedTemplate?.attachments ?? [],
+  }
 }

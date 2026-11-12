@@ -143,6 +143,17 @@ describe('TemplateFileHandleField', () => {
     expect(getFilesSpy).not.toHaveBeenCalled()
   })
 
+  it('links a document of a version saved before attachments existed to the file handle directly', async () => {
+    renderField({
+      fileHandleId: MOCK_FILE_HANDLE_ID,
+      savedTemplate: { ...SAVED_TEMPLATE, attachments: undefined },
+    })
+    expect(
+      await screen.findByRole('button', { name: /mock-file\.raw/ }),
+    ).toBeInTheDocument()
+    expect(getFilesSpy).not.toHaveBeenCalled()
+  })
+
   it('opens the file handle download URL for an unsaved template', async () => {
     server.use(
       http.get(`${REPO_ENDPOINT}/file/v1/fileHandle/:id/url`, ({ params }) =>

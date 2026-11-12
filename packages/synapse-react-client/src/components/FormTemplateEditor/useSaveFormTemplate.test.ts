@@ -140,6 +140,34 @@ describe('useSaveFormTemplate', () => {
     expect(updateTemplateSpy).not.toHaveBeenCalled()
   })
 
+  it('lists the template documents in the attachments of a new template', async () => {
+    mockRegisteredVersions()
+    createTemplateSpy.mockResolvedValueOnce({
+      name: 'My Template',
+      schema$id: 'org.sagebionetworks.act-MyTemplate-1.0.0',
+      steps: [],
+    })
+
+    const { result } = renderHook(() => useSaveFormTemplate(), {
+      wrapper: createWrapper(),
+    })
+
+    await result.current.mutateAsync({
+      name: 'My Template',
+      jsonSchema,
+      steps: [
+        {
+          ...steps[0],
+          fields: [{ ...steps[0].fields[0], templateFileHandleId: '222' }],
+        },
+      ],
+    })
+
+    expect(createTemplateSpy).toHaveBeenCalledWith({
+      formTemplate: expect.objectContaining({ attachments: ['222'] }),
+    })
+  })
+
   it('skips re-registering the schema when it has not changed, and updates the existing template', async () => {
     const initialTemplate: FormTemplate = {
       id: 'template-1',
