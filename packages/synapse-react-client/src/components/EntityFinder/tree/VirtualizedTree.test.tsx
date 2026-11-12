@@ -486,7 +486,7 @@ describe('VirtualizedTree tests', () => {
           nestingLevel: 1,
           node: rootNodeConfiguration.children[0],
         }).value,
-      ).toEqual(undefined)
+      ).toBeUndefined()
 
       // We could keep traversing a tree, but this should be good enough
     })

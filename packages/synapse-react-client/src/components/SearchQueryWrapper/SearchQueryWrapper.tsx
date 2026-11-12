@@ -191,6 +191,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     goToPage,
     pageSize,
     setPageSize,
+    isRestoringQueryFromUrl,
   } = immutableTableQueryResult
 
   // SearchTableQueryUseQueryOptions uses SearchIndexQuery generics rather than QueryBundleRequest.
@@ -263,6 +264,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     executeQueryRequest: setQuery,
     hasFacetedSelectColumn,
     hasResettableFilters,
+    isRestoringQueryFromUrl,
     removeSelectedFacet,
     removeValueFromSelectedFacet,
     resetQuery,

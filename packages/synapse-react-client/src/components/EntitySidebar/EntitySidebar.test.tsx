@@ -162,8 +162,8 @@ describe('EntitySidebar', () => {
     it('File handle md5', async () => {
       renderComponent()
 
-      await screen.findByText(`MD5`)
-      await screen.findByText(mockFileHandle.contentMd5!)
+      const md5 = await screen.findByRole('definition', { name: 'MD5' })
+      expect(md5).toHaveTextContent(mockFileHandle.contentMd5!)
     })
     it('File handle download alias', async () => {
       const fileName = 'custom-file-name-not-matching-entity-name.tar.gz'

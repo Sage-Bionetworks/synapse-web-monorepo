@@ -3,6 +3,7 @@ import {
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
 import { act, renderHook, waitFor } from '@testing-library/react'
+import { StrictMode } from 'react'
 import { cloneDeep } from 'lodash-es'
 import * as DeepLinkingUtils from '../../functions/deepLinkingUtils'
 import useImmutableTableQuery, {
@@ -76,8 +77,8 @@ describe('useImmutableTableQuery tests', () => {
 
   it('Returns the entity ID and version in the passed query', () => {
     const { result } = renderHook(() => useImmutableTableQuery(options))
-    expect(result.current.entityId).toEqual('syn123')
-    expect(result.current.versionNumber).toEqual(3)
+    expect(result.current.entityId).toBe('syn123')
+    expect(result.current.versionNumber).toBe(3)
   })
 
   it('Updates the query using a new query object', () => {
@@ -137,28 +138,28 @@ describe('useImmutableTableQuery tests', () => {
 
   it('Updates the page size', () => {
     const { result } = renderHook(() => useImmutableTableQuery(options))
-    expect(result.current.pageSize).toEqual(25)
+    expect(result.current.pageSize).toBe(25)
 
     // Call under test
     act(() => {
       result.current.setPageSize(50)
     })
 
-    expect(result.current.pageSize).toEqual(50)
-    expect(result.current.getCurrentQueryRequest().query.limit).toEqual(50)
+    expect(result.current.pageSize).toBe(50)
+    expect(result.current.getCurrentQueryRequest().query.limit).toBe(50)
   })
 
   it('Updates the page number', () => {
     const { result } = renderHook(() => useImmutableTableQuery(options))
     const pageSize = result.current.pageSize
-    expect(result.current.currentPage).toEqual(1)
+    expect(result.current.currentPage).toBe(1)
 
     // Call under test
     act(() => {
       result.current.goToPage(2)
     })
 
-    expect(result.current.currentPage).toEqual(2)
+    expect(result.current.currentPage).toBe(2)
     expect(result.current.getCurrentQueryRequest().query.offset).toEqual(
       pageSize,
     )
@@ -273,6 +274,144 @@ describe('useImmutableTableQuery tests', () => {
       expect(result.current.getCurrentQueryRequest().query.sql).toEqual(
         sqlInURL,
       )
+    })
+  })
+
+  describe('isRestoringQueryFromUrl', () => {
+    const savedQuery = {
+      ...options.initQueryRequest.query,
+      sql: 'SELECT * FROM syn123.3 WHERE "foo"=\'baz\'',
+    }
+
+    async function openUrlWithSavedQuery() {
+      window.history.replaceState(
+        null,
+        '',
+        await DeepLinkingUtils.generateCompressedQueryURL(
+          '/',
+          4,
+          savedQuery,
+          options.initQueryRequest.query,
+        ),
+      )
+    }
+
+    afterEach(() => {
+      window.history.replaceState(null, '', '/')
+    })
+
+    it('is true, with the initial query current, until the query saved in the URL is applied', async () => {
+      await openUrlWithSavedQuery()
+      const { result } = renderHook(() =>
+        useImmutableTableQuery({
+          ...options,
+          shouldDeepLink: true,
+          componentIndex: 4,
+        }),
+      )
+
+      expect(result.current.isRestoringQueryFromUrl).toBe(true)
+      expect(result.current.getCurrentQueryRequest()).toEqual(
+        options.initQueryRequest,
+      )
+      await waitFor(() =>
+        expect(result.current.isRestoringQueryFromUrl).toBe(false),
+      )
+      expect(result.current.getCurrentQueryRequest().query.sql).toEqual(
+        savedQuery.sql,
+      )
+    })
+
+    it('never reports the restore as done while the initial query is current, under StrictMode', async () => {
+      await openUrlWithSavedQuery()
+      const renders: { isRestoring: boolean; sql: string }[] = []
+      const { result } = renderHook(
+        () => {
+          const tableQuery = useImmutableTableQuery({
+            ...options,
+            shouldDeepLink: true,
+            componentIndex: 4,
+          })
+          renders.push({
+            isRestoring: tableQuery.isRestoringQueryFromUrl,
+            sql: tableQuery.currentQueryRequest.query.sql,
+          })
+          return tableQuery
+        },
+        { wrapper: StrictMode },
+      )
+
+      await waitFor(() =>
+        expect(result.current.currentQueryRequest.query.sql).toEqual(
+          savedQuery.sql,
+        ),
+      )
+      expect(
+        renders.filter(
+          render =>
+            !render.isRestoring &&
+            render.sql === options.initQueryRequest.query.sql,
+        ),
+      ).toEqual([])
+      await waitFor(() => expect(window.location.search).toContain('qw4='))
+    })
+
+    it('restores a query saved in the legacy search param', async () => {
+      window.history.replaceState(
+        null,
+        '',
+        `/?QueryWrapper4=${encodeURIComponent(JSON.stringify(savedQuery))}`,
+      )
+      const { result } = renderHook(() =>
+        useImmutableTableQuery({
+          ...options,
+          shouldDeepLink: true,
+          componentIndex: 4,
+        }),
+      )
+
+      expect(result.current.isRestoringQueryFromUrl).toBe(true)
+      await waitFor(() =>
+        expect(result.current.isRestoringQueryFromUrl).toBe(false),
+      )
+      expect(result.current.getCurrentQueryRequest().query.sql).toEqual(
+        savedQuery.sql,
+      )
+    })
+
+    it('finishes with the initial query when the saved query cannot be read', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {})
+      window.history.replaceState(null, '', '/?qw4=not-a-saved-query')
+      const { result } = renderHook(() =>
+        useImmutableTableQuery({
+          ...options,
+          shouldDeepLink: true,
+          componentIndex: 4,
+        }),
+      )
+
+      await waitFor(() =>
+        expect(result.current.isRestoringQueryFromUrl).toBe(false),
+      )
+      expect(result.current.getCurrentQueryRequest()).toEqual(
+        options.initQueryRequest,
+      )
+    })
+
+    it.each([
+      ['the URL holds no query for the component', true, '/?qw0=abc'],
+      ['deep linking is off', false, '/?qw4=abc'],
+    ])('is false from the start when %s', (_case, shouldDeepLink, url) => {
+      window.history.replaceState(null, '', url)
+      const { result } = renderHook(() =>
+        useImmutableTableQuery({
+          ...options,
+          shouldDeepLink,
+          componentIndex: 4,
+        }),
+      )
+
+      expect(result.current.isRestoringQueryFromUrl).toBe(false)
     })
   })
 

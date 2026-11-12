@@ -30,6 +30,7 @@ import {
   getNumberOfResultsToInvokeActionCopy,
 } from './TopLevelControlsUtils'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
+import { formatQueryCount } from '@/utils/functions/queryCountUtils'
 import { CustomControlButton } from '../CustomControls/CustomControlButton'
 import { useSynapseContext } from '@/utils'
 import { SignInRequiredModal } from '@/components/SignInRequiredModal/SignInRequiredModal'
@@ -180,7 +181,7 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
 
   const queryCountDisplay =
     !hideQueryCount && queryMetadata?.queryCount !== undefined
-      ? `(${queryMetadata.queryCount.toLocaleString()})`
+      ? `(${formatQueryCount(queryMetadata)})`
       : null
 
   return (

@@ -136,7 +136,7 @@ export function shouldRenderFacet(facet: Facet): boolean {
  * @returns The ID of the matching time range preset ('PAST_HOUR', 'PAST_DAY', etc.)
  */
 export function getSelectedTimeRangeId(timestamp: string): string {
-  const storedTimestamp = parseInt(timestamp)
+  const storedTimestamp = Number.parseInt(timestamp)
 
   if (!storedTimestamp) {
     return 'ANY_TIME'
@@ -174,7 +174,7 @@ export function getSelectedTimeRangeId(timestamp: string): string {
  * @returns A friendly display string
  */
 export function formatTimeRangeDisplayValue(timestamp: string): string {
-  const storedTimestamp = parseInt(timestamp)
+  const storedTimestamp = Number.parseInt(timestamp)
 
   if (isNaN(storedTimestamp)) {
     return timestamp

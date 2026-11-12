@@ -3,8 +3,9 @@ import {
   isInSynapseExperimentalMode,
 } from '@/synapse-client/SynapseClient'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useMemo } from 'react'
 import { SynapseContextProvider, SynapseContextType } from '../../context'
+import { getEnabledExperimentalFeatures } from '../../featureflag/experimentalFeatureCookies'
 import { useIsHydrated } from '../../hooks/useIsHydrated'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
 import { AuthenticationGuard } from './AuthenticationGuard'
@@ -28,7 +29,7 @@ export type ApplicationSessionManagerProps = PropsWithChildren<{
     twoFaResetToken: string,
   ) => void
   appId?: SynapseContextType['appId']
-  /* If true, redirects unauthenticated users to OneSage login after session initialization */
+  /* If true, redirects unauthenticated users to OneSage login after session initialization. Users signed in to a realm other than `defaultRealmId` are signed out first, so they are redirected as well. */
   requireAuthentication?: boolean
 }>
 
@@ -60,11 +61,17 @@ export function ApplicationSessionManager(
   const { sessionContext, token } = useSessionManager({
     ...hookOptions,
     defaultRealm: defaultRealmId,
+    requireAuthenticationInDefaultRealm: requireAuthentication,
   })
   // The experimental mode cookie cannot exist while prerendering, so reading it
   // during the first hydrating render would be a hydration mismatch in every
   // component that branches on a feature flag.
   const isHydrated = useIsHydrated()
+
+  const enabledExperimentalFeatures = useMemo(
+    () => (isHydrated ? getEnabledExperimentalFeatures() : []),
+    [isHydrated],
+  )
 
   return (
     <ApplicationSessionContextProvider context={sessionContext}>
@@ -73,6 +80,7 @@ export function ApplicationSessionManager(
           accessToken: token,
           isAuthenticated: sessionContext.isAuthenticated,
           isInExperimentalMode: isHydrated && isInSynapseExperimentalMode(),
+          enabledExperimentalFeatures,
           utcTime: isHydrated && getUseUtcTimeFromCookie(),
           downloadCartPageUrl,
           appId: appId,

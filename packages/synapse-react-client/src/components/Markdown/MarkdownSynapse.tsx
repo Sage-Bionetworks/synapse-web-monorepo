@@ -12,20 +12,8 @@ import {
 } from '@/synapse-queries/wiki/useWiki'
 import { sanitize } from '@/utils/functions/SanitizeHtmlUtils'
 import { Link, Typography } from '@mui/material'
-import markdownitContainer from '@sage-bionetworks/markdown-it-container'
 import { ObjectType } from '@sage-bionetworks/synapse-types'
-import MarkdownIt from 'markdown-it'
-import markdownitBr from 'markdown-it-br'
-import markdownitCentertext from 'markdown-it-center-text'
-import markdownitInlineComments from 'markdown-it-inline-comments'
-import markdownitStrikethroughAlt from 'markdown-it-strikethrough-alt'
-import markdownitSub from 'markdown-it-sub-alt'
-import markdownitSup from 'markdown-it-sup-alt'
 import * as markdownitSynapse from 'markdown-it-synapse'
-import markdownitSynapsePlugin from 'markdown-it-synapse'
-import markdownitSynapseHeading from 'markdown-it-synapse-heading'
-import markdownitMath from 'markdown-it-synapse-math'
-import markdownitSynapseTable from 'markdown-it-synapse-table'
 import { ComponentProps, ElementType, useEffect, useMemo, useRef } from 'react'
 import {
   htmlToDOM,
@@ -39,6 +27,7 @@ import { ErrorBanner } from '../error/ErrorBanner'
 import { SkeletonTable } from '../Skeleton'
 import MarkdownWidget from './MarkdownWidget'
 import { SynapseWikiContextProvider } from './SynapseWikiContext'
+import { synapseMarkdownIt as md } from './synapseMarkdownIt'
 import Bookmarks from './widget/Bookmarks'
 
 export const NO_WIKI_CONTENT = 'There is no content.'
@@ -53,26 +42,6 @@ export type MarkdownSynapseProps = {
   onMarkdownProcessingDone?: (htmlContent: string | null | undefined) => void
   showPlaceholderIfNoWikiContent?: boolean
 }
-
-// Configure markdown-it
-const md = MarkdownIt({ html: true })
-markdownitSynapse.init_markdown_it(
-  md,
-  markdownitSub,
-  markdownitSup,
-  markdownitCentertext,
-  markdownitSynapseHeading,
-  markdownitSynapseTable,
-  markdownitStrikethroughAlt,
-  markdownitContainer,
-  markdownitInlineComments,
-  markdownitBr,
-)
-const mathSuffix = ''
-md.use(markdownitSynapsePlugin, mathSuffix, 'https://synapse.org').use(
-  markdownitMath,
-  mathSuffix,
-)
 
 /**
  * Process all the corresponding bookmark tags of the references made throughout the page and renders footnotes, if any exist.

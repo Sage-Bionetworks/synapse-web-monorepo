@@ -1,5 +1,11 @@
-import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import {
+  DetailsPageContent,
+  DetailsPageContentType,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import {
+  DetailsPageContextConsumer,
+  useDetailsPageContext,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
@@ -7,8 +13,10 @@ import { datasetsSql } from '../config/resources'
 import {
   datasetCardConfiguration,
   datasetColumnAliases,
+  datasetQueryWrapperPlotNavProps,
 } from '../config/synapseConfigs/datasets'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
 import DatasetDetailsFilesTable from './DatasetDetailsFilesTable'
 import {
   createDetailPageRouteExports,
@@ -47,6 +55,67 @@ export const loader = _routeExports.loader
 export const clientLoader = _routeExports.clientLoader
 export const meta = _routeExports.meta
 
+function DatasetDetailsPageContent(props: { id: string }) {
+  const { id } = props
+  // Comma-separated entity IDs from the ENTITYID_LIST column
+  const { value: associatedDatasetIds } =
+    useDetailsPageContext('associatedDataset')
+
+  const content: DetailsPageContentType = [
+    {
+      id: 'DatasetJsonLdScript',
+      element: <DatasetJsonLdScript entityId={id} />,
+    },
+    {
+      title: 'Description',
+      id: 'Description',
+      element: (
+        <MarkdownSynapseFromColumnData columnName={'datasetDescription'} />
+      ),
+    },
+    {
+      title: 'Acknowledgment',
+      id: 'Acknowledgment',
+      element: (
+        <MarkdownSynapseFromColumnData columnName={'acknowledgmentStatement'} />
+      ),
+    },
+  ]
+
+  if (associatedDatasetIds) {
+    content.push({
+      title: 'Associated Datasets',
+      id: 'AssociatedDatasets',
+      element: (
+        <QueryWrapperPlotNav
+          {...datasetQueryWrapperPlotNavProps}
+          name={''}
+          shouldDeepLink={false}
+          defaultShowPlots={false}
+          defaultShowFacetFilter={false}
+          searchParams={{ id: associatedDatasetIds }}
+          sqlOperator={ColumnSingleValueFilterOperator.IN}
+          lockedColumn={{ columnName: 'id' }}
+        />
+      ),
+    })
+  }
+
+  content.push({
+    title: 'Files',
+    id: 'Files',
+    element: (
+      <DetailsPageContextConsumer>
+        {({ context }) => {
+          return <DatasetDetailsFilesTable rowData={context.rowData} />
+        }}
+      </DetailsPageContextConsumer>
+    ),
+  })
+
+  return <DetailsPageContent content={content} />
+}
+
 function DatasetDetailsPage() {
   const { id } = useParams<{ id: string }>()
 
@@ -77,43 +146,7 @@ function DatasetDetailsPage() {
       resourcePrimaryKey={['id']}
       disableCanonicalUrl
     >
-      <DetailsPageContent
-        content={[
-          {
-            id: 'DatasetJsonLdScript',
-            element: <DatasetJsonLdScript entityId={id} />,
-          },
-          {
-            title: 'Description',
-            id: 'Description',
-            element: (
-              <MarkdownSynapseFromColumnData
-                columnName={'datasetDescription'}
-              />
-            ),
-          },
-          {
-            title: 'Acknowledgment',
-            id: 'Acknowledgment',
-            element: (
-              <MarkdownSynapseFromColumnData
-                columnName={'acknowledgmentStatement'}
-              />
-            ),
-          },
-          {
-            title: 'Files',
-            id: 'Files',
-            element: (
-              <DetailsPageContextConsumer>
-                {({ context }) => {
-                  return <DatasetDetailsFilesTable rowData={context.rowData} />
-                }}
-              </DetailsPageContextConsumer>
-            ),
-          },
-        ]}
-      />
+      <DatasetDetailsPageContent id={id} />
     </DetailsPage>
   )
 }

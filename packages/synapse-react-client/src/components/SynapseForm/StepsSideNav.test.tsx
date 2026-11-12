@@ -40,10 +40,10 @@ describe('StepsSideNav', () => {
       'span.styled-svg-wrapper',
     )
     expect(icons).toHaveLength(4)
-    expect(icons[0].dataset.svg).toEqual('circle')
-    expect(icons[1].dataset.svg).toEqual('errorOutlined')
-    expect(icons[2].dataset.svg).toEqual('checkCircle')
-    expect(icons[3].dataset.svg).toEqual('block')
+    expect(icons[0].dataset.svg).toBe('circle')
+    expect(icons[1].dataset.svg).toBe('errorOutlined')
+    expect(icons[2].dataset.svg).toBe('checkCircle')
+    expect(icons[3].dataset.svg).toBe('block')
   })
 
   test('should call callback function with appropriate params', async () => {

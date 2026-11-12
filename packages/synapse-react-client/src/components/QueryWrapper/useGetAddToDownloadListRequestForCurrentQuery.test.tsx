@@ -65,6 +65,7 @@ const mockQueryContextValue: QueryContextType = {
   hasFacetedSelectColumn: false,
   hasResettableFilters: false,
   isInfinite: false,
+  isRestoringQueryFromUrl: false,
   lockedColumn: undefined,
   pageSize: 0,
   queryMetadataQueryOptions: { queryKey: [], queryFn: vi.fn() },

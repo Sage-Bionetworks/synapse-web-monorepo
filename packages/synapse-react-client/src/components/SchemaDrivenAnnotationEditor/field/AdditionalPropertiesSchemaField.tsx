@@ -63,7 +63,7 @@ export function transformDataFromPropertyType(
 
     case 'Float':
       return list.map(item => {
-        const asFloat = parseFloat(item as string)
+        const asFloat = Number.parseFloat(item as string)
         if (Number.isNaN(asFloat)) {
           return 'NaN'
         } else if (Number.isInteger(asFloat)) {

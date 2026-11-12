@@ -6,6 +6,7 @@ import {
   isTextMatchesQueryFilter,
   LockedColumn,
 } from '@/utils'
+import { isFilterGroup } from '@/utils/types/IsType'
 import { FRIENDLY_VALUE_NOT_SET, VALUE_NOT_SET } from '@/utils/SynapseConstants'
 import {
   ColumnModel,
@@ -30,6 +31,9 @@ import SelectionCriteriaPill, {
 import { getSearchTextFromBooleanModeSearchExpression } from '@/components/FullTextSearch/FullTextSearchUtils'
 
 const MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS = 4
+
+/** The single pill for the `FilterGroup` that holds the Query Builder conditions. */
+export const QUERY_BUILDER_CONDITIONS_PILL_TEXT = 'Query Builder conditions'
 
 function getPillPropsFromColumnQueryFilter(
   queryFilter:
@@ -149,6 +153,17 @@ function getPillPropsFromQueryFilters(
           queryContext,
           lockTextMatchesQueryFilterPill,
         ),
+      ]
+    } else if (isFilterGroup(queryFilter)) {
+      return [
+        {
+          key: `queryFilter-${queryFilter.concreteType}`,
+          label: QUERY_BUILDER_CONDITIONS_PILL_TEXT,
+          tooltipText: QUERY_BUILDER_CONDITIONS_PILL_TEXT,
+          onRemoveFilter: () => {
+            queryContext.removeQueryFilter(queryFilter)
+          },
+        },
       ]
     } else {
       console.log('Unknown query filter type', queryFilter)

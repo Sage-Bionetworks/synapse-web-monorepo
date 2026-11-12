@@ -293,7 +293,7 @@ export function getInfiniteQueryResultBundleOptions(
     queryFn: context => {
       const offset =
         typeof context.pageParam === 'string'
-          ? parseInt(context.pageParam)
+          ? Number.parseInt(context.pageParam)
           : (context.pageParam ?? 0)
       return SynapseClient.getQueryTableAsyncJobResults(
         {

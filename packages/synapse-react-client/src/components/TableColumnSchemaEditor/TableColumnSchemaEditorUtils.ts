@@ -332,7 +332,7 @@ function transformEnumValues(
   // The editor validates that these are integers, so inserting the strings returned by the API causes an
   // unexpected validation error
   if (columnType === ColumnTypeEnum.INTEGER) {
-    return enumValues.map(value => parseInt(value))
+    return enumValues.map(value => Number.parseInt(value))
   }
   return enumValues
 }
@@ -477,7 +477,7 @@ export function getFormDataValueAsNumber(
   formDataValue: string | number | undefined,
 ): number | null {
   const maxSize =
-    formDataValue !== null ? parseFloat(String(formDataValue)) : null
+    formDataValue !== null ? Number.parseFloat(String(formDataValue)) : null
   const isInteger = Number.isInteger(maxSize)
   return isInteger ? maxSize : null
 }

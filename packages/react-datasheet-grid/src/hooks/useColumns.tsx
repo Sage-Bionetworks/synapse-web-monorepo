@@ -23,14 +23,14 @@ export const parseFlexValue = (value: string | number) => {
   if (/^ *\d+(\.\d*)? *$/.exec(value)) {
     return {
       basis: 0,
-      grow: parseFloat(value.trim()),
+      grow: Number.parseFloat(value.trim()),
       shrink: 1,
     }
   }
 
   if (/^ *\d+(\.\d*)? *px *$/.exec(value)) {
     return {
-      basis: parseFloat(value.trim()),
+      basis: Number.parseFloat(value.trim()),
       grow: 1,
       shrink: 1,
     }
@@ -40,16 +40,16 @@ export const parseFlexValue = (value: string | number) => {
     const [grow, shrink] = value.trim().split(' ')
     return {
       basis: 0,
-      grow: parseFloat(grow),
-      shrink: parseFloat(shrink),
+      grow: Number.parseFloat(grow),
+      shrink: Number.parseFloat(shrink),
     }
   }
 
   if (/^ *\d+(\.\d*)? \d+(\.\d*)? *px *$/.exec(value)) {
     const [grow, basis] = value.trim().split(' ')
     return {
-      basis: parseFloat(basis),
-      grow: parseFloat(grow),
+      basis: Number.parseFloat(basis),
+      grow: Number.parseFloat(grow),
       shrink: 1,
     }
   }
@@ -57,9 +57,9 @@ export const parseFlexValue = (value: string | number) => {
   if (/^ *\d+(\.\d*)? \d+(\.\d*)? \d+(\.\d*)? *px *$/.exec(value)) {
     const [grow, shrink, basis] = value.trim().split(' ')
     return {
-      basis: parseFloat(basis),
-      grow: parseFloat(grow),
-      shrink: parseFloat(shrink),
+      basis: Number.parseFloat(basis),
+      grow: Number.parseFloat(grow),
+      shrink: Number.parseFloat(shrink),
     }
   }
 

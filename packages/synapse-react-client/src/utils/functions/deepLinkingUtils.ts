@@ -59,6 +59,11 @@ async function decompressString(base64Str: string): Promise<string> {
   return decoder.decode(decompressedArrayBuffer)
 }
 
+/** Prefix of the search param that holds a component's saved query, followed by its component index (e.g. `qw0`). */
+export const QUERY_SEARCH_PARAM_PREFIX = 'qw'
+/** Prefix of the legacy search param, which holds a component's query as plain JSON (e.g. `QueryWrapper0`). */
+const LEGACY_QUERY_SEARCH_PARAM_PREFIX = 'QueryWrapper'
+
 //id consists of a component class/function name and it's index
 function getComponentSearchHashId(
   componentName: string,
@@ -166,6 +171,29 @@ export async function updateUrlWithNewSearchParam(
 }
 
 /**
+ * Whether the URL holds a query for the component, in the current or the legacy search param format.
+ * @param componentIndex
+ * @param search - The URL's query string, e.g. `window.location.search`
+ */
+export function hasQueryRequestInLink(
+  componentIndex: number,
+  search: string,
+): boolean {
+  const searchParams = new URLSearchParams(search)
+  return (
+    searchParams.has(
+      getComponentSearchHashId(QUERY_SEARCH_PARAM_PREFIX, componentIndex),
+    ) ||
+    searchParams.has(
+      getComponentSearchHashId(
+        LEGACY_QUERY_SEARCH_PARAM_PREFIX,
+        componentIndex,
+      ),
+    )
+  )
+}
+
+/**
  * Retrieves a query request from the URL by applying the stored diff to the initial query.
  * @param componentIndex
  * @param initQuery - The initial query to apply the diff to
@@ -175,7 +203,10 @@ export async function getQueryRequestFromLink(
   componentIndex: number,
   initQuery: Query,
 ): Promise<Partial<QueryBundleRequest> | undefined> {
-  const paramKey = getComponentSearchHashId('qw', componentIndex)
+  const paramKey = getComponentSearchHashId(
+    QUERY_SEARCH_PARAM_PREFIX,
+    componentIndex,
+  )
   const searchParamValue = new URLSearchParams(window.location.search).get(
     paramKey,
   )
@@ -203,7 +234,7 @@ export async function getQueryRequestFromLink(
 
   // check for legacy search param for backward compatibility, but prioritize the new format if both are present
   const legacyParamKey = getComponentSearchHashId(
-    'QueryWrapper',
+    LEGACY_QUERY_SEARCH_PARAM_PREFIX,
     componentIndex,
   )
   const legacySearchParamValue = new URLSearchParams(
@@ -249,7 +280,10 @@ export async function generateCompressedQueryURL(
 
   const jsonString = JSON.stringify(diff)
   const compressed = await compressString(jsonString)
-  const paramKey = getComponentSearchHashId('qw', componentIndex)
+  const paramKey = getComponentSearchHashId(
+    QUERY_SEARCH_PARAM_PREFIX,
+    componentIndex,
+  )
 
   return `${path}?${paramKey}=${encodeURIComponent(compressed)}`
 }

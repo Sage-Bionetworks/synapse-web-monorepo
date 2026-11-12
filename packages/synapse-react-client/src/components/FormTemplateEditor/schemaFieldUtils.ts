@@ -23,12 +23,17 @@ export const FIELD_TYPE_OPTIONS: { value: SimpleFieldType; label: string }[] = [
   { value: 'file', label: 'File upload' },
 ]
 
+/** The simple editor edits choices as text, so an enum holding any other value is advanced. */
+function isStringEnum(values: unknown): values is string[] {
+  return Array.isArray(values) && values.every(v => typeof v === 'string')
+}
+
 export function detectFieldType(
   prop: RJSFSchema | undefined,
 ): SimpleFieldType | null {
   if (!prop || typeof prop !== 'object') return null
   if (prop.format === SYNAPSE_FILE_HANDLE_ID_FORMAT) return 'file'
-  if (prop.type === 'string' && Array.isArray(prop.enum)) return 'choice'
+  if (prop.type === 'string' && isStringEnum(prop.enum)) return 'choice'
   // RJSF renders an array as a multi-select only when `uniqueItems` is set; without it the
   // property renders as a repeatable list, which the simple editor does not author.
   const items = prop.items as RJSFSchema | undefined
@@ -36,11 +41,13 @@ export function detectFieldType(
     prop.type === 'array' &&
     prop.uniqueItems === true &&
     items?.type === 'string' &&
-    Array.isArray(items.enum)
+    isStringEnum(items.enum)
   ) {
     return 'multiChoice'
   }
-  if (prop.type === 'string' && !prop.format) return 'text'
+  if (prop.type === 'string' && !prop.format && prop.enum === undefined) {
+    return 'text'
+  }
   if (prop.type === 'number' || prop.type === 'integer') return 'number'
   if (prop.type === 'boolean') return 'boolean'
   return null
@@ -55,6 +62,35 @@ export function fieldTypeLabel(type: SimpleFieldType | null): string {
 export function choiceOptions(prop: RJSFSchema): string[] {
   const options = prop.enum ?? (prop.items as RJSFSchema | undefined)?.enum
   return Array.isArray(options) ? (options as string[]) : []
+}
+
+export type ChoiceOptionProblem = 'empty' | 'duplicate'
+
+/** Inline error shown on a choice's input for each problem. */
+export const CHOICE_OPTION_PROBLEM_TEXT: Record<ChoiceOptionProblem, string> = {
+  empty: 'Required',
+  duplicate: 'Already used by another choice',
+}
+
+/**
+ * Per option, why it can't be saved as an enum value, or `null` if it can. An enum can't usefully
+ * hold a blank value or the same value twice. Options are compared trimmed, since `'Red'` and
+ * `'Red '` look the same to the person filling in the form. A blank option wins over a duplicate,
+ * and every copy of a duplicated option is flagged, since either copy may be the one to change.
+ */
+export function choiceOptionProblems(
+  options: string[],
+): (ChoiceOptionProblem | null)[] {
+  const trimmed = options.map(option => option.trim())
+  const counts = new Map<string, number>()
+  for (const option of trimmed) {
+    counts.set(option, (counts.get(option) ?? 0) + 1)
+  }
+  return trimmed.map(option => {
+    if (option === '') return 'empty'
+    if ((counts.get(option) ?? 0) > 1) return 'duplicate'
+    return null
+  })
 }
 
 /** Build a fresh schema body for the given simple type, preserving label and help text. */

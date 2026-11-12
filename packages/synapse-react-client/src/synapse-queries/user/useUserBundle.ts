@@ -197,8 +197,11 @@ export function useGetPrincipalIdForAlias(
   })
 }
 
-export function useIsCurrentUserACTMember() {
+export function useIsCurrentUserACTMember(
+  options?: Partial<UseQueryOptions<UserBundle, SynapseClientError, boolean>>,
+) {
   return useGetCurrentUserBundle<boolean>(undefined, {
+    ...options,
     select: data => data.isACTMember!,
   })
 }

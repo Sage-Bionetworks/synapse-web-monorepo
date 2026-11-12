@@ -1,3 +1,5 @@
+import { ColumnModel } from '@sage-bionetworks/synapse-types'
+import { ReadonlyDeep } from 'type-fest'
 import { newQBNodeId } from './queryBuilderId'
 import {
   isQBGroup,
@@ -5,7 +7,9 @@ import {
   QBCondition,
   QBConditionOp,
   QBGroup,
+  QBGroupDefinition,
   QBNode,
+  QBNodeDefinition,
 } from './QueryBuilderTypes'
 
 // -----------------------------------------------------------------------------
@@ -70,6 +74,64 @@ export function newEmptyGroup(combinator: QBCombinator = 'AND'): QBGroup {
 export function defaultQBGroup(): QBGroup {
   const root = newEmptyGroup()
   return { ...root, children: [newBlankCondition(null, null)] }
+}
+
+/**
+ * Builds a QB tree from a configured definition, with new node IDs. Each condition's column type comes from the
+ * column model with its name, or is null when the query has no such column.
+ */
+export function qbGroupFromDefinition(
+  definition: QBGroupDefinition,
+  columnModels: ReadonlyDeep<ColumnModel[]>,
+): QBGroup {
+  const toGroup = (group: QBGroupDefinition): QBGroup => ({
+    kind: 'group',
+    id: newQBNodeId(),
+    combinator: group.combinator,
+    not: group.not ?? false,
+    children: group.children.map(toNode),
+  })
+  const toNode = (node: QBNodeDefinition): QBNode => {
+    if ('children' in node) {
+      return toGroup(node)
+    }
+    return {
+      kind: 'condition',
+      id: newQBNodeId(),
+      columnName: node.columnName,
+      columnType: null,
+      op: node.op,
+      values: node.values ?? [],
+      rangeMin: node.rangeMin ?? null,
+      rangeMax: node.rangeMax ?? null,
+      text: node.text ?? null,
+    }
+  }
+  return withColumnTypes(toGroup(definition), columnModels)
+}
+
+/**
+ * Sets each condition's `columnType` from the column model with its name, or to null when the query has no such
+ * column. Node IDs are kept. Meant for trees translated from elsewhere, whose column types are not yet known.
+ */
+export function withColumnTypes<T extends QBNode>(
+  node: T,
+  columnModels: ReadonlyDeep<ColumnModel[]>,
+): T {
+  const columnTypeByName = new Map<string, string>(
+    columnModels.map(cm => [cm.name, cm.columnType]),
+  )
+  const visit = (n: QBNode): QBNode =>
+    isQBGroup(n)
+      ? { ...n, children: n.children.map(visit) }
+      : {
+          ...n,
+          columnType:
+            n.columnName === null
+              ? null
+              : (columnTypeByName.get(n.columnName) ?? null),
+        }
+  return visit(node) as T
 }
 
 // -----------------------------------------------------------------------------

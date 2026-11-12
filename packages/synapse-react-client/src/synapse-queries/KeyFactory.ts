@@ -749,6 +749,23 @@ export class KeyFactory {
     }
   }
 
+  public getPresignedUrlFromFHAJsonContentQueryKey(
+    fileHandleAssociation: FileHandleAssociation,
+    forceAnonymous: boolean,
+  ) {
+    if (forceAnonymous) {
+      return this.getKeyAnonymous(
+        'presignedUrlJsonContentFromFHA',
+        fileHandleAssociation,
+      )
+    } else {
+      return this.getKey(
+        'presignedUrlJsonContentFromFHA',
+        fileHandleAssociation,
+      )
+    }
+  }
+
   public getStablePresignedUrlFromFHAQueryKey(
     fileHandleAssociation: FileHandleAssociation,
     forceAnonymous: boolean,

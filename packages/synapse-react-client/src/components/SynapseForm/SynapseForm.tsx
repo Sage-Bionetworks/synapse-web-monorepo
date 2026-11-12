@@ -1065,7 +1065,9 @@ function renderTransformedErrorObject(
 
   if (index) {
     index = index.substring(1, index.length - 1)
-    index = !isNaN(parseInt(index)) ? ` [${parseInt(index) + 1}]` : ''
+    index = !isNaN(Number.parseInt(index))
+      ? ` [${Number.parseInt(index) + 1}]`
+      : ''
   }
 
   const label =

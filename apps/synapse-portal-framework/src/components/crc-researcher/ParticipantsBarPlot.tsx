@@ -66,7 +66,7 @@ function getTraceItem(
 function getTotalSurveysReceived(data: any[]): number {
   let totalCount: number = 0
   data.forEach((row, i) => {
-    totalCount += parseInt(row['count'])
+    totalCount += Number.parseInt(row['count'])
   })
   return totalCount
 }
@@ -85,16 +85,17 @@ function getBarPlotDataPoints(data: any[]): any[] {
   let testedCount = 0
 
   if (testedRows.length > 0) {
-    testedCount = parseInt(testedRows[0].count)
+    testedCount = Number.parseInt(testedRows[0].count)
   }
 
   // note that if a participant was tested, then they were scheduled, and invited before
   if (scheduledRows.length > 0) {
-    scheduledCount = parseInt(scheduledRows[0].count) + testedCount
+    scheduledCount = Number.parseInt(scheduledRows[0].count) + testedCount
   }
   // note that if a participant was scheduled, then they were invited before
   if (invitedRows.length > 0) {
-    invitedCount = parseInt(invitedRows[0].count) + scheduledCount + testedCount
+    invitedCount =
+      Number.parseInt(invitedRows[0].count) + scheduledCount + testedCount
   }
 
   const x: string[] = [

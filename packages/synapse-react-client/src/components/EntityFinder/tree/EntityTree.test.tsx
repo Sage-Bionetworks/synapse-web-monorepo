@@ -284,7 +284,7 @@ describe('EntityTree tests', () => {
         expect(screen.getAllByRole('menu').length).toBeGreaterThan(0),
       )
 
-      expect(screen.getAllByText('Current Project').length).toBe(1)
+      expect(screen.getAllByText('Current Project')).toHaveLength(1)
     })
 
     it('changes data when a new selection is made', async () => {

@@ -10,11 +10,18 @@ import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { FormTemplate } from '@sage-bionetworks/synapse-client'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
 import userEvent, { UserEvent } from '@testing-library/user-event'
 import { JSONSchema7 } from 'json-schema'
 import { FormTemplateEditor } from './FormTemplateEditor'
 import { ACCESS_REQUIREMENT_BASE_SCHEMA_ID } from './formTemplateSchema'
+import { CHOICE_OPTION_PROBLEM_TEXT } from './schemaFieldUtils'
 
 const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
@@ -44,6 +51,23 @@ async function createField(user: UserEvent) {
 
 function getKeyField() {
   return screen.getByRole('textbox', { name: 'Property key' })
+}
+
+function getNameField() {
+  return screen.getByRole('textbox', { name: 'Internal Name' })
+}
+
+/** Create one field and bind it to the default step, leaving only the name to fill in. */
+async function createBoundField(user: UserEvent) {
+  await createField(user)
+  await user.click(screen.getByRole('button', { name: 'Close field editor' }))
+  await waitFor(() =>
+    expect(screen.getByRole('button', { name: 'New' })).toBeEnabled(),
+  )
+  await user.click(screen.getByRole('combobox', { name: 'Bind field' }))
+  await user.click(
+    await screen.findByRole('option', { name: 'New field (/newField)' }),
+  )
 }
 
 describe('FormTemplateEditor', () => {
@@ -121,6 +145,85 @@ describe('FormTemplateEditor', () => {
     await user.clear(keyField)
     await user.type(keyField, 'my field!! 1')
     expect(keyField).toHaveValue('myfield1')
+  })
+
+  it('marks Internal Name as required and shows an error only once it is left empty', async () => {
+    const user = userEvent.setup()
+    renderEditor()
+    const nameField = getNameField()
+
+    expect(nameField).toBeRequired()
+    expect(nameField).toHaveAttribute('aria-invalid', 'false')
+    expect(screen.queryByText('Name is required')).not.toBeInTheDocument()
+
+    await user.click(nameField)
+    await user.tab()
+
+    expect(nameField).toHaveAttribute('aria-invalid', 'true')
+    expect(nameField).toHaveAccessibleDescription('Name is required')
+
+    await user.type(nameField, 'My Template')
+    expect(nameField).toHaveAttribute('aria-invalid', 'false')
+    expect(screen.queryByText('Name is required')).not.toBeInTheDocument()
+  })
+
+  it('shows the name error instead of saving when Create is clicked without a name', async () => {
+    const user = userEvent.setup()
+    renderEditor()
+    await createBoundField(user)
+
+    await user.click(screen.getByRole('button', { name: 'Create Template' }))
+
+    expect(getNameField()).toHaveAttribute('aria-invalid', 'true')
+    expect(getNameField()).toHaveAccessibleDescription('Name is required')
+    // A started save would relabel the button "Saving…".
+    expect(
+      screen.getByRole('button', { name: 'Create Template' }),
+    ).toBeEnabled()
+    expect(createTemplateSpy).not.toHaveBeenCalled()
+  })
+
+  it('treats a name of only spaces as empty', async () => {
+    const user = userEvent.setup()
+    renderEditor()
+    await createBoundField(user)
+
+    await user.type(getNameField(), '   ')
+    await user.click(screen.getByRole('button', { name: 'Create Template' }))
+
+    expect(screen.getByText('Name is required')).toBeVisible()
+    expect(
+      screen.getByRole('button', { name: 'Create Template' }),
+    ).toBeEnabled()
+    expect(createTemplateSpy).not.toHaveBeenCalled()
+  })
+
+  it('saves the name without surrounding spaces', async () => {
+    const user = userEvent.setup()
+    const onSaved = vi.fn()
+    renderEditor(onSaved)
+    await createBoundField(user)
+
+    await user.type(getNameField(), '  My Template  ')
+    createTemplateSpy.mockResolvedValueOnce({
+      id: 'template-1',
+      name: 'My Template',
+      schema$id: 'org.example.mock-schema-1.0.1',
+      steps: [],
+      etag: 'etag-1',
+      versionNumber: 1,
+    })
+    await user.click(screen.getByRole('button', { name: 'Create Template' }))
+
+    await waitFor(() => expect(onSaved).toHaveBeenCalled())
+    expect(createTemplateSpy).toHaveBeenCalledWith({
+      formTemplate: expect.objectContaining({ name: 'My Template' }),
+    })
+    expect(createdSchemas).toEqual([
+      expect.objectContaining({
+        $id: 'org.sagebionetworks.act-MyTemplate-1.0.0',
+      }),
+    ])
   })
 
   it('registers a new template schema under the ACT organization, extending the base schema, and includes isPublic in the saved template', async () => {
@@ -227,6 +330,118 @@ describe('FormTemplateEditor', () => {
     expect(
       screen.getByRole('button', { name: 'Create Template' }),
     ).toBeDisabled()
+    // A field-level error is listed above the save button, not on the step card.
+    expect(
+      within(screen.getByRole('region', { name: /^Step 1:/ })).queryByRole(
+        'alert',
+      ),
+    ).not.toBeInTheDocument()
+  })
+
+  it('flags each empty step on its own card and blocks saving until it has a field', async () => {
+    const user = userEvent.setup()
+    renderEditor()
+
+    await createField(user)
+    await user.click(screen.getByRole('button', { name: 'Close field editor' }))
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'New' })).toBeEnabled(),
+    )
+    await user.type(
+      screen.getByRole('textbox', { name: 'Internal Name' }),
+      'My Template',
+    )
+
+    const firstStep = screen.getByRole('region', { name: /^Step 1:/ })
+    expect(within(firstStep).getByRole('alert')).toHaveTextContent(
+      'Step 1 "New Step" has no fields.',
+    )
+    expect(
+      screen.getByRole('button', { name: 'Create Template' }),
+    ).toBeDisabled()
+
+    await user.click(
+      within(firstStep).getByRole('combobox', { name: 'Bind field' }),
+    )
+    await user.click(
+      await screen.findByRole('option', { name: 'New field (/newField)' }),
+    )
+
+    expect(within(firstStep).queryByRole('alert')).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Create Template' }),
+    ).toBeEnabled()
+
+    await user.click(screen.getByRole('button', { name: 'Add step' }))
+
+    const secondStep = screen.getByRole('region', { name: /^Step 2:/ })
+    expect(within(secondStep).getByRole('alert')).toHaveTextContent(
+      'Step 2 "New Step" has no fields.',
+    )
+    expect(within(firstStep).queryByRole('alert')).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Create Template' }),
+    ).toBeDisabled()
+  })
+
+  it('blocks saving while a choice is empty or duplicated, until it is fixed', async () => {
+    const user = userEvent.setup()
+    renderEditor()
+    await createBoundField(user)
+    await user.type(getNameField(), 'My Template')
+
+    await user.click(screen.getByRole('button', { name: 'Edit New field' }))
+    await screen.findByRole('heading', { name: 'Edit field' })
+    await user.click(screen.getByLabelText('Field type'))
+    await user.click(screen.getByRole('option', { name: 'Single choice' }))
+    // Switching to a choice type seeds one choice, so the field stays answerable.
+    expect(screen.getByRole('textbox', { name: 'Choice 1' })).toHaveValue(
+      'Option 1',
+    )
+    await user.click(screen.getByRole('button', { name: 'Add choice' }))
+    const added = screen.getByRole('textbox', { name: 'Choice 2' })
+    expect(added).toHaveAccessibleDescription(CHOICE_OPTION_PROBLEM_TEXT.empty)
+
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Create Template' }),
+      ).toBeDisabled(),
+    )
+    expect(screen.getByText('"newField" has an empty choice.')).toBeVisible()
+
+    await user.click(screen.getByRole('button', { name: 'Edit New field' }))
+    await user.type(
+      await screen.findByRole('textbox', { name: 'Choice 2' }),
+      'Option 1',
+    )
+    expect(
+      screen.getByRole('textbox', { name: 'Choice 2' }),
+    ).toHaveAccessibleDescription(CHOICE_OPTION_PROBLEM_TEXT.duplicate)
+
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Create Template' }),
+      ).toBeDisabled(),
+    )
+    expect(screen.getByText('"newField" has duplicate choices.')).toBeVisible()
+    expect(
+      screen.queryByText('"newField" has an empty choice.'),
+    ).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Edit New field' }))
+    await user.type(
+      await screen.findByRole('textbox', { name: 'Choice 2' }),
+      '!',
+    )
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Create Template' }),
+      ).toBeEnabled(),
+    )
+    expect(screen.queryByText(/has (an empty|duplicate) choice/)).toBeNull()
   })
 
   it("opens an existing template with its registered schema, and saves a changed schema as the schema's next major version with the base $ref kept", async () => {

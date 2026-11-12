@@ -7,22 +7,26 @@ import {
 } from '@/utils/SynapseConstants'
 import { Alert, Typography } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { formatQueryCount } from '@/utils/functions/queryCountUtils'
 import pluralize from 'pluralize'
 import { ReactNode, Suspense, useMemo, useState } from 'react'
 import { SignInPrompt, SynapseErrorBoundary } from '../error/ErrorBanner'
 import { QueryBuilderControls } from '../QueryBuilder/QueryBuilderControls'
-import { QBGroup } from '../QueryBuilder/QueryBuilderTypes'
+import { QBGroup, QBGroupDefinition } from '../QueryBuilder/QueryBuilderTypes'
 import { useQueryContext } from '../QueryContext/QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationContext'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
 import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
+import { WaitForQueryRestoreFromUrl } from '../QueryWrapper/WaitForQueryRestoreFromUrl'
 import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import PlotsContainer from '../widgets/facet-nav/PlotsContainer'
 import { AggregateDataPreviewControls } from './AggregateDataPreviewControls'
 import styles from './CohortBuilder.module.scss'
 import { CohortFilesPanel } from './CohortFilesPanel'
+import { CohortDiscoveryBanner } from './CohortDiscoveryBanner'
+import { CohortSampleQuerySelector } from './CohortSampleQuerySelector'
 
 /**
  * The Cohort Builder only requests the count and facet statistics: it never shows participant rows, and the server
@@ -63,6 +67,13 @@ export type CohortBuilderProps = {
   unitDescription?: string
   /** Notice that queries are logged. Defaults to {@link DEFAULT_COHORT_BUILDER_AUDIT_NOTICE}. */
   auditNotice?: ReactNode
+  /** Sample queries, by name, that users can load into the Query Builder. Listed in insertion order. */
+  sampleQueries?: Record<string, QBGroupDefinition>
+  /**
+   * When true, the participant query (including the Query Builder conditions) and the files query's filters, sorting
+   * and paging are saved in the URL search parameters, and a URL with a saved query restores them.
+   */
+  shouldDeepLink?: boolean
 }
 
 /**
@@ -78,6 +89,8 @@ export function CohortBuilder(props: CohortBuilderProps) {
     columnAliases,
     unitDescription = 'participant',
     auditNotice = DEFAULT_COHORT_BUILDER_AUDIT_NOTICE,
+    sampleQueries,
+    shouldDeepLink,
   } = props
   const { isAuthenticated } = useSynapseContext()
 
@@ -93,9 +106,12 @@ export function CohortBuilder(props: CohortBuilderProps) {
 
   if (!isAuthenticated) {
     return (
-      <Typography variant="body1" className={styles.state}>
-        <SignInPrompt />
-      </Typography>
+      <div className={styles.root}>
+        <CohortDiscoveryBanner />
+        <Typography variant="body1" className={styles.state}>
+          <SignInPrompt />
+        </Typography>
+      </div>
     )
   }
 
@@ -104,6 +120,7 @@ export function CohortBuilder(props: CohortBuilderProps) {
     <QueryWrapper
       key={JSON.stringify(initQueryRequest)}
       initQueryRequest={initQueryRequest}
+      shouldDeepLink={shouldDeepLink}
     >
       <QueryVisualizationWrapper
         unitDescription={unitDescription}
@@ -111,6 +128,7 @@ export function CohortBuilder(props: CohortBuilderProps) {
         defaultShowPlots
       >
         <div className={styles.root}>
+          <CohortDiscoveryBanner />
           <div className={styles.notices}>
             <Alert severity="info">{auditNotice}</Alert>
             <CohortPreviewNotice />
@@ -120,17 +138,21 @@ export function CohortBuilder(props: CohortBuilderProps) {
               sourceTableId={participantsSourceTableId}
             />
           )}
-          <CohortQueryBuilder />
-          {/* Only the results are replaced by an error or withheld-result notice, so the cohort stays editable. */}
-          <QueryWrapperErrorBoundary>
-            <Suspense fallback={<QueryWrapperLoadingScreen />}>
-              <CohortResults
-                facetsToPlot={facetsToPlot}
-                participantsTableId={participantsTableId}
-                filesTableId={filesTableId}
-              />
-            </Suspense>
-          </QueryWrapperErrorBoundary>
+          {/* A cohort restored from the URL fills the Query Builder and the files panel's query, so neither starts from the initial query. */}
+          <WaitForQueryRestoreFromUrl>
+            <CohortQueryBuilder sampleQueries={sampleQueries} />
+            {/* Only the results are replaced by an error or withheld-result notice, so the cohort stays editable. */}
+            <QueryWrapperErrorBoundary>
+              <Suspense fallback={<QueryWrapperLoadingScreen />}>
+                <CohortResults
+                  facetsToPlot={facetsToPlot}
+                  participantsTableId={participantsTableId}
+                  filesTableId={filesTableId}
+                  shouldDeepLink={shouldDeepLink}
+                />
+              </Suspense>
+            </QueryWrapperErrorBoundary>
+          </WaitForQueryRestoreFromUrl>
         </div>
       </QueryVisualizationWrapper>
     </QueryWrapper>
@@ -145,20 +167,46 @@ function CohortPreviewNotice() {
   return <Alert severity="warning">{COHORT_BUILDER_PREVIEW_NOTICE}</Alert>
 }
 
-function CohortQueryBuilder() {
+function CohortQueryBuilder(props: {
+  sampleQueries?: Record<string, QBGroupDefinition>
+}) {
+  const { sampleQueries } = props
   const [tree, setTree] = useState<QBGroup | null>(null)
-  // The Query Builder's value options are queried with the current request, so changing it (e.g. stopping an
-  // aggregate-only preview whose threshold withheld them) can clear the error.
-  const { currentQueryRequest } = useQueryContext()
   return (
-    <SynapseErrorBoundary resetKeys={[currentQueryRequest]}>
+    <ResetOnQueryRequestChangeErrorBoundary>
       <Suspense fallback={null}>
+        {sampleQueries && Object.keys(sampleQueries).length > 0 && (
+          <CohortSampleQuerySelector
+            sampleQueries={sampleQueries}
+            tree={tree}
+            onTreeChange={setTree}
+          />
+        )}
         <QueryBuilderControls
           tree={tree}
           onTreeChange={setTree}
           onlyFacetedColumns
         />
       </Suspense>
+    </ResetOnQueryRequestChangeErrorBoundary>
+  )
+}
+
+/**
+ * An error boundary that resets when the current query request changes. The Query Builder's value options are queried
+ * with the current request, so changing it (e.g. stopping an aggregate-only preview whose threshold withheld them)
+ * can clear the error.
+ */
+function ResetOnQueryRequestChangeErrorBoundary(props: {
+  children: ReactNode
+}) {
+  // Only this component subscribes to the QueryContext: `children` keeps its identity when the context changes, so
+  // React does not re-render a still-suspended subtree on each change. Re-rendering it creates new query observers,
+  // which change the QueryContext again; under React's act() (Storybook dev) that loops without end.
+  const { currentQueryRequest } = useQueryContext()
+  return (
+    <SynapseErrorBoundary resetKeys={[currentQueryRequest]}>
+      {props.children}
     </SynapseErrorBoundary>
   )
 }
@@ -167,8 +215,10 @@ function CohortResults(props: {
   facetsToPlot?: string[]
   participantsTableId: string
   filesTableId?: string
+  shouldDeepLink?: boolean
 }) {
-  const { facetsToPlot, participantsTableId, filesTableId } = props
+  const { facetsToPlot, participantsTableId, filesTableId, shouldDeepLink } =
+    props
   const { data: queryMetadata } = useSuspenseGetQueryMetadata()
   const { unitDescription } = useQueryVisualizationContext()
   const count = queryMetadata.queryCount ?? 0
@@ -183,7 +233,7 @@ function CohortResults(props: {
   return (
     <>
       <Typography variant="headline3" component="p" className={styles.count}>
-        {count.toLocaleString()} {pluralize(unitDescription, count)}
+        {formatQueryCount(queryMetadata)} {pluralize(unitDescription, count)}
       </Typography>
       {/* The Query Builder is the only way to change the cohort. */}
       <PlotsContainer
@@ -195,6 +245,7 @@ function CohortResults(props: {
         <CohortFilesPanel
           filesTableId={filesTableId}
           participantsTableId={participantsTableId}
+          shouldDeepLink={shouldDeepLink}
         />
       )}
     </>

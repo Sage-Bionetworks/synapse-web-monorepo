@@ -50,6 +50,8 @@ export type QueryVisualizationWrapperProps = {
   visibleColumnCount?: number
   hiddenColumns?: string[]
   defaultShowPlots?: boolean
+  /** Whether the facet filter column/value panel is expanded on initial render. Defaults to true. */
+  defaultShowFacetFilter?: boolean
   hideCopyToClipboard?: boolean
   hideSearchBarControl?: boolean
   /** When true, the text matches filter pill is shown but cannot be removed. Defaults to true. */
@@ -86,6 +88,7 @@ export function QueryVisualizationWrapper(
     noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE,
     defaultShowSearchBar = false,
     defaultShowPlots = true,
+    defaultShowFacetFilter = true,
     hideCopyToClipboard = false,
     hideSearchBarControl = false,
     lockTextMatchesQueryFilterPill = true,
@@ -141,7 +144,7 @@ export function QueryVisualizationWrapper(
   const [showPlots, setShowPlots] = useState(defaultShowPlots)
   const [showCopyToClipboard, setShowCopyToClipboard] =
     useState(!hideCopyToClipboard)
-  const [showFacetFilter, setShowFacetFilter] = useState(true)
+  const [showFacetFilter, setShowFacetFilter] = useState(defaultShowFacetFilter)
 
   // The search bar and download confirmation should not be shown at the same time.
   const [

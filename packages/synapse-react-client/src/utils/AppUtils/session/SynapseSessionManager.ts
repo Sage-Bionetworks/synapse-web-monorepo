@@ -26,6 +26,8 @@ export type SynapseSessionManagerOptions = {
   /** If defined, specifies the allowable elapsed time in seconds since the last time the End-User was actively authenticated.
    * If the elapsed time is greater than this value, the session will be cleared and the user will have to re-authenticate. */
   maxAge?: number
+  /** If true, a user who is signed in to a realm other than `defaultRealm` is signed out, leaving an anonymous session in `defaultRealm`. */
+  requireAuthenticationInDefaultRealm?: boolean
   /** Called if the user is not authenticated when the session is initialized. */
   onMissingExpectedAuthentication?: () => void
   /** Called when a stored token fails validation (e.g. expired). Called after the session manager signs out.
@@ -207,6 +209,16 @@ export class SynapseSessionManager {
     }
 
     const isAuthenticated = currentUserId !== realmPrincipals.anonymousUser
+
+    if (
+      isAuthenticated &&
+      this.options.requireAuthenticationInDefaultRealm &&
+      realmPrincipals.realmId !== this.options.defaultRealm
+    ) {
+      // A session from another realm cannot access this app's realm, so the user must sign in again within it.
+      await SynapseClient.signOut(this.options.defaultRealm)
+      return this.refreshSession()
+    }
 
     /*
       NOTE: It's possible for a user to possess an anonymous token from a different realm (e.g. if they started on an app with a default realm, 

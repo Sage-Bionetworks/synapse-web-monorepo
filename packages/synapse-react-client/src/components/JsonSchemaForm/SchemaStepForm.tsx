@@ -1,4 +1,7 @@
-import { FileHandleWidgetContext } from '@/components/JsonSchemaForm/CustomFormContext'
+import {
+  CustomFormContext,
+  FileHandleWidgetContext,
+} from '@/components/JsonSchemaForm/CustomFormContext'
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
 import { FileHandleWidget } from '@/components/JsonSchemaForm/widgets/FileHandleWidget'
 import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
@@ -8,7 +11,12 @@ import {
   SYNAPSE_FILE_HANDLE_ID_FORMAT,
 } from '@/utils/jsonschema/schemaData'
 import RJSFForm from '@rjsf/core'
-import { Ref, useImperativeHandle, useRef } from 'react'
+import { Ref, useImperativeHandle, useMemo, useRef } from 'react'
+
+const SCHEMA_STEP_FORM_CONTEXT: CustomFormContext = {
+  descriptionVariant: 'inline',
+  booleanWidget: 'yesNoRadio',
+}
 
 export type SchemaStepFormHandle = {
   /** Validates the step's answers, showing errors against invalid fields. */
@@ -40,6 +48,13 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
     fileHandleWidgetContext,
   } = props
   const formRef = useRef<RJSFForm>(null)
+  const formContext = useMemo<CustomFormContext>(
+    () => ({
+      ...SCHEMA_STEP_FORM_CONTEXT,
+      fileHandleWidget: fileHandleWidgetContext,
+    }),
+    [fileHandleWidgetContext],
+  )
 
   useImperativeHandle(ref, () => ({
     submit: () => formRef.current?.submit(),
@@ -51,10 +66,7 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
       schema={step.jsonSchema}
       uiSchema={step.uiSchema}
       formData={getStepData(schemaData, step)}
-      formContext={{
-        descriptionVariant: 'inline',
-        fileHandleWidget: fileHandleWidgetContext,
-      }}
+      formContext={formContext}
       // A property with this format is a number in the schema, and the widget is chosen by its format
       widgets={{ [SYNAPSE_FILE_HANDLE_ID_FORMAT]: FileHandleWidget }}
       liveValidate={false}

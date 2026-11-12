@@ -1,0 +1,109 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  FeatureFlagEnum,
+  getFeatureFlagDisplayName,
+  NON_TEST_FEATURE_FLAGS,
+} from '@/utils/featureflag/FeatureFlags'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import ExperimentalFeaturesDialog from './ExperimentalFeaturesDialog'
+
+const FLAG = FeatureFlagEnum.TEST_ONLY
+const OTHER_FLAG = FeatureFlagEnum.TEST_ONLY_2
+const FLAG_NAME = getFeatureFlagDisplayName(FLAG)
+const OTHER_FLAG_NAME = getFeatureFlagDisplayName(OTHER_FLAG)
+
+function renderDialog(initialEnableAll: boolean) {
+  const onSave = vi.fn()
+  render(
+    <ExperimentalFeaturesDialog
+      open
+      isLoading={false}
+      features={[FLAG, OTHER_FLAG]}
+      initialEnableAll={initialEnableAll}
+      initialEnabledFlags={[]}
+      onCancel={vi.fn()}
+      onSave={onSave}
+    />,
+    { wrapper: createWrapper() },
+  )
+  return { onSave }
+}
+
+describe('ExperimentalFeaturesDialog', () => {
+  it('turns on every feature when Enable all is turned on', async () => {
+    const { onSave } = renderDialog(false)
+
+    await userEvent.click(
+      screen.getByRole('switch', { name: 'Enable all Experimental Features' }),
+    )
+
+    expect(screen.getByRole('switch', { name: FLAG_NAME })).toBeChecked()
+    expect(screen.getByRole('switch', { name: OTHER_FLAG_NAME })).toBeChecked()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Done' }))
+    expect(onSave).toHaveBeenCalledWith(true, [])
+  })
+
+  it('turns off Enable all and keeps every other feature on, including other menus', async () => {
+    const { onSave } = renderDialog(true)
+
+    await userEvent.click(screen.getByRole('switch', { name: FLAG_NAME }))
+
+    expect(
+      screen.getByRole('switch', { name: 'Enable all Experimental Features' }),
+    ).not.toBeChecked()
+    expect(screen.getByRole('switch', { name: FLAG_NAME })).not.toBeChecked()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Done' }))
+    expect(onSave).toHaveBeenCalledWith(false, [
+      ...NON_TEST_FEATURE_FLAGS,
+      OTHER_FLAG,
+    ])
+  })
+
+  it('turns off every feature when Enable all is turned off', async () => {
+    const { onSave } = renderDialog(true)
+
+    await userEvent.click(
+      screen.getByRole('switch', { name: 'Enable all Experimental Features' }),
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Done' }))
+
+    expect(onSave).toHaveBeenCalledWith(false, [])
+  })
+
+  it('does not save when a flag drops out of the list after loading and nothing else changed', async () => {
+    const onSave = vi.fn()
+    const onCancel = vi.fn()
+    const dialogProps = {
+      open: true,
+      initialEnableAll: false,
+      onCancel,
+      onSave,
+    }
+    const { rerender } = render(
+      <ExperimentalFeaturesDialog
+        {...dialogProps}
+        isLoading
+        features={[FLAG, OTHER_FLAG]}
+        initialEnabledFlags={[FLAG]}
+      />,
+      { wrapper: createWrapper() },
+    )
+
+    // The server pins FLAG, so it leaves the list and the saved choices
+    rerender(
+      <ExperimentalFeaturesDialog
+        {...dialogProps}
+        isLoading={false}
+        features={[OTHER_FLAG]}
+        initialEnabledFlags={[]}
+      />,
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Done' }))
+
+    expect(onSave).not.toHaveBeenCalled()
+    expect(onCancel).toHaveBeenCalled()
+  })
+})

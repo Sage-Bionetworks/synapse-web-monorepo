@@ -200,7 +200,7 @@ describe('FormTemplatePreview', () => {
     expect(getFieldLabel('Institution')).toBeInTheDocument()
   })
 
-  it('renders a multi-choice field as a multi-select that accumulates selections', async () => {
+  it('keeps the multi-select dropdown open after each pick', async () => {
     const user = userEvent.setup()
     renderPreview({
       template: template([
@@ -222,13 +222,36 @@ describe('FormTemplatePreview', () => {
         },
       },
     })
-    const combobox = screen.getByRole('combobox')
-    await user.click(combobox)
-    await user.click(screen.getByRole('option', { name: 'Green' }))
-    await user.click(combobox)
+    await user.click(screen.getByRole('combobox'))
     await user.click(screen.getByRole('option', { name: 'Red' }))
-    expect(screen.getByRole('button', { name: 'Green' })).toBeInTheDocument()
+    expect(screen.getByRole('listbox')).toBeInTheDocument()
+    await user.click(screen.getByRole('option', { name: 'Blue' }))
     expect(screen.getByRole('button', { name: 'Red' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Blue' })).toBeInTheDocument()
+  })
+
+  it('shows a Yes/No question as Yes and No radio buttons', async () => {
+    const user = userEvent.setup()
+    renderPreview({
+      template: template([
+        {
+          title: 'Basics',
+          fields: [{ schemaPath: '/hasIrbApproval', uiDefinition: {} }],
+        },
+      ]),
+      jsonSchema: {
+        ...schema,
+        properties: {
+          ...schema.properties,
+          hasIrbApproval: { type: 'boolean', title: 'IRB approval obtained' },
+        },
+      },
+    })
+    expect(getFieldLabel('IRB approval obtained')).toBeInTheDocument()
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('radio', { name: 'No' }))
+    expect(screen.getByRole('radio', { name: 'No' })).toBeChecked()
+    expect(screen.getByRole('radio', { name: 'Yes' })).not.toBeChecked()
   })
 
   describe('file field', () => {

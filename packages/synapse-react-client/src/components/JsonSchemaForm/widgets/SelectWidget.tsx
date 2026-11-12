@@ -122,6 +122,7 @@ export const SelectWidget: Widget = (props: SelectWidgetProps) => {
       readOnly={readonly}
       disabled={disabled}
       multiple={multiple}
+      disableCloseOnSelect={multiple}
       disableClearable={!isClearable}
       onChange={(event, newValue) => {
         if (multiple) {

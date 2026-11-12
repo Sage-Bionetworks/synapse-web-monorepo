@@ -217,10 +217,10 @@ describe('TableColumnSchemaEditorUtils', () => {
 
       types.forEach(type => {
         let isJsonSubColumnFacet = false
-        expect(configureFacetsForType(type, isJsonSubColumnFacet)).toEqual(null)
+        expect(configureFacetsForType(type, isJsonSubColumnFacet)).toBeNull()
 
         isJsonSubColumnFacet = true
-        expect(configureFacetsForType(type, isJsonSubColumnFacet)).toEqual(null)
+        expect(configureFacetsForType(type, isJsonSubColumnFacet)).toBeNull()
       })
     })
   })

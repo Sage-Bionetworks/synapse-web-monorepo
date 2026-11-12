@@ -60,6 +60,28 @@ export type QBGroup = {
 
 export type QBNode = QBCondition | QBGroup
 
+/**
+ * A {@link QBCondition} authored in configuration (e.g. a portal's sample queries). Node IDs and the column type are
+ * assigned when it is loaded into the Query Builder; omitted inputs are empty.
+ */
+export type QBConditionDefinition = {
+  columnName: string
+  op: QBConditionOp
+  values?: string[]
+  rangeMin?: string
+  rangeMax?: string
+  text?: string
+}
+
+/** A {@link QBGroup} authored in configuration. `not` defaults to false. */
+export type QBGroupDefinition = {
+  combinator: QBCombinator
+  not?: boolean
+  children: QBNodeDefinition[]
+}
+
+export type QBNodeDefinition = QBConditionDefinition | QBGroupDefinition
+
 export function isQBCondition(node: QBNode): node is QBCondition {
   return node.kind === 'condition'
 }

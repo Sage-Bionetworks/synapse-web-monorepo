@@ -41,7 +41,9 @@ function findLabel(key: string, schema: any, uiSchema: UiSchema): string {
 
   if (index) {
     index = index.substring(1, index.length - 2)
-    index = !isNaN(parseInt(index)) ? `${parseInt(index) + 1}` : ''
+    index = !isNaN(Number.parseInt(index))
+      ? `${Number.parseInt(index) + 1}`
+      : ''
   }
 
   const label =

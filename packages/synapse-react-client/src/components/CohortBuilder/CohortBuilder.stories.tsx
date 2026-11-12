@@ -3,6 +3,10 @@ import {
   CohortBuilderMockProfile,
   ELITE_MOCK_PROFILE,
 } from '@/mocks/cohortBuilder/cohortBuilderMockProfiles'
+import {
+  ADKP_MOCK_SAMPLE_QUERIES,
+  ELITE_MOCK_SAMPLE_QUERIES,
+} from '@/mocks/cohortBuilder/cohortBuilderMockSampleQueries'
 import { CohortBuilderAccess } from '@/mocks/cohortBuilder/cohortBuilderMockQueryEngine'
 import { getCohortBuilderStorybookHandlers } from '@/mocks/msw/handlers/cohortBuilderHandlers'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
@@ -121,6 +125,24 @@ export const EliteAggregateOnlyBelowThreshold: Story = {
 export const AdkpAggregateOnly: Story = {
   args: { participantsTableId: ADKP_MOCK_PROFILE.participantsVirtualTableId },
   parameters: getMockParameters(ADKP_MOCK_PROFILE, 'AGGREGATE_ONLY'),
+}
+
+/** ELITE, unapproved user: sample queries to load into the Query Builder. */
+export const EliteSampleQueries: Story = {
+  args: {
+    ...eliteWithFilesArgs,
+    sampleQueries: ELITE_MOCK_SAMPLE_QUERIES,
+  },
+  parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY'),
+}
+
+/** ADKP, approved user: sample queries to load into the Query Builder. */
+export const AdkpSampleQueries: Story = {
+  args: {
+    participantsTableId: ADKP_MOCK_PROFILE.participantsVirtualTableId,
+    sampleQueries: ADKP_MOCK_SAMPLE_QUERIES,
+  },
+  parameters: getMockParameters(ADKP_MOCK_PROFILE, 'FULL'),
 }
 
 /**

@@ -57,6 +57,7 @@ function createMockSynapseContext(
     isAuthenticated: false,
     accessToken: undefined,
     isInExperimentalMode: false,
+    enabledExperimentalFeatures: [],
     utcTime: false,
     withErrorBoundary: false,
     downloadCartPageUrl: '/DownloadCart',

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useId } from 'react'
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
 import {
@@ -11,7 +11,10 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import { useGetEntityTitleBarProperties } from '@/components/entity/page/title_bar/useGetEntityTitleBarProperties'
+import {
+  EntityProperty,
+  useGetEntityTitleBarProperties,
+} from '@/components/entity/page/title_bar/useGetEntityTitleBarProperties'
 import styles from './EntitySidebar.module.scss'
 import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
 import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
@@ -21,6 +24,31 @@ import AccessAndPermissions from './AccessAndPermissions'
 type EntitySidebarProps = {
   entityId: string
   versionNumber?: number
+}
+
+/**
+ * Renders one property as a term/definition pair. The definition is labelled by its term, so assistive technology
+ * (and role-based queries) can find a value by its property name, e.g. `getByRole('definition', { name: 'MD5' })`.
+ */
+function EntitySidebarProperty(props: { property: EntityProperty }) {
+  const { property } = props
+  const titleId = useId()
+  return (
+    <Stack className={styles.propertyRow}>
+      <Typography component="dt" id={titleId} className={styles.propertyTitle}>
+        {property.title}
+      </Typography>
+      <Typography
+        component="dd"
+        aria-labelledby={titleId}
+        className={styles.propertyValue}
+        variant="smallText1"
+        sx={{ m: 0 }}
+      >
+        {property.value}
+      </Typography>
+    </Stack>
+  )
 }
 
 export default function EntitySidebar(props: EntitySidebarProps) {
@@ -55,20 +83,13 @@ export default function EntitySidebar(props: EntitySidebarProps) {
           About this {friendlyName}
         </Typography>
         <Divider />
-        <Stack className={styles.propertiesContainer}>
+        <Stack
+          component="dl"
+          className={styles.propertiesContainer}
+          sx={{ m: 0 }}
+        >
           {properties.map(property => (
-            <Stack key={property.key} className={styles.propertyRow}>
-              <Typography className={styles.propertyTitle}>
-                {property.title}
-              </Typography>
-              <Typography
-                className={styles.propertyValue}
-                variant="smallText1"
-                component="div"
-              >
-                {property.value}
-              </Typography>
-            </Stack>
+            <EntitySidebarProperty key={property.key} property={property} />
           ))}
         </Stack>
       </div>

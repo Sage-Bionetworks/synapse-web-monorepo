@@ -15,12 +15,20 @@ import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ENTITY_PERMISSIONS } from '@/utils/APIConstants'
-import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
+import {
+  BUNDLE_MASK_QUERY_RESULTS,
+  DEFAULT_PAGE_SIZE,
+} from '@/utils/SynapseConstants'
+import {
+  generateCompressedQueryURL,
+  getQueryRequestFromLink,
+} from '@/utils/functions/deepLinkingUtils'
 import {
   AddToDownloadListRequest,
   AggregateDataConfiguration,
 } from '@sage-bionetworks/synapse-client'
 import {
+  ColumnSingleValueFilterOperator,
   DownloadFromTableRequest,
   FILTER_GROUP_CONCRETE_TYPE_VALUE,
   QueryBundleRequest,
@@ -29,11 +37,12 @@ import {
   configure,
   getConfig,
   render,
+  RenderOptions,
   screen,
   waitFor,
   within,
 } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import userEvent, { UserEvent } from '@testing-library/user-event'
 import { http } from 'msw'
 import {
   AGGREGATE_DATA_PREVIEW_TITLE,
@@ -49,10 +58,20 @@ import {
   DEFAULT_COHORT_BUILDER_AUDIT_NOTICE,
 } from './CohortBuilder'
 import {
+  COHORT_FILES_TITLE,
   COHORT_FILES_ZERO_COUNT_TEXT,
   COHORT_TOO_LARGE_TEXT,
 } from './CohortFilesPanel'
 import { MAX_COHORT_PARTICIPANTS } from './cohortHandOff'
+import {
+  COHORT_DISCOVERY_DESCRIPTION,
+  HOW_TO_USE_COHORT_BUILDER_CONFIRM_TEXT,
+  HOW_TO_USE_COHORT_BUILDER_TITLE,
+} from './CohortDiscoveryBanner'
+import {
+  SAMPLE_QUERY_PLACEHOLDER,
+  SAMPLE_QUERY_TITLE,
+} from './CohortSampleQuerySelector'
 
 // The Download List confirmation estimates download time by downloading a test file.
 vi.mock('@/utils/functions/testDownloadSpeed', () => ({
@@ -61,6 +80,8 @@ vi.mock('@/utils/functions/testDownloadSpeed', () => ({
 
 const participantsTableId = ELITE_MOCK_PROFILE.participantsVirtualTableId
 const allParticipantsCount = (2700).toLocaleString()
+// An aggregate-only caller's counts are obscured. ELITE rounds them down to a multiple of 5, which keeps 2,700.
+const approximateAllParticipantsCount = `≈ ${allParticipantsCount}`
 
 let sentRequests: QueryBundleRequest[]
 const recordQueryRequest = async ({ request }: { request: Request }) => {
@@ -80,7 +101,7 @@ function renderCohortBuilder(
   server.use(
     ...getCohortBuilderHandlers({ profile: ELITE_MOCK_PROFILE, access }),
   )
-  render(
+  return render(
     <CohortBuilder participantsTableId={participantsTableId} {...props} />,
     {
       wrapper: createWrapper(
@@ -101,11 +122,13 @@ describe('CohortBuilder', () => {
     server.events.removeListener('request:start', recordQueryRequest)
   })
 
-  it('shows the participant count and the logging notice, and never requests participant rows', async () => {
+  it('shows the approximate participant count and the logging notice, and never requests participant rows', async () => {
     renderCohortBuilder()
 
     expect(
-      await screen.findByText(`${allParticipantsCount} participants`),
+      await screen.findByText(
+        `${approximateAllParticipantsCount} participants`,
+      ),
     ).toBeInTheDocument()
     expect(
       screen.getByText(DEFAULT_COHORT_BUILDER_AUDIT_NOTICE),
@@ -157,7 +180,7 @@ describe('CohortBuilder', () => {
 
     expect(await screen.findByRole('progressbar')).toBeInTheDocument()
     pendingQuery.resolve()
-    await screen.findByText(`${allParticipantsCount} participants`)
+    await screen.findByText(`${approximateAllParticipantsCount} participants`)
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
 
     pendingQuery = Promise.withResolvers<void>()
@@ -170,18 +193,19 @@ describe('CohortBuilder', () => {
 
     expect(await screen.findByRole('progressbar')).toBeInTheDocument()
     expect(
-      screen.getByText(`${allParticipantsCount} participants`),
+      screen.getByText(`${approximateAllParticipantsCount} participants`),
     ).not.toBeVisible()
     expect(screen.getByRole('button', { name: 'Update Results' })).toBeVisible()
     pendingQuery.resolve()
-    expect(await screen.findByText('243 participants')).toBeVisible()
+    // 243 participants, rounded down.
+    expect(await screen.findByText('≈ 240 participants')).toBeVisible()
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
   })
 
   it('replaces only the results with a below-threshold notice, and keeps the cohort editable', async () => {
     const user = userEvent.setup()
     renderCohortBuilder()
-    await screen.findByText(`${allParticipantsCount} participants`)
+    await screen.findByText(`${approximateAllParticipantsCount} participants`)
 
     // 7 participants: fewer than the suppression threshold of 20.
     await user.click(screen.getByRole('combobox', { name: 'Property' }))
@@ -200,7 +224,9 @@ describe('CohortBuilder', () => {
     await user.click(screen.getByRole('button', { name: 'Update Results' }))
 
     expect(
-      await screen.findByText(`${allParticipantsCount} participants`),
+      await screen.findByText(
+        `${approximateAllParticipantsCount} participants`,
+      ),
     ).toBeInTheDocument()
     expect(
       screen.queryByText('A minimum of 20 participants is required'),
@@ -232,8 +258,368 @@ describe('CohortBuilder', () => {
     renderCohortBuilder({}, 'AGGREGATE_ONLY', false)
 
     expect(await screen.findByText('Sign In')).toBeInTheDocument()
+    expect(screen.getByText(COHORT_DISCOVERY_DESCRIPTION)).toBeVisible()
     expect(screen.queryByText(DEFAULT_COHORT_BUILDER_AUDIT_NOTICE)).toBeNull()
     expect(sentRequests).toEqual([])
+  })
+
+  it('opens and closes the How to Use instructions from the Cohort Discovery banner', async () => {
+    const user = userEvent.setup()
+    renderCohortBuilder()
+
+    expect(screen.getByText(COHORT_DISCOVERY_DESCRIPTION)).toBeVisible()
+    await user.click(
+      screen.getByRole('button', { name: HOW_TO_USE_COHORT_BUILDER_TITLE }),
+    )
+    const dialog = await screen.findByRole('dialog', {
+      name: HOW_TO_USE_COHORT_BUILDER_TITLE,
+    })
+    expect(within(dialog).getByText('Condition groups')).toBeVisible()
+
+    await user.click(
+      within(dialog).getByRole('button', {
+        name: HOW_TO_USE_COHORT_BUILDER_CONFIRM_TEXT,
+      }),
+    )
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+  })
+
+  describe('sample queries', () => {
+    const sampleName = 'Methylation data, without dementia'
+    const sampleQueries: CohortBuilderProps['sampleQueries'] = {
+      [sampleName]: {
+        combinator: 'AND',
+        children: [
+          {
+            columnName: 'assay',
+            op: 'is_any_of',
+            values: ['methylationArray'],
+          },
+          {
+            combinator: 'OR',
+            not: true,
+            children: [
+              { columnName: 'hasDementia', op: 'is_any_of', values: ['true'] },
+            ],
+          },
+        ],
+      },
+      'Living participants': {
+        combinator: 'AND',
+        children: [
+          {
+            columnName: 'mortalityStatus',
+            op: 'is_any_of',
+            values: ['Living'],
+          },
+        ],
+      },
+    }
+
+    async function loadSampleQuery(user: UserEvent, name: string) {
+      await user.click(
+        await screen.findByRole('combobox', { name: /^Try a sample query/ }),
+      )
+      await user.click(await screen.findByRole('option', { name }))
+    }
+
+    it('is not shown when no sample queries are configured', async () => {
+      renderCohortBuilder()
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
+
+      expect(
+        screen.queryByRole('region', { name: SAMPLE_QUERY_TITLE }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('loads a sample query into the Query Builder, which Update Results applies', async () => {
+      const user = userEvent.setup()
+      renderCohortBuilder({ sampleQueries })
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
+
+      await loadSampleQuery(user, sampleName)
+
+      expect(
+        screen.getByRole('combobox', { name: /^Try a sample query/ }),
+      ).toHaveTextContent(sampleName)
+      expect(
+        screen.getByRole('group', { name: 'Filter condition on assay' }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('group', { name: 'Filter condition on hasDementia' }),
+      ).toBeInTheDocument()
+      // Loading only edits the Query Builder; the cohort changes when the user applies it.
+      expect(
+        sentRequests.filter(request => request.query.additionalFilters),
+      ).toEqual([])
+
+      await user.click(screen.getByRole('button', { name: 'Update Results' }))
+
+      await waitFor(() =>
+        expect(
+          sentRequests.find(request => request.query.additionalFilters)?.query
+            .additionalFilters,
+        ).toEqual([
+          expect.objectContaining({
+            concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+            operator: 'AND',
+            children: [
+              // assay is a list column, so "is any of" uses HAS.
+              expect.objectContaining({
+                concreteType:
+                  'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
+                columnName: 'assay',
+                function: 'HAS',
+                values: ['methylationArray'],
+              }),
+              expect.objectContaining({
+                concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+                operator: 'OR',
+                not: true,
+                children: [
+                  expect.objectContaining({
+                    columnName: 'hasDementia',
+                    operator: 'IN',
+                    values: ['true'],
+                  }),
+                ],
+              }),
+            ],
+          }),
+        ]),
+      )
+    })
+
+    it('replaces the Query Builder tree, and can reload a sample after it is edited', async () => {
+      const user = userEvent.setup()
+      renderCohortBuilder({ sampleQueries })
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
+      const selector = await screen.findByRole('combobox', {
+        name: /^Try a sample query/,
+      })
+      expect(selector).toHaveTextContent(SAMPLE_QUERY_PLACEHOLDER)
+
+      await loadSampleQuery(user, sampleName)
+      await loadSampleQuery(user, 'Living participants')
+      expect(
+        screen.getAllByRole('group', { name: /^Filter condition/ }),
+      ).toHaveLength(1)
+      expect(
+        screen.getByRole('group', {
+          name: 'Filter condition on mortalityStatus',
+        }),
+      ).toBeInTheDocument()
+
+      await user.click(screen.getByRole('button', { name: 'Remove condition' }))
+      expect(selector).toHaveTextContent(SAMPLE_QUERY_PLACEHOLDER)
+
+      await loadSampleQuery(user, 'Living participants')
+      expect(
+        screen.getByRole('group', {
+          name: 'Filter condition on mortalityStatus',
+        }),
+      ).toBeInTheDocument()
+    })
+  })
+
+  describe('deep linking', { timeout: 30_000 }, () => {
+    const conditions: CohortBuilderProps['sampleQueries'] = {
+      'Methylation data, female': {
+        combinator: 'AND',
+        children: [
+          {
+            columnName: 'assay',
+            op: 'is_any_of',
+            values: ['methylationArray'],
+          },
+          { columnName: 'sex', op: 'is_any_of', values: ['Female'] },
+        ],
+      },
+    }
+
+    const { asyncUtilTimeout } = getConfig()
+    beforeAll(() => configure({ asyncUtilTimeout: 5_000 }))
+    afterAll(() => configure({ asyncUtilTimeout }))
+    afterEach(() => {
+      window.history.replaceState(null, '', '/')
+    })
+
+    it('saves the applied Query Builder conditions in the URL, and restores them into the Query Builder', async () => {
+      const user = userEvent.setup()
+      const { unmount } = renderCohortBuilder({
+        sampleQueries: conditions,
+        shouldDeepLink: true,
+      })
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
+      await user.click(
+        await screen.findByRole('combobox', { name: /^Try a sample query/ }),
+      )
+      await user.click(
+        await screen.findByRole('option', { name: 'Methylation data, female' }),
+      )
+      await user.click(screen.getByRole('button', { name: 'Update Results' }))
+
+      let appliedFilters: QueryBundleRequest['query']['additionalFilters']
+      await waitFor(() => {
+        expect(window.location.search).toContain('qw0=')
+        appliedFilters = sentRequests.find(
+          request => request.query.additionalFilters,
+        )?.query.additionalFilters
+        expect(appliedFilters).toBeDefined()
+      })
+      const deepLink = window.location.pathname + window.location.search
+      unmount()
+      sentRequests = []
+      window.history.replaceState(null, '', deepLink)
+
+      renderCohortBuilder({ sampleQueries: conditions, shouldDeepLink: true })
+
+      expect(
+        await screen.findByRole('group', { name: 'Filter condition on assay' }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('group', { name: 'Filter condition on sex' }),
+      ).toBeInTheDocument()
+      await waitFor(() =>
+        expect(
+          sentRequests.find(request => request.query.additionalFilters)?.query
+            .additionalFilters,
+        ).toEqual(appliedFilters),
+      )
+    })
+
+    describe('files panel', () => {
+      const filesTableId = ELITE_MOCK_PROFILE.dataVirtualTableId
+      const isFilesRowsRequest = (request: QueryBundleRequest) =>
+        request.entityId === filesTableId &&
+        (request.partMask & BUNDLE_MASK_QUERY_RESULTS) !== 0 &&
+        request.query.cohorts !== undefined
+      const cohortBuilder = (
+        <CohortBuilder
+          participantsTableId={participantsTableId}
+          filesTableId={filesTableId}
+          sampleQueries={{
+            Female: {
+              combinator: 'AND',
+              children: [
+                { columnName: 'sex', op: 'is_any_of', values: ['Female'] },
+              ],
+            },
+          }}
+          shouldDeepLink
+        />
+      )
+      // The saved files query, read back onto a stand-in query: only its changes from the initial query are saved.
+      const readSavedFilesQuery = () =>
+        getQueryRequestFromLink(1, { sql: 'SELECT * FROM syn1' })
+      // A cold restore waits on the participant query, then the files query; under a loaded test run that can take
+      // longer than the default wait.
+      const findSelectedPageTwo = () =>
+        screen.findByRole('button', { name: 'page 2' }, { timeout: 15_000 })
+
+      /**
+       * Builds a cohort and goes to page 2 of its files, then unmounts and puts that page's URL back in the address bar.
+       * Returns the saved files query.
+       */
+      async function saveFilesPageTwoLink(
+        wrapper: NonNullable<RenderOptions['wrapper']>,
+      ) {
+        const user = userEvent.setup()
+        const { unmount } = render(cohortBuilder, { wrapper })
+        await user.click(
+          await screen.findByRole('combobox', { name: /^Try a sample query/ }),
+        )
+        await user.click(await screen.findByRole('option', { name: 'Female' }))
+        await user.click(screen.getByRole('button', { name: 'Update Results' }))
+        await waitFor(() =>
+          expect(sentRequests.some(isFilesRowsRequest)).toBe(true),
+        )
+        await user.click(
+          await screen.findByRole('button', { name: 'Go to page 2' }),
+        )
+        await waitFor(() => expect(window.location.search).toContain('qw1='))
+        const deepLink = window.location.pathname + window.location.search
+        const savedFilesQuery = await readSavedFilesQuery()
+        unmount()
+        sentRequests = []
+        window.history.replaceState(null, '', deepLink)
+        return { savedFilesQuery }
+      }
+
+      beforeEach(() => {
+        server.use(...getCohortBuilderHandlers({ profile: ELITE_MOCK_PROFILE }))
+      })
+
+      it('restores the saved page from the URL when the results of the initial query are cached', async () => {
+        // One wrapper, so one query cache, for both renders, as when returning to the page in the same session.
+        const wrapper = createWrapper()
+        const { savedFilesQuery } = await saveFilesPageTwoLink(wrapper)
+
+        render(cohortBuilder, { wrapper })
+
+        expect(await findSelectedPageTwo()).toHaveAttribute(
+          'aria-current',
+          'page',
+        )
+        await waitFor(async () =>
+          expect(await readSavedFilesQuery()).toEqual(savedFilesQuery),
+        )
+      })
+
+      it('requests only the saved page when nothing is cached', async () => {
+        // The link the Female cohort's files page 2 saves: the cohort's Query Builder conditions, and the files offset.
+        const participantsQuery = {
+          sql: `SELECT * FROM ${participantsTableId}`,
+        }
+        const filesQuery = { sql: `SELECT * FROM ${filesTableId}` }
+        const participantsParam = await generateCompressedQueryURL(
+          '',
+          0,
+          {
+            ...participantsQuery,
+            additionalFilters: [
+              {
+                concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+                operator: 'AND',
+                children: [
+                  {
+                    concreteType:
+                      'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                    columnName: 'sex',
+                    operator: ColumnSingleValueFilterOperator.IN,
+                    values: ['Female'],
+                  },
+                ],
+              },
+            ],
+          },
+          participantsQuery,
+        )
+        const filesParam = await generateCompressedQueryURL(
+          '',
+          1,
+          { ...filesQuery, offset: DEFAULT_PAGE_SIZE },
+          filesQuery,
+        )
+        window.history.replaceState(
+          null,
+          '',
+          `/${participantsParam}&${filesParam.slice(1)}`,
+        )
+
+        render(cohortBuilder, { wrapper: createWrapper() })
+
+        expect(await findSelectedPageTwo()).toHaveAttribute(
+          'aria-current',
+          'page',
+        )
+        expect(
+          sentRequests
+            .filter(isFilesRowsRequest)
+            .map(request => request.query.offset),
+        ).toEqual([DEFAULT_PAGE_SIZE])
+      })
+    })
   })
 
   it('does not offer the aggregate-only preview to a user who does not administer the participant source table', async () => {
@@ -476,7 +862,7 @@ describe('CohortBuilder', () => {
 
       expect(
         await screen.findByText(
-          `${(2070).toLocaleString()} files and datasets`,
+          `≈ ${(2070).toLocaleString()} files and datasets`,
         ),
       ).toBeInTheDocument()
       expect(filesRequests(profile)).not.toHaveLength(0)
@@ -501,16 +887,16 @@ describe('CohortBuilder', () => {
           () => pendingFilesQuery.promise,
         ),
       )
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
 
       const filesPanel = screen.getByRole('region', {
-        name: 'Files and datasets',
+        name: COHORT_FILES_TITLE,
       })
       expect(await within(filesPanel).findByRole('progressbar')).toBeVisible()
       pendingFilesQuery.resolve()
       expect(
         await within(filesPanel).findByText(
-          `${(2070).toLocaleString()} files and datasets`,
+          `≈ ${(2070).toLocaleString()} files and datasets`,
         ),
       ).toBeVisible()
       await within(filesPanel).findByRole('table')
@@ -521,12 +907,12 @@ describe('CohortBuilder', () => {
 
     it("hands the participant cohort to the files query by reference, and lists the cohort's files and datasets", async () => {
       const profile = renderWithFiles()
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
 
       await buildCohort('Race', ['Black or African American'])
 
       expect(
-        await screen.findByText('193 files and datasets'),
+        await screen.findByText('≈ 190 files and datasets'),
       ).toBeInTheDocument()
       const participantRequest = sentRequests.findLast(
         request =>
@@ -556,7 +942,7 @@ describe('CohortBuilder', () => {
 
     it('shows a files-specific notice when a cohort matches fewer files and datasets than the threshold', async () => {
       renderWithFiles()
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
 
       // 1,200 participants, but only 3 datasets.
       await buildCohort('Study', ['LLFS'])
@@ -567,13 +953,13 @@ describe('CohortBuilder', () => {
         ),
       ).toBeInTheDocument()
       expect(
-        screen.getByText(`${(1200).toLocaleString()} participants`),
+        screen.getByText(`≈ ${(1200).toLocaleString()} participants`),
       ).toBeInTheDocument()
     })
 
     it('shows the cohort-too-large state when the server rejects the cohort as too large', async () => {
       renderWithFiles({ maxCohortValues: 1000 })
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
 
       // 1,096 participants: more than this server's maximum of 1,000.
       await buildCohort('Sex', ['Male'])
@@ -581,19 +967,22 @@ describe('CohortBuilder', () => {
       expect(await screen.findByText(COHORT_TOO_LARGE_TEXT)).toBeInTheDocument()
     })
 
-    it('does not send a cohort with more participants than the server allows', async () => {
-      const largeProfile: CohortBuilderMockProfile = {
+    function getLargeProfile(
+      participantCount: number,
+    ): CohortBuilderMockProfile {
+      return {
         ...ELITE_MOCK_PROFILE,
         participantsVirtualTableId: 'syn90000021',
         dataVirtualTableId: 'syn90000022',
-        studies: [
-          {
-            ...ELITE_MOCK_PROFILE.studies[0],
-            participantCount: MAX_COHORT_PARTICIPANTS + 1,
-          },
-        ],
+        studies: [{ ...ELITE_MOCK_PROFILE.studies[0], participantCount }],
       }
-      const profile = renderWithFiles({ profile: largeProfile })
+    }
+
+    it('does not send a cohort whose exact participant count is more than the server allows', async () => {
+      const profile = renderWithFiles({
+        profile: getLargeProfile(MAX_COHORT_PARTICIPANTS + 1),
+        access: 'FULL',
+      })
       const largeCount = `${(MAX_COHORT_PARTICIPANTS + 1).toLocaleString()} participants`
       await screen.findByText(largeCount)
 
@@ -606,6 +995,23 @@ describe('CohortBuilder', () => {
         filesRequests(profile).filter(request => request.query.cohorts),
       ).toEqual([])
       expect(screen.queryByText(COHORT_FILES_ZERO_COUNT_TEXT)).toBeNull()
+    })
+
+    it('sends a cohort whose approximate participant count is over the maximum, and lets the server reject it', async () => {
+      const profile = renderWithFiles({
+        profile: getLargeProfile(MAX_COHORT_PARTICIPANTS + 5),
+      })
+      await screen.findByText(
+        `≈ ${(MAX_COHORT_PARTICIPANTS + 5).toLocaleString()} participants`,
+      )
+
+      // Every participant, as a cohort.
+      await buildCohort('Sex', ['Female', 'Male', 'Unknown'])
+
+      expect(await screen.findByText(COHORT_TOO_LARGE_TEXT)).toBeInTheDocument()
+      expect(
+        filesRequests(profile).filter(request => request.query.cohorts),
+      ).not.toEqual([])
     })
 
     type DownloadListRequest = { path: string; body: unknown }
@@ -631,9 +1037,9 @@ describe('CohortBuilder', () => {
       const { downloadListRequests, stop } = recordDownloadListRequests()
       const user = userEvent.setup()
       const profile = renderWithFiles()
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
       await buildCohort('Race', ['Black or African American'])
-      await screen.findByText('193 files and datasets')
+      await screen.findByText('≈ 190 files and datasets')
       const filesQuery = filesRequests(profile).at(-1)!.query
 
       await user.click(screen.getByRole('button', { name: 'Download Options' }))
@@ -689,9 +1095,9 @@ describe('CohortBuilder', () => {
       server.events.on('request:start', recordExportRequest)
       const user = userEvent.setup()
       const profile = renderWithFiles()
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
       await buildCohort('Race', ['Black or African American'])
-      await screen.findByText('193 files and datasets')
+      await screen.findByText('≈ 190 files and datasets')
       const filesQuery = filesRequests(profile).at(-1)!.query
 
       await user.click(screen.getByRole('button', { name: 'Download Options' }))
@@ -720,9 +1126,9 @@ describe('CohortBuilder', () => {
       const { downloadListRequests, stop } = recordDownloadListRequests()
       const user = userEvent.setup()
       renderWithFiles()
-      await screen.findByText(`${allParticipantsCount} participants`)
+      await screen.findByText(`${approximateAllParticipantsCount} participants`)
       await buildCohort('Race', ['Black or African American'])
-      await screen.findByText('193 files and datasets')
+      await screen.findByText('≈ 190 files and datasets')
 
       const table = await screen.findByRole('table')
       const checkboxes = (

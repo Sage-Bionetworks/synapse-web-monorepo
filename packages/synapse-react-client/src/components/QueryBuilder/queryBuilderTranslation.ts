@@ -9,6 +9,7 @@ import {
   FilterGroup,
   QueryFilter,
 } from '@sage-bionetworks/synapse-types'
+import { isEqualTreatUndefinedAsMissing } from '@/utils/functions/IsEqualTreatUndefinedAsMissing'
 import { ReadonlyDeep } from 'type-fest'
 import {
   isColumnMultiValueFunctionQueryFilter,
@@ -17,6 +18,7 @@ import {
   isFacetColumnValuesRequest,
   isFilterGroup,
 } from '../../utils/types/IsType'
+import { withColumnTypes } from './queryBuilderOperations'
 import { isQBGroup, QBCondition, QBGroup, QBNode } from './QueryBuilderTypes'
 import { newQBNodeId } from './queryBuilderId'
 
@@ -64,8 +66,11 @@ export function classifyLikePattern(pattern: string): {
   text: string
 } {
   const startsPct = pattern.startsWith('%')
-  // Only treat a trailing '%' as a wildcard if it isn't itself escaped
-  const endsPct = /(?<!\\)%$/.test(pattern)
+  // A trailing '%' is a wildcard unless it is escaped, i.e. preceded by an odd number of backslashes (an even number
+  // are escaped backslashes, such as the one escapeLike adds for text ending in '\').
+  const trailingBackslashCount = /(\\*)%$/.exec(pattern)?.[1].length
+  const endsPct =
+    trailingBackslashCount !== undefined && trailingBackslashCount % 2 === 0
   const core = pattern.slice(startsPct ? 1 : 0, endsPct ? -1 : undefined)
   const text = unescapeLike(core)
   if (startsPct && endsPct) return { op: 'contains', text }
@@ -296,13 +301,11 @@ function rangeBoundFilter(
 }
 
 // -----------------------------------------------------------------------------
-// API → QB (initial hydration)
+// API → QB (hydration)
 // -----------------------------------------------------------------------------
 
 /**
- * Convert an API `QueryFilter` back into a QB node. Used when the initial
- * query already contains a `FilterGroup` (see filterMode auto-detect) so the
- * QB tree can be reconstructed on mount.
+ * Convert an API `QueryFilter` back into a QB node. Column types are left null; see `withColumnTypes`.
  *
  * Some conversions are lossy — an AND group of single-value `HAS` predicates
  * on one column (the shape `is_all_of` emits) deserializes as `is_all_of`, any
@@ -310,20 +313,11 @@ function rangeBoundFilter(
  * `equal` (not `is_exactly`) because they share the same wire representation.
  * Users can adjust the operator picker.
  */
-export function apiFilterToQBNode(filter: QueryFilter): QBNode | null {
+export function apiFilterToQBNode(
+  filter: ReadonlyDeep<QueryFilter>,
+): QBNode | null {
   if (isFilterGroup(filter)) {
-    const allOfCondition = allOfGroupToCondition(filter)
-    if (allOfCondition) return allOfCondition
-    const children = (filter.children ?? [])
-      .map(apiFilterToQBNode)
-      .filter((n): n is QBNode => n !== null)
-    return {
-      kind: 'group',
-      id: newQBNodeId(),
-      combinator: filter.operator ?? 'AND',
-      not: filter.not ?? false,
-      children,
-    }
+    return allOfGroupToCondition(filter) ?? filterGroupToQBGroup(filter)
   }
   if (isColumnSingleValueQueryFilter(filter)) {
     return singleValueToCondition(filter)
@@ -346,7 +340,40 @@ export function apiFilterToQBNode(filter: QueryFilter): QBNode | null {
   return null
 }
 
-function allOfGroupToCondition(group: FilterGroup): QBCondition | null {
+/**
+ * Convert an applied `FilterGroup` (such as one restored from a deep link) into a QB root group, with the same
+ * conversions as {@link apiFilterToQBNode} and each condition's column type taken from `columnModels` (so a condition
+ * on a list column translates back to `HAS` rather than `IN`). The result is always a group, even when the
+ * `FilterGroup` has the shape that `is_all_of` emits.
+ *
+ * Returns `undefined` when the QB can't express the `FilterGroup` exactly (e.g. it holds a text-matches filter, or a
+ * `HAS` on a column that isn't a list), because applying the converted tree would change the filter.
+ */
+export function apiFilterGroupToQBGroup(
+  group: ReadonlyDeep<FilterGroup>,
+  columnModels: ReadonlyDeep<ColumnModel[]>,
+): QBGroup | undefined {
+  const root = withColumnTypes(filterGroupToQBGroup(group), columnModels)
+  return isEqualTreatUndefinedAsMissing(qbNodeToApiFilter(root), group)
+    ? root
+    : undefined
+}
+
+function filterGroupToQBGroup(group: ReadonlyDeep<FilterGroup>): QBGroup {
+  return {
+    kind: 'group',
+    id: newQBNodeId(),
+    combinator: group.operator ?? 'AND',
+    not: group.not ?? false,
+    children: (group.children ?? [])
+      .map(apiFilterToQBNode)
+      .filter((n): n is QBNode => n !== null),
+  }
+}
+
+function allOfGroupToCondition(
+  group: ReadonlyDeep<FilterGroup>,
+): QBCondition | null {
   const children = group.children ?? []
   if (group.not || (group.operator ?? 'AND') !== 'AND' || children.length < 2) {
     return null
@@ -379,7 +406,7 @@ function allOfGroupToCondition(group: FilterGroup): QBCondition | null {
 }
 
 function singleValueToCondition(
-  filter: ColumnSingleValueQueryFilter,
+  filter: ReadonlyDeep<ColumnSingleValueQueryFilter>,
 ): QBCondition {
   const base = {
     kind: 'condition' as const,
@@ -447,28 +474,20 @@ export function selectedFacetsToQBGroup(
   selectedFacets: ReadonlyDeep<FacetColumnRequest[]>,
   columnModels?: ReadonlyDeep<ColumnModel[]>,
 ): QBGroup {
-  const columnTypeByName = new Map(
-    (columnModels ?? []).map(cm => [cm.name, cm.columnType as string]),
-  )
-  return {
+  const group: QBGroup = {
     kind: 'group',
     id: newQBNodeId(),
     combinator: 'AND',
     not: false,
     children: selectedFacets
-      .map(facet =>
-        facetToQBCondition(
-          facet,
-          columnTypeByName.get(facet.columnName) ?? null,
-        ),
-      )
+      .map(facetToQBCondition)
       .filter((c): c is QBCondition => c !== null),
   }
+  return withColumnTypes(group, columnModels ?? [])
 }
 
 function facetToQBCondition(
   facet: ReadonlyDeep<FacetColumnRequest>,
-  columnType: string | null,
 ): QBCondition | null {
   if (isFacetColumnValuesRequest(facet)) {
     if (!facet.facetValues || facet.facetValues.length === 0) return null
@@ -476,7 +495,7 @@ function facetToQBCondition(
       kind: 'condition',
       id: newQBNodeId(),
       columnName: facet.columnName,
-      columnType,
+      columnType: null,
       op: 'is_any_of',
       values: [...facet.facetValues],
       rangeMin: null,
@@ -492,7 +511,7 @@ function facetToQBCondition(
       kind: 'condition' as const,
       id: newQBNodeId(),
       columnName: facet.columnName,
-      columnType,
+      columnType: null,
       values: [],
       text: null,
     }
