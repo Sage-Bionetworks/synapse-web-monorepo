@@ -245,46 +245,37 @@ export const SignedOut: Story = {
 }
 
 /**
- * The synthetic test Cohort Builder on production, with the signed-in user's own access. Always uses the production
- * stack, whatever the Stack toolbar is set to.
+ * Parameters for a story against a live Synapse stack. Production is the default; choose Staging from the Stack toolbar
+ * to run the same story against the staging stack, which serves the same data.
  */
+const liveStackParameters = { stack: 'production', requireLogin: true }
+
+/** The synthetic test Cohort Builder, with the signed-in user's own access, on production or staging. */
 export const ProductionSyntheticDataCohortBuilderTest: Story = {
   args: {
     participantsTableId: 'syn78350488',
     filesTableId: 'syn78350475',
     participantsSourceTableId: 'syn78350314',
   },
-  // Story globals override, and lock, the Stack toolbar for this story.
-  globals: { stack: 'production' },
-  parameters: { requireLogin: true },
+  parameters: liveStackParameters,
 }
 
-/**
- * The ELITE Cohort Builder on production, with the signed-in user's own access. Always uses the production stack,
- * whatever the Stack toolbar is set to.
- */
+/** The ELITE Cohort Builder, with the signed-in user's own access, on production or staging. */
 export const ProductionEliteCohortBuilder: Story = {
   args: {
     participantsTableId: 'syn78340012',
     filesTableId: 'syn78340377',
     participantsSourceTableId: 'syn77454377',
   },
-  // Story globals override, and lock, the Stack toolbar for this story.
-  globals: { stack: 'production' },
-  parameters: { requireLogin: true },
+  parameters: liveStackParameters,
 }
 
-/**
- * The ADKP Cohort Builder on production, with the signed-in user's own access. Always uses the production stack,
- * whatever the Stack toolbar is set to.
- */
+/** The ADKP Cohort Builder, with the signed-in user's own access, on production or staging. */
 export const ProductionAdkpCohortBuilder: Story = {
   args: {
     participantsTableId: 'syn78155293',
     filesTableId: 'syn78157126',
     participantsSourceTableId: 'syn77485039',
   },
-  // Story globals override, and lock, the Stack toolbar for this story.
-  globals: { stack: 'production' },
-  parameters: { requireLogin: true },
+  parameters: liveStackParameters,
 }
