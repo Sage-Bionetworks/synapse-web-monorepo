@@ -81,6 +81,9 @@ export const FileHandleWidget: Widget = (props: WidgetProps) => {
         id={`${id}-upload`}
         documentName={label || 'file'}
         uploadCallback={onUploadComplete}
+        onUploadingChange={isUploading =>
+          context?.onUploadingChange?.(id, isUploading)
+        }
         fileHandleAssociations={answerAssociation ? [answerAssociation] : []}
         onClearAttachment={canEdit ? () => onChange(undefined) : undefined}
         disabled={!canEdit}

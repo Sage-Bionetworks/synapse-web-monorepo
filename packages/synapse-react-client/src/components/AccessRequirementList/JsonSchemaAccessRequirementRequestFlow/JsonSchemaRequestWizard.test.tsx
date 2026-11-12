@@ -25,7 +25,7 @@ import {
   Request,
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent, { UserEvent } from '@testing-library/user-event'
 import { JSONSchema7 } from 'json-schema'
 import { http, HttpResponse } from 'msw'
@@ -34,23 +34,37 @@ import JsonSchemaRequestWizard, {
   JsonSchemaRequestWizardProps,
 } from './JsonSchemaRequestWizard'
 
-// The upload completes with whichever file handle the test sets, or fails
+// The upload completes with whichever file handle the test sets, or fails. While `holdUploads` is set, it completes
+// only when the test calls `completeHeldUpload`.
 let uploadedFileHandleId = '4242'
 let uploadFailure: string | undefined
+let holdUploads = false
+let completeHeldUpload: (() => void) | undefined
 vi.mock('@/components/FileUpload/FileUpload', () => {
   const FileUpload = (props: FileUploadProps) => (
     <button
       type="button"
-      onClick={() =>
-        props.onComplete?.(
-          uploadFailure
-            ? { success: false, error: { reason: uploadFailure } }
-            : {
-                success: true,
-                resp: { fileHandleId: uploadedFileHandleId, fileName: 'a.pdf' },
-              },
-        )
-      }
+      disabled={props.buttonProps?.disabled}
+      onClick={() => {
+        props.onUploadStart?.()
+        const complete = () =>
+          props.onComplete?.(
+            uploadFailure
+              ? { success: false, error: { reason: uploadFailure } }
+              : {
+                  success: true,
+                  resp: {
+                    fileHandleId: uploadedFileHandleId,
+                    fileName: 'a.pdf',
+                  },
+                },
+          )
+        if (holdUploads) {
+          completeHeldUpload = complete
+        } else {
+          complete()
+        }
+      }}
     >
       {props.label}
     </button>
@@ -124,7 +138,8 @@ function createRenewal(
 }
 
 /**
- * Serves the request for the access requirement, records what is saved to it, and creates a submission (or rejects it)
+ * Serves the request for the access requirement, records what is saved to it, and creates a submission (or rejects it).
+ * Like Synapse, a save with an etag other than the current one is rejected as a conflict.
  */
 function mockRequestServices(
   accessRequirement: JsonSchemaAccessRequirement,
@@ -134,6 +149,7 @@ function mockRequestServices(
   let currentRequest = initialRequest
   const savedRequests: Array<Request | Renewal> = []
   const submissionRequests: unknown[] = []
+  let heldSave: Promise<void> | undefined
   server.use(
     ...getRegisteredSchemaHandlers(REPO_ENDPOINT, [
       mockGenomicsSchema as JSONSchema7,
@@ -147,6 +163,17 @@ function mockRequestServices(
       `${REPO_ENDPOINT}/repo/v1/dataAccessRequest`,
       async ({ request }) => {
         const body = (await request.json()) as Request | Renewal
+        if (heldSave) {
+          const gate = heldSave
+          heldSave = undefined
+          await gate
+        }
+        if (body.etag !== currentRequest.etag) {
+          return HttpResponse.json(
+            { reason: 'The request was updated since it was read' },
+            { status: 409 },
+          )
+        }
         currentRequest = { ...body, etag: `etag-${savedRequests.length + 1}` }
         savedRequests.push(currentRequest)
         return HttpResponse.json(currentRequest)
@@ -166,7 +193,13 @@ function mockRequestServices(
       },
     ),
   )
-  return { savedRequests, submissionRequests }
+  /** Holds the response to the next save until the returned function is called */
+  function holdNextSave() {
+    const { promise, resolve } = Promise.withResolvers<void>()
+    heldSave = promise
+    return resolve
+  }
+  return { savedRequests, submissionRequests, holdNextSave }
 }
 
 function renderWizard(
@@ -392,6 +425,8 @@ describe('JsonSchemaRequestWizard', () => {
     beforeEach(() => {
       uploadedFileHandleId = UPLOADED_FILE_HANDLE_ID
       uploadFailure = undefined
+      holdUploads = false
+      completeHeldUpload = undefined
     })
 
     async function advanceToFileQuestion(
@@ -498,12 +533,6 @@ describe('JsonSchemaRequestWizard', () => {
           UPLOADED_FILE_HANDLE_ID,
         ]),
       )
-      // The upload is disabled while the request is saved
-      await waitFor(() =>
-        expect(
-          screen.getByRole('button', { name: UPLOAD_BUTTON }),
-        ).toBeEnabled(),
-      )
       await upload(user, REPLACEMENT_FILE_HANDLE_ID)
       await waitFor(() =>
         expect(savedRequests.at(-1)?.attachments).toEqual([
@@ -555,14 +584,13 @@ describe('JsonSchemaRequestWizard', () => {
     })
 
     it('reports a failed save of an uploaded file, keeps the answers, and shows the file through its creator', async () => {
-      const { savedRequests } = mockRequestServices(
+      mockRequestServices(
         clinicalAccessRequirement,
         createRequest(clinicalAccessRequirement),
       )
       const user = userEvent.setup()
       renderWizard(clinicalAccessRequirement)
       await advanceToFileQuestion(user)
-      const savesBeforeUpload = savedRequests.length
       server.use(
         http.post(`${REPO_ENDPOINT}/repo/v1/dataAccessRequest`, () =>
           HttpResponse.json(
@@ -575,12 +603,61 @@ describe('JsonSchemaRequestWizard', () => {
       await upload(user, UPLOADED_FILE_HANDLE_ID)
 
       await screen.findByText(/The file cannot be attached/)
-      expect(savedRequests).toHaveLength(savesBeforeUpload)
       expect(getFileLinks()).toContainEqual({
         creatorFileHandleId: UPLOADED_FILE_HANDLE_ID,
       })
       await user.click(await screen.findByRole('button', { name: 'Back' }))
       expect(await screen.findByRole('textbox')).toHaveValue('Trial')
+    })
+
+    it('blocks Submit and Back while an upload is running, so the uploaded file is not dropped', async () => {
+      const { savedRequests } = mockRequestServices(
+        clinicalAccessRequirement,
+        createRequest(clinicalAccessRequirement),
+      )
+      const user = userEvent.setup()
+      renderWizard(clinicalAccessRequirement)
+      await advanceToFileQuestion(user)
+      holdUploads = true
+
+      await upload(user, UPLOADED_FILE_HANDLE_ID)
+
+      expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
+      expect(screen.getByRole('button', { name: 'Back' })).toBeDisabled()
+      act(() => completeHeldUpload?.())
+      await waitFor(() =>
+        expect(savedRequests.at(-1)?.attachments).toEqual([
+          UPLOADED_FILE_HANDLE_ID,
+        ]),
+      )
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: 'Submit' })).toBeEnabled(),
+      )
+      expect(screen.getByRole('button', { name: 'Back' })).toBeEnabled()
+    })
+
+    it('saves a file answer that changes during a save once that save finishes, with its etag', async () => {
+      const { savedRequests, holdNextSave } = mockRequestServices(
+        clinicalAccessRequirement,
+        createRequest(clinicalAccessRequirement),
+      )
+      const user = userEvent.setup()
+      renderWizard(clinicalAccessRequirement)
+      await advanceToFileQuestion(user)
+      const releaseFirstSave = holdNextSave()
+      const savesBeforeUpload = savedRequests.length
+
+      await upload(user, UPLOADED_FILE_HANDLE_ID)
+      await upload(user, REPLACEMENT_FILE_HANDLE_ID)
+      releaseFirstSave()
+
+      await waitFor(() =>
+        expect(savedRequests).toHaveLength(savesBeforeUpload + 2),
+      )
+      expect(savedRequests.at(-1)?.attachments).toEqual([
+        REPLACEMENT_FILE_HANDLE_ID,
+      ])
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
     })
 
     it('reports a failed upload and keeps the other answers', async () => {

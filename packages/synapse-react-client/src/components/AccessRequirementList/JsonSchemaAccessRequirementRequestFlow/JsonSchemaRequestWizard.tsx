@@ -27,7 +27,7 @@ import {
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
 import { RJSFSchema } from '@rjsf/utils'
-import { useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { DialogBaseTitle } from '../../DialogBase'
 import RequesterInformationFields from './RequesterInformationFields'
 import {
@@ -160,6 +160,28 @@ function JsonSchemaRequestWizardContent(
     request.schemaData ?? {},
   )
   const schemaStepFormRef = useRef<SchemaStepFormHandle>(null)
+  // The IDs of the file fields whose upload is running. Leaving the step would drop the uploaded file.
+  const [uploadingFieldIds, setUploadingFieldIds] = useState<
+    ReadonlySet<string>
+  >(() => new Set())
+  const isUploading = uploadingFieldIds.size > 0
+  const onUploadingChange = useCallback(
+    (fieldId: string, fieldIsUploading: boolean) =>
+      setUploadingFieldIds(previous => {
+        const next = new Set(previous)
+        if (fieldIsUploading) {
+          next.add(fieldId)
+        } else {
+          next.delete(fieldId)
+        }
+        return next
+      }),
+    [],
+  )
+  // The request as last saved. Saves run one at a time, each built on the previous one's result, so that each carries
+  // the latest etag and, once the request is created, its ID.
+  const savedRequestRef = useRef(request)
+  const saveQueueRef = useRef<Promise<unknown>>(Promise.resolve())
 
   const { mutateAsync: updateRequest, isPending: isSaving } =
     useUpdateDataAccessRequest({
@@ -180,25 +202,41 @@ function JsonSchemaRequestWizardContent(
     ? undefined
     : steps[activeStepIndex - 1]
 
-  /** Saves the request with the given answers. Resolves to undefined if the save failed. */
-  async function saveRequest(
-    latestSchemaData: SchemaData,
+  /**
+   * Saves the request built from the last saved one, after any save already in flight settles. Resolves to undefined
+   * if the save failed.
+   */
+  function enqueueSave(
+    build: (savedRequest: Request | Renewal) => Request | Renewal,
   ): Promise<Request | Renewal | undefined> {
     setAlertMessage(undefined)
-    try {
-      return await updateRequest(
-        buildRequest(
-          request,
-          requesterInformation,
-          latestSchemaData,
-          schema,
-          isEDucEnabled,
-        ),
-      )
-    } catch {
-      // The mutation's onError displays the message
-      return undefined
-    }
+    const save = saveQueueRef.current.then(async () => {
+      try {
+        const saved = await updateRequest(build(savedRequestRef.current))
+        savedRequestRef.current = saved
+        return saved
+      } catch {
+        // The mutation's onError displays the message
+        return undefined
+      }
+    })
+    saveQueueRef.current = save
+    return save
+  }
+
+  /** Saves the request with the given answers. Resolves to undefined if the save failed. */
+  function saveRequest(
+    latestSchemaData: SchemaData,
+  ): Promise<Request | Renewal | undefined> {
+    return enqueueSave(savedRequest =>
+      buildRequest(
+        savedRequest,
+        requesterInformation,
+        latestSchemaData,
+        schema,
+        isEDucEnabled,
+      ),
+    )
   }
 
   function onSchemaDataChange(latestSchemaData: SchemaData) {
@@ -225,13 +263,24 @@ function JsonSchemaRequestWizardContent(
           FileHandleAssociateType.AccessRequirementAttachment,
         associateObjectId: String(accessRequirement.id),
       },
-      // A second save started before the first one finishes would use a stale etag
-      canEdit: !isBusy,
+      // Saves are queued, so answers can change while one is in flight
+      canEdit: !isSubmitting,
+      onUploadingChange,
     }),
-    [request.id, request.attachments, accessRequirement.id, isBusy],
+    [
+      request.id,
+      request.attachments,
+      accessRequirement.id,
+      isSubmitting,
+      onUploadingChange,
+    ],
   )
 
   async function saveAndAdvance(latestSchemaData: SchemaData = schemaData) {
+    // Enter in a field also submits the step, so this is guarded as well as the Next button
+    if (isUploading) {
+      return
+    }
     const saved = await saveRequest(latestSchemaData)
     if (!saved) {
       return
@@ -266,17 +315,17 @@ function JsonSchemaRequestWizardContent(
 
   function onDucUpload(response: UploadCallbackResp) {
     if (response.success && response.resp) {
-      // The mutation's onError displays the message
-      updateRequest({
+      const ducFileHandleId = response.resp.fileHandleId
+      void enqueueSave(savedRequest => ({
         ...buildRequest(
-          request,
+          savedRequest,
           requesterInformation,
           schemaData,
           schema,
           isEDucEnabled,
         ),
-        ducFileHandleId: response.resp.fileHandleId,
-      }).catch(() => {})
+        ducFileHandleId,
+      }))
     } else if (response.error) {
       setAlertMessage(response.error.reason)
     }
@@ -284,6 +333,7 @@ function JsonSchemaRequestWizardContent(
 
   const disableNext =
     isBusy ||
+    isUploading ||
     (isRequesterInformationStep &&
       !isRequesterInformationComplete(requesterInformation, isEDucEnabled))
 
@@ -350,7 +400,7 @@ function JsonSchemaRequestWizardContent(
         {!isRequesterInformationStep && (
           <Button
             variant="outlined"
-            disabled={isBusy}
+            disabled={isBusy || isUploading}
             onClick={() => setActiveStepIndex(activeStepIndex - 1)}
           >
             Back
@@ -363,7 +413,7 @@ function JsonSchemaRequestWizardContent(
           onClick={() =>
             onCancel(
               buildRequest(
-                request,
+                savedRequestRef.current,
                 requesterInformation,
                 schemaData,
                 schema,

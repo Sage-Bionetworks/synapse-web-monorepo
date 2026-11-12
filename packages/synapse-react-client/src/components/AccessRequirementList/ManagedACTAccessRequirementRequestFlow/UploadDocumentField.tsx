@@ -14,6 +14,8 @@ type UploadDocumentFieldProps = {
   id: string
   documentName: string
   uploadCallback: (data: UploadCallbackResp) => void
+  /** Invoked when an upload starts and when it finishes, whether or not it succeeded */
+  onUploadingChange?: (isUploading: boolean) => void
   /* The fileHandleAssociations corresponding to an existing upload */
   fileHandleAssociations?: FileHandleAssociation[]
   isMultiFileUpload?: boolean
@@ -27,6 +29,7 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
   const {
     fileHandleAssociations = [],
     uploadCallback,
+    onUploadingChange,
     id,
     documentName,
     isMultiFileUpload = false,
@@ -65,10 +68,12 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
         onUploadStart={() => {
           setProgress(undefined)
           setIsUploading(true)
+          onUploadingChange?.(true)
         }}
         onProgress={setProgress}
         onComplete={res => {
           setIsUploading(false)
+          onUploadingChange?.(false)
           uploadCallback(res)
         }}
         label={`Upload ${documentName}`}

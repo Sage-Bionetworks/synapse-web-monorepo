@@ -41,6 +41,8 @@ export function FileUpload(props: FileUploadProps) {
         onUploadStart()
       }
       const file = e.target.files[0]
+      // Without this, choosing the same file again (to retry a failed upload, or after clearing it) fires no change
+      e.target.value = ''
       try {
         const resp: FileUploadComplete = await uploadFile(
           accessToken,

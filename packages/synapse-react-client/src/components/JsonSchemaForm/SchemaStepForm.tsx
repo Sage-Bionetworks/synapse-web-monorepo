@@ -11,11 +11,33 @@ import {
   SYNAPSE_FILE_HANDLE_ID_FORMAT,
 } from '@/utils/jsonschema/schemaData'
 import RJSFForm from '@rjsf/core'
+import { RJSFSchema, RJSFValidationError } from '@rjsf/utils'
 import { Ref, useImperativeHandle, useMemo, useRef } from 'react'
 
 const SCHEMA_STEP_FORM_CONTEXT: CustomFormContext = {
   descriptionVariant: 'inline',
   booleanWidget: 'yesNoRadio',
+}
+
+/**
+ * Drops the "required" errors of file questions. Used when files cannot be uploaded (as in the template preview),
+ * where a required file question could otherwise never be answered and would block the step.
+ */
+function withoutRequiredFileErrors(
+  schema: RJSFSchema,
+  errors: RJSFValidationError[],
+): RJSFValidationError[] {
+  return errors.filter(error => {
+    const missingProperty: unknown = error.params?.missingProperty
+    if (error.name !== 'required' || typeof missingProperty !== 'string') {
+      return true
+    }
+    const property = schema.properties?.[missingProperty]
+    return !(
+      typeof property === 'object' &&
+      property.format === SYNAPSE_FILE_HANDLE_ID_FORMAT
+    )
+  })
 }
 
 export type SchemaStepFormHandle = {
@@ -73,6 +95,11 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
       // A property with this format is a number in the schema, and the widget is chosen by its format
       widgets={{ [SYNAPSE_FILE_HANDLE_ID_FORMAT]: FileHandleWidget }}
       liveValidate={false}
+      transformErrors={
+        fileHandleWidgetContext.canEdit
+          ? undefined
+          : errors => withoutRequiredFileErrors(step.jsonSchema, errors)
+      }
       onChange={event =>
         onSchemaDataChange({ ...schemaData, ...event.formData })
       }

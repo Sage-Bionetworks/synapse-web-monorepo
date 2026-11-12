@@ -8,8 +8,9 @@ export type FileHandleAssociateObject = {
 }
 
 /**
- * What the file widget needs to know about the object that its files are attached to. This is plain data, because
- * RJSF does not re-render fields when only the identity of a function in the form context changes.
+ * What the file widget needs to know about the object that its files are attached to. Apart from the callback, which
+ * must keep its identity, this is plain data, because RJSF does not re-render fields when only the identity of a
+ * function in the form context changes.
  */
 export type FileHandleWidgetContext = {
   /**
@@ -27,8 +28,13 @@ export type FileHandleWidgetContext = {
    * case they are downloaded as file handles that the current user created.
    */
   templateObject?: FileHandleAssociateObject
-  /** Whether the user can upload, replace, or clear a file */
+  /**
+   * Whether the user can upload, replace, or clear a file. If not, a required file question does not fail the step's
+   * validation, since it could not be answered.
+   */
   canEdit: boolean
+  /** Invoked when an upload of a field's file starts and when it finishes. Its identity must not change. */
+  onUploadingChange?: (fieldId: string, isUploading: boolean) => void
 }
 
 export interface CustomFormContext extends FormContextType {

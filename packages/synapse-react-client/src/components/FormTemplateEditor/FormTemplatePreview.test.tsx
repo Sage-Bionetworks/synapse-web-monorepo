@@ -347,6 +347,34 @@ describe('FormTemplatePreview', () => {
         JSON.parse(screen.getByTestId('FileHandleLink').textContent ?? ''),
       ).toEqual({ creatorFileHandleId: '1234' })
     })
+
+    it('does not block moving on at a required file question, which cannot be answered in the preview', async () => {
+      const user = userEvent.setup()
+      renderPreview({
+        template: template([
+          fileTemplate.steps[0],
+          {
+            title: 'Basics',
+            fields: [{ schemaPath: '/institution', uiDefinition: {} }],
+          },
+        ]),
+        jsonSchema: {
+          ...schema,
+          properties: {
+            ...schema.properties,
+            ...fileSchema.properties,
+          },
+          required: [...(schema.required ?? []), 'agreement'],
+        },
+      })
+      await user.click(getValidateCheckbox())
+
+      await user.click(screen.getByRole('button', { name: 'Basics' }))
+
+      expect(
+        await screen.findByText('Institution', { selector: 'label' }),
+      ).toBeInTheDocument()
+    })
   })
 
   describe('Validate preview responses', () => {
