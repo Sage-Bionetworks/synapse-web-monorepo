@@ -3,6 +3,7 @@ import { getCohortBuilderHandlers } from '@/mocks/msw/handlers/cohortBuilderHand
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
+  BUNDLE_MASK_COMBINED_SQL,
   BUNDLE_MASK_QUERY_COLUMN_MODELS,
   BUNDLE_MASK_QUERY_COUNT,
   BUNDLE_MASK_QUERY_FACETS,
@@ -64,6 +65,27 @@ function renderQueryBuilder(
     </QueryWrapper>,
     { wrapper: createWrapper() },
   )
+}
+
+/** Records the combinedSql requests sent until the test finishes; the returned function resolves to them. */
+function recordCombinedSqlRequests() {
+  const requestBodies: Promise<QueryBundleRequest>[] = []
+  const listener = ({ request }: { request: Request }) => {
+    if (
+      request.method === 'POST' &&
+      new URL(request.url).pathname.endsWith('/table/query/async/start')
+    ) {
+      requestBodies.push(request.clone().json() as Promise<QueryBundleRequest>)
+    }
+  }
+  server.events.on('request:start', listener)
+  onTestFinished(() => {
+    server.events.removeListener('request:start', listener)
+  })
+  return async () =>
+    (await Promise.all(requestBodies)).filter(
+      request => request.partMask === BUNDLE_MASK_COMBINED_SQL,
+    )
 }
 
 describe('QueryBuilderControls', () => {
@@ -165,6 +187,20 @@ describe('QueryBuilderControls', () => {
         '  )',
       ].join('\n'),
     )
+  })
+
+  it('requests the SQL only once the SQL tab is opened', async () => {
+    const user = userEvent.setup()
+    const getCombinedSqlRequests = recordCombinedSqlRequests()
+    renderQueryBuilder(null)
+    await screen.findByRole('combobox', { name: 'Property' })
+
+    expect(await getCombinedSqlRequests()).toEqual([])
+
+    await user.click(screen.getByRole('button', { name: 'Show SQL' }))
+    await screen.findByRole('code')
+
+    expect(await getCombinedSqlRequests()).toHaveLength(1)
   })
 
   it('warns, and starts from an empty tree, when it cannot show the applied conditions exactly', async () => {

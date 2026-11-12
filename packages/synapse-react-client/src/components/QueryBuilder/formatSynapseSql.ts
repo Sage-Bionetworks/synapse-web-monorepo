@@ -8,7 +8,7 @@ const synapseSqlDialect: DialectOptions = {
   tokenizerOptions: {
     ...sql.tokenizerOptions,
     identTypes: [
-      { regex: '[sS][yY][nN]\\d+\\.\\d+' },
+      { regex: String.raw`[sS][yY][nN]\d+\.\d+` },
       ...sql.tokenizerOptions.identTypes,
     ],
   },
