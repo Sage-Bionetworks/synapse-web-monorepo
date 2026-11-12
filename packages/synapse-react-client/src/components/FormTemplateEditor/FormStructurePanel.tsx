@@ -1,4 +1,7 @@
-import { FormTemplateStep } from '@sage-bionetworks/synapse-client'
+import {
+  FormTemplate,
+  FormTemplateStep,
+} from '@sage-bionetworks/synapse-client'
 import { Alert, Box, Button, Paper, Stack, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import pluralize from 'pluralize'
@@ -21,8 +24,8 @@ export type FormStructurePanelProps = {
   jsonSchema: RJSFSchema
   /** Properties not yet bound to any step in the template. */
   unboundProperties: ResolvedSchemaProperty[]
-  /** The FormTemplate's id, if it has been saved. Threaded down to file-field template uploads. */
-  formTemplateId: string | undefined
+  /** The saved version of the template, if any. Its attachments can be downloaded through it. */
+  savedTemplate: FormTemplate | undefined
   /** Current validation errors; those against a whole step are shown on that step's card. */
   validationErrors: FormTemplateFieldValidationError[]
   onStepsChange: (next: EditableFormTemplateStep[]) => void
@@ -39,7 +42,7 @@ export function FormStructurePanel({
   steps,
   jsonSchema,
   unboundProperties,
-  formTemplateId,
+  savedTemplate,
   validationErrors,
   onStepsChange,
   onBindField,
@@ -126,7 +129,7 @@ export function FormStructurePanel({
               isLast={stepIdx === steps.length - 1}
               unboundProperties={unboundProperties}
               jsonSchema={jsonSchema}
-              formTemplateId={formTemplateId}
+              savedTemplate={savedTemplate}
               defaultExpanded={stepIdx === 0}
               onChange={patch => handleStepChange(stepIdx, patch)}
               onBindField={propertyKey => onBindField(propertyKey, step.uiKey)}

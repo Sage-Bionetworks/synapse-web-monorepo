@@ -1,4 +1,11 @@
-import { FormTemplateStep } from '@sage-bionetworks/synapse-client'
+import {
+  FormTemplate,
+  FormTemplateStep,
+} from '@sage-bionetworks/synapse-client'
+import {
+  FileHandleAssociateType,
+  FileHandleAssociation,
+} from '@sage-bionetworks/synapse-types'
 
 export { moveItem } from '@/utils/functions/ArrayUtils'
 
@@ -38,4 +45,38 @@ export function toFormTemplateSteps(
   steps: EditableFormTemplateStep[],
 ): FormTemplateStep[] {
   return steps.map(({ uiKey: _uiKey, ...rest }) => rest)
+}
+
+/**
+ * The `attachments` of a FormTemplate version with these steps: the template document of every field, each once.
+ * Synapse requires every `templateFileHandleId` to be listed, and the list is replaced on each save, so a removed or
+ * replaced document is no longer listed.
+ */
+export function getFormTemplateAttachments(
+  steps: FormTemplateStep[],
+): string[] {
+  const fileHandleIds = steps.flatMap(step =>
+    step.fields.flatMap(field =>
+      field.templateFileHandleId ? [field.templateFileHandleId] : [],
+    ),
+  )
+  return [...new Set(fileHandleIds)]
+}
+
+/**
+ * The association that downloads a template document through the saved template, or undefined if no saved version of
+ * the template lists it yet (e.g. it was uploaded since the last save), in which case only the user who uploaded it
+ * can download it.
+ */
+export function getTemplateDocumentAssociation(
+  savedTemplate: FormTemplate | undefined,
+  fileHandleId: string,
+): FileHandleAssociation | undefined {
+  return savedTemplate?.id && savedTemplate.attachments?.includes(fileHandleId)
+    ? {
+        fileHandleId,
+        associateObjectType: FileHandleAssociateType.FormTemplateAttachment,
+        associateObjectId: savedTemplate.id,
+      }
+    : undefined
 }

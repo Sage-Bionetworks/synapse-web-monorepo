@@ -77,6 +77,6 @@ export const FileFieldWithTemplateOnUnsavedTemplate: Story = {
     },
     resolvedProperty: { format: 'synapse-filehandle-id' },
     propertyKey: 'consentForm',
-    formTemplateId: undefined,
+    savedTemplate: undefined,
   },
 }

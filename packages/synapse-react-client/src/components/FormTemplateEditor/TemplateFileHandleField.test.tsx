@@ -6,6 +6,8 @@ import { MOCK_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
 import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { FormTemplate } from '@sage-bionetworks/synapse-client'
+import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -23,6 +25,13 @@ const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 const DOWNLOAD_URL = 'https://example.com/download/template.docx'
 const UPLOADED_FILE_HANDLE_ID = '9999999'
 const VALIDATION_ERROR = 'File is too large.'
+const SAVED_TEMPLATE: FormTemplate = {
+  id: '42',
+  name: 'Template',
+  schema$id: 'org.example-Template-1.0.0',
+  steps: [],
+  attachments: [MOCK_FILE_HANDLE_ID],
+}
 
 vi.mocked(BasicFileHandleUpload).mockImplementation(
   (props: BasicFileHandleUploadProps) => (
@@ -47,7 +56,7 @@ vi.mocked(BasicFileHandleUpload).mockImplementation(
 function renderField(overrides: Partial<TemplateFileHandleFieldProps> = {}) {
   const props: TemplateFileHandleFieldProps = {
     fileHandleId: undefined,
-    formTemplateId: undefined,
+    savedTemplate: undefined,
     onChange: vi.fn(),
     ...overrides,
   }
@@ -105,18 +114,33 @@ describe('TemplateFileHandleField', () => {
     expect(getFilesSpy).not.toHaveBeenCalled()
   })
 
-  it('downloads a saved template file through an association with the form template', async () => {
-    renderField({ fileHandleId: MOCK_FILE_HANDLE_ID, formTemplateId: '42' })
+  it('downloads a file that the saved template lists through the form template', async () => {
+    renderField({
+      fileHandleId: MOCK_FILE_HANDLE_ID,
+      savedTemplate: SAVED_TEMPLATE,
+    })
     expect(
       await screen.findByRole('button', { name: /mock-file\.raw/ }),
     ).toBeInTheDocument()
     expect(getFilesSpy).toHaveBeenCalledTimes(1)
     expect(getFilesSpy.mock.calls[0][0].requestedFiles).toEqual([
-      expect.objectContaining({
+      {
         fileHandleId: MOCK_FILE_HANDLE_ID,
+        associateObjectType: FileHandleAssociateType.FormTemplateAttachment,
         associateObjectId: '42',
-      }),
+      },
     ])
+  })
+
+  it('links a file uploaded since the last save to the file handle directly, as the saved template does not list it', async () => {
+    renderField({
+      fileHandleId: MOCK_FILE_HANDLE_ID,
+      savedTemplate: { ...SAVED_TEMPLATE, attachments: ['1'] },
+    })
+    expect(
+      await screen.findByRole('button', { name: /mock-file\.raw/ }),
+    ).toBeInTheDocument()
+    expect(getFilesSpy).not.toHaveBeenCalled()
   })
 
   it('opens the file handle download URL for an unsaved template', async () => {
@@ -151,7 +175,10 @@ describe('TemplateFileHandleField', () => {
     )
     const openSpy = vi.spyOn(window, 'open').mockReturnValue(null)
     const user = userEvent.setup()
-    renderField({ fileHandleId: MOCK_FILE_HANDLE_ID, formTemplateId: '42' })
+    renderField({
+      fileHandleId: MOCK_FILE_HANDLE_ID,
+      savedTemplate: SAVED_TEMPLATE,
+    })
     await user.click(
       await screen.findByRole('button', { name: /mock-file\.raw/ }),
     )
@@ -164,7 +191,7 @@ describe('TemplateFileHandleField', () => {
   it('does not refetch the file when re-rendered with the same ids', async () => {
     const { rerender, props } = renderField({
       fileHandleId: MOCK_FILE_HANDLE_ID,
-      formTemplateId: '42',
+      savedTemplate: SAVED_TEMPLATE,
     })
     await screen.findByRole('button', { name: /mock-file\.raw/ })
     rerender(<TemplateFileHandleField {...props} onChange={vi.fn()} />)

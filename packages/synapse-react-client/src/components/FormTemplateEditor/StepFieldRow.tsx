@@ -1,5 +1,8 @@
 import { useSortable } from '@dnd-kit/react/sortable'
-import { FormTemplateField } from '@sage-bionetworks/synapse-client'
+import {
+  FormTemplate,
+  FormTemplateField,
+} from '@sage-bionetworks/synapse-client'
 import {
   Box,
   Checkbox,
@@ -44,8 +47,8 @@ export type StepFieldRowProps = {
   propertyKey: string
   isFirst: boolean
   isLast: boolean
-  /** The FormTemplate's id, if it has been saved. Used to build the template file download. */
-  formTemplateId: string | undefined
+  /** The saved version of the template, if any. Its attachments can be downloaded through it. */
+  savedTemplate: FormTemplate | undefined
   onChange: (patch: Partial<FormTemplateField>) => void
   onMoveUp: () => void
   onMoveDown: () => void
@@ -67,7 +70,7 @@ export function StepFieldRow({
   propertyKey,
   isFirst,
   isLast,
-  formTemplateId,
+  savedTemplate,
   onChange,
   onMoveUp,
   onMoveDown,
@@ -175,7 +178,7 @@ export function StepFieldRow({
           {isFileField && (
             <TemplateFileHandleField
               fileHandleId={field.templateFileHandleId}
-              formTemplateId={formTemplateId}
+              savedTemplate={savedTemplate}
               onChange={next => onChange({ templateFileHandleId: next })}
             />
           )}

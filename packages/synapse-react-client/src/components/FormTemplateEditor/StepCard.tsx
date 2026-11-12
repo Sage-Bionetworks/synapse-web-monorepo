@@ -1,6 +1,7 @@
 import { useDroppable } from '@dnd-kit/react'
 import { useSortable } from '@dnd-kit/react/sortable'
 import {
+  FormTemplate,
   FormTemplateField,
   FormTemplateStep,
 } from '@sage-bionetworks/synapse-client'
@@ -60,8 +61,8 @@ export type StepCardProps = {
   unboundProperties: ResolvedSchemaProperty[]
   /** The full JSON Schema, used to resolve display labels for slot rows. */
   jsonSchema: RJSFSchema
-  /** The FormTemplate's id, if it has been saved. Threaded down to file-field template uploads. */
-  formTemplateId: string | undefined
+  /** The saved version of the template, if any. Its attachments can be downloaded through it. */
+  savedTemplate: FormTemplate | undefined
   /** If true, render expanded by default (first step). */
   defaultExpanded: boolean
   onChange: (patch: Partial<FormTemplateStep>) => void
@@ -80,7 +81,7 @@ export function StepCard({
   isLast,
   unboundProperties,
   jsonSchema,
-  formTemplateId,
+  savedTemplate,
   defaultExpanded,
   onChange,
   onBindField,
@@ -260,7 +261,7 @@ export function StepCard({
                     }
                     isFirst={fieldIdx === 0}
                     isLast={fieldIdx === step.fields.length - 1}
-                    formTemplateId={formTemplateId}
+                    savedTemplate={savedTemplate}
                     onChange={patch => handleFieldChange(fieldIdx, patch)}
                     onMoveUp={() => handleFieldMove(fieldIdx, -1)}
                     onMoveDown={() => handleFieldMove(fieldIdx, 1)}

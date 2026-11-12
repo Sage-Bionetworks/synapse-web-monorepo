@@ -220,7 +220,7 @@ export function FormTemplateEditorForm({
               steps={steps}
               jsonSchema={jsonSchema}
               unboundProperties={unboundProperties}
-              formTemplateId={initialTemplate?.id}
+              savedTemplate={initialTemplate}
               validationErrors={validationErrors}
               onStepsChange={setSteps}
               onBindField={bindField}
@@ -231,7 +231,7 @@ export function FormTemplateEditorForm({
               <FormTemplatePreview
                 template={previewTemplate}
                 jsonSchema={jsonSchema}
-                formTemplateId={initialTemplate?.id}
+                savedTemplate={initialTemplate}
               />
             </Box>
           </Grid>

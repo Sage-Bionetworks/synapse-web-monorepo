@@ -179,6 +179,56 @@ describe('useSaveFormTemplate', () => {
     })
   })
 
+  it('replaces the attachments with the template document of every field, each once', async () => {
+    const initialTemplate: FormTemplate = {
+      id: 'template-1',
+      name: 'My Template',
+      schema$id: 'org.example-MyTemplate-1.0.0',
+      steps: [],
+      attachments: ['111'],
+      etag: 'etag-1',
+      versionNumber: 1,
+    }
+    updateTemplateSpy.mockResolvedValueOnce(initialTemplate)
+    const twoFileJsonSchema: RJSFSchema = {
+      ...jsonSchema,
+      properties: { a: { type: 'string' }, b: { type: 'string' } },
+    }
+    const stepsWithDocuments: EditableFormTemplateStep[] = [
+      {
+        uiKey: 'step-0',
+        title: 'Step 1',
+        fields: [
+          { schemaPath: '/a', uiDefinition: {}, templateFileHandleId: '222' },
+        ],
+      },
+      {
+        uiKey: 'step-1',
+        title: 'Step 2',
+        fields: [
+          { schemaPath: '/b', uiDefinition: {}, templateFileHandleId: '222' },
+        ],
+      },
+    ]
+
+    const { result } = renderHook(() => useSaveFormTemplate(), {
+      wrapper: createWrapper(),
+    })
+
+    await result.current.mutateAsync({
+      initialTemplate,
+      initialJsonSchema: twoFileJsonSchema,
+      name: 'My Template',
+      jsonSchema: twoFileJsonSchema,
+      steps: stepsWithDocuments,
+    })
+
+    expect(updateTemplateSpy).toHaveBeenCalledWith({
+      templateId: 'template-1',
+      formTemplate: expect.objectContaining({ attachments: ['222'] }),
+    })
+  })
+
   it('propagates a 412 conflict from the update mutation, forwarding the stale etag', async () => {
     const initialTemplate: FormTemplate = {
       id: 'template-1',
