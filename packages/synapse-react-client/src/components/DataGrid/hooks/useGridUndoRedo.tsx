@@ -1,21 +1,11 @@
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { Menu, MenuItem } from '@mui/material'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { DataGridRow, Operation } from '../DataGridTypes'
 import { ModelChange } from '../utils/applyModelChange'
 import { convertActionToModelChange } from '../utils/convertActionToModelChange'
 import { useStack } from './useStack'
-
-const GRID_CONTAINER_SELECTOR = '.dsg-container'
-
-function isEditableOutsideGrid(target: EventTarget | null) {
-  return (
-    target instanceof HTMLElement &&
-    (target.isContentEditable || target.matches('input, textarea, select')) &&
-    !target.closest(GRID_CONTAINER_SELECTOR)
-  )
-}
 
 /**
  * Represents a single action in the grid that can be undone or redone
@@ -56,7 +46,8 @@ const MAX_UNDO_STEPS = 100
 const MAX_REDO_STEPS = 100
 
 /**
- * Hook to manage undo/redo functionality for a grid backed by a CRDT model.
+ * Hook to manage undo/redo functionality for a grid backed by a CRDT model. For the keyboard
+ * shortcuts, pass `handleUndo` and `handleRedo` to the grid's `onUndo` and `onRedo`.
  *
  * @param onApplyModelChange - Function to apply model changes and commit
  */
@@ -217,35 +208,6 @@ export function useGridUndoRedo(
     }
     handleRedoClose()
   }, [redoStack, undoStack, onApplyModelChange])
-
-  // Keyboard shortcuts for both undo and redo
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Text fields outside the grid, such as the chat composer or a dialog's form, keep the browser's own text undo
-      if (isEditableOutsideGrid(event.target)) {
-        return
-      }
-      if (
-        (event.ctrlKey && event.key === 'z' && !event.shiftKey) ||
-        (event.metaKey && event.key === 'z' && !event.shiftKey)
-      ) {
-        event.preventDefault()
-        handleUndo()
-      } else if (
-        (event.ctrlKey && event.key === 'y') ||
-        (event.ctrlKey && event.shiftKey && event.key === 'z') ||
-        (event.metaKey && event.shiftKey && event.key === 'z')
-      ) {
-        event.preventDefault()
-        handleRedo()
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [handleUndo, handleRedo])
 
   const addToUndoStack = (action: GridAction) => {
     undoStack.push(action)

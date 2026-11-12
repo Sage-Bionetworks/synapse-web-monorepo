@@ -354,72 +354,24 @@ describe('useGridUndoRedo', () => {
     })
   })
 
-  describe('Keyboard shortcuts', () => {
-    const UNDO_KEYS = { key: 'z', ctrlKey: true }
-    const REDO_KEYS = { key: 'y', ctrlKey: true }
-
-    /** Renders the hook with one action that has been undone, so both undo and redo have work to do */
-    function renderWithUndoAndRedoAvailable() {
-      const { result } = renderHook(() =>
-        useGridUndoRedo(mockOnApplyModelChange),
-      )
-      act(() => {
-        result.current.addToUndoStack({
-          type: 'CREATE',
-          rowIndex: 0,
-          newValue: { id: '1' },
-        })
-        result.current.addToUndoStack({
-          type: 'CREATE',
-          rowIndex: 1,
-          newValue: { id: '2' },
-        })
+  // The grid owns the shortcuts, so it can tell whether a cell is active or being edited, and calls
+  // handleUndo and handleRedo through its onUndo and onRedo props
+  it('does not handle the undo and redo shortcuts itself', () => {
+    const { result } = renderHook(() => useGridUndoRedo(mockOnApplyModelChange))
+    act(() => {
+      result.current.addToUndoStack({
+        type: 'CREATE',
+        rowIndex: 0,
+        newValue: { id: '1' },
       })
-      act(() => result.current.handleUndo())
-      mockOnApplyModelChange.mockClear()
-      return result
-    }
-
-    function appendToBody<T extends HTMLElement>(element: T): T {
-      document.body.appendChild(element)
-      return element
-    }
-
-    afterEach(() => {
-      document.body.innerHTML = ''
     })
 
-    // fireEvent returns false when a handler prevented the browser's default action
-    it('undoes and redoes from the keyboard outside text fields', () => {
-      renderWithUndoAndRedoAvailable()
-
-      expect(fireEvent.keyDown(document.body, UNDO_KEYS)).toBe(false)
-      expect(mockOnApplyModelChange).toHaveBeenCalledTimes(1)
-
-      expect(fireEvent.keyDown(document.body, REDO_KEYS)).toBe(false)
-      expect(mockOnApplyModelChange).toHaveBeenCalledTimes(2)
+    const undoNotPrevented = fireEvent.keyDown(document.body, {
+      key: 'z',
+      ctrlKey: true,
     })
 
-    it.each(['textarea', 'input', 'select'] as const)(
-      'leaves undo and redo to the browser in <%s> outside the grid',
-      tagName => {
-        renderWithUndoAndRedoAvailable()
-        const field = appendToBody(document.createElement(tagName))
-
-        expect(fireEvent.keyDown(field, UNDO_KEYS)).toBe(true)
-        expect(fireEvent.keyDown(field, REDO_KEYS)).toBe(true)
-        expect(mockOnApplyModelChange).not.toHaveBeenCalled()
-      },
-    )
-
-    it('undoes from a text field inside the grid', () => {
-      renderWithUndoAndRedoAvailable()
-      const grid = appendToBody(document.createElement('div'))
-      grid.className = 'dsg-container'
-      const cellInput = grid.appendChild(document.createElement('input'))
-
-      expect(fireEvent.keyDown(cellInput, UNDO_KEYS)).toBe(false)
-      expect(mockOnApplyModelChange).toHaveBeenCalledTimes(1)
-    })
+    expect(undoNotPrevented).toBe(true)
+    expect(mockOnApplyModelChange).not.toHaveBeenCalled()
   })
 })

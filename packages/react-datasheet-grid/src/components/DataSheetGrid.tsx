@@ -40,6 +40,7 @@ import {
   getSelectionWithId,
 } from '../utils/typeCheck'
 import { getAllTabbableElements } from '../utils/tab'
+import { isRedoShortcut, isUndoShortcut } from '../utils/undoShortcuts'
 import { Grid } from './Grid'
 import { SelectionRect } from './SelectionRect'
 import { useRowHeights } from '../hooks/useRowHeights'
@@ -90,6 +91,8 @@ export const DataSheetGrid = React.memo(
         cellClassName,
         onScroll,
         pinFirstColumn = false,
+        onUndo,
+        onRedo,
       }: DataSheetGridProps<T>,
       ref: React.ForwardedRef<DataSheetGridRef>,
     ): React.JSX.Element => {
@@ -1520,6 +1523,13 @@ export const DataSheetGrid = React.memo(
               selection?.max.row,
             )
             event.preventDefault()
+          } else if (isUndoShortcut(event) || isRedoShortcut(event)) {
+            // While editing, the cell's editor keeps the browser's own text undo, as in a spreadsheet
+            const handler = isUndoShortcut(event) ? onUndo : onRedo
+            if (!editing && handler) {
+              handler()
+              event.preventDefault()
+            }
           } else if (
             (isPrintableUnicode(event.key) || /Key[A-Z]$/.exec(event.code)) &&
             !event.ctrlKey &&
@@ -1572,9 +1582,30 @@ export const DataSheetGrid = React.memo(
           setSelectionCell,
           stopEditing,
           hasStickyRightColumn,
+          onUndo,
+          onRedo,
         ],
       )
       useDocumentEventListener('keydown', onKeyDown)
+
+      // The last focus event that reached this grid's React tree, which includes cell editors that
+      // are portaled outside the grid's DOM
+      const lastFocusInsideRef = useRef<Event | null>(null)
+
+      // Focus moving outside the grid, such as a script focusing a text field elsewhere, deactivates
+      // the grid, so its keyboard shortcuts stop acting on it. Clicks and Tab already do this.
+      const onFocusIn = useCallback(
+        (event: FocusEvent) => {
+          // React dispatches the event to the grid's tree before this document listener runs
+          if (activeCell && event !== lastFocusInsideRef.current) {
+            setActiveCell(null)
+            setSelectionCell(null)
+            setEditing(false)
+          }
+        },
+        [activeCell, setActiveCell, setSelectionCell],
+      )
+      useDocumentEventListener('focusin', onFocusIn)
 
       const onContextMenu = useCallback(
         (event: MouseEvent) => {
@@ -1835,7 +1866,13 @@ export const DataSheetGrid = React.memo(
       ])
 
       return (
-        <div className={className} style={style}>
+        <div
+          className={className}
+          style={style}
+          onFocus={e => {
+            lastFocusInsideRef.current = e.nativeEvent
+          }}
+        >
           <div
             ref={beforeTabIndexRef}
             tabIndex={rawColumns.length && data.length ? 0 : undefined}
