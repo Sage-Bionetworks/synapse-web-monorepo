@@ -22,6 +22,7 @@ export const Grid = <T,>({
   displayHeight,
   headerRowHeight,
   rowHeight,
+  getRowSize,
   rowKey,
   fullWidth,
   selection,
@@ -47,7 +48,8 @@ export const Grid = <T,>({
   pinFirstColumn: boolean
   displayHeight: number
   headerRowHeight: number
-  rowHeight: (index: number) => { height: number }
+  rowHeight: DataSheetGridProps<T>['rowHeight']
+  getRowSize: (index: number) => { height: number }
   rowKey: DataSheetGridProps<T>['rowKey']
   rowClassName: DataSheetGridProps<T>['rowClassName']
   cellClassName: DataSheetGridProps<T>['cellClassName']
@@ -65,9 +67,7 @@ export const Grid = <T,>({
   onScroll?: React.UIEventHandler<HTMLDivElement>
 }) => {
   // The virtualizer measures every row again whenever getItemKey changes, so
-  // it keeps its identity across renders that leave the rows and their heights
-  // unchanged. rowHeight is a dependency only to make the virtualizer measure
-  // the rows again when their heights change.
+  // it keeps its identity across renders that leave the rows unchanged.
   const getRowKey = useCallback(
     (index: number): React.Key => {
       if (rowKey && index > 0) {
@@ -87,15 +87,14 @@ export const Grid = <T,>({
       }
       return index
     },
-    // oxlint-disable-next-line react-hooks/exhaustive-deps -- rowHeight makes the virtualizer measure the rows again
-    [data, rowKey, rowHeight],
+    [data, rowKey],
   )
 
   const rowVirtualizer = useVirtualizer({
     count: data.length,
     getScrollElement: () => outerRef.current,
     paddingStart: headerRowHeight,
-    estimateSize: index => rowHeight(index).height,
+    estimateSize: index => getRowSize(index).height,
     getItemKey: getRowKey,
     overscan: 5,
   })
@@ -136,6 +135,12 @@ export const Grid = <T,>({
   useEffect(() => {
     colVirtualizer.measure()
   }, [colVirtualizer, columnWidths])
+
+  // The virtualizer keeps its row measurements until the rows change, so a new
+  // row height needs an explicit measure
+  useEffect(() => {
+    rowVirtualizer.measure()
+  }, [rowVirtualizer, rowHeight])
 
   const setGivenRowData = useMemoizedIndexCallback(setRowData, 1)
   const deleteGivenRow = useMemoizedIndexCallback(deleteRows, 0)

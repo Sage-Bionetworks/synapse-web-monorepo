@@ -382,7 +382,7 @@ export function autocompleteMultipleEnumColumn({
             limitTags={limitTags}
           />
         }
-        renderEditor={() => (
+        editor={
           <MemoizedAutocompleteMultipleEnumCell
             {...props}
             choices={choices}
@@ -390,7 +390,7 @@ export function autocompleteMultipleEnumColumn({
             limitTags={limitTags}
             clearValue={clearValue}
           />
-        )}
+        }
       />
     )) as CellComponent,
     copyValue: ({ rowData }) => {

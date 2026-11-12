@@ -623,6 +623,11 @@ const largeGridColumnTemplates: SchemaPropertiesMap = {
     isRequired: false,
     enumeratedValues: ['alpha', 'beta', 'gamma', 'delta'],
   },
+  due_date: {
+    type: { type: 'string', format: 'date', isArray: false },
+    isRequired: false,
+    enumeratedValues: null,
+  },
 }
 const largeGridTemplateNames = Object.keys(largeGridColumnTemplates)
 const largeGridTags = [
@@ -630,6 +635,25 @@ const largeGridTags = [
   ['beta', 'gamma'],
   ['alpha', 'gamma', 'delta'],
 ]
+const largeGridDueDates = ['2026-12-25', '2027-01-15', '2027-03-01']
+
+function largeGridCellValue(
+  templateName: string,
+  rowIndex: number,
+): DataGridRow[string] {
+  switch (templateName) {
+    case 'tags':
+      // The model holds a multiple-value cell as an array, which DataGridRow's
+      // value type does not include
+      return largeGridTags[
+        rowIndex % largeGridTags.length
+      ] as unknown as DataGridRow[string]
+    case 'due_date':
+      return largeGridDueDates[rowIndex % largeGridDueDates.length]
+    default:
+      return sampleRowData[rowIndex % sampleRowData.length][templateName]
+  }
+}
 
 function createLargeGrid() {
   const templateNameFor = (columnIndex: number) =>
@@ -653,15 +677,10 @@ function createLargeGrid() {
         __validationStatus: sampleRow.__validationStatus,
       }
       columnNames.forEach((columnName, columnIndex) => {
-        const templateName = templateNameFor(columnIndex)
-        row[columnName] =
-          templateName === 'tags'
-            ? // The model holds a multiple-value cell as an array, which
-              // DataGridRow's value type does not include
-              (largeGridTags[
-                rowIndex % largeGridTags.length
-              ] as unknown as DataGridRow[string])
-            : sampleRow[templateName]
+        row[columnName] = largeGridCellValue(
+          templateNameFor(columnIndex),
+          rowIndex,
+        )
       })
       return row
     },

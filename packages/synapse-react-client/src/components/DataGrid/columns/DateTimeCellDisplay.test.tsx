@@ -1,8 +1,8 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentType } from 'react'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   dateTimeColumn,
   DateTimeCell,
@@ -12,6 +12,7 @@ import {
   PICKER_DATE_PLACEHOLDER,
   PICKER_DATE_TIME_PLACEHOLDER,
 } from './DateTimeColumn'
+import { POINTER_REST_MS } from './LazyCellEditor'
 
 // The display stands in for the picker until the cell is reached, so these
 // tests render the real pickers and check that the display shows the same text.
@@ -101,18 +102,32 @@ describe('DateTimeCellDisplay', () => {
 })
 
 describe('dateTimeColumn cell', () => {
-  it('opens the date picker with one click after a cell stops under a stationary pointer', async () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('opens the date picker with one click once a stationary pointer has rested on the cell', async () => {
     const Cell = dateTimeColumn({ format: FULL_DATE_FORMAT_NAME })
       .component as ComponentType<Partial<DateTimeCellProps>>
     render(<Cell rowData="2026-12-25" active={false} setRowData={vi.fn()} />, {
       wrapper: createWrapper(),
     })
+    vi.useFakeTimers()
 
     // A cell that scrolls under the pointer gets pointerenter but no pointermove
     fireEvent.pointerEnter(screen.getByText('12/25/2026'))
-    await userEvent.click(
-      await screen.findByRole('button', { name: /choose date/i }),
-    )
+    act(() => {
+      vi.advanceTimersByTime(POINTER_REST_MS - 1)
+    })
+    expect(
+      screen.queryByRole('button', { name: /choose date/i }),
+    ).not.toBeInTheDocument()
+    act(() => {
+      vi.advanceTimersByTime(1)
+    })
+    vi.useRealTimers()
+
+    await userEvent.click(screen.getByRole('button', { name: /choose date/i }))
 
     expect(await screen.findByRole('dialog')).toBeInTheDocument()
   })

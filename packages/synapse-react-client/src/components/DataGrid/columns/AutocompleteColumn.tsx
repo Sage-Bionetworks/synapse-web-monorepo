@@ -322,7 +322,7 @@ export function autocompleteColumn({
       <LazyCellEditor
         active={props.active}
         display={<AutocompleteCellDisplay rowData={props.rowData} />}
-        renderEditor={() => (
+        editor={
           <MemoizedAutocompleteCell
             {...props}
             choices={choices}
@@ -330,7 +330,7 @@ export function autocompleteColumn({
             parseFreeText={parseFreeText}
             clearValue={clearValue}
           />
-        )}
+        }
       />
     )) as CellComponent,
     // If we update our enums to support labels, then we can update copy to copy the label and paste to lookup the mapping from label -> value

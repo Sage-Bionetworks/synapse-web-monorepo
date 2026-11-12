@@ -331,9 +331,7 @@ export function dateTimeColumn({
             disabled={props.disabled}
           />
         }
-        renderEditor={() => (
-          <DateTimeCell {...props} colType={colType} format={format} />
-        )}
+        editor={<DateTimeCell {...props} colType={colType} format={format} />}
       />
     )) as CellComponent,
     copyValue: ({ rowData }) => rowData,

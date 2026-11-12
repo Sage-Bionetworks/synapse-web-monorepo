@@ -12,7 +12,8 @@ type LazyCellEditorProps = {
   active: boolean
   /** Lightweight markup that shows the cell's value until the editor mounts */
   display: ReactNode
-  renderEditor: () => ReactNode
+  /** The cell's editor, mounted only once the user reaches the cell */
+  editor: ReactNode
 }
 
 /**
@@ -24,13 +25,12 @@ type LazyCellEditorProps = {
 export function LazyCellEditor({
   active,
   display,
-  renderEditor,
+  editor,
 }: LazyCellEditorProps) {
-  // Mounting an MUI editor for every cell that scrolls into view is what made
-  // scrolling slow, so a cell only gets one when the user reaches it. Mounting
-  // on hover, not just on activation, keeps the editor's hover affordances and
-  // one-click actions (open the menu, clear, open the date picker) working as
-  // they do on a cell that already has its editor.
+  // Each MUI editor is costly to mount, so a cell mounts one only when the user
+  // reaches it. Mounting on hover, not just on activation, keeps the editor's
+  // hover affordances and one-click actions (open the menu, clear, open the
+  // date picker) working as they do on a cell that already has its editor.
   const [isEditorMounted, setIsEditorMounted] = useState(active)
   if (active && !isEditorMounted) {
     setIsEditorMounted(true)
@@ -43,7 +43,7 @@ export function LazyCellEditor({
   // text, and it finishes an option click that the grid saw as a click outside
   // the cell.
   if (isEditorMounted) {
-    return renderEditor()
+    return editor
   }
 
   return (
@@ -55,6 +55,7 @@ export function LazyCellEditor({
       // needs its editor before the next click, because the grid activates the
       // cell on mousedown and the click would otherwise land on the display.
       onPointerEnter={() => {
+        clearTimeout(restTimeout.current)
         restTimeout.current = setTimeout(
           () => setIsEditorMounted(true),
           POINTER_REST_MS,

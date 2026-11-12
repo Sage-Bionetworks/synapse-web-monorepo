@@ -7,7 +7,7 @@ function renderCell(active: boolean) {
     <LazyCellEditor
       active={isActive}
       display="Display value"
-      renderEditor={() => <input aria-label="Editor" />}
+      editor={<input aria-label="Editor" />}
     />
   )
   const { rerender } = render(cell(active))
@@ -56,6 +56,38 @@ describe('LazyCellEditor', () => {
       expect(
         screen.queryByRole('textbox', { name: 'Editor' }),
       ).not.toBeInTheDocument()
+    })
+
+    it('does not mount the editor for a cell the pointer entered twice and then left', () => {
+      vi.useFakeTimers()
+      renderCell(false)
+
+      fireEvent.pointerEnter(screen.getByText('Display value'))
+      fireEvent.pointerEnter(screen.getByText('Display value'))
+      fireEvent.pointerLeave(screen.getByText('Display value'))
+      act(() => {
+        vi.advanceTimersByTime(POINTER_REST_MS)
+      })
+
+      expect(
+        screen.queryByRole('textbox', { name: 'Editor' }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('mounts the editor when the pointer comes back and rests on the cell', () => {
+      vi.useFakeTimers()
+      renderCell(false)
+
+      fireEvent.pointerEnter(screen.getByText('Display value'))
+      fireEvent.pointerLeave(screen.getByText('Display value'))
+      fireEvent.pointerEnter(screen.getByText('Display value'))
+      act(() => {
+        vi.advanceTimersByTime(POINTER_REST_MS)
+      })
+
+      expect(
+        screen.getByRole('textbox', { name: 'Editor' }),
+      ).toBeInTheDocument()
     })
 
     it('mounts the editor once the pointer has rested on the cell', () => {
