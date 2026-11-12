@@ -5,7 +5,7 @@ import { CardConfiguration } from '../CardContainer/CardConfiguration'
 import LastUpdatedOn from './LastUpdatedOn'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
-import { SynapseErrorBoundary } from '../error'
+import { ErrorBanner, SynapseErrorBoundary } from '../error'
 import { useQueryContext } from '../QueryContext'
 import { Box } from '@mui/material'
 import { TablePagination } from '../SynapseTable/TablePagination'
@@ -50,7 +50,10 @@ export function RowSetView(props: RowSetViewProps) {
     isLoadingNewPage,
     fetchNextPageOfInfiniteData,
     hasNextPageOfInfiniteData,
+    error,
   } = useRowSet(initialLimitIsApplied ? initialLimit : undefined)
+  // A failed row query has no rows to page through, e.g. when row results are withheld from an aggregate-only caller.
+  const isRowSetUnavailable = error != null && rowSet === undefined
 
   return (
     <SynapseErrorBoundary>
@@ -58,6 +61,7 @@ export function RowSetView(props: RowSetViewProps) {
         {isLoading && (
           <QueryWrapperLoadingScreen progressMessage={progressMessage} />
         )}
+        {error && <ErrorBanner error={error} />}
         {!isLoading && rowSet && (
           <>
             {tableConfiguration && (
@@ -77,12 +81,12 @@ export function RowSetView(props: RowSetViewProps) {
           </>
         )}
         <Suspense fallback={<></>}>
-          {!isInfinite && (
+          {!isInfinite && !isRowSetUnavailable && (
             <Box sx={{ mt: 2, textAlign: 'right' }}>
               <TablePagination />
             </Box>
           )}
-          {isInfinite && (
+          {isInfinite && !isRowSetUnavailable && (
             <ViewMoreQueryResultsButton
               initialLimit={initialLimit}
               initialLimitIsApplied={initialLimitIsApplied}
