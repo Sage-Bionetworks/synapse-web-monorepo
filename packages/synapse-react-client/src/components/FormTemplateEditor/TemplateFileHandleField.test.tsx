@@ -69,6 +69,27 @@ function renderField(overrides: Partial<TemplateFileHandleFieldProps> = {}) {
 // Pass-through spy: MSW serves the batch-file response; the spy records each call synchronously.
 const getFilesSpy = vi.spyOn(SynapseClient, 'getFiles')
 
+/** Clicks the file link and asserts the download URL came from the creator-only endpoint, not through an association. */
+async function expectCreatorOnlyDownload() {
+  server.use(
+    http.get(`${REPO_ENDPOINT}/file/v1/fileHandle/:id/url`, ({ params }) =>
+      params.id === MOCK_FILE_HANDLE_ID
+        ? HttpResponse.json(DOWNLOAD_URL)
+        : new HttpResponse(null, { status: 404 }),
+    ),
+  )
+  const openSpy = vi.spyOn(window, 'open').mockReturnValue(null)
+  const user = userEvent.setup()
+  await user.click(
+    await screen.findByRole('button', { name: /mock-file\.raw/ }),
+  )
+  await waitFor(() =>
+    expect(openSpy).toHaveBeenCalledWith(DOWNLOAD_URL, '_blank'),
+  )
+  openSpy.mockRestore()
+  expect(getFilesSpy).not.toHaveBeenCalled()
+}
+
 describe('TemplateFileHandleField', () => {
   afterEach(() => {
     getFilesSpy.mockClear()
@@ -132,26 +153,20 @@ describe('TemplateFileHandleField', () => {
     ])
   })
 
-  it('links a file uploaded since the last save to the file handle directly, as the saved template does not list it', async () => {
+  it('downloads a file uploaded since the last save from the creator-only endpoint, as the saved template does not list it', async () => {
     renderField({
       fileHandleId: MOCK_FILE_HANDLE_ID,
       savedTemplate: { ...SAVED_TEMPLATE, attachments: ['1'] },
     })
-    expect(
-      await screen.findByRole('button', { name: /mock-file\.raw/ }),
-    ).toBeInTheDocument()
-    expect(getFilesSpy).not.toHaveBeenCalled()
+    await expectCreatorOnlyDownload()
   })
 
-  it('links a document of a version saved before attachments existed to the file handle directly', async () => {
+  it('downloads a document of a version saved before attachments existed from the creator-only endpoint', async () => {
     renderField({
       fileHandleId: MOCK_FILE_HANDLE_ID,
       savedTemplate: { ...SAVED_TEMPLATE, attachments: undefined },
     })
-    expect(
-      await screen.findByRole('button', { name: /mock-file\.raw/ }),
-    ).toBeInTheDocument()
-    expect(getFilesSpy).not.toHaveBeenCalled()
+    await expectCreatorOnlyDownload()
   })
 
   it('opens the file handle download URL for an unsaved template', async () => {
