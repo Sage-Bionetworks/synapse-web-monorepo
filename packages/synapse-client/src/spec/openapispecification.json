@@ -19823,6 +19823,11 @@
           "queryCountPostProcessingApplied": {
             "type": "boolean",
             "description": "True when the facet post-processing algorithm (e.g. rounding or noise) was applied to the queryCount, indicating the count is approximate. With rounding, the queryCount is the inclusive lower bound of its bin. Absent or false when the queryCount is exact."
+          },
+          "suppressionThreshold": {
+            "type": "integer",
+            "description": "The suppression threshold (k) of an aggregate-only read or an aggregate data preview. A facet count, or a count cell in the query results, of -1 is a non-zero count below this threshold that has been masked. Absent when the read is not aggregate-only.",
+            "format": "int32"
           }
         },
         "description": "A bundle of information about a query result.",
@@ -23627,7 +23632,7 @@
           },
           "count": {
             "type": "integer",
-            "description": "the number of times the value appears in the column",
+            "description": "the number of times the value appears in the column. For an aggregate-only read, -1 means the count is non-zero and below the QueryResultBundle's suppressionThreshold, so it is masked.",
             "format": "int32"
           },
           "isSelected": {
@@ -30438,7 +30443,7 @@
           },
           "binMin": {
             "type": "integer",
-            "description": "The inclusive lower bound of the bin that contains the exact count: floor(count / binSize) * binSize. The exact count lies within [binMin, binMin + binSize - 1].",
+            "description": "The inclusive lower bound of the bin that contains the exact count: floor(count / binSize) * binSize. The exact count lies within [binMin, binMin + binSize - 1]. -1 means the count is non-zero and below the QueryResultBundle's suppressionThreshold, so it is masked.",
             "format": "int32"
           },
           "isSelected": {

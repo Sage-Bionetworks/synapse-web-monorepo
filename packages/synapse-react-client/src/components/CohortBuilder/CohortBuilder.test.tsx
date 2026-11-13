@@ -1,6 +1,7 @@
 import {
   CohortBuilderMockProfile,
   ELITE_MOCK_PROFILE,
+  withMaskedCounts,
 } from '@/mocks/cohortBuilder/cohortBuilderMockProfiles'
 import {
   CohortBuilderAccess,
@@ -82,6 +83,7 @@ const participantsTableId = ELITE_MOCK_PROFILE.participantsVirtualTableId
 const allParticipantsCount = (2700).toLocaleString()
 // An aggregate-only caller's counts are obscured. ELITE rounds them down to a multiple of 5, which keeps 2,700.
 const approximateAllParticipantsCount = `≈ ${allParticipantsCount}`
+const maskingEliteProfile = withMaskedCounts(ELITE_MOCK_PROFILE)
 
 let sentRequests: QueryBundleRequest[]
 const recordQueryRequest = async ({ request }: { request: Request }) => {
@@ -202,9 +204,38 @@ describe('CohortBuilder', () => {
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
   })
 
+  it('shows a facet value count below the suppression threshold as below it', async () => {
+    const user = userEvent.setup()
+    server.use(...getCohortBuilderHandlers({ profile: maskingEliteProfile }))
+    render(
+      <CohortBuilder
+        participantsTableId={participantsTableId}
+        facetsToPlot={['race']}
+      />,
+      { wrapper: createWrapper() },
+    )
+
+    // The collapsed legend lists only the most frequent values, so expand it to see the rarest.
+    await user.click(
+      await within(await screen.findByRole('figure')).findByRole('button', {
+        name: 'Expand to large graph',
+      }),
+    )
+    const dialog = await screen.findByRole('dialog')
+    // 7 participants: fewer than the suppression threshold of 20.
+    const rareValue = await within(dialog).findByText(
+      'American Indian or Alaska Native',
+    )
+    expect(within(rareValue.parentElement!).getByText('< 20')).toBeVisible()
+  })
+
   it('replaces only the results with a below-threshold notice, and keeps the cohort editable', async () => {
     const user = userEvent.setup()
-    renderCohortBuilder()
+    // Masking, rather than excluding, keeps the rare value listed so it can be selected.
+    server.use(...getCohortBuilderHandlers({ profile: maskingEliteProfile }))
+    render(<CohortBuilder participantsTableId={participantsTableId} />, {
+      wrapper: createWrapper(),
+    })
     await screen.findByText(`${approximateAllParticipantsCount} participants`)
 
     // 7 participants: fewer than the suppression threshold of 20.

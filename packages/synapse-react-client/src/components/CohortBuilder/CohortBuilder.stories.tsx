@@ -2,6 +2,7 @@ import {
   ADKP_MOCK_PROFILE,
   CohortBuilderMockProfile,
   ELITE_MOCK_PROFILE,
+  withMaskedCounts,
 } from '@/mocks/cohortBuilder/cohortBuilderMockProfiles'
 import {
   ADKP_MOCK_SAMPLE_QUERIES,
@@ -43,6 +44,9 @@ function getMockParameters(
     },
   }
 }
+
+const ELITE_MASKING_MOCK_PROFILE = withMaskedCounts(ELITE_MOCK_PROFILE)
+const ADKP_MASKING_MOCK_PROFILE = withMaskedCounts(ADKP_MOCK_PROFILE)
 
 /** A play function that builds the cohort "`property` is any of `value`" with the Query Builder. */
 function buildCohort(property: string, value: string): Story['play'] {
@@ -108,6 +112,12 @@ export const EliteAggregateOnly: Story = {
   parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY'),
 }
 
+/** ELITE, unapproved user, masking: facet counts below the suppression threshold of 20 show as "< 20", others binned. */
+export const EliteAggregateOnlyMaskedFacetValues: Story = {
+  args: { participantsTableId: ELITE_MOCK_PROFILE.participantsVirtualTableId },
+  parameters: getMockParameters(ELITE_MASKING_MOCK_PROFILE, 'AGGREGATE_ONLY'),
+}
+
 /** ADKP synthetic participants, approved user: exact counts. */
 export const AdkpFullAccess: Story = {
   args: { participantsTableId: ADKP_MOCK_PROFILE.participantsVirtualTableId },
@@ -117,7 +127,8 @@ export const AdkpFullAccess: Story = {
 /** ELITE, unapproved user: a cohort of 7 participants is below the suppression threshold of 20. */
 export const EliteAggregateOnlyBelowThreshold: Story = {
   args: { participantsTableId: ELITE_MOCK_PROFILE.participantsVirtualTableId },
-  parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY'),
+  // Masking, rather than excluding, keeps the rare value listed so it can be selected.
+  parameters: getMockParameters(ELITE_MASKING_MOCK_PROFILE, 'AGGREGATE_ONLY'),
   play: buildCohort('Race', 'American Indian or Alaska Native'),
 }
 
@@ -125,6 +136,12 @@ export const EliteAggregateOnlyBelowThreshold: Story = {
 export const AdkpAggregateOnly: Story = {
   args: { participantsTableId: ADKP_MOCK_PROFILE.participantsVirtualTableId },
   parameters: getMockParameters(ADKP_MOCK_PROFILE, 'AGGREGATE_ONLY'),
+}
+
+/** ADKP, unapproved user, masking: facet counts below the suppression threshold of 20 show as "< 20", others noised. */
+export const AdkpAggregateOnlyMaskedFacetValues: Story = {
+  args: { participantsTableId: ADKP_MOCK_PROFILE.participantsVirtualTableId },
+  parameters: getMockParameters(ADKP_MASKING_MOCK_PROFILE, 'AGGREGATE_ONLY'),
 }
 
 /** ELITE, unapproved user: sample queries to load into the Query Builder. */
@@ -228,46 +245,37 @@ export const SignedOut: Story = {
 }
 
 /**
- * The synthetic test Cohort Builder on production, with the signed-in user's own access. Always uses the production
- * stack, whatever the Stack toolbar is set to.
+ * Parameters for a story against a live Synapse stack. Production is the default; choose Staging from the Stack toolbar
+ * to run the same story against the staging stack, which serves the same data.
  */
+const liveStackParameters = { stack: 'production', requireLogin: true }
+
+/** The synthetic test Cohort Builder, with the signed-in user's own access, on production or staging. */
 export const ProductionSyntheticDataCohortBuilderTest: Story = {
   args: {
     participantsTableId: 'syn78350488',
     filesTableId: 'syn78350475',
     participantsSourceTableId: 'syn78350314',
   },
-  // Story globals override, and lock, the Stack toolbar for this story.
-  globals: { stack: 'production' },
-  parameters: { requireLogin: true },
+  parameters: liveStackParameters,
 }
 
-/**
- * The ELITE Cohort Builder on production, with the signed-in user's own access. Always uses the production stack,
- * whatever the Stack toolbar is set to.
- */
+/** The ELITE Cohort Builder, with the signed-in user's own access, on production or staging. */
 export const ProductionEliteCohortBuilder: Story = {
   args: {
     participantsTableId: 'syn78340012',
     filesTableId: 'syn78340377',
     participantsSourceTableId: 'syn77454377',
   },
-  // Story globals override, and lock, the Stack toolbar for this story.
-  globals: { stack: 'production' },
-  parameters: { requireLogin: true },
+  parameters: liveStackParameters,
 }
 
-/**
- * The ADKP Cohort Builder on production, with the signed-in user's own access. Always uses the production stack,
- * whatever the Stack toolbar is set to.
- */
+/** The ADKP Cohort Builder, with the signed-in user's own access, on production or staging. */
 export const ProductionAdkpCohortBuilder: Story = {
   args: {
     participantsTableId: 'syn78155293',
     filesTableId: 'syn78157126',
     participantsSourceTableId: 'syn77485039',
   },
-  // Story globals override, and lock, the Stack toolbar for this story.
-  globals: { stack: 'production' },
-  parameters: { requireLogin: true },
+  parameters: liveStackParameters,
 }

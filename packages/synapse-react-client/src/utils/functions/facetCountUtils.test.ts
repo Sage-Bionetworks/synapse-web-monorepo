@@ -1,4 +1,8 @@
-import { formatFacetValueCount } from './facetCountUtils'
+import { SUPPRESSED_FACET_VALUE_COUNT } from './enumerationFacet'
+import {
+  formatFacetValueCount,
+  SUPPRESSED_FACET_VALUE_COUNT_TEXT,
+} from './facetCountUtils'
 
 describe('formatFacetValueCount', () => {
   it.each([
@@ -51,11 +55,53 @@ describe('formatFacetValueCount', () => {
       facetPostProcessingApplied: undefined,
       expected: '12',
     },
+    {
+      case: 'a suppressed binned count as below k, not as a bin range',
+      count: SUPPRESSED_FACET_VALUE_COUNT,
+      binSize: 5,
+      facetPostProcessingApplied: true,
+      suppressionThreshold: 20,
+      expected: '< 20',
+    },
+    {
+      case: 'a suppressed noised count as below k, not as approximate',
+      count: SUPPRESSED_FACET_VALUE_COUNT,
+      binSize: undefined,
+      facetPostProcessingApplied: true,
+      suppressionThreshold: 20,
+      expected: '< 20',
+    },
+    {
+      case: 'a suppressed count without post-processing as below k',
+      count: SUPPRESSED_FACET_VALUE_COUNT,
+      binSize: undefined,
+      facetPostProcessingApplied: false,
+      suppressionThreshold: 20,
+      expected: '< 20',
+    },
+    {
+      case: 'a suppressed count without a suppression threshold as suppressed',
+      count: SUPPRESSED_FACET_VALUE_COUNT,
+      binSize: undefined,
+      facetPostProcessingApplied: false,
+      suppressionThreshold: undefined,
+      expected: SUPPRESSED_FACET_VALUE_COUNT_TEXT,
+    },
   ])(
     'formats $case',
-    ({ count, binSize, facetPostProcessingApplied, expected }) => {
+    ({
+      count,
+      binSize,
+      facetPostProcessingApplied,
+      suppressionThreshold,
+      expected,
+    }) => {
       expect(
-        formatFacetValueCount(count, { binSize }, facetPostProcessingApplied),
+        formatFacetValueCount(
+          count,
+          { binSize },
+          { facetPostProcessingApplied, suppressionThreshold },
+        ),
       ).toBe(expected)
     },
   )

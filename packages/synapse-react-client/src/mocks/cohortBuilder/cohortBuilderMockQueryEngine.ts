@@ -8,7 +8,14 @@ import {
   BUNDLE_MASK_QUERY_RESULTS,
   BUNDLE_MASK_QUERY_SELECT_COLUMNS,
 } from '@/utils/SynapseConstants'
-import { AggregateDataConfiguration } from '@sage-bionetworks/synapse-client/generated/models/AggregateDataConfiguration'
+import {
+  isSuppressedFacetValueCount,
+  SUPPRESSED_FACET_VALUE_COUNT,
+} from '@/utils/functions/enumerationFacet'
+import {
+  AggregateDataConfiguration,
+  AggregateDataConfigurationCountSuppressionStrategyEnum,
+} from '@sage-bionetworks/synapse-client/generated/models/AggregateDataConfiguration'
 import { BelowThresholdErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/BelowThresholdErrorResponse'
 import { ColumnModel } from '@sage-bionetworks/synapse-client/generated/models/ColumnModel'
 import { ErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/ErrorResponse'
@@ -432,6 +439,33 @@ function countFacetValues(
   return counts
 }
 
+/**
+ * Applies the aggregate configuration's countSuppressionStrategy to the facet value counts, as the backend does for an
+ * aggregate-only read (PLFM-10107): a count in (0, k) is listed as {@link SUPPRESSED_FACET_VALUE_COUNT} under
+ * MASK_BELOW_THRESHOLD, and the value is dropped under EXCLUDE_ROW, which is also the default.
+ */
+function suppressFacetValueCounts(
+  counts: ReadonlyMap<string, number>,
+  aggregateConfig: AggregateDataConfiguration | undefined,
+): [string, number][] {
+  const entries = Array.from(counts)
+  if (!aggregateConfig) {
+    return entries
+  }
+  const isBelowThreshold = (count: number) =>
+    count > 0 && count < aggregateConfig.suppressionThreshold
+  if (
+    aggregateConfig.countSuppressionStrategy ===
+    AggregateDataConfigurationCountSuppressionStrategyEnum.MASK_BELOW_THRESHOLD
+  ) {
+    return entries.map(([value, count]) => [
+      value,
+      isBelowThreshold(count) ? SUPPRESSED_FACET_VALUE_COUNT : count,
+    ])
+  }
+  return entries.filter(([, count]) => !isBelowThreshold(count))
+}
+
 function buildFacet(
   columnName: string,
   counts: ReadonlyMap<string, number>,
@@ -439,7 +473,11 @@ function buildFacet(
   aggregateConfig: AggregateDataConfiguration | undefined,
   noiseKeyPrefix: string,
 ): FacetColumnResult {
-  const sortedCounts = Array.from(counts).toSorted(
+  // Sorted by the reported count, so masked values tie rather than revealing the order of their true counts.
+  const sortedCounts = suppressFacetValueCounts(
+    counts,
+    aggregateConfig,
+  ).toSorted(
     ([valueA, countA], [valueB, countB]) =>
       countB - countA || valueA.localeCompare(valueB),
   )
@@ -454,7 +492,9 @@ function buildFacet(
       binSize,
       binnedValues: sortedCounts.map(([value, count]) => ({
         value,
-        binMin: floorToBin(count, binSize),
+        binMin: isSuppressedFacetValueCount(count)
+          ? SUPPRESSED_FACET_VALUE_COUNT
+          : floorToBin(count, binSize),
         isSelected: selectedValues.includes(value),
       })),
     }
@@ -468,7 +508,7 @@ function buildFacet(
     facetValues: sortedCounts.map(([value, count]) => ({
       value,
       count:
-        epsilon === undefined
+        epsilon === undefined || isSuppressedFacetValueCount(count)
           ? count
           : addLaplaceNoise(
               count,
@@ -1018,6 +1058,7 @@ function executeQuery(
 
   const bundle: QueryResultBundle = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+    suppressionThreshold: aggregateConfig?.suppressionThreshold,
   }
   const selectColumns = columnModels.map(({ id, name, columnType }) => ({
     id,
