@@ -5,7 +5,7 @@
   "type": "module",
   "dependencies": {
     "@mui/icons-material": "^7.3.11",
-    "@mui/material": "^7.3.11",
+    "@mui/material": "^9.5.0",
     "@react-router/node": "catalog:",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
