@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./UserOrTeamBadge-DdTFiQU4.js";var r;function i(){return(i=e((()=>{t(),r=n})))()}export{i as n,r as t};
