@@ -14,7 +14,7 @@ import {
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
-import { createRef } from 'react'
+import { createRef, ReactNode } from 'react'
 import SynapseGrid, { SynapseGridHandle, SynapseGridProps } from './SynapseGrid'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 
@@ -29,6 +29,8 @@ const SESSION_ID = 'test-grid-session'
 const REPLICA_ID = 7
 const HEADER_TEXT = 'Working Copy'
 const CONTENT_CLASS_NAME = 'test-grid-content'
+const GRID_ERROR = 'The grid connection failed'
+const HEADER_ERROR = 'The page title failed'
 
 const mockGridSession: GridSession = {
   sessionId: SESSION_ID,
@@ -82,26 +84,46 @@ async function renderGridWithSession(props: SynapseGridProps = {}) {
   return { user, ...result }
 }
 
+/** Mocks a websocket that is connected to a grid with a real model */
+function mockConnectedWebSocket(
+  overrides: Partial<ReturnType<typeof useDataGridWebSocket>> = {},
+) {
+  const model = createTestModel(2, 2, REPLICA_ID)
+  mockUseDataGridWebSocket.mockReturnValue({
+    isConnected: true,
+    websocketInstance: null,
+    hasCompletedInitialSync: true,
+    hasCompletedInitialLoad: true,
+    isSyncing: false,
+    model,
+    modelSnapshot: model.api.getSnapshot(),
+    connect: vi.fn(),
+    presignedUrl: null,
+    errorEstablishingWebsocketConnection: null,
+    websocketError: null,
+    ...overrides,
+  })
+}
+
+function renderWithHeader(header: ReactNode = <h1>{HEADER_TEXT}</h1>) {
+  return render(
+    <SynapseGrid header={header} contentClassName={CONTENT_CLASS_NAME} />,
+    { wrapper: createWrapper() },
+  )
+}
+
+function getHeader() {
+  return screen.getByRole('heading', { name: HEADER_TEXT })
+}
+
 describe('SynapseGrid', () => {
   beforeEach(() => {
     vi.spyOn(console, 'log').mockImplementation(() => {})
     vi.spyOn(console, 'debug').mockImplementation(() => {})
 
-    const model = createTestModel(2, 2, REPLICA_ID)
-    mockUseDataGridWebSocket.mockReturnValue({
-      isConnected: true,
-      websocketInstance: null,
-      hasCompletedInitialSync: true,
-      hasCompletedInitialLoad: true,
-      isSyncing: false,
-      model,
-      modelSnapshot: model.api.getSnapshot(),
-      connect: vi.fn(),
-      presignedUrl: null,
-      errorEstablishingWebsocketConnection: null,
-      websocketError: null,
-    })
-
+    mockConnectedWebSocket()
+    // Only certified users see the grid
+    server.use(getCurrentUserCertifiedValidatedHandler(repoOrigin, true, true))
     registerGridSessionHandlers()
   })
 
@@ -115,31 +137,64 @@ describe('SynapseGrid', () => {
       contentClassName: CONTENT_CLASS_NAME,
     })
 
-    const header = screen.getByRole('heading', { name: HEADER_TEXT })
+    const header = getHeader()
     const toolbarLink = screen.getByRole('link', {
       name: 'Help and Instructions',
     })
     expect(toolbarLink.closest(`.${CONTENT_CLASS_NAME}`)).not.toBeNull()
     expect(header.closest(`.${CONTENT_CLASS_NAME}`)).toBeNull()
-    expect(
-      header.compareDocumentPosition(toolbarLink) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy()
+    expect(header.compareDocumentPosition(toolbarLink)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    )
   })
 
   it('renders the header and the certification requirement for users who are not certified', async () => {
     server.use(getCurrentUserCertifiedValidatedHandler(repoOrigin, false, true))
 
-    render(
-      <SynapseGrid
-        header={<h1>{HEADER_TEXT}</h1>}
-        contentClassName={CONTENT_CLASS_NAME}
-      />,
-      { wrapper: createWrapper() },
-    )
+    renderWithHeader()
 
     const requirement = await screen.findByText(/You must first become a/)
-    expect(screen.getByRole('heading', { name: HEADER_TEXT })).toBeVisible()
+    expect(screen.getAllByRole('heading', { name: HEADER_TEXT })).toHaveLength(
+      1,
+    )
+    expect(getHeader().closest(`.${CONTENT_CLASS_NAME}`)).toBeNull()
     expect(requirement.closest(`.${CONTENT_CLASS_NAME}`)).not.toBeNull()
+  })
+
+  describe('errors', () => {
+    beforeEach(() => {
+      // React logs the errors that error boundaries catch
+      vi.spyOn(console, 'error').mockImplementation(() => {})
+    })
+
+    it('keeps the header when the grid fails, and shows the error in place of the grid', async () => {
+      mockConnectedWebSocket({ websocketError: new Error(GRID_ERROR) })
+
+      renderWithHeader()
+
+      const error = await screen.findByText(GRID_ERROR)
+      expect(error.closest(`.${CONTENT_CLASS_NAME}`)).not.toBeNull()
+      expect(
+        screen.getAllByRole('heading', { name: HEADER_TEXT }),
+      ).toHaveLength(1)
+      expect(getHeader().closest(`.${CONTENT_CLASS_NAME}`)).toBeNull()
+    })
+
+    it('keeps the grid when the header fails', async () => {
+      function FailingHeader(): ReactNode {
+        throw new Error(HEADER_ERROR)
+      }
+
+      await renderGridWithSession({
+        header: <FailingHeader />,
+        contentClassName: CONTENT_CLASS_NAME,
+      })
+
+      const error = screen.getByText(HEADER_ERROR)
+      expect(error.closest(`.${CONTENT_CLASS_NAME}`)).toBeNull()
+      expect(
+        screen.getByRole('link', { name: 'Help and Instructions' }),
+      ).toBeVisible()
+    })
   })
 })

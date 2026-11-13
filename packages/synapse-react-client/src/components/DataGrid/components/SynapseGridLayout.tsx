@@ -1,3 +1,4 @@
+import { SynapseErrorBoundary } from '@/components/error/ErrorBanner'
 import { ReactNode } from 'react'
 
 export type SynapseGridLayoutProps = {
@@ -8,7 +9,10 @@ export type SynapseGridLayoutProps = {
   children: ReactNode
 }
 
-/** Lays out the grid page: an optional header above the grid content. */
+/**
+ * Lays out the grid page: an optional header above the grid content. The header has its own error
+ * boundary, so an error in it leaves the grid content on screen.
+ */
 export function SynapseGridLayout({
   header,
   contentClassName,
@@ -16,7 +20,7 @@ export function SynapseGridLayout({
 }: SynapseGridLayoutProps) {
   return (
     <div>
-      {header}
+      <SynapseErrorBoundary>{header}</SynapseErrorBoundary>
       <div className={contentClassName}>{children}</div>
     </div>
   )

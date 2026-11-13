@@ -10,7 +10,7 @@ import SyncGridWithSourceButton from '@/components/DataGrid/SyncGridWithSourceBu
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import { getNamedColumnIndices } from '@/components/DataGrid/utils/getNamedColumnIndices'
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
-import { SynapseErrorBoundary } from '@/components/error/ErrorBanner'
+import { ErrorFallbackComponent } from '@/components/error/ErrorBanner'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
 import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
 import { useGetEntity } from '@/synapse-queries/index'
@@ -47,7 +47,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
+import { ErrorBoundary, useErrorHandler } from 'react-error-boundary'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import GridAgentChat from '../SynapseChat/GridAgentChat'
 import { ValidationAlert } from './components/ValidationAlert'
@@ -70,7 +70,7 @@ const EMPTY_COLUMN_NAMES: string[] = []
 export type SynapseGridProps = {
   agentRegistrationId?: string
   showDebugInfo?: boolean
-  /** Content shown above the grid, such as the page title */
+  /** Content shown above the grid, such as the page title. It stays on screen if the grid fails. */
   header?: ReactNode
   /** Class name for the container around the grid content, which excludes `header` */
   contentClassName?: string
@@ -634,10 +634,20 @@ function SynapseGridInner({
 }
 
 function SynapseGrid(props: SynapseGridProps) {
+  const { header, contentClassName } = props
   return (
-    <SynapseErrorBoundary>
+    // The fallback keeps the page header, so an error in the grid doesn't hide the page title.
+    // Its "Try again" remounts the grid, which reloads the session.
+    <ErrorBoundary
+      // oxlint-disable-next-line react/no-unstable-nested-components -- fallbackRender is a function that ErrorBoundary calls, not a component it mounts, so a new function on each render does not remount the fallback
+      fallbackRender={fallbackProps => (
+        <SynapseGridLayout header={header} contentClassName={contentClassName}>
+          <ErrorFallbackComponent {...fallbackProps} />
+        </SynapseGridLayout>
+      )}
+    >
       <SynapseGridInner {...props} />
-    </SynapseErrorBoundary>
+    </ErrorBoundary>
   )
 }
 
