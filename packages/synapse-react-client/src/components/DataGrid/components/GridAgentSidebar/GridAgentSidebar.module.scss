@@ -1,0 +1,48 @@
+// Stretches to the docking layout's height, so the panel can stay in view while the page scrolls
+// past the layout. At least as tall as the viewport, so a short grid still gets a full-height chat.
+.sidebar {
+  flex-shrink: 0;
+  align-self: stretch;
+  min-height: 100dvh;
+  background-color: var(--synapse-white);
+  border-left: 1px solid var(--synapse-v2-gray-200);
+}
+
+// Stuck to the top of the viewport and sized by script to the part of the sidebar that is on
+// screen, so its header and the chat composer stay visible whatever is above or below the layout.
+// Clipped, so nothing shows once the layout has scrolled out of view.
+.panel {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 12px 8px 20px;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 20px 16px;
+}
+
+// Fixed to the viewport, so it stays reachable however far the page scrolls
+.openButton:global(.MuiFab-root) {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  background-color: var(--synapse-white);
+  border: 1px solid var(--synapse-v2-gray-200);
+
+  &:hover {
+    background-color: var(--synapse-v2-gray-50);
+  }
+}
