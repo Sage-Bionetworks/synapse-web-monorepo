@@ -1,3 +1,4 @@
+import { isMustCheckBoolean } from '@/components/JsonSchemaForm/mustCheckBoolean'
 import { SYNAPSE_FILE_HANDLE_ID_FORMAT } from '@/utils/jsonschema/schemaData'
 import { RJSFSchema, UiSchema } from '@rjsf/utils'
 
@@ -11,6 +12,8 @@ export type SimpleFieldType =
   | 'longText'
   | 'number'
   | 'boolean'
+  /** A box the requester must check, such as agreeing to terms: a boolean that must be `true`. */
+  | 'mustCheck'
   | 'choice'
   | 'multiChoice'
   | 'file'
@@ -20,6 +23,7 @@ export const FIELD_TYPE_OPTIONS: { value: SimpleFieldType; label: string }[] = [
   { value: 'longText', label: 'Long answer' },
   { value: 'number', label: 'Number' },
   { value: 'boolean', label: 'Yes / No' },
+  { value: 'mustCheck', label: 'Checkbox (must be checked)' },
   { value: 'choice', label: 'Single choice' },
   { value: 'multiChoice', label: 'Multiple choice (select many)' },
   { value: 'file', label: 'File upload' },
@@ -62,7 +66,9 @@ export function detectFieldType(
       : 'text'
   }
   if (prop.type === 'number' || prop.type === 'integer') return 'number'
-  if (prop.type === 'boolean') return 'boolean'
+  if (isMustCheckBoolean(prop)) return 'mustCheck'
+  if (prop.type === 'boolean')
+    return prop.const === undefined ? 'boolean' : null
   return null
 }
 
@@ -128,6 +134,10 @@ export function applyFieldType(
       break
     case 'boolean':
       next.type = 'boolean'
+      break
+    case 'mustCheck':
+      next.type = 'boolean'
+      next.const = true
       break
     case 'choice':
       next.type = 'string'

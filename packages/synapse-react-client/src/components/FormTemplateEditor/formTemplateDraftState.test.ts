@@ -402,6 +402,31 @@ describe('changeFieldType', () => {
     const state = draft()
     expect(changeFieldType(state, 'missing', 'longText')).toBe(state)
   })
+
+  it('makes a must-be-checked property a required boolean that must be true, and drops const when switched away', () => {
+    const mustCheck = changeFieldType(draft(), 'age', 'mustCheck')
+    expect(resolve(mustCheck, 'age')).toMatchObject({
+      subSchema: { type: 'boolean', const: true },
+      isRequired: true,
+      context: 'ALWAYS',
+    })
+
+    const yesNo = changeFieldType(mustCheck, 'age', 'boolean')
+    expect(resolve(yesNo, 'age')?.subSchema).not.toHaveProperty('const')
+    expect(resolve(yesNo, 'age')?.subSchema).toMatchObject({ type: 'boolean' })
+  })
+
+  it('makes an optional renewal-only property required in its own context when it becomes must-be-checked', () => {
+    const mustCheck = changeFieldType(
+      changeRequired(draft(), 'summaryOfUse', false),
+      'summaryOfUse',
+      'mustCheck',
+    )
+    expect(resolve(mustCheck, 'summaryOfUse')).toMatchObject({
+      context: 'RENEWAL_ONLY',
+      isRequired: true,
+    })
+  })
 })
 
 describe('listUnboundProperties', () => {

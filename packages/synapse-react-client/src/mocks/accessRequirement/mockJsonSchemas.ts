@@ -15,6 +15,9 @@ import { DataAccessRequestType } from '@sage-bionetworks/synapse-client'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
 import { ACCESS_REQUIREMENT_BASE_SCHEMA_ID } from '@/components/FormTemplateEditor/formTemplateSchema'
 
+/** The genomics DAR's must-be-checked Terms and Conditions box, labelled by its title. */
+export const GENOMICS_TERMS_LABEL = 'I agree to the terms and conditions'
+
 /** Genomics DAR data contract — all fields required. */
 export const mockGenomicsSchema: RJSFSchema = {
   $id: 'org.sagebionetworks.act-GenomicsDataAccessRequest-1.0.0',
@@ -28,10 +31,12 @@ export const mockGenomicsSchema: RJSFSchema = {
         'Describe in detail how you intend to use the requested data.',
     },
     agreeToTerms: {
+      // A box the requester must check: the schema accepts only `true`.
       type: 'boolean',
-      title: 'Terms and Conditions',
+      const: true,
+      title: GENOMICS_TERMS_LABEL,
       description:
-        'I agree to abide by all terms and conditions for accessing this data.',
+        'You must abide by all terms and conditions for accessing this data.',
     },
   },
   required: ['intendedDataUse', 'agreeToTerms'],
