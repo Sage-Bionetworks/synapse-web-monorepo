@@ -6,22 +6,26 @@ import {
   autocompleteMultipleEnumColumn,
   AutocompleteMultipleEnumCellProps,
   AutocompleteMultipleEnumOption,
+  INACTIVE_CHIP_MAX_WIDTH,
+  MemoizedAutocompleteMultipleEnumCell,
 } from './AutocompleteMultipleEnumColumn'
 
-// Helper to create a test cell component from the column factory
+// Helper to create a test cell that always renders the column's editor
 function createTestCell(
   choices: AutocompleteMultipleEnumOption[],
   colType?: string,
   limitTags = 2,
 ) {
-  const column = autocompleteMultipleEnumColumn({
-    choices,
-    colType: colType,
-    limitTags,
-  })
-  return column.component as React.ComponentType<
-    Partial<AutocompleteMultipleEnumCellProps>
-  >
+  return function TestCell(props: Partial<AutocompleteMultipleEnumCellProps>) {
+    return (
+      <MemoizedAutocompleteMultipleEnumCell
+        {...(props as AutocompleteMultipleEnumCellProps)}
+        choices={choices}
+        colType={colType}
+        limitTags={limitTags}
+      />
+    )
+  }
 }
 
 describe('autocompleteMultipleEnumColumn', () => {
@@ -284,6 +288,88 @@ describe('autocompleteMultipleEnumColumn', () => {
         expect(mockSetRowData).toHaveBeenCalledTimes(1)
         expect(mockSetRowData).toHaveBeenCalledWith(['option2'])
       })
+    })
+  })
+
+  describe('cell', () => {
+    const Cell = autocompleteMultipleEnumColumn({
+      choices: ['a', 'b', 'c', 'd'],
+      limitTags: 2,
+    }).component as React.ComponentType<
+      Partial<AutocompleteMultipleEnumCellProps>
+    >
+
+    it('shows the first limitTags values as chips and counts the rest, without mounting the editor', () => {
+      render(
+        <Cell
+          rowData={['a', 'b', 'c', 'd']}
+          active={false}
+          focus={false}
+          setRowData={vi.fn()}
+        />,
+      )
+
+      expect(screen.getByText('a')).toBeInTheDocument()
+      expect(screen.getByText('b')).toBeInTheDocument()
+      expect(screen.queryByText('c')).not.toBeInTheDocument()
+      expect(screen.getByText('+2')).toBeInTheDocument()
+      expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
+    })
+
+    it('caps each chip at the width the inactive editor caps it at', () => {
+      // jsdom has no layout, so a visual check confirms the editor matches
+      render(
+        <Cell
+          rowData={['a', 'b', 'c', 'd']}
+          active={false}
+          focus={false}
+          setRowData={vi.fn()}
+        />,
+      )
+
+      expect(screen.getByText('a').parentElement).toHaveStyle({
+        maxWidth: `${INACTIVE_CHIP_MAX_WIDTH}px`,
+      })
+    })
+
+    it('shows every value as a chip when limitTags is negative, as the editor does', () => {
+      const UnlimitedCell = autocompleteMultipleEnumColumn({
+        choices: ['a', 'b', 'c'],
+        limitTags: -1,
+      }).component as React.ComponentType<
+        Partial<AutocompleteMultipleEnumCellProps>
+      >
+      render(
+        <UnlimitedCell
+          rowData={['a', 'b', 'c']}
+          active={false}
+          focus={false}
+          setRowData={vi.fn()}
+        />,
+      )
+
+      expect(screen.getByText('a')).toBeInTheDocument()
+      expect(screen.getByText('b')).toBeInTheDocument()
+      expect(screen.getByText('c')).toBeInTheDocument()
+      expect(screen.queryByText(/^\+\d+$/)).not.toBeInTheDocument()
+    })
+
+    it('mounts the editor with the same chips when the pointer moves over the cell', () => {
+      render(
+        <Cell
+          rowData={['a', 'b', 'c', 'd']}
+          active={false}
+          focus={false}
+          setRowData={vi.fn()}
+        />,
+      )
+
+      fireEvent.pointerMove(screen.getByText('a'))
+
+      expect(screen.getByRole('combobox')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'a' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'b' })).toBeInTheDocument()
+      expect(screen.getByText('+2')).toBeInTheDocument()
     })
   })
 

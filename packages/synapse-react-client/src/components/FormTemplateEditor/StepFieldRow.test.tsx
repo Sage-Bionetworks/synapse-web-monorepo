@@ -32,7 +32,7 @@ function renderRow(
       propertyKey="institution"
       isFirst={false}
       isLast={false}
-      formTemplateId={undefined}
+      savedTemplate={undefined}
       onChange={onChange}
       onMoveUp={onMoveUp}
       onMoveDown={onMoveDown}

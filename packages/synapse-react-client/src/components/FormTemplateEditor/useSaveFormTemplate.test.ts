@@ -140,6 +140,34 @@ describe('useSaveFormTemplate', () => {
     expect(updateTemplateSpy).not.toHaveBeenCalled()
   })
 
+  it('lists the template documents in the attachments of a new template', async () => {
+    mockRegisteredVersions()
+    createTemplateSpy.mockResolvedValueOnce({
+      name: 'My Template',
+      schema$id: 'org.sagebionetworks.act-MyTemplate-1.0.0',
+      steps: [],
+    })
+
+    const { result } = renderHook(() => useSaveFormTemplate(), {
+      wrapper: createWrapper(),
+    })
+
+    await result.current.mutateAsync({
+      name: 'My Template',
+      jsonSchema,
+      steps: [
+        {
+          ...steps[0],
+          fields: [{ ...steps[0].fields[0], templateFileHandleId: '222' }],
+        },
+      ],
+    })
+
+    expect(createTemplateSpy).toHaveBeenCalledWith({
+      formTemplate: expect.objectContaining({ attachments: ['222'] }),
+    })
+  })
+
   it('skips re-registering the schema when it has not changed, and updates the existing template', async () => {
     const initialTemplate: FormTemplate = {
       id: 'template-1',
@@ -176,6 +204,93 @@ describe('useSaveFormTemplate', () => {
       formTemplate: expect.objectContaining({
         schema$id: 'org.example-MyTemplate-1.0.0',
       }),
+    })
+  })
+
+  it('replaces the attachments with the template document of every field, each once', async () => {
+    const initialTemplate: FormTemplate = {
+      id: 'template-1',
+      name: 'My Template',
+      schema$id: 'org.example-MyTemplate-1.0.0',
+      steps: [],
+      attachments: ['111'],
+      etag: 'etag-1',
+      versionNumber: 1,
+    }
+    updateTemplateSpy.mockResolvedValueOnce(initialTemplate)
+    const threeFieldJsonSchema: RJSFSchema = {
+      ...jsonSchema,
+      properties: {
+        a: { type: 'string' },
+        b: { type: 'string' },
+        c: { type: 'string' },
+        d: { type: 'string' },
+      },
+    }
+    const stepsWithDocuments: EditableFormTemplateStep[] = [
+      {
+        uiKey: 'step-0',
+        title: 'Step 1',
+        fields: [
+          { schemaPath: '/a', uiDefinition: {}, templateFileHandleId: '222' },
+          { schemaPath: '/b', uiDefinition: {} },
+        ],
+      },
+      {
+        uiKey: 'step-1',
+        title: 'Step 2',
+        fields: [
+          { schemaPath: '/c', uiDefinition: {}, templateFileHandleId: '333' },
+          { schemaPath: '/d', uiDefinition: {}, templateFileHandleId: '222' },
+        ],
+      },
+    ]
+
+    const { result } = renderHook(() => useSaveFormTemplate(), {
+      wrapper: createWrapper(),
+    })
+
+    await result.current.mutateAsync({
+      initialTemplate,
+      initialJsonSchema: threeFieldJsonSchema,
+      name: 'My Template',
+      jsonSchema: threeFieldJsonSchema,
+      steps: stepsWithDocuments,
+    })
+
+    expect(updateTemplateSpy).toHaveBeenCalledWith({
+      templateId: 'template-1',
+      formTemplate: expect.objectContaining({ attachments: ['222', '333'] }),
+    })
+  })
+
+  it('saves empty attachments once no field has a template document', async () => {
+    const initialTemplate: FormTemplate = {
+      id: 'template-1',
+      name: 'My Template',
+      schema$id: 'org.example-MyTemplate-1.0.0',
+      steps: [],
+      attachments: ['111'],
+      etag: 'etag-1',
+      versionNumber: 1,
+    }
+    updateTemplateSpy.mockResolvedValueOnce(initialTemplate)
+
+    const { result } = renderHook(() => useSaveFormTemplate(), {
+      wrapper: createWrapper(),
+    })
+
+    await result.current.mutateAsync({
+      initialTemplate,
+      initialJsonSchema: jsonSchema,
+      name: 'My Template',
+      jsonSchema,
+      steps,
+    })
+
+    expect(updateTemplateSpy).toHaveBeenCalledWith({
+      templateId: 'template-1',
+      formTemplate: expect.objectContaining({ attachments: [] }),
     })
   })
 

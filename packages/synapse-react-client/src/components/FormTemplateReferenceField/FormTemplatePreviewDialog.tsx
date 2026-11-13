@@ -42,6 +42,7 @@ export function FormTemplatePreviewDialog(
           <FormTemplatePreview
             template={template}
             jsonSchema={schema as RJSFSchema}
+            savedTemplate={template}
           />
         )}
       </DialogContent>

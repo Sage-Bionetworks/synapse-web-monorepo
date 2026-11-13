@@ -1,10 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { JSONSchema7 } from 'json-schema'
-import { useRef, useState, useCallback } from 'react'
+import { useRef, useState, useCallback, useMemo } from 'react'
 import { DataSheetGridRef } from '@sage-bionetworks/react-datasheet-grid'
 import { SelectionWithId } from '@sage-bionetworks/react-datasheet-grid'
 import DataGrid from './DataGrid'
 import { DataGridRow, Operation } from './DataGridTypes'
+import { GRID_ROW_REACT_KEY_PROPERTY } from './utils/DataGridUtils'
 import {
   getSchemaPropertiesInfo,
   SchemaPropertiesMap,
@@ -610,4 +611,108 @@ export const WithNumberOrEnumColumns: Story = {
       jsonSchema={numberOrEnumSchema}
     />
   ),
+}
+
+const LARGE_GRID_ROW_COUNT = 20_000
+const LARGE_GRID_COLUMN_COUNT = 50
+
+const largeGridColumnTemplates: SchemaPropertiesMap = {
+  ...sampleSchemaPropertiesInfo,
+  tags: {
+    type: { type: 'string', isArray: true },
+    isRequired: false,
+    enumeratedValues: ['alpha', 'beta', 'gamma', 'delta'],
+  },
+  due_date: {
+    type: { type: 'string', format: 'date', isArray: false },
+    isRequired: false,
+    enumeratedValues: null,
+  },
+}
+const largeGridTemplateNames = Object.keys(largeGridColumnTemplates)
+const largeGridTags = [
+  ['alpha'],
+  ['beta', 'gamma'],
+  ['alpha', 'gamma', 'delta'],
+]
+const largeGridDueDates = ['2026-12-25', '2027-01-15', '2027-03-01']
+
+function largeGridCellValue(
+  templateName: string,
+  rowIndex: number,
+): DataGridRow[string] {
+  switch (templateName) {
+    case 'tags':
+      // The model holds a multiple-value cell as an array, which DataGridRow's
+      // value type does not include
+      return largeGridTags[
+        rowIndex % largeGridTags.length
+      ] as unknown as DataGridRow[string]
+    case 'due_date':
+      return largeGridDueDates[rowIndex % largeGridDueDates.length]
+    default:
+      return sampleRowData[rowIndex % sampleRowData.length][templateName]
+  }
+}
+
+function createLargeGrid() {
+  const templateNameFor = (columnIndex: number) =>
+    largeGridTemplateNames[columnIndex % largeGridTemplateNames.length]
+  const columnNames = Array.from(
+    { length: LARGE_GRID_COLUMN_COUNT },
+    (_, columnIndex) => `${templateNameFor(columnIndex)}_${columnIndex}`,
+  )
+  const schemaPropertiesInfo: SchemaPropertiesMap = Object.fromEntries(
+    columnNames.map((columnName, columnIndex) => [
+      columnName,
+      largeGridColumnTemplates[templateNameFor(columnIndex)],
+    ]),
+  )
+  const rows = Array.from(
+    { length: LARGE_GRID_ROW_COUNT },
+    (_, rowIndex): DataGridRow => {
+      const sampleRow = sampleRowData[rowIndex % sampleRowData.length]
+      const row: DataGridRow = {
+        [GRID_ROW_REACT_KEY_PROPERTY]: String(rowIndex),
+        __validationStatus: sampleRow.__validationStatus,
+      }
+      columnNames.forEach((columnName, columnIndex) => {
+        row[columnName] = largeGridCellValue(
+          templateNameFor(columnIndex),
+          rowIndex,
+        )
+      })
+      return row
+    },
+  )
+  return {
+    columnNames,
+    columnOrder: columnNames.map((_, columnIndex) => columnIndex),
+    schemaPropertiesInfo,
+    rows,
+  }
+}
+
+function LargeGridStory() {
+  const { columnNames, columnOrder, schemaPropertiesInfo, rows } = useMemo(
+    createLargeGrid,
+    [],
+  )
+  return (
+    <DataGridStoryWrapper
+      initialRowData={rows}
+      columnNames={columnNames}
+      columnOrder={columnOrder}
+      schemaPropertiesInfo={schemaPropertiesInfo}
+      jsonSchema={{ type: 'object', properties: {} }}
+    />
+  )
+}
+
+/**
+ * 20,000 rows by 50 columns (1,000,000 cells) of every column type, for
+ * checking that scrolling stays smooth on a grid this large.
+ */
+export const LargeGrid: Story = {
+  render: () => <LargeGridStory />,
 }
