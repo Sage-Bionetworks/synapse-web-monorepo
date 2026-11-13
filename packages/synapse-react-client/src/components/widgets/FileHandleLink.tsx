@@ -105,7 +105,8 @@ export const FileHandleLink = (props: FileHandleLinkProps): React.ReactNode => {
         variant={buttonVariant}
         size="small"
         endIcon={downloadIcon || undefined}
-        sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+        // The label is usually a file name, which the theme's button text transform would alter
+        sx={{ whiteSpace: 'nowrap', flexShrink: 0, textTransform: 'none' }}
       >
         {label}
       </Button>
