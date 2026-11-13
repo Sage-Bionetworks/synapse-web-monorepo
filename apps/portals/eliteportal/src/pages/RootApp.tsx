@@ -8,7 +8,7 @@ function RootApp() {
     <App>
       {/* PORTALS-3508 */}
       <RepositoryUnderReviewAlert portalSpecificDisclaimer="This repository is developed by Sage Bionetworks to host and share resources related to Exceptional Longevity research, and remains fully operational. We continue to maintain and accept longevity-related data and resources throughout this review process." />
-      <TemporaryBanner deadline="2026-01-26" content={<FundingBanner />} />
+      <TemporaryBanner deadline="2026-12-11" content={<FundingBanner />} />
     </App>
   )
 }
