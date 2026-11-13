@@ -14,6 +14,8 @@ permissions:
 jobs:
   tag-and-publish:
     strategy:
+      # Each package publishes independently; one package's failure must not cancel the others.
+      fail-fast: false
       matrix:
         publishablePackage:
           [
@@ -56,33 +58,55 @@ jobs:
           else
             echo "should_run=false" >> "$GITHUB_OUTPUT"
           fi
-      # Check if the package version changed
-      - id: package-version-check
+      # Publish whenever the version in package.json is not yet on npm, so a rerun
+      # (or a later push) retries an unpublished version and skips a published one.
+      - name: Check whether this version is already on npm
+        id: registry-check
         if: steps.package-changes.outputs.should_run == 'true'
-        uses: EndBug/version-check@5785f1c1fedad8eeba81c658397b0bedaa1d8e12 # v2.1.7
-        with:
-          diff-search: true
-          file-name: './${{ steps.package-path.outputs.packagePath }}/package.json'
+        working-directory: './${{ steps.package-path.outputs.packagePath }}'
+        run: |
+          set -euo pipefail
+          name=$(jq -r '.name' package.json)
+          version=$(jq -r '.version' package.json)
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          error_log="${RUNNER_TEMP}/npm-view-error.log"
+          if npm view "${name}@${version}" version > /dev/null 2> "${error_log}"; then
+            echo "unpublished=false" >> "$GITHUB_OUTPUT"
+          elif grep -q 'E404' "${error_log}"; then
+            echo "unpublished=true" >> "$GITHUB_OUTPUT"
+          else
+            cat "${error_log}"
+            exit 1
+          fi
       # Build the package to publish
       - name: Build package
         if: steps.package-changes.outputs.should_run == 'true'
         run: pnpm nx run ${{ matrix.publishablePackage }}:build
-      # If the package version changed, and the build succeeded, create the tag using the output of the previous step.
+      # If the version is unpublished and the build succeeded, tag the release. An existing
+      # tag (e.g. from an attempt whose publish failed) is kept so the publish can be retried.
       - name: Create tag
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-        if: ${{ steps.package-changes.outputs.should_run == 'true' && github.event_name == 'push' && steps.package-version-check.outputs.changed == 'true' }}
+        if: ${{ steps.package-changes.outputs.should_run == 'true' && github.event_name == 'push' && steps.registry-check.outputs.unpublished == 'true' }}
         with:
           github-token: ${{ github.token }}
           script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: "refs/tags/${{ matrix.publishablePackage }}/v${{ steps.package-version-check.outputs.version }}",
-              sha: context.sha
-            })
+            const ref = "refs/tags/${{ matrix.publishablePackage }}/v${{ steps.registry-check.outputs.version }}"
+            try {
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref,
+                sha: context.sha,
+              })
+            } catch (error) {
+              if (error.status !== 422 || !/already exists/i.test(error.message)) {
+                throw error
+              }
+              core.warning(`${ref} already exists; keeping it`)
+            }
       - name: Publish to NPM # or simulate the publish for PRs
         if: steps.package-changes.outputs.should_run == 'true'
-        run: pnpm publish --access public ${{ ((github.event_name == 'pull_request' || steps.package-version-check.outputs.changed == 'false') && '--dry-run --no-git-checks') || '' }}
+        run: pnpm publish --access public ${{ ((github.event_name == 'pull_request' || steps.registry-check.outputs.unpublished == 'false') && '--dry-run --no-git-checks') || '' }}
         working-directory: './${{ steps.package-path.outputs.packagePath }}'
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
