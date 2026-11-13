@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{q as t,t as n,v as r}from"./dist-D7gB_Asd.js";function i(e){if(e.length===0)return;let n=e[0],i=r.CREATED_ON;return n.id===`createdOn`?i=r.CREATED_ON:n.id===`modifiedOn`&&(i=r.MODIFIED_ON),[{field:i,direction:n.desc?t.DESC:t.ASC}]}function a(){return(a=e((()=>{n()})))()}export{a as n,i as t};

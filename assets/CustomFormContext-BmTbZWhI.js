@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";function t(e,t){let n=e?.templateObject;if(!(!n||e.templateFileHandleIds&&!e.templateFileHandleIds.includes(t)))return{fileHandleId:t,...n}}function n(){return(n=e((()=>{})))()}export{n,t};
