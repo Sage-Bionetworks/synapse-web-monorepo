@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./FavoriteButton-D4oGV9dP.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`Synapse/FavoriteButton`,component:n},i={args:{entityId:`syn33576900`}},a=[`Demo`]})))()}o();export{i as Demo,a as __namedExportsOrder,r as default};

@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./CopyToClipboardInput-B1sMA0OT.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`Synapse/CopyToClipboardInput`,component:n},i={args:{value:`The quick brown fox jumps over the lazy dog.`,inputWidth:`250px`}},a=[`Default`]})))()}o();export{i as Default,a as __namedExportsOrder,r as default};
