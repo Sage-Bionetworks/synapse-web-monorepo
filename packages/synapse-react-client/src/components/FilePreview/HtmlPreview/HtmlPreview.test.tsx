@@ -16,6 +16,9 @@ import { render, renderHook, screen, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
 import HtmlPreview, {
   EXPORTED_FOR_UNIT_TESTING,
+  HEIGHT_MESSAGE_TYPE,
+  HEIGHT_REPORTER_SCRIPTS,
+  HTML_PREVIEW_SANDBOX,
   HtmlPreviewProps,
 } from './HtmlPreview'
 
@@ -65,7 +68,7 @@ describe('HTML Preview tests', () => {
           isTrusted: false,
         }),
       )
-      expect(result.current).toEqual(undefined)
+      expect(result.current).toBeUndefined()
     })
     it('Returns rawHtml if the user is trusted', () => {
       const isTrustedUser = true
@@ -105,7 +108,7 @@ describe('HTML Preview tests', () => {
     await waitFor(() => {
       frame = container.querySelector('iframe')
       expect(frame).toBeDefined()
-      expect(frame).toHaveAttribute('srcdoc', rawHtml)
+      expect(frame).toHaveAttribute('srcdoc', rawHtml + HEIGHT_REPORTER_SCRIPTS)
     })
     // Verify that no alert is shown since the content is trusted
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
@@ -125,7 +128,7 @@ describe('HTML Preview tests', () => {
       frame = container.querySelector('iframe')
       expect(frame).toBeDefined()
       // The HTML is sanitized, so the script tag is removed
-      expect(frame).toHaveAttribute('srcdoc', '')
+      expect(frame).toHaveAttribute('srcdoc', HEIGHT_REPORTER_SCRIPTS)
     })
 
     // An alert should be shown to inform the user that the rendering is limited
@@ -146,10 +149,58 @@ describe('HTML Preview tests', () => {
       frame = container.querySelector('iframe')
       expect(frame).toBeDefined()
       // The HTML should be identical since it doesn't contain anything that would be stripped by sanitization
-      expect(frame).toHaveAttribute('srcdoc', rawHtml)
+      expect(frame).toHaveAttribute('srcdoc', rawHtml + HEIGHT_REPORTER_SCRIPTS)
     })
 
     // Verify that no alert is shown since the content was unchanged by sanitization
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it('sandbox equals HTML_PREVIEW_SANDBOX and does not contain allow-same-origin', async () => {
+    const rawHtml = '<span>test</span>'
+    const { container } = renderComponent({
+      rawHtml,
+      createdByUserId: MOCK_USER_ID.toString(),
+    })
+
+    let frame: HTMLIFrameElement | null = null
+    await waitFor(() => {
+      frame = container.querySelector('iframe')
+      expect(frame).toBeDefined()
+      expect(frame).toHaveAttribute('sandbox', HTML_PREVIEW_SANDBOX)
+      expect(frame).not.toHaveAttribute(
+        'sandbox',
+        expect.stringContaining('allow-same-origin'),
+      )
+    })
+  })
+
+  it('receives a height message and updates the iframe height', async () => {
+    const rawHtml = '<span>test</span>'
+    const { container } = renderComponent({
+      rawHtml,
+      createdByUserId: MOCK_USER_ID.toString(),
+    })
+
+    const frame = await waitFor(() => {
+      const iframe = container.querySelector('iframe')
+      expect(iframe).not.toBeNull()
+      return iframe!
+    })
+
+    const newHeight = 600
+    // Simulate the height message from the iframe. The component ignores messages from any other source
+    window.dispatchEvent(
+      new MessageEvent('message', {
+        data: { type: HEIGHT_MESSAGE_TYPE, height: newHeight },
+        // Messages from the sandboxed iframe have the origin 'null'
+        origin: 'null',
+        source: frame.contentWindow,
+      }),
+    )
+
+    await waitFor(() => {
+      expect(frame).toHaveAttribute('height', `${newHeight + 50}px`)
+    })
   })
 })
