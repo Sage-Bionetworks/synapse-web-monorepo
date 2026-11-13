@@ -297,8 +297,14 @@ function SynapseGridInner({
     [model, applyAndCommitChanges],
   )
 
-  const { undoUI, redoUI, addOperationsToUndoStack, clearRedoStack } =
-    useGridUndoRedo(applyModelChangeFromUndoRedo)
+  const {
+    undoUI,
+    redoUI,
+    handleUndo,
+    handleRedo,
+    addOperationsToUndoStack,
+    clearRedoStack,
+  } = useGridUndoRedo(applyModelChangeFromUndoRedo)
 
   const handleChange = useCallback(
     (newValue: DataGridRow[], operations: Operation[]) => {
@@ -571,6 +577,8 @@ function SynapseGridInner({
                     handleSelectionChange={handleSelectionChange}
                     remoteSelections={remoteSelections}
                     upsertKey={upsertKey}
+                    onUndo={handleUndo}
+                    onRedo={handleRedo}
                   />
                 </Grid>
               </>

@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react'
+import { renderHook, act, fireEvent } from '@testing-library/react'
 import { vi } from 'vitest'
 import {
   GridAction,
@@ -352,5 +352,26 @@ describe('useGridUndoRedo', () => {
 
       expect(mockOnApplyModelChange).toHaveBeenCalledTimes(4)
     })
+  })
+
+  // The grid owns the shortcuts, so it can tell whether a cell is active or being edited, and calls
+  // handleUndo and handleRedo through its onUndo and onRedo props
+  it('does not handle the undo and redo shortcuts itself', () => {
+    const { result } = renderHook(() => useGridUndoRedo(mockOnApplyModelChange))
+    act(() => {
+      result.current.addToUndoStack({
+        type: 'CREATE',
+        rowIndex: 0,
+        newValue: { id: '1' },
+      })
+    })
+
+    const undoNotPrevented = fireEvent.keyDown(document.body, {
+      key: 'z',
+      ctrlKey: true,
+    })
+
+    expect(undoNotPrevented).toBe(true)
+    expect(mockOnApplyModelChange).not.toHaveBeenCalled()
   })
 })
