@@ -54,6 +54,22 @@ export const mockAgentChatResponse: AgentChatResponse = {
   concreteType: 'org.sagebionetworks.repo.model.agent.AgentChatResponse',
 }
 
+/** A response with a table wider than a narrow chat, for checking horizontal overflow. */
+export const mockWideTableAgentChatResponse: AgentChatResponse = {
+  ...mockAgentChatResponse,
+  responseText: [
+    'Here is what each column in this grid means:',
+    '',
+    '| Column | Type | Required | Description | Example | Allowed values |',
+    '|---|---|---|---|---|---|',
+    '| specimenID | string | yes | The identifier of the specimen the file was derived from | SPEC-000123 | any |',
+    '| assay | enum | yes | The assay used to generate the data in the file | rnaSeq | rnaSeq, wholeGenomeSeq, ATACSeq |',
+    '| tissue | enum | no | The tissue the specimen was collected from | dorsolateralPrefrontalCortex | see the tissue vocabulary |',
+    '',
+    'Let me know if you want me to fill in any missing values.',
+  ].join('\n'),
+}
+
 /**
  * Builds a full `AsynchronousJobStatus` for the chat async job, for tests/stories that poll the
  * job status endpoint directly (e.g. to exercise the PROCESSING state). `jobId` is required since

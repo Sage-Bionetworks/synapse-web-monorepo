@@ -32,17 +32,26 @@ import {
   AddFilesDialog,
   AddFilesDialogProps,
 } from './components/AddFilesDialog/AddFilesDialog'
+import { UPLOAD_SUPPORTING_DOCUMENTS_LABEL } from './components/ChatWelcome/ChatWelcome'
 import { SynapseChat, SynapseChatProps } from './SynapseChat'
+import {
+  ALLOWED_FILE_TYPES_LABEL,
+  ATTACHMENT_COUNT_AND_SIZE_LIMIT_LABEL,
+} from './utils/attachmentLabels'
 
 vi.mock('@/components/SynapseChat/useChatState')
 vi.mock('./components/AddFilesDialog/AddFilesDialog', () => ({
   AddFilesDialog: vi.fn(),
-  ALLOWED_FILE_TYPES_LABEL: 'pdf, csv, txt, json',
 }))
 
 const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 const mockUseChatState = vi.mocked(useChatState)
 const mockAddFilesDialog = vi.mocked(AddFilesDialog)
+
+/** The upload card's accessible name starts with its label and goes on to list the limits */
+function isUploadCardName(name: string) {
+  return name.startsWith(UPLOAD_SUPPORTING_DOCUMENTS_LABEL)
+}
 
 const mockSendChat = vi.fn()
 
@@ -57,6 +66,12 @@ const mockPrompts = [
   'Help me understand this',
   'Find missing fields',
 ]
+
+const mockWelcome = {
+  avatar: <span>Avatar</span>,
+  title: 'Hi, I’m Curie!',
+  description: 'I’m here to help with your annotations.',
+}
 
 const defaultProps: SynapseChatProps = {
   externalSession: mockAgentSession,
@@ -270,6 +285,22 @@ describe('SynapseChat - allowAttachments', () => {
     await user.click(screen.getByRole('button', { name: 'Remove report.pdf' }))
 
     expect(screen.queryByText('report.pdf')).not.toBeInTheDocument()
+  })
+
+  it('opens the Add Files dialog from the welcome upload card, attaching uploads to the composer', async () => {
+    const { user } = renderComponent({
+      allowAttachments: true,
+      welcome: mockWelcome,
+    })
+
+    await user.click(screen.getByRole('button', { name: isUploadCardName }))
+    await user.click(
+      screen.getByRole('button', { name: 'Simulate attachment uploaded' }),
+    )
+
+    expect(
+      screen.getByRole('button', { name: 'Remove report.pdf' }),
+    ).toBeInTheDocument()
   })
 
   it('sends attachments alongside the message text, then clears both', async () => {
@@ -504,6 +535,64 @@ describe('SynapseChat - createSessionOnFirstMessage', () => {
       expect(mockSendChat).toHaveBeenCalledExactlyOnceWith('Start here'),
     )
     expect(sessionCreation.count).toBe(1)
+  })
+})
+
+describe('SynapseChat - welcome', () => {
+  beforeAll(() => {
+    window.HTMLElement.prototype.scrollIntoView = vi.fn()
+  })
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUseChatState.mockReturnValue(defaultMockChatState)
+    mockAddFilesDialog.mockImplementation(() => <></>)
+  })
+
+  it('shows the welcome with the attachment limits in an empty conversation', () => {
+    renderComponent({ allowAttachments: true, welcome: mockWelcome })
+
+    expect(screen.getByText(mockWelcome.title)).toBeInTheDocument()
+    expect(screen.getByText(mockWelcome.description)).toBeInTheDocument()
+    const uploadCard = screen.getByRole('button', { name: isUploadCardName })
+    expect(uploadCard).toHaveTextContent(ATTACHMENT_COUNT_AND_SIZE_LIMIT_LABEL)
+    expect(uploadCard).toHaveTextContent(
+      `Allowed file types: ${ALLOWED_FILE_TYPES_LABEL}`,
+    )
+  })
+
+  it('omits the upload card when attachments are not allowed', () => {
+    renderComponent({ welcome: mockWelcome })
+
+    expect(screen.getByText(mockWelcome.title)).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: isUploadCardName }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('hides the welcome once the conversation has started', () => {
+    renderComponent({
+      allowAttachments: true,
+      welcome: mockWelcome,
+      externalChatState: {
+        ...defaultMockChatState,
+        interactions: [{ id: '0', userMessage: 'hi', jobId: 'job-1' }],
+      },
+    })
+
+    expect(screen.queryByText(mockWelcome.title)).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: isUploadCardName }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('replaces the Curie greeting', () => {
+    renderComponent({ variant: 'curie', welcome: mockWelcome })
+
+    expect(screen.getByText(mockWelcome.title)).toBeInTheDocument()
+    expect(
+      screen.queryByText('Hi! How can I help you today?'),
+    ).not.toBeInTheDocument()
   })
 })
 
