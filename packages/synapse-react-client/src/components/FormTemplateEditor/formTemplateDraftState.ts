@@ -4,7 +4,7 @@
  * sync (renaming a property key rewrites every step and settings entry that names it, removing a
  * property unbinds it from every step and drops its settings, etc).
  */
-import { RJSFSchema } from '@rjsf/utils'
+import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import {
   listResolvedSchemaProperties,
   propertyKeyToPointer,
@@ -18,7 +18,13 @@ import {
   setSchemaPropertyContext,
   setSchemaPropertyRequired,
 } from '@/utils/jsonschema/submissionContext'
-import { generatePropertyKey } from './schemaFieldUtils'
+import {
+  applyFieldType,
+  applyFieldTypeUiDefinition,
+  detectFieldType,
+  generatePropertyKey,
+  SimpleFieldType,
+} from './schemaFieldUtils'
 import {
   EditableFormTemplateStep,
   FieldSettings,
@@ -177,6 +183,34 @@ export function replaceProperty(
     ...state,
     jsonSchema: replaceSchemaPropertyDefinition(state.jsonSchema, key, next),
   }
+}
+
+/**
+ * Change a property to a simple field type: its schema takes that type's shape, and its slot
+ * `uiDefinition` takes that type's widget, whether or not a step binds it yet. Text and Long
+ * answer share one schema shape, so switching between them keeps the schema as it is, including
+ * constraints the editor doesn't author such as `maxLength` or `pattern`.
+ */
+export function changeFieldType(
+  state: FormTemplateDraftState,
+  key: string,
+  type: SimpleFieldType,
+): FormTemplateDraftState {
+  const path = propertyKeyToPointer(key)
+  const resolved = resolveSchemaPropertyAtPointer(state.jsonSchema, path)
+  if (!resolved) return state
+  const keepsSchema =
+    (type === 'text' || type === 'longText') &&
+    detectFieldType(resolved.subSchema) === 'text'
+  const replaced = keepsSchema
+    ? state
+    : replaceProperty(state, key, applyFieldType(resolved.subSchema, type))
+  // The generated client types `uiDefinition` as `any`.
+  const uiDefinition = (fieldSettingsFor(state.fieldSettings, path)
+    .uiDefinition ?? {}) as UiSchema
+  return updateFieldSettings(replaced, path, {
+    uiDefinition: applyFieldTypeUiDefinition(uiDefinition, type),
+  })
 }
 
 export function changeRequired(

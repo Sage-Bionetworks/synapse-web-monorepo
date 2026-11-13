@@ -88,7 +88,9 @@ export function StepFieldRow({
     accept: SLOT_SORTABLE_TYPE,
   })
 
-  const type = resolvedProperty ? detectFieldType(resolvedProperty) : null
+  const type = resolvedProperty
+    ? detectFieldType(resolvedProperty, settings.uiDefinition)
+    : null
   const displayLabel = resolvedProperty?.title || propertyKey
   const isFileField = type === 'file'
   const isUnresolved = !resolvedProperty

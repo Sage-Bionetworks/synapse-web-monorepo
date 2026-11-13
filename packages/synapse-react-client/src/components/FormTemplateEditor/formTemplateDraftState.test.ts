@@ -7,6 +7,7 @@ import {
 import {
   bindField,
   changeContext,
+  changeFieldType,
   changeRequired,
   createField,
   FormTemplateDraftState,
@@ -20,6 +21,7 @@ import {
   updateFieldSettings,
   updateProperty,
 } from './formTemplateDraftState'
+import { LONG_TEXT_WIDGET } from './schemaFieldUtils'
 import {
   DEFAULT_FIELD_SETTINGS,
   EditableFormTemplateStep,
@@ -350,6 +352,55 @@ describe('field settings', () => {
     )
 
     expect(next.fieldSettings).toEqual({})
+  })
+})
+
+describe('changeFieldType', () => {
+  it.each([
+    ['a bound', [step('s1', ['/age'])]],
+    ['an unbound', [step('s1')]],
+  ])(
+    'sets the long-answer widget on %s property, and switching back removes only that',
+    (_label, steps) => {
+      const state = draft(steps, null, {
+        '/age': { uiDefinition: { 'ui:options': { rows: 3 } } },
+      })
+
+      const long = changeFieldType(state, 'age', 'longText')
+      expect(resolve(long, 'age')?.subSchema).toMatchObject({ type: 'string' })
+      expect(long.fieldSettings['/age'].uiDefinition).toEqual({
+        'ui:options': { rows: 3 },
+        'ui:widget': LONG_TEXT_WIDGET,
+      })
+
+      const text = changeFieldType(long, 'age', 'text')
+      expect(text.fieldSettings['/age'].uiDefinition).toEqual({
+        'ui:options': { rows: 3 },
+      })
+    },
+  )
+
+  it('keeps a string’s other constraints when it switches between Text and Long answer', () => {
+    const constrained = updateProperty(draft(), 'institution', {
+      maxLength: 2000,
+      pattern: '\\S',
+    })
+    const expected = {
+      type: 'string',
+      title: 'Institution Name',
+      maxLength: 2000,
+      pattern: '\\S',
+    }
+
+    const long = changeFieldType(constrained, 'institution', 'longText')
+    expect(resolve(long, 'institution')?.subSchema).toEqual(expected)
+    const text = changeFieldType(long, 'institution', 'text')
+    expect(resolve(text, 'institution')?.subSchema).toEqual(expected)
+  })
+
+  it('is a no-op for a property that does not exist', () => {
+    const state = draft()
+    expect(changeFieldType(state, 'missing', 'longText')).toBe(state)
   })
 })
 

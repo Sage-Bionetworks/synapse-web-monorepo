@@ -9,13 +9,14 @@ const meta = {
     propertyKey: 'institution',
     existingKeys: new Set(['institution', 'summaryOfUse']),
     property: { type: 'string', title: 'Institution' },
+    uiDefinition: {},
     isRequired: false,
     context: 'ALWAYS',
     isUsedInSteps: false,
     onClose: () => console.log('onClose'),
     onUpdate: (patch: unknown) => console.log('onUpdate', patch),
     onRenameKey: (key: string) => console.log('onRenameKey', key),
-    onReplace: (next: unknown) => console.log('onReplace', next),
+    onChangeType: (type: unknown) => console.log('onChangeType', type),
     onChangeRequired: (isRequired: boolean) =>
       console.log('onChangeRequired', isRequired),
     onChangeContext: (context: unknown) =>
@@ -28,6 +29,14 @@ export default meta
 type Story = StoryObj<typeof FieldDefinitionDrawer>
 
 export const TextField: Story = {}
+
+export const LongAnswerField: Story = {
+  args: {
+    propertyKey: 'summaryOfUse',
+    property: { type: 'string', title: 'Summary of use' },
+    uiDefinition: { 'ui:widget': 'textarea' },
+  },
+}
 
 export const ChoiceField: Story = {
   args: {
