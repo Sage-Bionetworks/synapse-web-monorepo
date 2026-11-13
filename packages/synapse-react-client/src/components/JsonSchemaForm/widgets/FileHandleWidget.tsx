@@ -73,7 +73,7 @@ export const FileHandleWidget: Widget = (props: WidgetProps) => {
                 context,
                 templateFileHandleId,
               )}
-              variant="outlined"
+              buttonLabel="Download Template"
             />
           }
         >
@@ -122,21 +122,24 @@ function toAssociation(
 function FileLink(props: {
   fileHandleId: string
   association: FileHandleAssociation | undefined
-  /** If set, the link is a button of this variant (a call to action). Either way, it shows the file name. */
-  variant?: 'outlined'
+  /** If set, the link is an outlined button with this label. */
+  buttonLabel?: string
 }) {
-  const { fileHandleId, association, variant } = props
+  const { fileHandleId, association, buttonLabel } = props
+  const buttonProps = buttonLabel
+    ? { buttonVariant: 'outlined' as const, displayValue: buttonLabel }
+    : {}
   return association ? (
     <FileHandleLink
       fileHandleAssociation={association}
       showDownloadIcon
-      buttonVariant={variant}
+      {...buttonProps}
     />
   ) : (
     <FileHandleLink
       creatorFileHandleId={fileHandleId}
       showDownloadIcon
-      buttonVariant={variant}
+      {...buttonProps}
     />
   )
 }

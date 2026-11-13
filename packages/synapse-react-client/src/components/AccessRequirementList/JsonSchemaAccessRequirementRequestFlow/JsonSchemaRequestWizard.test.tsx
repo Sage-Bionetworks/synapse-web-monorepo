@@ -457,7 +457,7 @@ describe('JsonSchemaRequestWizard', () => {
       )
     }
 
-    it('offers the template file through the form template, without overriding its file name', async () => {
+    it('offers the template file through the form template', async () => {
       mockRequestServices(
         clinicalAccessRequirement,
         createRequest(clinicalAccessRequirement),
@@ -474,11 +474,13 @@ describe('JsonSchemaRequestWizard', () => {
             clinicalAccessRequirement.formTemplateRef.templateId,
         },
       ])
-      // The template download is a call-to-action button that shows the file name, which FileHandleLink looks up
-      // when no display value is given
+      // The template download is a call-to-action button
       const templateLink = screen.getByTestId('FileHandleLink')
       expect(templateLink).toHaveAttribute('data-button-variant', 'outlined')
-      expect(templateLink).not.toHaveAttribute('data-display-value')
+      expect(templateLink).toHaveAttribute(
+        'data-display-value',
+        'Download Template',
+      )
     })
 
     it('saves an uploaded file as the answer and in attachments, and shows it through the request', async () => {
