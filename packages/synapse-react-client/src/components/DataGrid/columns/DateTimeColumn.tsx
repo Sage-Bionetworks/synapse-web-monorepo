@@ -1,18 +1,28 @@
 import DatePicker from '@/components/DatePicker/DatePicker'
-import DateTimePicker from '@/components/DateTimePicker/DateTimePicker'
+import DateTimePicker, {
+  getPickerTimeZoneLabel,
+} from '@/components/DateTimePicker/DateTimePicker'
+import { useSynapseContext } from '@/utils'
 import { Box, SxProps, Theme, Tooltip } from '@mui/material'
+import { CalendarIcon } from '@mui/x-date-pickers/icons'
+import classNames from 'classnames'
 import dayjs, { Dayjs } from 'dayjs'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
 import utc from 'dayjs/plugin/utc'
 import { JSONSchema7Type } from 'json-schema'
 import isNil from 'lodash-es/isNil'
+import { memo } from 'react'
 import {
   CellComponent,
   CellProps,
   Column,
 } from '@sage-bionetworks/react-datasheet-grid'
 import { castCellValueToString } from './AutocompleteColumn'
+import styles from './GridCellDisplay.module.scss'
+import { LazyCellEditor } from './LazyCellEditor'
 
 dayjs.extend(utc)
+dayjs.extend(localizedFormat)
 
 const UNPARSEABLE_VALUE_SX: SxProps<Theme> = {
   display: 'flex',
@@ -36,6 +46,14 @@ const PICKER_SX: SxProps<Theme> = {
 
 /** The JSON Schema `date` format: an RFC 3339 full-date, e.g. 2026-12-25. */
 export const FULL_DATE_FORMAT_NAME = 'date'
+
+// The pickers' default formats for the dayjs adapter. They are passed to the
+// pickers so a cell's display formats its value the same way.
+export const PICKER_DATE_FORMAT = 'L'
+export const PICKER_DATE_TIME_FORMAT = 'L hh:mm A'
+// What the pickers show in an empty field with those formats
+export const PICKER_DATE_PLACEHOLDER = 'MM/DD/YYYY'
+export const PICKER_DATE_TIME_PLACEHOLDER = 'MM/DD/YYYY hh:mm aa'
 
 const FULL_DATE_PATTERN = 'YYYY-MM-DD'
 const LEADING_FULL_DATE = /^\d{4}-\d{2}-\d{2}/
@@ -208,6 +226,10 @@ export function DateTimeCell({
 
   const pickerProps = {
     disabled,
+    format:
+      format === FULL_DATE_FORMAT_NAME
+        ? PICKER_DATE_FORMAT
+        : PICKER_DATE_TIME_FORMAT,
     value: cellValue.kind === 'date' ? cellValue.date : null,
     onChange: (newValue: string | Dayjs | null) => {
       setRowData(
@@ -226,6 +248,69 @@ export function DateTimeCell({
   )
 }
 
+function formatPickerValue(
+  date: Dayjs,
+  format: string | undefined,
+  utcTime: boolean,
+): string {
+  if (format === FULL_DATE_FORMAT_NAME) {
+    return date.format(PICKER_DATE_FORMAT)
+  }
+  // The date-time picker shows its value in UTC or in local time; see DateTimePicker
+  const shownDate = utcTime ? dayjs.utc(date) : dayjs(date)
+  return shownDate.format(PICKER_DATE_TIME_FORMAT)
+}
+
+type DateTimeCellDisplayProps = {
+  rowData: unknown
+  format?: string
+  disabled?: boolean
+}
+
+/** Shows a date cell's value the way DateTimeCell does while the cell is inactive */
+export const DateTimeCellDisplay = memo(function DateTimeCellDisplay({
+  rowData,
+  format,
+  disabled,
+}: DateTimeCellDisplayProps) {
+  const { utcTime } = useSynapseContext()
+  const cellValue = interpretDateTimeCellValue(rowData, format)
+  if (cellValue.kind === 'unparseable') {
+    return <span className={styles.unparseableValue}>{cellValue.text}</span>
+  }
+
+  const isDateOnly = format === FULL_DATE_FORMAT_NAME
+  const placeholder = isDateOnly
+    ? PICKER_DATE_PLACEHOLDER
+    : PICKER_DATE_TIME_PLACEHOLDER
+  return (
+    <span
+      className={classNames(styles.display, disabled && styles.disabledPicker)}
+    >
+      <span
+        className={classNames(
+          styles.inputText,
+          styles.dateValue,
+          cellValue.kind === 'empty' && styles.placeholder,
+        )}
+      >
+        {cellValue.kind === 'date'
+          ? formatPickerValue(cellValue.date, format, utcTime)
+          : placeholder}
+      </span>
+      {isDateOnly ? (
+        <span className={styles.calendarIcon} aria-hidden>
+          <CalendarIcon fontSize="inherit" />
+        </span>
+      ) : (
+        <span className={styles.timeZone}>
+          {getPickerTimeZoneLabel(utcTime)}
+        </span>
+      )}
+    </span>
+  )
+})
+
 export type DateTimeColumnProps = {
   colType?: JSONSchema7Type
   format?: string
@@ -237,7 +322,17 @@ export function dateTimeColumn({
 }: DateTimeColumnProps): Partial<Column> {
   return {
     component: ((props: DateTimeCellProps) => (
-      <DateTimeCell {...props} colType={colType} format={format} />
+      <LazyCellEditor
+        active={props.active}
+        display={
+          <DateTimeCellDisplay
+            rowData={props.rowData as unknown}
+            format={format}
+            disabled={props.disabled}
+          />
+        }
+        editor={<DateTimeCell {...props} colType={colType} format={format} />}
+      />
     )) as CellComponent,
     copyValue: ({ rowData }) => rowData,
     pasteValue: ({ value }) => value,

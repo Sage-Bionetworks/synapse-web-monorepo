@@ -1,5 +1,5 @@
 import { defaultRangeExtractor, useVirtualizer } from '@tanstack/react-virtual'
-import React, { ReactNode, RefObject, useEffect } from 'react'
+import React, { ReactNode, RefObject, useCallback, useEffect } from 'react'
 import {
   Cell,
   Column,
@@ -22,6 +22,7 @@ export const Grid = <T,>({
   displayHeight,
   headerRowHeight,
   rowHeight,
+  getRowSize,
   rowKey,
   fullWidth,
   selection,
@@ -47,7 +48,8 @@ export const Grid = <T,>({
   pinFirstColumn: boolean
   displayHeight: number
   headerRowHeight: number
-  rowHeight: (index: number) => { height: number }
+  rowHeight: DataSheetGridProps<T>['rowHeight']
+  getRowSize: (index: number) => { height: number }
   rowKey: DataSheetGridProps<T>['rowKey']
   rowClassName: DataSheetGridProps<T>['rowClassName']
   cellClassName: DataSheetGridProps<T>['cellClassName']
@@ -64,12 +66,10 @@ export const Grid = <T,>({
   stopEditing: (opts?: { nextRow?: boolean }) => void
   onScroll?: React.UIEventHandler<HTMLDivElement>
 }) => {
-  const rowVirtualizer = useVirtualizer({
-    count: data.length,
-    getScrollElement: () => outerRef.current,
-    paddingStart: headerRowHeight,
-    estimateSize: index => rowHeight(index).height,
-    getItemKey: (index: number): React.Key => {
+  // The virtualizer measures every row again whenever getItemKey changes, so
+  // it keeps its identity across renders that leave the rows unchanged.
+  const getRowKey = useCallback(
+    (index: number): React.Key => {
       if (rowKey && index > 0) {
         const row = data[index - 1]
         if (typeof rowKey === 'function') {
@@ -87,6 +87,15 @@ export const Grid = <T,>({
       }
       return index
     },
+    [data, rowKey],
+  )
+
+  const rowVirtualizer = useVirtualizer({
+    count: data.length,
+    getScrollElement: () => outerRef.current,
+    paddingStart: headerRowHeight,
+    estimateSize: index => getRowSize(index).height,
+    getItemKey: getRowKey,
     overscan: 5,
   })
 
@@ -126,6 +135,12 @@ export const Grid = <T,>({
   useEffect(() => {
     colVirtualizer.measure()
   }, [colVirtualizer, columnWidths])
+
+  // The virtualizer keeps its row measurements until the rows change, so a new
+  // row height needs an explicit measure
+  useEffect(() => {
+    rowVirtualizer.measure()
+  }, [rowVirtualizer, rowHeight])
 
   const setGivenRowData = useMemoizedIndexCallback(setRowData, 1)
   const deleteGivenRow = useMemoizedIndexCallback(deleteRows, 0)

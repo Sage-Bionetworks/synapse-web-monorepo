@@ -26,7 +26,16 @@ import {
 import { GridAutocompleteChip } from './GridAutocompleteChip'
 import isNil from 'lodash-es/isNil'
 import isEqual from 'lodash-es/isEqual'
+import CancelIcon from '@mui/icons-material/Cancel'
+import classNames from 'classnames'
+import styles from './GridCellDisplay.module.scss'
+import { LazyCellEditor } from './LazyCellEditor'
 import { useGridAutocompleteState } from './useGridAutocompleteState'
+
+/** The widest a value's chip grows in a cell that is not active */
+export const INACTIVE_CHIP_MAX_WIDTH = 120
+
+const INACTIVE_CHIP_STYLE = { maxWidth: INACTIVE_CHIP_MAX_WIDTH } as const
 
 // Static styles extracted to avoid recreation on every render
 const AUTOCOMPLETE_MULTIPLE_BASE_SX: SxProps<Theme> = {
@@ -34,9 +43,6 @@ const AUTOCOMPLETE_MULTIPLE_BASE_SX: SxProps<Theme> = {
   height: '100%',
   '& .MuiFormControl-root': {
     height: '100%',
-  },
-  '& .MuiAutocomplete-tag': {
-    margin: '1px',
   },
   '&:hover .MuiAutocomplete-clearIndicator': {
     visibility: 'visible',
@@ -172,6 +178,12 @@ function AutocompleteMultipleEnumCell({
         visibility: active ? 'visible' : 'hidden',
         pointerEvents: 'auto',
       },
+      '& .MuiAutocomplete-tag': {
+        margin: '1px',
+        // Autocomplete's own tag style caps a chip at the input's width, and
+        // overrides a max width set on the chip itself
+        maxWidth: active ? undefined : INACTIVE_CHIP_MAX_WIDTH,
+      },
     }),
     [active, focus],
   )
@@ -270,7 +282,6 @@ function AutocompleteMultipleEnumCell({
                 <GridAutocompleteChip
                   key={key}
                   option={optionValue}
-                  active={active}
                   {...tagProps}
                 />
               )
@@ -310,10 +321,44 @@ export function areAutocompleteMultipleEnumCellPropsEqual(
   )
 }
 
-const MemoizedAutocompleteMultipleEnumCell = memo(
+export const MemoizedAutocompleteMultipleEnumCell = memo(
   AutocompleteMultipleEnumCell,
   areAutocompleteMultipleEnumCellPropsEqual,
 )
+
+/**
+ * Shows a multiple-value cell's values the way the inactive editor does: a chip
+ * for each of the first `limitTags` values, then a count of the rest. A
+ * negative `limitTags` shows every value, as it does for MUI Autocomplete.
+ */
+export function AutocompleteMultipleEnumCellDisplay({
+  rowData,
+  limitTags,
+}: {
+  rowData: AutocompleteMultipleEnumOption
+  limitTags: number
+}) {
+  const values = createSafeRowData(rowData)
+  const shownValues = limitTags < 0 ? values : values.slice(0, limitTags)
+  const hiddenCount = values.length - shownValues.length
+  return (
+    <span className={classNames(styles.display, styles.multipleValues)}>
+      {shownValues.map((value, index) => (
+        <span key={index} className={styles.chip} style={INACTIVE_CHIP_STYLE}>
+          <span className={styles.chipLabel}>
+            {castCellValueToString(value)}
+          </span>
+          <span className={styles.chipDeleteIcon} aria-hidden>
+            <CancelIcon fontSize="inherit" />
+          </span>
+        </span>
+      ))}
+      {hiddenCount > 0 && (
+        <span className={styles.moreTags}>+{hiddenCount}</span>
+      )}
+    </span>
+  )
+}
 
 export type AutocompleteMultipleEnumColumnProps = {
   choices: AutocompleteMultipleEnumOption[]
@@ -334,12 +379,23 @@ export function autocompleteMultipleEnumColumn({
     component: ((
       props: Omit<AutocompleteMultipleEnumCellProps, 'choices' | 'limitTags'>,
     ) => (
-      <MemoizedAutocompleteMultipleEnumCell
-        {...props}
-        choices={choices}
-        colType={colType}
-        limitTags={limitTags}
-        clearValue={clearValue}
+      <LazyCellEditor
+        active={props.active}
+        display={
+          <AutocompleteMultipleEnumCellDisplay
+            rowData={props.rowData}
+            limitTags={limitTags}
+          />
+        }
+        editor={
+          <MemoizedAutocompleteMultipleEnumCell
+            {...props}
+            choices={choices}
+            colType={colType}
+            limitTags={limitTags}
+            clearValue={clearValue}
+          />
+        }
       />
     )) as CellComponent,
     copyValue: ({ rowData }) => {
