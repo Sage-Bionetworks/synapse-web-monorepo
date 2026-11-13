@@ -1,4 +1,38 @@
 import { FormContextType } from '@rjsf/utils'
+import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
+
+/** A Synapse object that files can be associated with */
+export type FileHandleAssociateObject = {
+  associateObjectType: FileHandleAssociateType
+  associateObjectId: string
+}
+
+/**
+ * What the file widget needs to know about the object that its files are attached to. Apart from the callback, which
+ * must keep its identity, this is plain data, because RJSF does not re-render fields when only the identity of a
+ * function in the form context changes.
+ */
+export type FileHandleWidgetContext = {
+  /**
+   * The object that the files of answers are associated with once it lists them. Undefined if there is no such
+   * object yet.
+   */
+  answerObject?: FileHandleAssociateObject
+  /**
+   * The file handle IDs that `answerObject` lists. Only these can be downloaded through it: until then, a file can
+   * only be downloaded by the user who uploaded it.
+   */
+  answerFileHandleIds: string[]
+  /**
+   * The object that the template files of fields are associated with. Undefined if no object can serve them, in which
+   * case they are downloaded as file handles that the current user created.
+   */
+  templateObject?: FileHandleAssociateObject
+  /** Whether the user can upload, replace, or clear a file */
+  canEdit: boolean
+  /** Invoked when an upload of a field's file starts and when it finishes. Its identity must not change. */
+  onUploadingChange?: (fieldId: string, isUploading: boolean) => void
+}
 
 export interface CustomFormContext extends FormContextType {
   /**
@@ -45,4 +79,9 @@ export interface CustomFormContext extends FormContextType {
    *   source schema is a genuine yes/no toggle with no meaningful "unset" state.
    */
   booleanWidget?: 'yesNoSelect' | 'yesNoRadio' | 'checkbox'
+
+  /**
+   * Used by the widget for `synapse-filehandle-id` properties. Without it, the widget shows files but cannot change them.
+   */
+  fileHandleWidget?: FileHandleWidgetContext
 }

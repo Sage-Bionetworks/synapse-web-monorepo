@@ -67,11 +67,13 @@
 }
 
 .sqlText {
-  display: block;
+  margin: 0;
+  max-height: 320px;
+  overflow: auto;
   font-family: var(--synapse-font-family-mono, monospace);
   font-size: 12px;
-  white-space: pre-wrap;
-  word-break: break-word;
+  line-height: 1.5;
+  white-space: pre;
   color: var(--synapse-gray-1000);
 }
 

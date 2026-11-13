@@ -1,4 +1,4 @@
-import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
+import type { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
 import {
   contextAppliesForRequestType,
   listResolvedSchemaProperties,
@@ -6,12 +6,15 @@ import {
 } from '@/utils/jsonschema/submissionContext'
 import { RJSFSchema } from '@rjsf/utils'
 import { DataAccessRequestType } from '@sage-bionetworks/synapse-client'
+import isEqual from 'lodash-es/isEqual'
 import omit from 'lodash-es/omit'
 import pick from 'lodash-es/pick'
 
 export type SchemaData = Record<string, unknown>
 
 export const SYNAPSE_FILE_HANDLE_ID_FORMAT = 'synapse-filehandle-id'
+/** The `ui:options` key under which the generated uiSchema of a file field holds the ID of its template file */
+export const TEMPLATE_FILE_HANDLE_ID_OPTION = 'templateFileHandleId'
 const NUMERIC_ID_PATTERN = /^\d+$/
 
 /**
@@ -117,16 +120,14 @@ export function withSubmissionContext(
   }
 }
 
-/** The titles of the file upload fields, which the request form cannot yet collect. */
-export function getFileUploadFieldTitles(
-  steps: GeneratedFormStepForRjsf[],
-): string[] {
-  return steps.flatMap(step =>
-    Object.entries(step.jsonSchema.properties ?? {})
-      .filter(
-        ([, property]) =>
-          (property as RJSFSchema).format === SYNAPSE_FILE_HANDLE_ID_FORMAT,
-      )
-      .map(([key, property]) => (property as RJSFSchema).title ?? key),
+/** Whether the file handles that the answers reference differ between two sets of answers. */
+export function fileAnswersChanged(
+  schema: RJSFSchema,
+  previous: SchemaData,
+  next: SchemaData,
+): boolean {
+  return !isEqual(
+    getSchemaDataFileHandleIds(schema, previous),
+    getSchemaDataFileHandleIds(schema, next),
   )
 }

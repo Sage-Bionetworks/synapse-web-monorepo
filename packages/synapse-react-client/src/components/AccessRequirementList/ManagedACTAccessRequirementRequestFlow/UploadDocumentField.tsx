@@ -1,5 +1,6 @@
+import { ProgressCallback } from '@/synapse-client/SynapseClient'
 import { useGetFileBatch } from '@/synapse-queries/file/useFiles'
-import { Box, Button, ButtonProps } from '@mui/material'
+import { Box, Button, ButtonProps, LinearProgress } from '@mui/material'
 import {
   FileHandleAssociation,
   UploadCallbackResp,
@@ -13,6 +14,8 @@ type UploadDocumentFieldProps = {
   id: string
   documentName: string
   uploadCallback: (data: UploadCallbackResp) => void
+  /** Invoked when an upload starts and when it finishes, whether or not it succeeded */
+  onUploadingChange?: (isUploading: boolean) => void
   /* The fileHandleAssociations corresponding to an existing upload */
   fileHandleAssociations?: FileHandleAssociation[]
   isMultiFileUpload?: boolean
@@ -26,6 +29,7 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
   const {
     fileHandleAssociations = [],
     uploadCallback,
+    onUploadingChange,
     id,
     documentName,
     isMultiFileUpload = false,
@@ -35,6 +39,7 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
     uploadBtnVariant = 'outlined',
   } = props
   const [isUploading, setIsUploading] = useState(false)
+  const [progress, setProgress] = useState<ProgressCallback>()
 
   const { data: fileData } = useGetFileBatch(
     {
@@ -60,14 +65,21 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
     >
       <FileUpload
         id={`${id}-upload`}
-        onUploadStart={() => setIsUploading(true)}
+        onUploadStart={() => {
+          setProgress(undefined)
+          setIsUploading(true)
+          onUploadingChange?.(true)
+        }}
+        onProgress={setProgress}
         onComplete={res => {
           setIsUploading(false)
+          onUploadingChange?.(false)
           uploadCallback(res)
         }}
         label={`Upload ${documentName}`}
         buttonProps={{
-          disabled: isLoading || disabled,
+          // One upload at a time, so that the file uploaded last is the one that is kept
+          disabled: isLoading || disabled || isUploading,
           variant: uploadBtnVariant,
           endIcon: <IconSvg icon={'upload'} wrap={false} />,
         }}
@@ -94,6 +106,7 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
             {onClearAttachment && (
               <Button
                 className={'clear-x'}
+                aria-label="Remove file"
                 variant={'text'}
                 onClick={() => onClearAttachment(fha.fileHandleId)}
               >
@@ -111,6 +124,14 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
         >
           Uploading...
         </Button>
+      )}
+      {isUploading && progress && progress.total > 0 && (
+        <LinearProgress
+          variant="determinate"
+          value={(100 * progress.value) / progress.total}
+          aria-label="Upload progress"
+          sx={{ width: 160 }}
+        />
       )}
     </Box>
   )

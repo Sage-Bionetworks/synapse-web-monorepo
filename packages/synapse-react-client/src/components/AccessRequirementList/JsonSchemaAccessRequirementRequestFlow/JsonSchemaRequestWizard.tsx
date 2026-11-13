@@ -19,6 +19,7 @@ import {
   Stepper,
 } from '@mui/material'
 import {
+  FileHandleAssociateType,
   JsonSchemaAccessRequirement,
   Renewal,
   Request,
@@ -26,7 +27,7 @@ import {
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
 import { RJSFSchema } from '@rjsf/utils'
-import { useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { DialogBaseTitle } from '../../DialogBase'
 import RequesterInformationFields from './RequesterInformationFields'
 import {
@@ -39,8 +40,9 @@ import {
 import SchemaStepForm, {
   SchemaStepFormHandle,
 } from '@/components/JsonSchemaForm/SchemaStepForm'
+import { FileHandleWidgetContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import {
-  getFileUploadFieldTitles,
+  fileAnswersChanged,
   getStepTitle,
   SchemaData,
 } from '@/utils/jsonschema/schemaData'
@@ -158,6 +160,28 @@ function JsonSchemaRequestWizardContent(
     request.schemaData ?? {},
   )
   const schemaStepFormRef = useRef<SchemaStepFormHandle>(null)
+  // The IDs of the file fields whose upload is running. Leaving the step would drop the uploaded file.
+  const [uploadingFieldIds, setUploadingFieldIds] = useState<
+    ReadonlySet<string>
+  >(() => new Set())
+  const isUploading = uploadingFieldIds.size > 0
+  const onUploadingChange = useCallback(
+    (fieldId: string, fieldIsUploading: boolean) =>
+      setUploadingFieldIds(previous => {
+        const next = new Set(previous)
+        if (fieldIsUploading) {
+          next.add(fieldId)
+        } else {
+          next.delete(fieldId)
+        }
+        return next
+      }),
+    [],
+  )
+  // The request as last saved. Saves run one at a time, each built on the previous one's result, so that each carries
+  // the latest etag and, once the request is created, its ID.
+  const savedRequestRef = useRef(request)
+  const saveQueueRef = useRef<Promise<unknown>>(Promise.resolve())
 
   const { mutateAsync: updateRequest, isPending: isSaving } =
     useUpdateDataAccessRequest({
@@ -169,7 +193,6 @@ function JsonSchemaRequestWizardContent(
       onError: e => setAlertMessage(e.reason),
     })
 
-  const fileUploadFieldTitles = getFileUploadFieldTitles(steps)
   const isBusy = isSaving || isSubmitting
   // Step 0 is the requester information; schema steps follow
   const lastStepIndex = steps.length
@@ -179,21 +202,88 @@ function JsonSchemaRequestWizardContent(
     ? undefined
     : steps[activeStepIndex - 1]
 
+  /**
+   * Saves the request built from the last saved one, after any save already in flight settles. Resolves to undefined
+   * if the save failed.
+   */
+  function enqueueSave(
+    build: (savedRequest: Request | Renewal) => Request | Renewal,
+  ): Promise<Request | Renewal | undefined> {
+    const save = saveQueueRef.current.then(async () => {
+      // Cleared as this save starts, so that a message left by the save before it is not shown after this one succeeds
+      setAlertMessage(undefined)
+      try {
+        const saved = await updateRequest(build(savedRequestRef.current))
+        savedRequestRef.current = saved
+        return saved
+      } catch {
+        // The mutation's onError displays the message
+        return undefined
+      }
+    })
+    saveQueueRef.current = save
+    return save
+  }
+
+  /** Saves the request with the given answers. Resolves to undefined if the save failed. */
+  function saveRequest(
+    latestSchemaData: SchemaData,
+  ): Promise<Request | Renewal | undefined> {
+    return enqueueSave(savedRequest =>
+      buildRequest(
+        savedRequest,
+        requesterInformation,
+        latestSchemaData,
+        schema,
+        isEDucEnabled,
+      ),
+    )
+  }
+
+  function onSchemaDataChange(latestSchemaData: SchemaData) {
+    setSchemaData(latestSchemaData)
+    if (fileAnswersChanged(schema, schemaData, latestSchemaData)) {
+      // Save a file answer as soon as it changes: the request must list the file in its attachments before the file can
+      // be downloaded through the request, and the file should not be lost if the requester leaves the wizard
+      void saveRequest(latestSchemaData)
+    }
+  }
+
+  const fileHandleWidgetContext = useMemo<FileHandleWidgetContext>(
+    () => ({
+      answerObject: request.id
+        ? {
+            associateObjectType:
+              FileHandleAssociateType.DataAccessRequestAttachment,
+            associateObjectId: String(request.id),
+          }
+        : undefined,
+      answerFileHandleIds: request.attachments ?? [],
+      templateObject: {
+        associateObjectType:
+          FileHandleAssociateType.AccessRequirementAttachment,
+        associateObjectId: String(accessRequirement.id),
+      },
+      // Saves are queued, so answers can change while one is in flight
+      canEdit: !isSubmitting,
+      onUploadingChange,
+    }),
+    [
+      request.id,
+      request.attachments,
+      accessRequirement.id,
+      isSubmitting,
+      onUploadingChange,
+    ],
+  )
+
   async function saveAndAdvance(latestSchemaData: SchemaData = schemaData) {
-    setAlertMessage(undefined)
-    let saved: Request | Renewal
-    try {
-      saved = await updateRequest(
-        buildRequest(
-          request,
-          requesterInformation,
-          latestSchemaData,
-          schema,
-          isEDucEnabled,
-        ),
-      )
-    } catch {
-      // The mutation's onError displays the message
+    // Enter in a field also submits the step, so this is guarded as well as the Next button
+    if (isUploading || isBusy) {
+      return
+    }
+    const saved = await saveRequest(latestSchemaData)
+    if (!saved) {
       return
     }
     if (!isLastStep) {
@@ -226,17 +316,17 @@ function JsonSchemaRequestWizardContent(
 
   function onDucUpload(response: UploadCallbackResp) {
     if (response.success && response.resp) {
-      // The mutation's onError displays the message
-      updateRequest({
+      const ducFileHandleId = response.resp.fileHandleId
+      void enqueueSave(savedRequest => ({
         ...buildRequest(
-          request,
+          savedRequest,
           requesterInformation,
           schemaData,
           schema,
           isEDucEnabled,
         ),
-        ducFileHandleId: response.resp.fileHandleId,
-      }).catch(() => {})
+        ducFileHandleId,
+      }))
     } else if (response.error) {
       setAlertMessage(response.error.reason)
     }
@@ -244,9 +334,9 @@ function JsonSchemaRequestWizardContent(
 
   const disableNext =
     isBusy ||
+    isUploading ||
     (isRequesterInformationStep &&
-      !isRequesterInformationComplete(requesterInformation, isEDucEnabled)) ||
-    (isLastStep && fileUploadFieldTitles.length > 0)
+      !isRequesterInformationComplete(requesterInformation, isEDucEnabled))
 
   let primaryActionText = 'Next'
   if (isLastStep) {
@@ -292,16 +382,10 @@ function JsonSchemaRequestWizardContent(
             ref={schemaStepFormRef}
             step={activeSchemaStep}
             schemaData={schemaData}
-            onSchemaDataChange={setSchemaData}
+            onSchemaDataChange={onSchemaDataChange}
+            fileHandleWidgetContext={fileHandleWidgetContext}
             onValid={latestSchemaData => void saveAndAdvance(latestSchemaData)}
           />
-        )}
-        {isLastStep && fileUploadFieldTitles.length > 0 && (
-          <Alert severity="warning" sx={{ mt: 2 }}>
-            This request includes file upload questions (
-            {fileUploadFieldTitles.join(', ')}), which cannot be answered here
-            yet. The request cannot be submitted.
-          </Alert>
         )}
         {alertMessage && (
           <Alert severity="error" sx={{ mt: 2 }}>
@@ -317,7 +401,7 @@ function JsonSchemaRequestWizardContent(
         {!isRequesterInformationStep && (
           <Button
             variant="outlined"
-            disabled={isBusy}
+            disabled={isBusy || isUploading}
             onClick={() => setActiveStepIndex(activeStepIndex - 1)}
           >
             Back
@@ -330,7 +414,7 @@ function JsonSchemaRequestWizardContent(
           onClick={() =>
             onCancel(
               buildRequest(
-                request,
+                savedRequestRef.current,
                 requesterInformation,
                 schemaData,
                 schema,

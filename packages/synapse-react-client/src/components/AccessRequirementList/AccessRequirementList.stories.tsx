@@ -8,6 +8,7 @@ import {
 } from '@/mocks/accessRequirement/mockAccessRequirements'
 import {
   mockJsonSchemaAR1,
+  mockJsonSchemaAR2,
   mockJsonSchemaAR1WikiPage,
   mockJsonSchemaAR1WikiPageKey,
 } from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
@@ -22,7 +23,12 @@ import {
   getAccessRequirementStatusHandlers,
 } from '@/mocks/msw/handlers/accessRequirementHandlers'
 import { getDataAccessRequestHandlers } from '@/mocks/msw/handlers/dataAccessRequestHandlers'
-import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
+import { getFileHandlers } from '@/mocks/msw/handlers/fileHandlers'
+import {
+  getFormTemplateHandlers,
+  getFormTemplateService,
+} from '@/mocks/msw/handlers/formTemplateHandlers'
+import { mockFormTemplates } from '@/mocks/accessRequirement/mockFormTemplates'
 import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
 import { getEntityHandlers } from '@/mocks/msw/handlers/entityHandlers'
 import { getResearchProjectHandlers } from '@/mocks/msw/handlers/researchProjectHandlers'
@@ -47,7 +53,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { JSONSchema7 } from 'json-schema'
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse, RequestHandler } from 'msw'
 import AccessRequirementList from './AccessRequirementList'
 
 const meta: Meta = {
@@ -510,4 +516,75 @@ export const SchemaDrivenRequirementWithYesNoQuestion: Story = {
     },
   },
   args: schemaDrivenRequirementArgs,
+}
+
+function getMswHandlers(story: Story): RequestHandler[] {
+  const parameters = story.parameters as
+    | { msw?: { handlers?: RequestHandler[] } }
+    | undefined
+  return parameters?.msw?.handlers ?? []
+}
+
+const schemaDrivenAccessRequirementWithFileQuestion =
+  mockJsonSchemaAR2 as unknown as AccessRequirement
+
+/**
+ * A JsonSchemaAccessRequirement whose FormTemplate asks the requester to upload a file, and offers a template file for
+ * download. The wizard saves the request when the file changes, listing the file in the request's attachments.
+ */
+export const SchemaDrivenRequirementWithFileQuestion: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        ...getFileHandlers(MOCK_REPO_ORIGIN),
+        ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, [
+          {
+            accessRequirementId: String(mockJsonSchemaAR2.id),
+            concreteType:
+              'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus',
+            isApproved: false,
+          },
+        ]),
+        ...getAccessRequirementEntityBindingHandlers(
+          MOCK_REPO_ORIGIN,
+          undefined,
+          [schemaDrivenAccessRequirementWithFileQuestion],
+        ),
+        ...getMswHandlers(SchemaDrivenRequirement),
+      ],
+    },
+  },
+  args: {
+    ...SchemaDrivenRequirement.args,
+    accessRequirementFromProps: [schemaDrivenAccessRequirementWithFileQuestion],
+  },
+}
+
+/**
+ * The same file question when its field has no template file: the requester only uploads the file.
+ */
+export const SchemaDrivenRequirementWithFileQuestionWithoutTemplate: Story = {
+  ...SchemaDrivenRequirementWithFileQuestion,
+  parameters: {
+    msw: {
+      handlers: [
+        ...getFormTemplateHandlers(
+          MOCK_REPO_ORIGIN,
+          getFormTemplateService(
+            mockFormTemplates.map(template => ({
+              ...template,
+              steps: template.steps.map(step => ({
+                ...step,
+                fields: step.fields.map(
+                  ({ templateFileHandleId: _templateFileHandleId, ...field }) =>
+                    field,
+                ),
+              })),
+            })),
+          ),
+        ),
+        ...getMswHandlers(SchemaDrivenRequirementWithFileQuestion),
+      ],
+    },
+  },
 }

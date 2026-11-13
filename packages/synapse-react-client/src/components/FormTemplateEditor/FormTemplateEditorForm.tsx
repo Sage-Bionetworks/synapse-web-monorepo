@@ -228,16 +228,10 @@ export function FormTemplateEditorForm({
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>
             <Box sx={{ position: 'sticky', top: 16 }}>
-              <Typography
-                variant="subtitle2"
-                color="text.secondary"
-                gutterBottom
-              >
-                Live Preview
-              </Typography>
               <FormTemplatePreview
                 template={previewTemplate}
                 jsonSchema={jsonSchema}
+                formTemplateId={initialTemplate?.id}
               />
             </Box>
           </Grid>
