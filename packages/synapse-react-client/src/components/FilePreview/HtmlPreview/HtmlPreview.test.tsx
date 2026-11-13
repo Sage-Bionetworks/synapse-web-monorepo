@@ -193,6 +193,8 @@ describe('HTML Preview tests', () => {
     window.dispatchEvent(
       new MessageEvent('message', {
         data: { type: HEIGHT_MESSAGE_TYPE, height: newHeight },
+        // Messages from the sandboxed iframe have the origin 'null'
+        origin: 'null',
         source: frame.contentWindow,
       }),
     )

@@ -70,8 +70,11 @@ export default function HtmlPreview(props: HtmlPreviewProps) {
   )
   useEffect(() => {
     function onMessage(event: MessageEvent) {
-      // Only accept messages from this preview's iframe
-      if (event.source !== frameEl?.current?.contentWindow) {
+      // Only accept messages from this preview's iframe. Because it's sandboxed, the browser reports its origin as 'null'
+      if (
+        event.origin !== 'null' ||
+        event.source !== frameEl?.current?.contentWindow
+      ) {
         return
       }
 
@@ -80,7 +83,11 @@ export default function HtmlPreview(props: HtmlPreviewProps) {
         height?: number
       }
 
-      if (type !== HEIGHT_MESSAGE_TYPE || !Number.isFinite(height)) {
+      if (
+        type !== HEIGHT_MESSAGE_TYPE ||
+        typeof height !== 'number' ||
+        !Number.isFinite(height)
+      ) {
         return
       }
 
