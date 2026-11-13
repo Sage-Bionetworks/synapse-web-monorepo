@@ -5,6 +5,28 @@ import { Alert } from '@mui/material'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 
+// Never add allow-same-origin: with allow-scripts, the preview's scripts would run as synapse.org and could read the
+// parent page, cookies and storage, or remove the sandbox
+export const HTML_PREVIEW_SANDBOX =
+  'allow-scripts allow-popups allow-popups-to-escape-sandbox'
+
+export const HEIGHT_MESSAGE_TYPE = 'SYNAPSE_HTML_PREVIEW_HEIGHT'
+
+// The sandboxed frame is cross-origin, so it reports its own height on load and on resize (no polling needed)
+export const HEIGHT_REPORTER_SCRIPTS = `
+    <script>
+      window.addEventListener('load', () => {
+        const post = () =>
+          window.parent.postMessage(
+            { type: '${HEIGHT_MESSAGE_TYPE}', height: document.body.scrollHeight },
+            '*',
+          )
+        post()
+        new ResizeObserver(post).observe(document.body)
+      })
+    </script>
+  `
+
 /**
  * @param options
  * @returns HTML that is cleaned if it is not trusted. undefined if `isLoading` is true.
@@ -39,30 +61,38 @@ export type HtmlPreviewProps = {
  */
 export default function HtmlPreview(props: HtmlPreviewProps) {
   const { createdByUserId, rawHtml } = props
-  const frameEl = useRef(null)
+  const frameEl = useRef<HTMLIFrameElement>(null)
   const [frameHeight, setFrameHeight] = useState(100)
 
   const { data: teamMembership, isLoading } = useGetIsUserMemberOfTeam(
     TRUSTED_HTML_USERS_TEAM_ID,
     createdByUserId,
   )
-  const updateHeight = () => {
-    if (frameEl?.current && frameEl?.current['contentWindow']) {
-      let newHeightPx: number =
-        frameEl.current['contentWindow']['document']['body']['scrollHeight']
-      if (newHeightPx < 450) {
-        newHeightPx = 450
-      }
-      if (!frameHeight || Math.abs(newHeightPx - frameHeight) > 70) {
-        setFrameHeight(newHeightPx + 50)
-      }
-    }
-  }
   useEffect(() => {
-    setInterval(() => {
-      updateHeight()
-    }, 500)
-  }, [rawHtml])
+    function onMessage(event: MessageEvent) {
+      // Only accept messages from this preview's iframe
+      if (event.source !== frameEl?.current?.contentWindow) {
+        return
+      }
+
+      const { type, height } = (event.data ?? {}) as {
+        type?: string
+        height?: number
+      }
+
+      if (type !== HEIGHT_MESSAGE_TYPE || !Number.isFinite(height)) {
+        return
+      }
+
+      const newHeightPx = Math.max(height, 450)
+      setFrameHeight(current =>
+        Math.abs(newHeightPx - current) > 70 ? newHeightPx + 50 : current,
+      )
+    }
+
+    window.addEventListener('message', onMessage)
+    return () => window.removeEventListener('message', onMessage)
+  }, [])
   const htmlIsCreatedByTrustedUser = !!teamMembership
 
   const cleanHtml = useCleanHtml({
@@ -70,6 +100,9 @@ export default function HtmlPreview(props: HtmlPreviewProps) {
     isLoading,
     isTrusted: htmlIsCreatedByTrustedUser,
   })
+
+  const srcDoc =
+    cleanHtml === undefined ? undefined : cleanHtml + HEIGHT_REPORTER_SCRIPTS
 
   if (isLoading) {
     return <SynapseSpinner />
@@ -84,9 +117,10 @@ export default function HtmlPreview(props: HtmlPreviewProps) {
       )}
       <iframe
         ref={frameEl}
-        srcDoc={cleanHtml}
+        srcDoc={srcDoc}
         height={`${frameHeight}px`}
         style={{ border: 0, width: '100%' }}
+        sandbox={HTML_PREVIEW_SANDBOX}
       />
     </>
   )
