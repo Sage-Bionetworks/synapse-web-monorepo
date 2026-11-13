@@ -43,7 +43,7 @@ function Harness({
       steps={draft.steps}
       jsonSchema={draft.jsonSchema}
       unboundProperties={draft.unboundProperties}
-      formTemplateId={undefined}
+      savedTemplate={undefined}
       validationErrors={validateFormTemplateFields(
         toFormTemplateSteps(draft.steps),
         draft.jsonSchema,

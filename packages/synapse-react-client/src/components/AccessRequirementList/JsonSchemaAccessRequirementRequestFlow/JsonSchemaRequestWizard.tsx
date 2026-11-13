@@ -259,10 +259,10 @@ function JsonSchemaRequestWizardContent(
           }
         : undefined,
       answerFileHandleIds: request.attachments ?? [],
+      // Any version of the template may list a file, so the files are not filtered by the version of this form
       templateObject: {
-        associateObjectType:
-          FileHandleAssociateType.AccessRequirementAttachment,
-        associateObjectId: String(accessRequirement.id),
+        associateObjectType: FileHandleAssociateType.FormTemplateAttachment,
+        associateObjectId: accessRequirement.formTemplateRef.templateId,
       },
       // Saves are queued, so answers can change while one is in flight
       canEdit: !isSubmitting,
@@ -271,7 +271,7 @@ function JsonSchemaRequestWizardContent(
     [
       request.id,
       request.attachments,
-      accessRequirement.id,
+      accessRequirement.formTemplateRef.templateId,
       isSubmitting,
       onUploadingChange,
     ],

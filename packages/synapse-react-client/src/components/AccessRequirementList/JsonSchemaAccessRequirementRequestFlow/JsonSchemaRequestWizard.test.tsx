@@ -457,7 +457,7 @@ describe('JsonSchemaRequestWizard', () => {
       )
     }
 
-    it('offers the template file through the access requirement', async () => {
+    it('offers the template file through the form template', async () => {
       mockRequestServices(
         clinicalAccessRequirement,
         createRequest(clinicalAccessRequirement),
@@ -469,9 +469,9 @@ describe('JsonSchemaRequestWizard', () => {
       expect(getFileLinks()).toEqual([
         {
           fileHandleId: MOCK_FILE_HANDLE_ID,
-          associateObjectType:
-            FileHandleAssociateType.AccessRequirementAttachment,
-          associateObjectId: String(clinicalAccessRequirement.id),
+          associateObjectType: FileHandleAssociateType.FormTemplateAttachment,
+          associateObjectId:
+            clinicalAccessRequirement.formTemplateRef.templateId,
         },
       ])
       // The template download is a call-to-action button
