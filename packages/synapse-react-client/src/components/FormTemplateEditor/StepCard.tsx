@@ -1,10 +1,6 @@
 import { useDroppable } from '@dnd-kit/react'
 import { useSortable } from '@dnd-kit/react/sortable'
-import {
-  FormTemplate,
-  FormTemplateField,
-  FormTemplateStep,
-} from '@sage-bionetworks/synapse-client'
+import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import {
   Alert,
   Box,
@@ -43,7 +39,17 @@ import {
   STEP_SORTABLE_GROUP,
   STEP_SORTABLE_TYPE,
 } from './sortableIds'
-import { BIND_FIELD_LABEL, EditableFormTemplateStep, moveItem } from './utils'
+import {
+  BIND_FIELD_LABEL,
+  EditableFormTemplateStep,
+  FieldSettings,
+  FieldSettingsByPath,
+  fieldSettingsFor,
+  moveItem,
+} from './utils'
+
+/** The parts of a step its card edits; `uiKey` is the step's identity, not an edit. */
+export type StepPatch = Partial<Omit<EditableFormTemplateStep, 'uiKey'>>
 
 /**
  * The slot list must lose to the slot rows inside it so that dragging over a populated step
@@ -61,11 +67,17 @@ export type StepCardProps = {
   unboundProperties: ResolvedSchemaProperty[]
   /** The full JSON Schema, used to resolve display labels for slot rows. */
   jsonSchema: RJSFSchema
+  /** Each property's slot settings by `schemaPath`. */
+  fieldSettings: FieldSettingsByPath
   /** The saved version of the template, if any. Its attachments can be downloaded through it. */
   savedTemplate: FormTemplate | undefined
   /** If true, render expanded by default (first step). */
   defaultExpanded: boolean
-  onChange: (patch: Partial<FormTemplateStep>) => void
+  onChange: (patch: StepPatch) => void
+  onFieldSettingsChange: (
+    schemaPath: string,
+    patch: Partial<FieldSettings>,
+  ) => void
   onBindField: (propertyKey: string) => void
   onMoveUp: () => void
   onMoveDown: () => void
@@ -81,9 +93,11 @@ export function StepCard({
   isLast,
   unboundProperties,
   jsonSchema,
+  fieldSettings,
   savedTemplate,
   defaultExpanded,
   onChange,
+  onFieldSettingsChange,
   onBindField,
   onMoveUp,
   onMoveDown,
@@ -110,26 +124,15 @@ export function StepCard({
     collisionPriority: SLOT_LIST_COLLISION_PRIORITY,
   })
 
-  const handleFieldChange = (
-    fieldIdx: number,
-    patch: Partial<FormTemplateField>,
-  ) => {
-    onChange({
-      fields: step.fields.map((f, i) =>
-        i === fieldIdx ? { ...f, ...patch } : f,
-      ),
-    })
-  }
-
   const handleFieldMove = (fieldIdx: number, direction: -1 | 1) => {
-    onChange({ fields: moveItem(step.fields, fieldIdx, direction) })
+    onChange({ fieldPaths: moveItem(step.fieldPaths, fieldIdx, direction) })
   }
 
   const handleFieldRemove = (fieldIdx: number) => {
-    onChange({ fields: step.fields.filter((_, i) => i !== fieldIdx) })
+    onChange({ fieldPaths: step.fieldPaths.filter((_, i) => i !== fieldIdx) })
   }
 
-  const fieldCountLabel = pluralize('field', step.fields.length, true)
+  const fieldCountLabel = pluralize('field', step.fieldPaths.length, true)
 
   return (
     <Paper
@@ -233,7 +236,7 @@ export function StepCard({
               borderRadius: 1,
             }}
           >
-            {step.fields.length === 0 ? (
+            {step.fieldPaths.length === 0 ? (
               <Typography
                 variant="caption"
                 color="text.secondary"
@@ -242,27 +245,26 @@ export function StepCard({
                 Drag a field here, or bind one below.
               </Typography>
             ) : (
-              step.fields.map((field, fieldIdx) => {
+              step.fieldPaths.map((schemaPath, fieldIdx) => {
                 const resolved = resolveSchemaPropertyAtPointer(
                   jsonSchema,
-                  field.schemaPath,
+                  schemaPath,
                 )
                 return (
                   <StepFieldRow
-                    key={field.schemaPath}
-                    sortableId={slotSortableId(field)}
+                    key={schemaPath}
+                    sortableId={slotSortableId(schemaPath)}
                     sortableIndex={fieldIdx}
                     sortableGroup={slotGroupId(step)}
-                    field={field}
+                    schemaPath={schemaPath}
+                    settings={fieldSettingsFor(fieldSettings, schemaPath)}
                     resolvedProperty={resolved?.subSchema}
                     context={resolved?.context ?? 'ALWAYS'}
-                    propertyKey={
-                      pointerToPropertyKey(field.schemaPath) ?? field.schemaPath
-                    }
+                    propertyKey={pointerToPropertyKey(schemaPath) ?? schemaPath}
                     isFirst={fieldIdx === 0}
-                    isLast={fieldIdx === step.fields.length - 1}
+                    isLast={fieldIdx === step.fieldPaths.length - 1}
                     savedTemplate={savedTemplate}
-                    onChange={patch => handleFieldChange(fieldIdx, patch)}
+                    onChange={patch => onFieldSettingsChange(schemaPath, patch)}
                     onMoveUp={() => handleFieldMove(fieldIdx, -1)}
                     onMoveDown={() => handleFieldMove(fieldIdx, 1)}
                     onRemove={() => handleFieldRemove(fieldIdx)}

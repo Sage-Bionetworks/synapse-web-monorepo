@@ -1,6 +1,7 @@
 import { FormTemplateField } from '@sage-bionetworks/synapse-client'
 import {
   createEditableStep,
+  DEFAULT_FIELD_SETTINGS,
   moveItem,
   toEditableSteps,
   toFormTemplateSteps,
@@ -15,7 +16,9 @@ describe('utils', () => {
     })
 
     it('assigns each loaded step a distinct uiKey', () => {
-      const [a, b] = toEditableSteps([
+      const {
+        steps: [a, b],
+      } = toEditableSteps([
         { title: 'A', fields: [] },
         { title: 'B', fields: [] },
       ])
@@ -35,11 +38,42 @@ describe('utils', () => {
       expect(reordered.find(s => s.uiKey === second.uiKey)).toBe(second)
     })
 
-    it('strips uiKey before handing steps back to a caller', () => {
-      const editable = toEditableSteps([{ title: 'A', fields: [] }])
-      const plain = toFormTemplateSteps(editable)
-      expect(plain).toEqual([{ title: 'A', fields: [] }])
+    it('round-trips loaded steps, splitting each slot into its path and settings', () => {
+      const steps = [
+        {
+          title: 'A',
+          fields: [
+            {
+              schemaPath: '/a',
+              uiDefinition: { 'ui:widget': 'textarea' },
+              isPublic: true,
+              templateFileHandleId: '123',
+            },
+          ],
+        },
+        { title: 'B', description: 'b', fields: [] },
+      ]
+      const editable = toEditableSteps(steps)
+
+      expect(editable.steps.map(s => s.fieldPaths)).toEqual([['/a'], []])
+      expect(editable.fieldSettings).toEqual({
+        '/a': {
+          uiDefinition: { 'ui:widget': 'textarea' },
+          isPublic: true,
+          templateFileHandleId: '123',
+        },
+      })
+      const plain = toFormTemplateSteps(editable.steps, editable.fieldSettings)
+      expect(plain).toEqual(steps)
       expect(plain[0]).not.toHaveProperty('uiKey')
+    })
+
+    it('gives a bound path without settings the default slot settings', () => {
+      const step = { ...createEditableStep(), fieldPaths: ['/a'] }
+
+      expect(toFormTemplateSteps([step], {})[0].fields).toEqual([
+        { schemaPath: '/a', ...DEFAULT_FIELD_SETTINGS },
+      ])
     })
   })
 

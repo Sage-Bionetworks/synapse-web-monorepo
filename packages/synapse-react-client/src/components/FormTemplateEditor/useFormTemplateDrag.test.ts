@@ -69,7 +69,7 @@ function renderDrag() {
   const steps = () => result.current.draft.steps
   return {
     steps,
-    pathsByStep: () => steps().map(s => s.fields.map(f => f.schemaPath)),
+    pathsByStep: () => steps().map(s => s.fieldPaths),
     titles: () => steps().map(s => s.title),
     start: () => act(() => result.current.handlers.onDragStart()),
     over: (source: Draggable, target: Droppable) =>
@@ -104,7 +104,7 @@ describe('useFormTemplateDrag', () => {
   it('moves a slot into an empty step while dragged over that step’s slot list', () => {
     const drag = renderDrag()
     const [one, two] = drag.steps()
-    const slotA = one.fields[0]
+    const slotA = one.fieldPaths[0]
 
     drag.start()
     drag.over(

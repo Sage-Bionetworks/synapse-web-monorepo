@@ -17,9 +17,14 @@ import {
   removeProperty,
   renamePropertyKey,
   replaceProperty,
+  updateFieldSettings,
   updateProperty,
 } from './formTemplateDraftState'
-import { EditableFormTemplateStep } from './utils'
+import {
+  DEFAULT_FIELD_SETTINGS,
+  EditableFormTemplateStep,
+  FieldSettingsByPath,
+} from './utils'
 
 /**
  * `institution` (required, ALWAYS), `age` (optional, ALWAYS, title matches its key), and
@@ -52,29 +57,22 @@ const schema: RJSFSchema = {
 
 function step(
   uiKey: string,
-  schemaPaths: string[] = [],
+  fieldPaths: string[] = [],
 ): EditableFormTemplateStep {
-  return {
-    uiKey,
-    title: uiKey,
-    fields: schemaPaths.map(schemaPath => ({
-      schemaPath,
-      uiDefinition: {},
-      isPublic: false,
-    })),
-  }
+  return { uiKey, title: uiKey, fieldPaths }
 }
 
 function draft(
   steps: EditableFormTemplateStep[] = [step('s1', ['/institution'])],
   editingPropertyKey: string | null = null,
+  fieldSettings: FieldSettingsByPath = {},
 ): FormTemplateDraftState {
-  return { jsonSchema: schema, steps, editingPropertyKey }
+  return { jsonSchema: schema, steps, fieldSettings, editingPropertyKey }
 }
 
 /** Each step's bound schemaPaths, for readable assertions. */
 function pathsByStep(state: FormTemplateDraftState): string[][] {
-  return state.steps.map(s => s.fields.map(f => f.schemaPath))
+  return state.steps.map(s => s.fieldPaths)
 }
 
 function resolve(state: FormTemplateDraftState, key: string) {
@@ -274,13 +272,10 @@ describe('moveSlot', () => {
 })
 
 describe('bindField', () => {
-  it('appends a field bound to the property with default slot config', () => {
+  it('appends the property to the step', () => {
     const next = bindField(draft([step('s1'), step('s2')]), 'age', 's2')
 
-    expect(next.steps[1].fields).toEqual([
-      { schemaPath: '/age', uiDefinition: {}, isPublic: false },
-    ])
-    expect(next.steps[0].fields).toEqual([])
+    expect(pathsByStep(next)).toEqual([[], ['/age']])
   })
 
   it.each([
@@ -289,6 +284,72 @@ describe('bindField', () => {
   ])('is a no-op when %s', (_label, propertyKey, stepKey) => {
     const state = draft([step('s1', ['/institution']), step('s2')])
     expect(bindField(state, propertyKey, stepKey)).toBe(state)
+  })
+})
+
+describe('field settings', () => {
+  const publicWithHint = {
+    uiDefinition: { 'ui:options': { rows: 3 } },
+    isPublic: true,
+    templateFileHandleId: '123',
+  }
+
+  it('merges an update into the defaults for a property without settings', () => {
+    const next = updateFieldSettings(draft(), '/age', { isPublic: true })
+
+    expect(next.fieldSettings['/age']).toEqual({
+      ...DEFAULT_FIELD_SETTINGS,
+      isPublic: true,
+    })
+  })
+
+  it('keeps settings when a field is unbound and bound to another step', () => {
+    const bound = draft([step('s1', ['/institution']), step('s2')], null, {
+      '/institution': publicWithHint,
+    })
+    const unbound = { ...bound, steps: [step('s1'), step('s2')] }
+    const rebound = bindField(unbound, 'institution', 's2')
+
+    expect(pathsByStep(rebound)).toEqual([[], ['/institution']])
+    expect(rebound.fieldSettings['/institution']).toEqual(publicWithHint)
+  })
+
+  it('moves settings with a renamed property', () => {
+    const next = renamePropertyKey(
+      draft(undefined, null, { '/institution': publicWithHint }),
+      'institution',
+      'org',
+    )
+
+    expect(next.fieldSettings).toEqual({ '/org': publicWithHint })
+  })
+
+  it('drops settings with a removed property', () => {
+    const next = removeProperty(
+      draft(undefined, null, { '/institution': publicWithHint }),
+      'institution',
+    )
+
+    expect(next.fieldSettings).toEqual({})
+  })
+
+  it('starts a created field from the defaults, even under a key with leftover settings', () => {
+    const next = createField(
+      draft(undefined, null, { '/newField': publicWithHint }),
+    )
+
+    expect(next.editingPropertyKey).toBe('newField')
+    expect(next.fieldSettings).toEqual({})
+  })
+
+  it('replaces leftover settings under the key a property is renamed to', () => {
+    const next = renamePropertyKey(
+      draft(undefined, null, { '/org': publicWithHint }),
+      'institution',
+      'org',
+    )
+
+    expect(next.fieldSettings).toEqual({})
   })
 })
 

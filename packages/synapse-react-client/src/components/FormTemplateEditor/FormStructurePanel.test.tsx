@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FormStructurePanel } from './FormStructurePanel'
 import { validateFormTemplateFields } from './formTemplateValidation'
-import { BIND_FIELD_LABEL, toFormTemplateSteps } from './utils'
+import { BIND_FIELD_LABEL } from './utils'
 import { useFormTemplateDraft } from './useFormTemplateDraft'
 
 const jsonSchema: RJSFSchema = {
@@ -42,13 +42,15 @@ function Harness({
     <FormStructurePanel
       steps={draft.steps}
       jsonSchema={draft.jsonSchema}
+      fieldSettings={draft.fieldSettings}
       unboundProperties={draft.unboundProperties}
       savedTemplate={undefined}
       validationErrors={validateFormTemplateFields(
-        toFormTemplateSteps(draft.steps),
+        draft.formTemplateSteps,
         draft.jsonSchema,
       )}
       onStepsChange={draft.setSteps}
+      onFieldSettingsChange={draft.handleUpdateFieldSettings}
       onBindField={draft.bindField}
     />
   )

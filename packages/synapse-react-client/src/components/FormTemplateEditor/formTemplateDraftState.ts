@@ -1,7 +1,8 @@
 /*
  * Pure transitions over a FormTemplate draft: the in-progress JSON Schema body, the step structure,
- * and the property open for editing. Every transition keeps the three in sync (renaming a property
- * key rewrites every step field bound to it, removing a property unbinds it from every step, etc).
+ * each property's slot settings, and the property open for editing. Every transition keeps them in
+ * sync (renaming a property key rewrites every step and settings entry that names it, removing a
+ * property unbinds it from every step and drops its settings, etc).
  */
 import { RJSFSchema } from '@rjsf/utils'
 import {
@@ -18,11 +19,25 @@ import {
   setSchemaPropertyRequired,
 } from '@/utils/jsonschema/submissionContext'
 import { generatePropertyKey } from './schemaFieldUtils'
-import { EditableFormTemplateStep } from './utils'
+import {
+  EditableFormTemplateStep,
+  FieldSettings,
+  FieldSettingsByPath,
+  fieldSettingsFor,
+} from './utils'
 
 export type FormTemplateDraftState = {
   jsonSchema: RJSFSchema
   steps: EditableFormTemplateStep[]
+  /**
+   * Slot settings by `schemaPath`. A property binds to at most one slot, so these are per-property
+   * and kept whether or not a step binds the property: unbinding, rebinding and moving a field
+   * leave them alone. An entry also outlives its property in the raw JSON Schema, so an edit that
+   * drops a property and brings it back (a key typed over, an undo) restores it. Only
+   * `removeProperty` deletes one, and a key the guided editor creates (`createField`,
+   * `renamePropertyKey`) starts fresh. A property without an entry has `DEFAULT_FIELD_SETTINGS`.
+   */
+  fieldSettings: FieldSettingsByPath
   /** The property open in the field definition drawer, if any. */
   editingPropertyKey: string | null
 }
@@ -39,7 +54,7 @@ export function schemaPropertyKeys(jsonSchema: RJSFSchema): Set<string> {
 export function boundSchemaPaths(
   steps: EditableFormTemplateStep[],
 ): Set<string> {
-  return new Set(steps.flatMap(step => step.fields.map(f => f.schemaPath)))
+  return new Set(steps.flatMap(step => step.fieldPaths))
 }
 
 /** Schema properties that no step binds yet, in schema order. */
@@ -53,7 +68,10 @@ export function listUnboundProperties(
   )
 }
 
-/** Add an unbound text property with a generated key and open it for editing. */
+/**
+ * Add an unbound text property with a generated key and open it for editing. It starts from the
+ * default slot settings, even if a property removed earlier left settings under the same key.
+ */
 export function createField(
   state: FormTemplateDraftState,
 ): FormTemplateDraftState {
@@ -61,6 +79,8 @@ export function createField(
     NEW_FIELD_TITLE,
     schemaPropertyKeys(state.jsonSchema),
   )
+  const { [propertyKeyToPointer(key)]: _stale, ...fieldSettings } =
+    state.fieldSettings
   return {
     ...state,
     jsonSchema: setSchemaProperty(
@@ -69,13 +89,15 @@ export function createField(
       { type: 'string', title: NEW_FIELD_TITLE, description: '' },
       'ALWAYS',
     ),
+    fieldSettings,
     editingPropertyKey: key,
   }
 }
 
 /**
- * Rename a property's key everywhere it's referenced: the schema, every step field bound to it, and
- * the drawer editing it. A no-op if `oldKey` doesn't exist or `newKey` is already taken.
+ * Rename a property's key everywhere it's referenced: the schema, the step binding it, its slot
+ * settings (replacing any left under `newKey`), and the drawer editing it. A no-op if `oldKey`
+ * doesn't exist or `newKey` is taken.
  */
 export function renamePropertyKey(
   state: FormTemplateDraftState,
@@ -90,13 +112,22 @@ export function renamePropertyKey(
     jsonSchema: renameSchemaProperty(state.jsonSchema, oldKey, newKey),
     steps: state.steps.map(step => ({
       ...step,
-      fields: step.fields.map(f =>
-        f.schemaPath === oldPath ? { ...f, schemaPath: newPath } : f,
-      ),
+      fieldPaths: step.fieldPaths.map(p => (p === oldPath ? newPath : p)),
     })),
+    fieldSettings: moveKey(state.fieldSettings, oldPath, newPath),
     editingPropertyKey:
       state.editingPropertyKey === oldKey ? newKey : state.editingPropertyKey,
   }
+}
+
+/** `record` with `oldKey`'s entry, or none, under `newKey` instead. */
+function moveKey<T>(
+  record: Record<string, T>,
+  oldKey: string,
+  newKey: string,
+): Record<string, T> {
+  const { [oldKey]: value, [newKey]: _replaced, ...rest } = record
+  return value === undefined ? rest : { ...rest, [newKey]: value }
 }
 
 /**
@@ -184,14 +215,34 @@ export function removeProperty(
   key: string,
 ): FormTemplateDraftState {
   const path = propertyKeyToPointer(key)
+  const { [path]: _removed, ...fieldSettings } = state.fieldSettings
   return {
     jsonSchema: removeSchemaProperty(state.jsonSchema, key),
     steps: state.steps.map(step => ({
       ...step,
-      fields: step.fields.filter(f => f.schemaPath !== path),
+      fieldPaths: step.fieldPaths.filter(p => p !== path),
     })),
+    fieldSettings,
     editingPropertyKey:
       state.editingPropertyKey === key ? null : state.editingPropertyKey,
+  }
+}
+
+/** Merge `patch` into the slot settings of the property at `schemaPath`. */
+export function updateFieldSettings(
+  state: FormTemplateDraftState,
+  schemaPath: string,
+  patch: Partial<FieldSettings>,
+): FormTemplateDraftState {
+  return {
+    ...state,
+    fieldSettings: {
+      ...state.fieldSettings,
+      [schemaPath]: {
+        ...fieldSettingsFor(state.fieldSettings, schemaPath),
+        ...patch,
+      },
+    },
   }
 }
 
@@ -222,27 +273,25 @@ export function moveSlot(
   toStepKey: string,
   toIndex: number,
 ): FormTemplateDraftState {
-  const field = state.steps
-    .flatMap(step => step.fields)
-    .find(f => f.schemaPath === schemaPath)
-  if (!field || !state.steps.some(step => step.uiKey === toStepKey)) {
+  const isBound = boundSchemaPaths(state.steps).has(schemaPath)
+  if (!isBound || !state.steps.some(step => step.uiKey === toStepKey)) {
     return state
   }
   return {
     ...state,
     steps: state.steps.map(step => {
-      const fields = step.fields.filter(f => f.schemaPath !== schemaPath)
+      const fieldPaths = step.fieldPaths.filter(p => p !== schemaPath)
       if (step.uiKey === toStepKey) {
-        fields.splice(Math.max(0, toIndex), 0, field)
+        fieldPaths.splice(Math.max(0, toIndex), 0, schemaPath)
       }
-      return { ...step, fields }
+      return { ...step, fieldPaths }
     }),
   }
 }
 
 /**
- * Append a field bound to `propertyKey` to the step identified by `stepKey`. A no-op if that
- * property is already bound to any step (a property binds at most once) or no step has `stepKey`.
+ * Append the property `propertyKey` to the step identified by `stepKey`. A no-op if that property
+ * is already bound to any step (a property binds at most once) or no step has `stepKey`.
  */
 export function bindField(
   state: FormTemplateDraftState,
@@ -260,13 +309,7 @@ export function bindField(
     ...state,
     steps: state.steps.map(step =>
       step.uiKey === stepKey
-        ? {
-            ...step,
-            fields: [
-              ...step.fields,
-              { schemaPath: path, uiDefinition: {}, isPublic: false },
-            ],
-          }
+        ? { ...step, fieldPaths: [...step.fieldPaths, path] }
         : step,
     ),
   }

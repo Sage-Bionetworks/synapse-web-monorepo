@@ -1,7 +1,4 @@
-import {
-  FormTemplate,
-  FormTemplateStep,
-} from '@sage-bionetworks/synapse-client'
+import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import { Alert, Box, Button, Paper, Stack, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import pluralize from 'pluralize'
@@ -11,17 +8,21 @@ import {
   ResolvedSchemaProperty,
 } from '@/utils/jsonschema/submissionContext'
 import { FormTemplateFieldValidationError } from './formTemplateValidation'
-import { StepCard } from './StepCard'
+import { StepCard, StepPatch } from './StepCard'
 import {
   BIND_FIELD_LABEL,
   createEditableStep,
   EditableFormTemplateStep,
+  FieldSettings,
+  FieldSettingsByPath,
   moveItem,
 } from './utils'
 
 export type FormStructurePanelProps = {
   steps: EditableFormTemplateStep[]
   jsonSchema: RJSFSchema
+  /** Each property's slot settings by `schemaPath`. */
+  fieldSettings: FieldSettingsByPath
   /** Properties not yet bound to any step in the template. */
   unboundProperties: ResolvedSchemaProperty[]
   /** The saved version of the template, if any. Its attachments can be downloaded through it. */
@@ -29,6 +30,10 @@ export type FormStructurePanelProps = {
   /** Current validation errors; those against a whole step are shown on that step's card. */
   validationErrors: FormTemplateFieldValidationError[]
   onStepsChange: (next: EditableFormTemplateStep[]) => void
+  onFieldSettingsChange: (
+    schemaPath: string,
+    patch: Partial<FieldSettings>,
+  ) => void
   onBindField: (propertyKey: string, stepKey: string) => void
 }
 
@@ -41,13 +46,15 @@ export type FormStructurePanelProps = {
 export function FormStructurePanel({
   steps,
   jsonSchema,
+  fieldSettings,
   unboundProperties,
   savedTemplate,
   validationErrors,
   onStepsChange,
+  onFieldSettingsChange,
   onBindField,
 }: FormStructurePanelProps) {
-  const handleStepChange = (idx: number, patch: Partial<FormTemplateStep>) => {
+  const handleStepChange = (idx: number, patch: StepPatch) => {
     onStepsChange(steps.map((s, i) => (i === idx ? { ...s, ...patch } : s)))
   }
 
@@ -129,9 +136,11 @@ export function FormStructurePanel({
               isLast={stepIdx === steps.length - 1}
               unboundProperties={unboundProperties}
               jsonSchema={jsonSchema}
+              fieldSettings={fieldSettings}
               savedTemplate={savedTemplate}
               defaultExpanded={stepIdx === 0}
               onChange={patch => handleStepChange(stepIdx, patch)}
+              onFieldSettingsChange={onFieldSettingsChange}
               onBindField={propertyKey => onBindField(propertyKey, step.uiKey)}
               onMoveUp={() => handleMoveStep(stepIdx, -1)}
               onMoveDown={() => handleMoveStep(stepIdx, 1)}

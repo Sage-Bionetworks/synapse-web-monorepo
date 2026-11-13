@@ -1,8 +1,5 @@
 import { useSortable } from '@dnd-kit/react/sortable'
-import {
-  FormTemplate,
-  FormTemplateField,
-} from '@sage-bionetworks/synapse-client'
+import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import {
   Box,
   Checkbox,
@@ -29,15 +26,19 @@ import styles from './dragHandle.module.scss'
 import { detectFieldType, fieldTypeLabel } from './schemaFieldUtils'
 import { SLOT_SORTABLE_TYPE } from './sortableIds'
 import { TemplateFileHandleField } from './TemplateFileHandleField'
+import { FieldSettings } from './utils'
 
 export type StepFieldRowProps = {
-  /** Sortable id assigned by parent: `slot:{stepIndex}:{fieldIndex}`. */
+  /** Sortable id assigned by parent, derived from `schemaPath`. */
   sortableId: string
-  /** Position within its step's fields array. */
+  /** Position within its step's fields. */
   sortableIndex: number
   /** Sortable group; slots only reorder within the same step. */
   sortableGroup: string
-  field: FormTemplateField
+  /** The property this slot binds. */
+  schemaPath: string
+  /** The bound property's slot settings. */
+  settings: FieldSettings
   /** The schema property this slot resolves to, if it still exists. */
   resolvedProperty: RJSFSchema | undefined
   /** Which submission context (per the schema's `x-synapse-submissionContext` convention)
@@ -49,7 +50,7 @@ export type StepFieldRowProps = {
   isLast: boolean
   /** The saved version of the template, if any. Its attachments can be downloaded through it. */
   savedTemplate: FormTemplate | undefined
-  onChange: (patch: Partial<FormTemplateField>) => void
+  onChange: (patch: Partial<FieldSettings>) => void
   onMoveUp: () => void
   onMoveDown: () => void
   onRemove: () => void
@@ -64,7 +65,8 @@ export function StepFieldRow({
   sortableId,
   sortableIndex,
   sortableGroup,
-  field,
+  schemaPath,
+  settings,
   resolvedProperty,
   context,
   propertyKey,
@@ -91,13 +93,13 @@ export function StepFieldRow({
   const isFileField = type === 'file'
   const isUnresolved = !resolvedProperty
 
-  let caption = `Missing field: ${field.schemaPath}`
+  let caption = `Missing field: ${schemaPath}`
   if (!isUnresolved) {
     const captionParts = [fieldTypeLabel(type)]
     if (context !== 'ALWAYS') {
       captionParts.push(submissionContextLabel(context))
     }
-    if (field.isPublic) {
+    if (settings.isPublic) {
       captionParts.push('Public')
     }
     caption = captionParts.join(' · ')
@@ -177,7 +179,7 @@ export function StepFieldRow({
         <Stack spacing={1} sx={{ pt: 1, pl: 4 }}>
           {isFileField && (
             <TemplateFileHandleField
-              fileHandleId={field.templateFileHandleId}
+              fileHandleId={settings.templateFileHandleId}
               savedTemplate={savedTemplate}
               onChange={next => onChange({ templateFileHandleId: next })}
             />
@@ -185,7 +187,7 @@ export function StepFieldRow({
           <FormControlLabel
             control={
               <Checkbox
-                checked={field.isPublic ?? false}
+                checked={settings.isPublic ?? false}
                 onChange={e => onChange({ isPublic: e.target.checked })}
               />
             }

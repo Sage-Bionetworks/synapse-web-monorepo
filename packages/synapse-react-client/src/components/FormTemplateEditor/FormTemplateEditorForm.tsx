@@ -40,7 +40,6 @@ import {
   formatSchema$id,
   resolveFormTemplateSchemaName,
 } from './formTemplateSchema'
-import { toFormTemplateSteps } from './utils'
 import {
   FormTemplateFieldValidationError,
   validateFormTemplateFields,
@@ -75,6 +74,9 @@ export function FormTemplateEditorForm({
     setJsonSchema,
     steps,
     setSteps,
+    fieldSettings,
+    handleUpdateFieldSettings,
+    formTemplateSteps,
     editingPropertyKey,
     setEditingPropertyKey,
     usedPaths,
@@ -101,8 +103,8 @@ export function FormTemplateEditorForm({
   const showNameError = nameTouched && !trimmedName
 
   const validationErrors = useMemo(
-    () => validateFormTemplateFields(toFormTemplateSteps(steps), jsonSchema),
-    [steps, jsonSchema],
+    () => validateFormTemplateFields(formTemplateSteps, jsonSchema),
+    [formTemplateSteps, jsonSchema],
   )
 
   const handleSave = async () => {
@@ -115,7 +117,7 @@ export function FormTemplateEditorForm({
         initialJsonSchema,
         name: trimmedName,
         jsonSchema,
-        steps,
+        steps: formTemplateSteps,
       })
       if (!result.ok) {
         setSaveError(result.validationErrors)
@@ -219,10 +221,12 @@ export function FormTemplateEditorForm({
             <FormStructurePanel
               steps={steps}
               jsonSchema={jsonSchema}
+              fieldSettings={fieldSettings}
               unboundProperties={unboundProperties}
               savedTemplate={initialTemplate}
               validationErrors={validationErrors}
               onStepsChange={setSteps}
+              onFieldSettingsChange={handleUpdateFieldSettings}
               onBindField={bindField}
             />
           </Grid>
