@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./OAuthManagement-B0JJJ7xl.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`Synapse/OAuthManagement`,component:n},i={},a=[`OAuthManagementDemo`]})))()}o();export{i as OAuthManagementDemo,a as __namedExportsOrder,r as default};
