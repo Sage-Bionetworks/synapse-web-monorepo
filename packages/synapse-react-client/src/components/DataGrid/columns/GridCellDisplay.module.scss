@@ -43,12 +43,13 @@
   padding: 0 65px 0 10px;
 }
 
-// MUI Chip, as rendered by GridAutocompleteChip in an Autocomplete tag
+// MUI Chip, as rendered by GridAutocompleteChip in an Autocomplete tag. Its
+// max width is set inline from INACTIVE_CHIP_MAX_WIDTH, which the editor uses
+// too.
 .chip {
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
-  max-width: calc(100% - 6px);
   height: 24px;
   margin: 1px;
   border-radius: 16px;
@@ -71,9 +72,14 @@
   font-size: 22px;
 }
 
-// The "+N" that Autocomplete shows for tags past its limit
+// The "+N" that Autocomplete shows for tags past its limit. It is a span, not
+// an input, so it takes the input's font without .inputText's offset.
 .moreTags {
+  flex-shrink: 0;
   margin: 1px;
+  color: var(--synapse-gray-900);
+  font-size: 14px;
+  line-height: 1.4375em;
 }
 
 // The picker's input pads its text by 14px on the left

@@ -6,6 +6,7 @@ import {
   autocompleteMultipleEnumColumn,
   AutocompleteMultipleEnumCellProps,
   AutocompleteMultipleEnumOption,
+  INACTIVE_CHIP_MAX_WIDTH,
   MemoizedAutocompleteMultipleEnumCell,
 } from './AutocompleteMultipleEnumColumn'
 
@@ -313,6 +314,22 @@ describe('autocompleteMultipleEnumColumn', () => {
       expect(screen.queryByText('c')).not.toBeInTheDocument()
       expect(screen.getByText('+2')).toBeInTheDocument()
       expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
+    })
+
+    it('caps each chip at the width the inactive editor caps it at', () => {
+      // jsdom has no layout, so a visual check confirms the editor matches
+      render(
+        <Cell
+          rowData={['a', 'b', 'c', 'd']}
+          active={false}
+          focus={false}
+          setRowData={vi.fn()}
+        />,
+      )
+
+      expect(screen.getByText('a').parentElement).toHaveStyle({
+        maxWidth: `${INACTIVE_CHIP_MAX_WIDTH}px`,
+      })
     })
 
     it('shows every value as a chip when limitTags is negative, as the editor does', () => {
