@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./RequestDownloadCard-DG3I1VfW.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`Download/RequestDownloadCard`,component:n},i={args:{entityId:`syn36695878`}},a=[`Demo`]})))()}o();export{i as Demo,a as __namedExportsOrder,r as default};

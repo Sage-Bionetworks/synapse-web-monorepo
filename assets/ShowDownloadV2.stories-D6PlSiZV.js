@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./ShowDownloadV2-2y5SyrYF.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`Download/ShowDownloadV2`,component:n},i={args:{to:`/#/Other%20Components?id=downloadcartpage`}},a=[`Demo`]})))()}o();export{i as Demo,a as __namedExportsOrder,r as default};
