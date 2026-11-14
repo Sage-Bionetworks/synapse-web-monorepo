@@ -6,7 +6,7 @@ flowchart TD
     CHOOSE_VIEW_TYPE[Select View Type]
     ENTITY_VIEW_SCOPE[Define Scope of EntityView]
     SUBMISSION_VIEW_SCOPE[Define Scope of SubmissionView]
-    TABLE_SQL[Write Defining SQL for View]
+    TABLE_SQL[Write Defining SQL for View, plus optional Search Configuration for a Search Index]
     TABLE_COLUMNS[Define Column Model]
     TABLE_NAME[Add name and description]
 
@@ -17,9 +17,10 @@ flowchart TD
     CHOOSE_VIEW_TYPE -->|Submission View| SUBMISSION_VIEW_SCOPE
     CHOOSE_VIEW_TYPE -->|Materialized View| TABLE_SQL
     CHOOSE_VIEW_TYPE -->|Virtual Table| TABLE_SQL
+    CHOOSE_VIEW_TYPE -->|Search Index, if SEARCH_INDEX_MANAGEMENT flag is enabled| TABLE_SQL
 
     ENTITY_VIEW_SCOPE --> TABLE_COLUMNS
     SUBMISSION_VIEW_SCOPE --> TABLE_COLUMNS
     TABLE_COLUMNS --> TABLE_NAME
-    TABLE_SQL -->|Currently on same screen, see PLFM-8209| TABLE_NAME
+    TABLE_SQL -->|SQL validated, except for Search Index| TABLE_NAME
 ```

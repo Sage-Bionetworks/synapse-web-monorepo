@@ -1,3 +1,10 @@
+import { getHandlersForStorybook } from '@/mocks/msw/handlers'
+import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
+import {
+  MOCK_PORTAL_ORIGIN,
+  MOCK_REPO_ORIGIN,
+} from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import CreateTableViewWizard from './CreateTableViewWizard'
 import { displayToast } from '../ToastMessage'
@@ -27,5 +34,27 @@ export const Demo: Story = {
       displayToast(`Successfully created ${newId}`)
     },
     onCancel: fn(),
+  },
+}
+
+/** Mock backend with SEARCH_INDEX_MANAGEMENT enabled, so "View" offers a Search Index. */
+export const WithSearchIndex: Story = {
+  args: {
+    ...Demo.args,
+    parentId: 'syn12345',
+  },
+  parameters: {
+    stack: 'mock',
+    msw: {
+      handlers: {
+        ...getHandlersForStorybook(MOCK_REPO_ORIGIN, MOCK_PORTAL_ORIGIN),
+        featureFlags: [
+          getFeatureFlagsOverride({
+            portalOrigin: MOCK_PORTAL_ORIGIN,
+            overrides: { [FeatureFlagEnum.SEARCH_INDEX_MANAGEMENT]: true },
+          }),
+        ],
+      },
+    },
   },
 }

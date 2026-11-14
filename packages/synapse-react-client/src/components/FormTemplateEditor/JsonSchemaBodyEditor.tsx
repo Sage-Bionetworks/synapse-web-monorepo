@@ -1,6 +1,5 @@
-import { TextField } from '@mui/material'
+import { JsonTextField } from '@/components/JsonTextField/JsonTextField'
 import { RJSFSchema } from '@rjsf/utils'
-import { useState } from 'react'
 
 type JsonSchemaBodyEditorProps = {
   value: RJSFSchema
@@ -16,35 +15,11 @@ export function JsonSchemaBodyEditor({
   value,
   onChange,
 }: JsonSchemaBodyEditorProps) {
-  const [text, setText] = useState(() => JSON.stringify(value, null, 2))
-  const [error, setError] = useState<string | null>(null)
-
-  const handleChange = (next: string) => {
-    setText(next)
-    try {
-      const parsed = JSON.parse(next)
-      setError(null)
-      onChange(parsed)
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Invalid JSON')
-    }
-  }
-
   return (
-    <TextField
+    <JsonTextField
       label="Raw JSON Schema"
-      value={text}
-      onChange={e => handleChange(e.target.value)}
-      error={!!error}
-      helperText={error ?? ' '}
-      multiline
-      rows={14}
-      fullWidth
-      slotProps={{
-        input: {
-          sx: { fontFamily: 'monospace', fontSize: '0.85rem' },
-        },
-      }}
+      value={value}
+      onChange={next => onChange(next as RJSFSchema)}
     />
   )
 }
