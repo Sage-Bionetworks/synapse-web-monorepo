@@ -198,6 +198,47 @@ describe('SynapseSankeyPlot', () => {
     })
   })
 
+  describe('renderDetailPanel', () => {
+    it('is not rendered when the prop is omitted', async () => {
+      getResultsSpy.mockResolvedValue(labelFirstBundle)
+      renderComponent()
+
+      await screen.findByRole('img')
+      expect(screen.queryByTestId('detail-panel')).not.toBeInTheDocument()
+    })
+
+    it('renders the panel with no focused category before any interaction', async () => {
+      getResultsSpy.mockResolvedValue(labelFirstBundle)
+      renderComponent({
+        renderDetailPanel: focusedCategory => (
+          <div data-testid="detail-panel">{focusedCategory ?? 'nothing'}</div>
+        ),
+      })
+
+      await screen.findByRole('img')
+      expect(screen.getByTestId('detail-panel')).toHaveTextContent('nothing')
+    })
+
+    it('passes the focused category when a flow is hovered', async () => {
+      const user = userEvent.setup()
+      getResultsSpy.mockResolvedValue(labelFirstBundle)
+      renderComponent({
+        renderDetailPanel: focusedCategory => (
+          <div data-testid="detail-panel">{focusedCategory ?? 'nothing'}</div>
+        ),
+      })
+
+      await screen.findByRole('img')
+      await user.hover(screen.getByText('Gene Expression Omnibus'))
+
+      await waitFor(() =>
+        expect(screen.getByTestId('detail-panel')).toHaveTextContent(
+          'Gene Expression Omnibus',
+        ),
+      )
+    })
+  })
+
   it('renders nothing when the query returns no rows', async () => {
     getResultsSpy.mockResolvedValue(
       bundleWithColumns([{ name: 'source' }, { name: 'count' }], []),
