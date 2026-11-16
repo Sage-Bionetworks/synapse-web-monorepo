@@ -12,7 +12,6 @@ import {
 import { Alert, Box, Divider, Link, Typography } from '@mui/material'
 import RJSF from '@rjsf/core'
 import { RJSFValidationError } from '@rjsf/utils'
-import validator from '@rjsf/validator-ajv8'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { EntityJson } from '@sage-bionetworks/synapse-types'
 import { JSONSchema7 } from 'json-schema'
@@ -274,7 +273,6 @@ export function SchemaDrivenAnnotationEditor(
             </Alert>
           )}
           <JsonSchemaForm
-            validator={validator}
             liveValidate={liveValidate}
             noHtml5Validate={true}
             formRef={ref}

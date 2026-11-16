@@ -566,7 +566,7 @@ describe('JsonSchemaRequestWizard', () => {
       await advanceToFileQuestion(user)
 
       await user.click(screen.getByRole('button', { name: 'Submit' }))
-      await screen.findAllByText(/required property/i)
+      await screen.findAllByText('This field is required')
       expect(submissionRequests).toHaveLength(0)
 
       await upload(user, UPLOADED_FILE_HANDLE_ID)

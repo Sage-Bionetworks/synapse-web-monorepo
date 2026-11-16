@@ -306,7 +306,7 @@ describe('CreateOrUpdateDoiModal', () => {
     const saveButton = screen.getByText(/Save/i)
     await user.click(saveButton)
 
-    await screen.findByText("must have required property 'Publication Year'")
+    await screen.findByText('This field is required')
     expect(onDoiRequest).not.toHaveBeenCalled()
   })
 

@@ -18,7 +18,7 @@ import { Optional } from '@/utils/types/Optional'
 import RJSFForm, { FormProps } from '@rjsf/core'
 import Form from '@rjsf/mui'
 import { GenericObjectType, RJSFSchema, Widget } from '@rjsf/utils'
-import validator from '@rjsf/validator-ajv8'
+import { jsonSchemaFormValidator } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 import { Ref } from 'react'
 import styles from './JsonSchemaForm.module.scss'
 
@@ -49,7 +49,7 @@ export function JsonSchemaForm<T = any>(
   return (
     <Form
       ref={props.formRef}
-      validator={validator}
+      validator={jsonSchemaFormValidator}
       className={styles.jsonSchemaForm}
       {...props}
       templates={{
