@@ -1,3 +1,4 @@
+import { IdentityProviderName } from '@sage-bionetworks/synapse-client'
 import { RestrictableObjectDescriptor } from './RestrictableObjectDescriptor'
 import ACCESS_TYPE from '../ACCESS_TYPE'
 
@@ -54,4 +55,6 @@ export type ManagedACTAccessRequirement = {
   isTwoFaRequired: boolean
   /* The ID of the electronic Data Use Certificate (eDUC) template to fill out for data access requests. */
   eDucTemplateId?: string
+  /* If not empty, then accessor must have authenticated through one of the listed identity providers. If null or empty, then there is no requirement on how the accessor authenticated. */
+  identityProviders?: IdentityProviderName[]
 }

@@ -5,11 +5,14 @@ import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ACCESS_REQUIREMENT_BY_ID } from '@/utils/APIConstants'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { getIdentityProviderDisplayName } from '@/utils/functions/IdentityProviderNameUtils'
 import { DAY_IN_MS } from '@/utils/SynapseConstants'
+import { IdentityProviderName } from '@sage-bionetworks/synapse-client'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { createRef } from 'react'
+import { IDENTITY_PROVIDERS_FIELD_LABEL } from '../SetBasicAccessRequirementFields/AccessorRequirements'
 import {
   SetManagedAccessRequirementFields,
   SetManagedAccessRequirementFieldsHandle,
@@ -105,6 +108,34 @@ describe('SetManagedAccessRequirementFields for a JsonSchemaAccessRequirement', 
       expect(updateAccessRequirementSpy).toHaveBeenCalledWith(
         MOCK_ACCESS_TOKEN,
         { ...mockEditableJsonSchemaAR, isTwoFaRequired: false },
+      )
+      expect(onSave).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  test('saves the accepted identity providers', async () => {
+    const user = userEvent.setup()
+    const { ref } = await renderForJsonSchemaAccessRequirement()
+
+    await user.click(
+      screen.getByRole('combobox', { name: IDENTITY_PROVIDERS_FIELD_LABEL }),
+    )
+    await user.click(
+      screen.getByRole('option', {
+        name: getIdentityProviderDisplayName(
+          IdentityProviderName.NIH_RESEARCHER_AUTH_SERVICE,
+        ),
+      }),
+    )
+    ref.current?.save()
+
+    await waitFor(() => {
+      expect(updateAccessRequirementSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        {
+          ...mockEditableJsonSchemaAR,
+          identityProviders: [IdentityProviderName.NIH_RESEARCHER_AUTH_SERVICE],
+        },
       )
       expect(onSave).toHaveBeenCalledTimes(1)
     })
