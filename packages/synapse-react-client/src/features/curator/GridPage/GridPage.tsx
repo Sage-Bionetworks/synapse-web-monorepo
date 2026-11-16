@@ -18,7 +18,7 @@ function GridPageInternal() {
     searchParams.get(GRID_PAGE_SESSION_ID_QUERY_PARAM) ?? '',
   )
   const rawTaskId = searchParams.get(GRID_PAGE_TASK_ID_QUERY_PARAM)
-  const taskId = rawTaskId ? parseInt(rawTaskId) : undefined
+  const taskId = rawTaskId ? Number.parseInt(rawTaskId) : undefined
   const agentRegistrationId = searchParams.get(
     GRID_PAGE_AGENT_REGISTRATION_ID_QUERY_PARAM,
   )
@@ -29,19 +29,16 @@ function GridPageInternal() {
   }
 
   return (
-    <>
-      <GridPageTitle sessionId={sessionId} taskId={taskId} />
-      <div className={'pageContent'}>
-        <SynapseGrid
-          agentRegistrationId={agentRegistrationId ?? undefined}
-          ref={handle => {
-            if (handle) {
-              handle.loadExistingSession(sessionId)
-            }
-          }}
-        />
-      </div>
-    </>
+    <SynapseGrid
+      header={<GridPageTitle sessionId={sessionId} taskId={taskId} />}
+      contentClassName={'pageContent'}
+      agentRegistrationId={agentRegistrationId ?? undefined}
+      ref={handle => {
+        if (handle) {
+          handle.loadExistingSession(sessionId)
+        }
+      }}
+    />
   )
 }
 
