@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";function t(e){let[t]=e.subjectIds??[];return t?{subjectId:t.id,subjectType:t.type}:{}}function n(){return(n=e((()=>{})))()}export{n,t};
