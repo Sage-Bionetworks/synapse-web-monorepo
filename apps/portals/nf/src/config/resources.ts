@@ -5,6 +5,7 @@ export const SYNAPSE_PORTAL_ID = '1005'
 
 export const datasetsSql = 'SELECT * FROM syn50913342'
 export const publicationsSql = 'SELECT * FROM syn16857542'
+export const citedBySql = 'SELECT * FROM syn78484103'
 export const studiesSql = 'SELECT * FROM syn52694652'
 export const initiativesSql =
   'SELECT * FROM syn24189696 order by initiative asc'
@@ -110,7 +111,7 @@ export const publicationsSearchQueryConfig: SearchQueryConfig = {
 }
 export const studiesSearchIndexId = 'syn75081633'
 // Tuned in nf-osi/opensearch-ops (benchmark/studies/fields.yaml).
-// includeUnlistedFields:true because the `*` enables search for keyword-mapped ENTITYID 
+// includeUnlistedFields:true because the `*` enables search for keyword-mapped ENTITYID
 // cols not explicitly here; accessRequirements or others at 1 despite `*` to convey
 // they were measured-and-unboosted, and weights may still change as content evolves.
 export const studiesSearchQueryConfig: SearchQueryConfig = {
