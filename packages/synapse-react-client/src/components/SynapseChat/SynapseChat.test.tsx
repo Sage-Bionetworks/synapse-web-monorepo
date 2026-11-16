@@ -512,7 +512,7 @@ describe('SynapseChat - creating the agent session', () => {
     expect(sessionRequests).toHaveLength(1)
   })
 
-  it('disables the prompts and the access level menu while the session is being created', async () => {
+  it('disables the prompts and the access level menu while the session is being created, and enables them once it exists', async () => {
     const { user, sessionRequests, release } = renderWithoutSession(
       { suggestedPrompts: mockPrompts, showAccessLevelMenu: true },
       { holdResponse: true },
@@ -536,6 +536,11 @@ describe('SynapseChat - creating the agent session', () => {
     release()
 
     await waitFor(() => expect(accessLevelMenu).toBeEnabled())
+    mockPrompts.forEach(prompt => {
+      expect(screen.getByRole('button', { name: prompt })).not.toHaveAttribute(
+        'aria-disabled',
+      )
+    })
   })
 
   it('creates the session with the access level chosen before it exists', async () => {
