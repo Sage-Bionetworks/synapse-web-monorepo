@@ -5,6 +5,7 @@ import {
   FairFormSection,
   parseFairFormSections,
   summarizeFormAnswers,
+  toFairSubmissionAnswers,
 } from './fairFormToRjsf'
 
 // Comprehensive set of FairField variants
@@ -112,6 +113,10 @@ describe('fairSectionToRjsf', () => {
     const { schema, unsupported } = fairSectionToRjsf(sectionWithAuthField)
     expect(unsupported.map(f => f.name)).toEqual(['sso_login'])
     expect(schema.properties).not.toHaveProperty('sso_login')
+  })
+
+  test('lists phone-type fields in phoneFieldNames', () => {
+    expect(fairSectionToRjsf(section).phoneFieldNames).toEqual(['phone_number'])
   })
 })
 
@@ -236,5 +241,23 @@ describe('summarizeFormAnswers', () => {
         project_end_date: '2027-03-05T00:00:00.000Z',
       }),
     ).toEqual([{ label: 'project_end_date', value: 'Mar 5, 2027' }])
+  })
+})
+
+describe('toFairSubmissionAnswers', () => {
+  test('sends phone answers as digits only, matching what RDCA-DAP stores', () => {
+    const values = { phone_number: '+1 202 555 0123', note: '+1 202 555 0123' }
+    expect(toFairSubmissionAnswers(values, ['phone_number'])).toEqual({
+      phone_number: '12025550123',
+      note: '+1 202 555 0123',
+    })
+    // The in-form values (and so the saved draft) are left untouched.
+    expect(values.phone_number).toBe('+1 202 555 0123')
+  })
+
+  test('leaves unanswered phone fields absent', () => {
+    expect(toFairSubmissionAnswers({ a: 'x' }, ['phone_number'])).toEqual({
+      a: 'x',
+    })
   })
 })

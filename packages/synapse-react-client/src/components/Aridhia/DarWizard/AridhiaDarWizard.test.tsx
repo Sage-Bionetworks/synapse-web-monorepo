@@ -56,6 +56,13 @@ const PROJECT_END_DATE_FIELD = {
   validation: { required: false },
 }
 
+const PHONE_FIELD = {
+  name: 'phone',
+  type: 'phone',
+  label: 'Phone number',
+  validation: { required: false },
+}
+
 /**
  * Mirrors the real gateway's overlap between the new-workspace form and the main workflow's
  * `project` section (see `REAL_WORKSPACE_REQUEST_FORM`): both ask for `project_name`.
@@ -684,6 +691,39 @@ describe('AridhiaDarWizard', () => {
     expect(capturedRequestBodies[0].fields.project_end_date).toBe(
       '2027-03-05T00:00:00.000Z',
     )
+  })
+
+  it('submits phone answers as digits only, keeping the formatted value in the draft and review', async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(
+        getAridhiaWorkflowHandler({
+          about: [...MOCK_ARIDHIA_ABOUT_FIELDS, PHONE_FIELD],
+        }),
+      ),
+      // A failed submission leaves the draft in place so its stored value can be checked.
+      submitRequestHandler(() =>
+        HttpResponse.json({ error: 'server error' }, { status: 500 }),
+      ),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    await clickNext(user)
+    await fillAboutStep(user)
+    await user.type(screen.getByLabelText(/^phone number/i), '2025550123')
+    await clickNext(user)
+
+    expect(await screen.findByText('+1 202 555 0123')).toBeInTheDocument()
+    await acceptTermsAndSubmit(user)
+
+    await waitFor(() => expect(capturedRequestBodies).toHaveLength(1))
+    // RDCA-DAP stores phone answers as digits only and prepends its own "+" for display.
+    expect(capturedRequestBodies[0].fields.phone).toBe('12025550123')
+    const draft: DarDraft = JSON.parse(sessionStorage.getItem(DRAFT_KEY)!)
+    expect(draft.values.phone).toBe('+1 202 555 0123')
   })
 
   it('retries a failed submission with the identical request code', async () => {
