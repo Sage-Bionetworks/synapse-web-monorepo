@@ -26,6 +26,7 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { createRef } from 'react'
+import { IDENTITY_PROVIDERS_FIELD_LABEL } from './AccessorRequirements'
 import {
   SetBasicAccessRequirementFields,
   SetBasicAccessRequirementFieldsHandle,
@@ -145,6 +146,9 @@ describe('SetBasicAccessRequirementFields', () => {
     expect(checkboxes.isValidatedProfileRequired).not.toBeNull()
     expect(checkboxes.isCertifiedUserRequired).toBeChecked()
     expect(checkboxes.isValidatedProfileRequired).toBeChecked()
+    expect(
+      screen.queryByRole('combobox', { name: IDENTITY_PROVIDERS_FIELD_LABEL }),
+    ).not.toBeInTheDocument()
 
     await user.click(checkboxes.isCertifiedUserRequired!)
     await user.click(checkboxes.isValidatedProfileRequired!)

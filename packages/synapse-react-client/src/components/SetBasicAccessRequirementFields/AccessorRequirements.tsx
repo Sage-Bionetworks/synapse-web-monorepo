@@ -1,10 +1,24 @@
 import {
-  AccessRequirement,
-  JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-} from '@sage-bionetworks/synapse-types'
-import { hasAccessorRequirement } from './GovernanceUtils'
-import { Box, Checkbox, FormControlLabel, Typography } from '@mui/material'
+  getIdentityProviderDisplayName,
+  IDENTITY_PROVIDER_NAMES,
+} from '@/utils/functions/IdentityProviderNameUtils'
+import { AccessRequirement } from '@sage-bionetworks/synapse-types'
+import {
+  hasAccessorRequirement,
+  hasIdentityProviderRequirement,
+  hasTwoFactorAuthRequirement,
+} from './GovernanceUtils'
+import {
+  Autocomplete,
+  Box,
+  Checkbox,
+  FormControlLabel,
+  TextField,
+  Typography,
+} from '@mui/material'
+
+export const IDENTITY_PROVIDERS_FIELD_LABEL =
+  'Accessors must sign in with one of these identity providers'
 
 type AccessorRequirementsProps = {
   accessRequirement: AccessRequirement
@@ -53,10 +67,7 @@ export function AccessorRequirements(props: AccessorRequirementsProps) {
                 })
               }
             />
-            {(accessRequirement.concreteType ===
-              MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE ||
-              accessRequirement.concreteType ===
-                JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE) && (
+            {hasTwoFactorAuthRequirement(accessRequirement) && (
               <FormControlLabel
                 control={<Checkbox />}
                 label="Accessors must use two-factor authentication (2FA)."
@@ -67,6 +78,29 @@ export function AccessorRequirements(props: AccessorRequirementsProps) {
                     isTwoFaRequired: checked,
                   })
                 }
+              />
+            )}
+            {hasIdentityProviderRequirement(accessRequirement) && (
+              <Autocomplete
+                multiple
+                disableCloseOnSelect
+                options={IDENTITY_PROVIDER_NAMES}
+                getOptionLabel={getIdentityProviderDisplayName}
+                value={accessRequirement.identityProviders ?? []}
+                onChange={(_event, identityProviders) =>
+                  onChange({
+                    ...accessRequirement,
+                    identityProviders,
+                  })
+                }
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    label={IDENTITY_PROVIDERS_FIELD_LABEL}
+                    helperText="Leave empty to accept any identity provider."
+                  />
+                )}
+                sx={{ mt: 1 }}
               />
             )}
           </Box>

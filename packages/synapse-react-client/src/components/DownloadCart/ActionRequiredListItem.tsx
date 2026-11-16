@@ -2,6 +2,7 @@ import { Action } from '@sage-bionetworks/synapse-types'
 import { MeetAccessRequirementCard } from './MeetAccessRequirementCard'
 import { RequestDownloadCard } from './RequestDownloadCard'
 import { EnableTwoFaRequirementCard } from './EnableTwoFaRequirementCard'
+import { AuthenticateWithIdentityProviderCard } from './AuthenticateWithIdentityProviderCard'
 
 export type ActionRequiredListItemProps = {
   action: Action
@@ -34,6 +35,16 @@ export function ActionRequiredListItem(props: ActionRequiredListItemProps) {
         <EnableTwoFaRequirementCard
           key={action.accessRequirementId}
           accessRequirementId={action.accessRequirementId}
+          count={count}
+        />
+      )
+    }
+    case 'org.sagebionetworks.repo.model.download.AuthenticateWithIdentityProvider': {
+      return (
+        <AuthenticateWithIdentityProviderCard
+          key={action.accessRequirementId}
+          accessRequirementId={action.accessRequirementId}
+          identityProviders={action.identityProviders ?? []}
           count={count}
         />
       )

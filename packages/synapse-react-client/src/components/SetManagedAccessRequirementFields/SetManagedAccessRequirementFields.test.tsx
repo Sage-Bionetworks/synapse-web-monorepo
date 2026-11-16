@@ -18,7 +18,9 @@ import {
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ACCESS_REQUIREMENT_BY_ID, WIKI_PAGE_ID } from '@/utils/APIConstants'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { getIdentityProviderDisplayName } from '@/utils/functions/IdentityProviderNameUtils'
 import { DAY_IN_MS } from '@/utils/SynapseConstants'
+import { IdentityProviderName } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   FileUploadComplete,
@@ -32,6 +34,7 @@ import { noop } from 'lodash-es'
 import { http, HttpResponse } from 'msw'
 import { createRef } from 'react'
 import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
+import { IDENTITY_PROVIDERS_FIELD_LABEL } from '../SetBasicAccessRequirementFields/AccessorRequirements'
 import { DUC_TEMPLATE_UPLOAD_ERROR } from './DataUseCertificateFields'
 import { getValidExpirationPeriodOrErrorMessage } from './ExpirationPeriodField'
 import {
@@ -248,6 +251,70 @@ describe('SetManagedAccessRequirementFields', () => {
       expect(updateAccessRequirementSpy).toHaveBeenLastCalledWith(
         MOCK_ACCESS_TOKEN,
         updatedAr,
+      )
+    })
+  })
+
+  test('handles updates to accepted identity providers', async () => {
+    overrideGetAccessRequirementHandler({
+      ...mockManagedACTAccessRequirement,
+      identityProviders: [IdentityProviderName.NIH_RESEARCHER_AUTH_SERVICE],
+    })
+    const { user, ref } = await setUp()
+
+    expect(
+      screen.getByText(
+        getIdentityProviderDisplayName(
+          IdentityProviderName.NIH_RESEARCHER_AUTH_SERVICE,
+        ),
+      ),
+    ).toBeVisible()
+
+    await user.click(
+      screen.getByRole('combobox', { name: IDENTITY_PROVIDERS_FIELD_LABEL }),
+    )
+    await user.click(
+      screen.getByRole('option', {
+        name: getIdentityProviderDisplayName(IdentityProviderName.ORCID),
+      }),
+    )
+
+    ref.current?.save()
+
+    await waitFor(() => {
+      expect(onSave).toHaveBeenCalledTimes(1)
+      expect(updateAccessRequirementSpy).toHaveBeenLastCalledWith(
+        MOCK_ACCESS_TOKEN,
+        {
+          ...mockManagedACTAccessRequirement,
+          identityProviders: [
+            IdentityProviderName.NIH_RESEARCHER_AUTH_SERVICE,
+            IdentityProviderName.ORCID,
+          ],
+        },
+      )
+    })
+  })
+
+  test('clearing accepted identity providers removes the constraint', async () => {
+    overrideGetAccessRequirementHandler({
+      ...mockManagedACTAccessRequirement,
+      identityProviders: [IdentityProviderName.NIH_RESEARCHER_AUTH_SERVICE],
+    })
+    const { user, ref } = await setUp()
+
+    await user.click(
+      screen.getByRole('combobox', { name: IDENTITY_PROVIDERS_FIELD_LABEL }),
+    )
+    await user.keyboard('{Backspace}')
+
+    ref.current?.save()
+
+    await waitFor(() => {
+      expect(onSave).toHaveBeenCalledTimes(1)
+      expect(updateAccessRequirementSpy).toHaveBeenLastCalledWith(
+        MOCK_ACCESS_TOKEN,
+        { ...mockManagedACTAccessRequirement, identityProviders: [] },
       )
     })
   })
