@@ -10,6 +10,8 @@ import { AccessRequirement } from '@sage-bionetworks/synapse-types'
 import {
   getOldAccessRequirementInstructions,
   hasAccessorRequirement,
+  hasIdentityProviderRequirement,
+  hasTwoFactorAuthRequirement,
   LOCK_ACCESS_REQUIREMENT_TEXT,
 } from './GovernanceUtils'
 
@@ -28,6 +30,24 @@ describe('GovernanceUtils', () => {
       expect(hasAccessorRequirement(mockToUAccessRequirement)).toBe(false)
       expect(hasAccessorRequirement(mockACTAccessRequirement)).toBe(false)
       expect(hasAccessorRequirement(mockLockAccessRequirement)).toBe(false)
+    })
+  })
+
+  // Mirrors the backend interfaces HasTwoFactorAuthRequirement and HasIdentityProviderRequirement, which are
+  // implemented by ManagedACTAccessRequirement and JsonSchemaAccessRequirement
+  describe.each([
+    ['hasTwoFactorAuthRequirement', hasTwoFactorAuthRequirement],
+    ['hasIdentityProviderRequirement', hasIdentityProviderRequirement],
+  ])('%s', (_name, guard) => {
+    test.each([
+      { ar: mockManagedACTAccessRequirement, expected: true },
+      { ar: jsonSchemaAccessRequirement, expected: true },
+      { ar: mockSelfSignAccessRequirement, expected: false },
+      { ar: mockToUAccessRequirement, expected: false },
+      { ar: mockACTAccessRequirement, expected: false },
+      { ar: mockLockAccessRequirement, expected: false },
+    ])('$ar.concreteType -> $expected', ({ ar, expected }) => {
+      expect(guard(ar)).toBe(expected)
     })
   })
 
