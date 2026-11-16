@@ -2,26 +2,22 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MAX_LISTED_ERRORS, ValidationAlert } from './ValidationAlert'
 import { DataGridRow } from '../DataGridTypes'
+import createValidationTestRow from '../utils/createValidationTestRow'
 
 const defaultProps = {
   columnNames: ['patientId', 'platform', 'disease'],
   columnOrder: [0, 1, 2],
   onNavigateToCell: vi.fn(),
+  onHide: vi.fn(),
 }
 
-function makeInvalidRow(cellErrors: Record<string, string[]>): DataGridRow {
-  return {
-    __validationStatus: 'invalid',
-    __cellValidationResults: new Map(Object.entries(cellErrors)),
-  } as unknown as DataGridRow
-}
+const HIDE_LINK_NAME = 'Hide validation errors'
 
-function makePendingRow(cellErrors: Record<string, string[]>): DataGridRow {
-  return {
-    __validationStatus: 'pending',
-    __cellValidationResults: new Map(Object.entries(cellErrors)),
-  } as unknown as DataGridRow
-}
+const makeInvalidRow = (cellErrors: Record<string, string[]>) =>
+  createValidationTestRow('invalid', cellErrors)
+
+const makePendingRow = (cellErrors: Record<string, string[]>) =>
+  createValidationTestRow('pending', cellErrors)
 
 describe('ValidationAlert', () => {
   it('shows a no-errors message when there are no invalid rows', () => {
@@ -83,15 +79,26 @@ describe('ValidationAlert', () => {
       />,
     )
 
-    await userEvent.click(screen.getByRole('button', { name: 'Hide' }))
+    await userEvent.click(screen.getByRole('button', { name: HIDE_LINK_NAME }))
     expect(onHide).toHaveBeenCalledOnce()
   })
 
-  it('does not offer Hide without an onHide handler', () => {
+  it('offers Hide on the no-errors banner', async () => {
+    const onHide = vi.fn()
+    render(<ValidationAlert {...defaultProps} rowValues={[]} onHide={onHide} />)
+
+    expect(screen.getByText('No validation errors')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: HIDE_LINK_NAME }))
+    expect(onHide).toHaveBeenCalledOnce()
+  })
+
+  it('does not offer Hide while validation errors load', () => {
     const rowValues = [makeInvalidRow({ platform: ['cannot be empty'] })]
-    render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
+    render(
+      <ValidationAlert {...defaultProps} rowValues={rowValues} isLoading />,
+    )
     expect(
-      screen.queryByRole('button', { name: 'Hide' }),
+      screen.queryByRole('button', { name: HIDE_LINK_NAME }),
     ).not.toBeInTheDocument()
   })
 

@@ -1,12 +1,14 @@
+@use 'gridToolbarItem';
+
 .button:global(.MuiButton-root) {
-  height: 36px;
+  height: gridToolbarItem.$height;
   font-size: 16px;
   font-weight: 400;
   white-space: nowrap;
 
   &:global(.MuiButton-outlined:not(.Mui-disabled)) {
     color: var(--synapse-gray-900);
-    border: 1px solid var(--synapse-gray-300);
+    border: gridToolbarItem.$border;
     :global(.MuiButton-icon) {
       color: var(--synapse-gray-700);
     }

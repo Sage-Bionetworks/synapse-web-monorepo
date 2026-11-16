@@ -11,8 +11,9 @@ import {
   GridSession,
   ListGridReplicasResponse,
 } from '@sage-bionetworks/synapse-client'
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { s } from 'json-joy/lib/json-crdt'
 import { http, HttpResponse } from 'msw'
 import { createRef, ReactNode } from 'react'
 import SynapseGrid, { SynapseGridHandle, SynapseGridProps } from './SynapseGrid'
@@ -105,6 +106,21 @@ function mockConnectedWebSocket(
   })
 }
 
+/** Mocks a connected grid whose first row failed validation with one error */
+function mockConnectedWebSocketWithInvalidRow() {
+  const model = createTestModel(2, 2, REPLICA_ID)
+  // Written after the row data, so the row's validation is up to date and the row is invalid
+  model.api.obj(['rows', '0']).set({
+    metadata: s.obj({
+      rowValidation: s.con({
+        isValid: false,
+        allValidationMessages: ['#/c0: cannot be empty'],
+      }),
+    }),
+  })
+  mockConnectedWebSocket({ model, modelSnapshot: model.api.getSnapshot() })
+}
+
 function renderWithHeader(header: ReactNode = <h1>{HEADER_TEXT}</h1>) {
   return render(
     <SynapseGrid header={header} contentClassName={CONTENT_CLASS_NAME} />,
@@ -159,6 +175,36 @@ describe('SynapseGrid', () => {
     )
     expect(getHeader().closest(`.${CONTENT_CLASS_NAME}`)).toBeNull()
     expect(requirement.closest(`.${CONTENT_CLASS_NAME}`)).not.toBeNull()
+  })
+
+  it('hides the validation errors banner behind a summary in the toolbar, and shows it again', async () => {
+    mockConnectedWebSocketWithInvalidRow()
+    const { user } = await renderGridWithSession()
+
+    expect(screen.getByText('Validation errors')).toBeInTheDocument()
+    await user.click(
+      screen.getByRole('button', { name: 'Hide validation errors' }),
+    )
+
+    expect(screen.queryByText('Validation errors')).not.toBeInTheDocument()
+    const summary = screen.getByRole('group', {
+      name: 'Validation errors summary',
+    })
+    expect(within(summary).getByText('1')).toBeInTheDocument()
+    const showLink = within(summary).getByRole('button', {
+      name: 'Show validation errors',
+    })
+    expect(showLink).toHaveFocus()
+
+    await user.click(showLink)
+
+    expect(screen.getByText('Validation errors')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('group', { name: 'Validation errors summary' }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Hide validation errors' }),
+    ).toHaveFocus()
   })
 
   describe('errors', () => {

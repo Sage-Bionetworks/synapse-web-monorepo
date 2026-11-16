@@ -1,26 +1,33 @@
-import { Chip, Link, Typography } from '@mui/material'
-import { useMemo } from 'react'
+import { Chip, Link, Stack, Typography } from '@mui/material'
+import { Ref, useMemo } from 'react'
 import { DataGridRow } from '../DataGridTypes'
-import { collectValidationErrors } from '../utils/groupValidationErrors'
-import styles from './HiddenValidationAlert.module.scss'
+import { countValidationErrors } from '../utils/groupValidationErrors'
+import styles from './ValidationErrorSummary.module.scss'
 
-type HiddenValidationAlertProps = {
+type ValidationErrorSummaryProps = {
   rowValues: DataGridRow[]
   onShow: () => void
+  showLinkRef?: Ref<HTMLButtonElement>
 }
 
 /** Compact stand-in for a hidden ValidationAlert: the error count and a link to show the banner again. */
-export function HiddenValidationAlert({
+export function ValidationErrorSummary({
   rowValues,
   onShow,
-}: HiddenValidationAlertProps) {
+  showLinkRef,
+}: ValidationErrorSummaryProps) {
   const errorCount = useMemo(
-    () => collectValidationErrors(rowValues).length,
+    () => countValidationErrors(rowValues),
     [rowValues],
   )
 
   return (
-    <div className={styles.container}>
+    <Stack
+      direction="row"
+      role="group"
+      aria-label="Validation errors summary"
+      className={styles.container}
+    >
       <Chip
         label={errorCount.toLocaleString()}
         color={errorCount > 0 ? 'error' : 'success'}
@@ -32,12 +39,12 @@ export function HiddenValidationAlert({
       <Link
         component="button"
         variant="body1"
+        ref={showLinkRef}
         onClick={onShow}
         aria-label="Show validation errors"
-        sx={{ fontWeight: 'normal' }}
       >
         Show
       </Link>
-    </div>
+    </Stack>
   )
 }

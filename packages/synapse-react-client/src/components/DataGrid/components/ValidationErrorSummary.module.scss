@@ -1,0 +1,12 @@
+@use 'sass:math';
+@use 'GridMenuButton/gridToolbarItem';
+
+.container {
+  align-items: center;
+  gap: 8px;
+  height: gridToolbarItem.$height;
+  padding: 0 16px 0 8px;
+  border: gridToolbarItem.$border;
+  border-radius: math.div(gridToolbarItem.$height, 2);
+  white-space: nowrap;
+}

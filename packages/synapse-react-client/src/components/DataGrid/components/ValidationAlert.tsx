@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@mui/material'
 import pluralize from 'pluralize'
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, Ref, useMemo, useState } from 'react'
 import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 import {
   collectValidationErrors,
@@ -34,8 +34,9 @@ type ValidationAlertProps = {
   columnOrder: number[]
   onNavigateToCell: (rowIndex: number, colIndex: number) => void
   isLoading?: boolean
-  /** When provided, the banner offers a "Hide" link that calls this. */
-  onHide?: () => void
+  /** Called by the banner's "Hide" link, which is offered once validation has loaded */
+  onHide: () => void
+  hideLinkRef?: Ref<HTMLButtonElement>
 }
 
 type NavProps = {
@@ -103,6 +104,27 @@ const headerLinkSx = {
   flexShrink: 0,
   fontWeight: 'normal',
 } as const
+
+function HideLink({
+  onHide,
+  linkRef,
+}: {
+  onHide: () => void
+  linkRef?: Ref<HTMLButtonElement>
+}) {
+  return (
+    <Link
+      component="button"
+      variant="body1"
+      ref={linkRef}
+      onClick={onHide}
+      aria-label="Hide validation errors"
+      sx={headerLinkSx}
+    >
+      Hide
+    </Link>
+  )
+}
 
 const bannerBaseSx = {
   border: '1px solid',
@@ -295,6 +317,7 @@ export const ValidationAlert = ({
   onNavigateToCell,
   isLoading = false,
   onHide,
+  hideLinkRef,
 }: ValidationAlertProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [groupBy, setGroupBy] = useState<GroupBy>('row')
@@ -365,11 +388,15 @@ export const ValidationAlert = ({
           borderLeftColor: 'success.main',
           px: 2,
           py: 2,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
         }}
       >
         <Typography variant="body1" color="success.main">
           No validation errors
         </Typography>
+        <HideLink onHide={onHide} linkRef={hideLinkRef} />
       </Box>
     )
   }
@@ -400,16 +427,7 @@ export const ValidationAlert = ({
         <Typography variant="body1" fontWeight="bold">
           Validation errors
         </Typography>
-        {onHide && (
-          <Link
-            component="button"
-            variant="body1"
-            onClick={onHide}
-            sx={headerLinkSx}
-          >
-            Hide
-          </Link>
-        )}
+        <HideLink onHide={onHide} linkRef={hideLinkRef} />
         <Link
           component="button"
           variant="body1"

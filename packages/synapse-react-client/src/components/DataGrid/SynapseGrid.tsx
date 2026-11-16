@@ -50,13 +50,14 @@ import {
 import { ErrorBoundary, useErrorHandler } from 'react-error-boundary'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import GridAgentChat from '../SynapseChat/GridAgentChat'
-import { HiddenValidationAlert } from './components/HiddenValidationAlert'
 import { ValidationAlert } from './components/ValidationAlert'
+import { ValidationErrorSummary } from './components/ValidationErrorSummary'
 import DataGrid from './DataGrid'
 import { DataGridRow, GridModel, Operation } from './DataGridTypes'
 import { useGridReplicaUsers } from './hooks/useGridReplicaUsers'
 import { useGridUndoRedo } from './hooks/useGridUndoRedo'
 import { useRemoteSelections } from './hooks/useRemoteSelections'
+import { useValidationAlertToggle } from './hooks/useValidationAlertToggle'
 import { StartGridSession, StartGridSessionHandle } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { applyModelChange, ModelChange } from './utils/applyModelChange'
@@ -93,7 +94,7 @@ function SynapseGridInner({
   const [session, setSession] = useState<GridSession | null>(null)
   const [replicaId, setReplicaId] = useState<number | null>(null)
   const [chatOpen, setChatOpen] = useState(false)
-  const [isValidationAlertHidden, setIsValidationAlertHidden] = useState(false)
+  const validationAlertToggle = useValidationAlertToggle()
   const [lastSelection, setLastSelection] = useState<SelectionWithId | null>(
     null,
   )
@@ -493,7 +494,7 @@ function SynapseGridInner({
             {/* Grid */}
             {hasCompletedInitialLoad && (
               <>
-                {!isValidationAlertHidden && (
+                {!validationAlertToggle.isHidden && (
                   <Grid size={12}>
                     <ValidationAlert
                       rowValues={rowValues}
@@ -501,7 +502,8 @@ function SynapseGridInner({
                       columnOrder={columnOrder}
                       onNavigateToCell={handleNavigateToCell}
                       isLoading={!hasCompletedInitialSync}
-                      onHide={() => setIsValidationAlertHidden(true)}
+                      onHide={validationAlertToggle.hide}
+                      hideLinkRef={validationAlertToggle.toggleLinkRef}
                     />
                   </Grid>
                 )}
@@ -536,10 +538,11 @@ function SynapseGridInner({
                       >
                         Help and Instructions
                       </GridMenuButton>
-                      {isValidationAlertHidden && (
-                        <HiddenValidationAlert
+                      {validationAlertToggle.isHidden && (
+                        <ValidationErrorSummary
                           rowValues={rowValues}
-                          onShow={() => setIsValidationAlertHidden(false)}
+                          onShow={validationAlertToggle.show}
+                          showLinkRef={validationAlertToggle.toggleLinkRef}
                         />
                       )}
                     </Stack>
