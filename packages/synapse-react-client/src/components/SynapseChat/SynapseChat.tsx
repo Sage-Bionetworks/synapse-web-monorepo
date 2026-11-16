@@ -169,7 +169,7 @@ export function SynapseChat({
   const setAgentSession = setExternalSession ?? setLocalAgentSession
 
   const {
-    mutate: createAgentSession,
+    mutateAsync: createAgentSession,
     isPending: isCreatingAgentSession,
     error: createAgentSessionError,
   } = useCreateAgentSession({
@@ -274,22 +274,27 @@ export function SynapseChat({
 
   const startSessionAndSend = useCallback(
     (outgoing: OutgoingMessage, onSent?: () => void) => {
-      createAgentSession(
-        { agentAccessLevel, agentRegistrationId, sessionContext },
-        {
-          // The new session reaches `agentSession` only on the next render, so pass its ID directly
-          onSuccess: newAgentSession => {
-            sendMessage(outgoing, newAgentSession.sessionId)
-            onSent?.()
-          },
-          onError: error => {
-            if (
-              onSessionCreationUnauthenticated &&
-              isAnonymousUserTurnedAway(error, isAuthenticated)
-            ) {
-              onSessionCreationUnauthenticated(outgoing.message)
-            }
-          },
+      void createAgentSession({
+        agentAccessLevel,
+        agentRegistrationId,
+        sessionContext,
+      }).then(
+        // A promise continuation, unlike a `mutate` callback, runs after the chat closes, so a
+        // caller that keeps the chat state across close and reopen (GridAgentChat) still gets the
+        // message. The new session reaches `agentSession` only on the next render, so its ID is
+        // passed directly.
+        newAgentSession => {
+          sendMessage(outgoing, newAgentSession.sessionId)
+          onSent?.()
+        },
+        (error: unknown) => {
+          if (
+            onSessionCreationUnauthenticated &&
+            error instanceof SynapseClientError &&
+            isAnonymousUserTurnedAway(error, isAuthenticated)
+          ) {
+            onSessionCreationUnauthenticated(outgoing.message)
+          }
         },
       )
     },
@@ -321,9 +326,14 @@ export function SynapseChat({
   }, [initialMessage, agentSession, sendMessage, startSessionAndSend])
 
   const handleSend = (message: string, attachments: ChatAttachment[]) => {
+    // Edits made while the session is being created are kept for the next message
     const clearComposer = () => {
-      setUserChatTextfieldValue('')
-      setComposerAttachments([])
+      setUserChatTextfieldValue(current =>
+        current.trim() === message ? '' : current,
+      )
+      setComposerAttachments(current =>
+        current === attachments ? [] : current,
+      )
     }
     if (agentSession) {
       sendMessage({ message, attachments })

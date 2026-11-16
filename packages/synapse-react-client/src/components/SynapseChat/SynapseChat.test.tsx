@@ -75,12 +75,16 @@ const defaultProps: SynapseChatProps = {
 function renderComponent(props?: Partial<SynapseChatProps>) {
   const user = userEvent.setup()
   const { wrapperFn, queryClient } = createWrapperAndQueryClient()
-  const { rerender } = render(<SynapseChat {...defaultProps} {...props} />, {
-    wrapper: wrapperFn,
-  })
+  const { rerender, unmount } = render(
+    <SynapseChat {...defaultProps} {...props} />,
+    {
+      wrapper: wrapperFn,
+    },
+  )
   return {
     user,
     queryClient,
+    unmount,
     // Re-renders with the same defaults, so a test can advance the mocked props (e.g. once the
     // interaction gains a jobId) without remounting and losing SynapseChat's own internal state.
     rerender: (newProps?: Partial<SynapseChatProps>) =>
@@ -510,6 +514,47 @@ describe('SynapseChat - creating the agent session', () => {
     )
     expect(screen.getByRole('textbox')).toHaveValue('')
     expect(sessionRequests).toHaveLength(1)
+  })
+
+  it('sends the first message even if the chat is closed while its session is being created', async () => {
+    const { user, sessionRequests, release, unmount } = renderWithoutSession(
+      {},
+      { holdResponse: true },
+    )
+
+    await sendMessage(user)
+    await waitFor(() => expect(sessionRequests).toHaveLength(1))
+    unmount()
+    release()
+
+    await waitFor(() =>
+      expect(mockSendChat).toHaveBeenCalledExactlyOnceWith(
+        'hello',
+        undefined,
+        mockAgentSession.sessionId,
+      ),
+    )
+  })
+
+  it('keeps edits made while the session is being created in the composer', async () => {
+    const { user, sessionRequests, release } = renderWithoutSession(
+      {},
+      { holdResponse: true },
+    )
+
+    await sendMessage(user)
+    await waitFor(() => expect(sessionRequests).toHaveLength(1))
+    await user.type(screen.getByRole('textbox'), ' again')
+    release()
+
+    await waitFor(() =>
+      expect(mockSendChat).toHaveBeenCalledExactlyOnceWith(
+        'hello',
+        undefined,
+        mockAgentSession.sessionId,
+      ),
+    )
+    expect(screen.getByRole('textbox')).toHaveValue('hello again')
   })
 
   it('disables the prompts and the access level menu while the session is being created, and enables them once it exists', async () => {
