@@ -1,3 +1,5 @@
+import { getSynapseEntityUrl } from 'synapse-react-client/utils/functions/getSynapseEntityUrl'
+
 /**
  * How a dataset's data is accessed, derived from the dataset's `source` column.
  * - `open`: publicly available in an external repository (no request needed)
@@ -24,4 +26,29 @@ export function getDatasetAccessRoute(
     return 'cpath'
   }
   return 'synapse'
+}
+
+export type DatasetFilesLink = { label: string; href: string }
+
+/**
+ * Where a user goes to get a dataset's files: the external repository for
+ * open datasets, or the Synapse dataset entity for Synapse-governed ones.
+ * C-Path datasets have no files to link to; their access status component
+ * already points to RDCA-DAP.
+ */
+export function getDatasetFilesLink(
+  source: string | null | undefined,
+  id: string | null | undefined,
+  url: string | null | undefined,
+): DatasetFilesLink | undefined {
+  switch (getDatasetAccessRoute(source)) {
+    case 'open':
+      return url ? { label: 'Open in GEO', href: url } : undefined
+    case 'cpath':
+      return undefined
+    case 'synapse':
+      return id
+        ? { label: 'View files', href: getSynapseEntityUrl(id) }
+        : undefined
+  }
 }

@@ -1,40 +1,11 @@
-import { useAridhiaEndpoints } from '@sage-bionetworks/synapse-portal-framework/components/useAridhiaEndpoints'
 import { Row } from '@sage-bionetworks/synapse-types/src/Table/QueryResult'
 import { CellContext, ColumnDef } from '@tanstack/react-table'
-import AccessIcon, {
-  RestrictionUiType,
-} from 'synapse-react-client/components/HasAccess/AccessIcon'
-import HasAccessV2 from 'synapse-react-client/components/HasAccess/HasAccessV2'
-import AridhiaAccessStatus from 'synapse-react-client/components/Aridhia/AridhiaAccessStatus'
 import { getColumnIndex } from 'synapse-react-client/utils/functions/index'
-import { getDatasetAccessRoute } from './datasetSource'
+import { DatasetAccessStatus } from './DatasetAccessStatus'
 
 const ID_COLUMN_NAME = 'id'
 const SOURCE_COLUMN_NAME = 'source'
 const DATASET_CODE_COLUMN_NAME = 'dataset_code'
-
-function AccessBySource(props: {
-  source: string | null
-  id: string
-  datasetCode: string
-}) {
-  const { source, id, datasetCode } = props
-  const { fairPortalUrl } = useAridhiaEndpoints()
-
-  switch (getDatasetAccessRoute(source)) {
-    case 'open':
-      return <AccessIcon restrictionUiType={RestrictionUiType.Accessible} />
-    case 'cpath':
-      return (
-        <AridhiaAccessStatus
-          fairPortalUrl={fairPortalUrl}
-          datasetCode={datasetCode}
-        />
-      )
-    case 'synapse':
-      return <HasAccessV2 entityId={id} showButtonText={false} />
-  }
-}
 
 /**
  * Given the (tanstack react) Table CellContext, return an access column that changes based on the value of the 'source' column.
@@ -68,7 +39,11 @@ function AmpAlsAccessColumnCell<TValue = unknown>(
   const datasetCode = row.original.values[datasetCodeColumnIndex]!
 
   return (
-    <AccessBySource source={sourceValue} id={id} datasetCode={datasetCode} />
+    <DatasetAccessStatus
+      source={sourceValue}
+      id={id}
+      datasetCode={datasetCode}
+    />
   )
 }
 

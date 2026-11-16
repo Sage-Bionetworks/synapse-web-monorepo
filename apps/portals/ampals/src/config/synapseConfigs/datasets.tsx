@@ -1,5 +1,7 @@
 import ampAlsAccessColumn from '@/components/AmpAlsAccessColumn'
+import { DatasetCardAdornment } from '@/components/DatasetCardAdornment'
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import type { CardLink } from 'synapse-react-client/components/CardContainer/CardLink'
 import type { LabelLinkConfig } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import type { QueryWrapperSynapsePlotProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperSynapsePlot'
@@ -55,14 +57,16 @@ const datasetSizePlotConfig: QueryWrapperSynapsePlotProps = {
   fullWidth: false,
 }
 
+const datasetDetailsPageLink: CardLink = {
+  isMarkdown: false,
+  baseURL: 'Explore/Datasets/DetailsPage',
+  URLColumnName: 'id',
+  matchColumnName: 'name',
+  overrideValueWithRowID: true,
+}
+
 export const datasetColumnLinks: LabelLinkConfig = [
-  {
-    isMarkdown: false,
-    baseURL: 'Explore/Datasets/DetailsPage',
-    URLColumnName: 'id',
-    matchColumnName: 'name',
-    overrideValueWithRowID: true,
-  },
+  datasetDetailsPageLink,
   {
     isMarkdown: false,
     linkColumnName: 'url',
@@ -116,6 +120,14 @@ export const datasetCardConfiguration: CardConfiguration = {
   labelLinkConfig: datasetColumnLinks,
 }
 
+// Explore cards open the dataset's details page from the title; the adornment
+// carries access status and the direct link to the files.
+const datasetExploreCardConfiguration: CardConfiguration = {
+  ...datasetCardConfiguration,
+  titleLinkConfig: datasetDetailsPageLink,
+  CardTypeAdornment: DatasetCardAdornment,
+}
+
 export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
   rgbIndex,
   name: 'Datasets',
@@ -126,11 +138,7 @@ export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
   autocompleteFieldName: 'name',
   hideTopLevelControls: false,
   hideQueryCount: false,
-  tableConfiguration: {
-    columnLinks: datasetColumnLinks,
-    showAccessColumn: false, // use custom access column instead
-    customColumns: [ampAlsAccessColumn],
-  },
+  cardConfiguration: datasetExploreCardConfiguration,
   customPlots: [
     datasetItemCountPlotConfig,
     datasetSizePlotConfig,
