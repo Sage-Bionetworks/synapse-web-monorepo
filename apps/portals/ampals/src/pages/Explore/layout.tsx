@@ -10,9 +10,6 @@ function ExploreLayout() {
         {
           path: 'Datasets',
         },
-        {
-          path: 'Files',
-        },
       ]}
     />
   )
