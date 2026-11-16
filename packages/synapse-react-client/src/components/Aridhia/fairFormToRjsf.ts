@@ -20,6 +20,28 @@ export type FairRjsfSection = {
   uiSchema: UiSchema
   /** Fields whose `type` cannot be rendered; the wizard blocks submit and names them. */
   unsupported: FairField[]
+  /** Names of this section's FAIR `phone`-type fields; see `toFairSubmissionAnswers`. */
+  phoneFieldNames: string[]
+}
+
+/**
+ * Converts in-form answers into the values FAIR stores. `PhoneWidget` keeps a formatted
+ * international number (e.g. `+1 202 555 0123`) so drafts restore into the widget, but
+ * RDCA-DAP's own form stores phone answers as digits only (`12025550123`) and prepends `+`
+ * when displaying them, so a `+` sent here would render as `++1 …`.
+ */
+export function toFairSubmissionAnswers(
+  values: Record<string, unknown>,
+  phoneFieldNames: Iterable<string>,
+): Record<string, unknown> {
+  const answers = { ...values }
+  for (const name of phoneFieldNames) {
+    const value = answers[name]
+    if (typeof value === 'string') {
+      answers[name] = value.replaceAll(/\D/g, '')
+    }
+  }
+  return answers
 }
 
 const RENDERABLE_TYPES = new Set([
@@ -134,6 +156,7 @@ export function fairSectionToRjsf(
   }
   const required: string[] = []
   const unsupported: FairField[] = []
+  const phoneFieldNames: string[] = []
 
   for (const field of section.fields) {
     const name = field.name
@@ -231,6 +254,7 @@ export function fairSectionToRjsf(
       case 'phone': {
         properties[name] = { type: 'string', maxLength: lengthBound(v.maximum) }
         uiSchema[name] = { 'ui:widget': 'PhoneWidget' }
+        phoneFieldNames.push(name)
         break
       }
       case 'label': {
@@ -263,6 +287,7 @@ export function fairSectionToRjsf(
     },
     uiSchema,
     unsupported,
+    phoneFieldNames,
   }
 }
 
