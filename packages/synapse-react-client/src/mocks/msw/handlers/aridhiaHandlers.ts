@@ -67,7 +67,7 @@ export const MOCK_ARIDHIA_ABOUT_FIELDS: FairField[] = [
     name: 'email',
     type: 'string',
     label: 'Email address',
-    validation: { required: true },
+    validation: { required: true, format: 'email' },
   },
 ]
 

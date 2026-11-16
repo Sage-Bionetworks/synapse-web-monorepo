@@ -1,6 +1,8 @@
 import { describe, expect, test } from 'vitest'
 import {
+  FAIR_FORMAT_MESSAGES,
   fairSectionToRjsf,
+  getFairFormatErrors,
   FairField,
   FairFormSection,
   parseFairFormSections,
@@ -112,6 +114,67 @@ describe('fairSectionToRjsf', () => {
     const { schema, unsupported } = fairSectionToRjsf(sectionWithAuthField)
     expect(unsupported.map(f => f.name)).toEqual(['sso_login'])
     expect(schema.properties).not.toHaveProperty('sso_login')
+  })
+})
+
+describe('FAIR string formats', () => {
+  const formattedSection: FairFormSection = {
+    key: 'about',
+    fields: [
+      { name: 'email', type: 'string', validation: { format: 'email' } },
+      { name: 'website', type: 'string', validation: { format: 'uri' } },
+      { name: 'orcid_uuid', type: 'string', validation: { format: 'uuid' } },
+      { name: 'other', type: 'string', validation: { format: 'ipv4' } },
+      { name: 'plain', type: 'string' },
+    ],
+  }
+  const { schema } = fairSectionToRjsf(formattedSection)
+
+  test('email, uri and uuid string fields carry their JSON-schema format', () => {
+    expect(schema.properties!.email).toMatchObject({ format: 'email' })
+    expect(schema.properties!.website).toMatchObject({ format: 'uri' })
+    expect(schema.properties!.orcid_uuid).toMatchObject({ format: 'uuid' })
+  })
+
+  test('unknown formats and unformatted fields get no format', () => {
+    expect(schema.properties!.other).not.toHaveProperty('format')
+    expect(schema.properties!.plain).not.toHaveProperty('format')
+  })
+
+  test('flags malformed values with FAIR’s own messages', () => {
+    expect(
+      getFairFormatErrors(schema, {
+        email: 'jane@',
+        website: 'not a url',
+        orcid_uuid: '1234',
+        other: 'anything',
+        plain: 'anything',
+      }),
+    ).toEqual({
+      email: 'Please enter a valid email address',
+      website: FAIR_FORMAT_MESSAGES.uri,
+      orcid_uuid: FAIR_FORMAT_MESSAGES.uuid,
+    })
+  })
+
+  test('accepts well-formed values', () => {
+    expect(
+      getFairFormatErrors(schema, {
+        email: 'jane@example.edu',
+        website: 'https://example.org/lab',
+        orcid_uuid: '123e4567-e89b-12d3-a456-426614174000',
+      }),
+    ).toEqual({})
+  })
+
+  test('does not flag blank values (undefined, null, or empty string)', () => {
+    expect(
+      getFairFormatErrors(schema, {
+        email: '',
+        website: null,
+        orcid_uuid: undefined,
+      }),
+    ).toEqual({})
   })
 })
 

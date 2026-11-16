@@ -1,4 +1,5 @@
 import { RJSFSchema, UiSchema } from '@rjsf/utils'
+import validator from '@rjsf/validator-ajv8'
 import dayjs from 'dayjs'
 import { FairField, FairFormPayload } from '@/aridhia-queries/FairFormPayload'
 
@@ -67,6 +68,25 @@ function num(value: string | undefined): number | undefined {
   return value == null ? undefined : Number(value)
 }
 
+/**
+ * FAIR's own inline messages (its `validation.{email,uri,uuid}.not.valid` strings) for the
+ * `string` field formats it defines. The keys are also the JSON-schema `format`s, checked by
+ * the ajv-formats bundled with `@rjsf/validator-ajv8`. Any other FAIR format is not validated.
+ */
+export const FAIR_FORMAT_MESSAGES = {
+  email: 'Please enter a valid email address',
+  uri: 'Please enter a valid URI',
+  uuid: 'Please apply a valid uuid',
+} as const
+
+type FairFormat = keyof typeof FAIR_FORMAT_MESSAGES
+
+function isFairFormat(format: unknown): format is FairFormat {
+  return (
+    typeof format === 'string' && Object.hasOwn(FAIR_FORMAT_MESSAGES, format)
+  )
+}
+
 /** Translates one FAIR form section into an RJSF schema/uiSchema pair. */
 export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
   const properties: Record<string, RJSFSchema> = {}
@@ -98,6 +118,7 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
           type: 'string',
           maxLength: num(v.maximum),
           minLength: num(v.minimum),
+          ...(isFairFormat(v.format) ? { format: v.format } : {}),
         }
         uiSchema[name] = { 'ui:placeholder': field.placeholder }
         break
@@ -174,6 +195,33 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
     uiSchema,
     unsupported,
   }
+}
+
+/**
+ * Checks a `fairSectionToRjsf` schema's formatted (`email`/`uri`/`uuid`) fields, returning
+ * FAIR's message for each one holding a value that doesn't match its format, keyed by field
+ * name. Blank values are left to the section's `required` check, so optional fields may stay
+ * empty.
+ */
+export function getFairFormatErrors(
+  schema: RJSFSchema,
+  values: Record<string, unknown>,
+): Record<string, string> {
+  const errors: Record<string, string> = {}
+  for (const [name, property] of Object.entries(schema.properties ?? {})) {
+    if (typeof property === 'boolean' || !isFairFormat(property.format)) {
+      continue
+    }
+    const value = values[name]
+    if (value === undefined || value === null || value === '') {
+      continue
+    }
+    const formatSchema: RJSFSchema = { type: 'string', format: property.format }
+    if (!validator.isValid(formatSchema, value, formatSchema)) {
+      errors[name] = FAIR_FORMAT_MESSAGES[property.format]
+    }
+  }
+  return errors
 }
 
 export type AnsweredField = { label: string; value: string }

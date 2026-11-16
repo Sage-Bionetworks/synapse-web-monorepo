@@ -16,7 +16,13 @@ export type FairField = {
   default_options?: string
   placeholder?: string
   options?: Array<{ text?: string; value?: string; description?: string }>
-  validation?: { minimum?: string; maximum?: string; required?: boolean }
+  validation?: {
+    minimum?: string
+    maximum?: string
+    required?: boolean
+    /** On `string` fields: `email`, `uri` or `uuid` (see `FAIR_FORMAT_MESSAGES`). */
+    format?: string
+  }
 }
 
 /**

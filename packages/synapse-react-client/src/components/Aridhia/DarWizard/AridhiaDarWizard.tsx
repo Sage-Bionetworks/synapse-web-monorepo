@@ -19,6 +19,7 @@ import {
   fairSectionToRjsf,
   FairField,
   FairFormPayload,
+  getFairFormatErrors,
   parseFairFormSections,
   summarizeFormAnswers,
 } from '@/components/Aridhia/fairFormToRjsf'
@@ -55,14 +56,18 @@ type StepKey = 'destination' | 'workspace' | 'project' | 'about' | 'complete'
 const SUPPORT_PORTAL_URL =
   'https://sagebionetworks.jira.com/servicedesk/customer/portal/9'
 
-function isSectionComplete(
+/** Every required field is answered, and no formatted field holds a malformed value. */
+function isSectionValid(
   schema: RJSFSchema,
   values: Record<string, unknown>,
 ): boolean {
-  return (schema.required ?? []).every(key => {
+  const isComplete = (schema.required ?? []).every(key => {
     const value = values[key]
     return value !== undefined && value !== null && value !== ''
   })
+  return (
+    isComplete && Object.keys(getFairFormatErrors(schema, values)).length === 0
+  )
 }
 
 function useFairSection(data: FairFormPayload | null | undefined, key: string) {
@@ -272,18 +277,17 @@ function useAridhiaDarWizardParts(
         return (
           !workspaceFormQuery.isLoading &&
           !!draft.workspaceReference?.trim() &&
-          (!workspaceRjsf ||
-            isSectionComplete(workspaceRjsf.schema, draft.values))
+          (!workspaceRjsf || isSectionValid(workspaceRjsf.schema, draft.values))
         )
       case 'about':
         return (
           !workflowQuery.isLoading &&
-          (!aboutRjsf || isSectionComplete(aboutRjsf.schema, draft.values))
+          (!aboutRjsf || isSectionValid(aboutRjsf.schema, draft.values))
         )
       case 'project':
         return (
           !workflowQuery.isLoading &&
-          (!projectRjsf || isSectionComplete(projectRjsf.schema, draft.values))
+          (!projectRjsf || isSectionValid(projectRjsf.schema, draft.values))
         )
       case 'complete':
         return draft.termsAccepted
