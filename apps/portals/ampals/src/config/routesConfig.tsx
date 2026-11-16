@@ -54,6 +54,11 @@ const routes: RouteObject[] = [
           import('@/pages/DatasetDetailsPage').then(convertModuleToRouteObject),
       },
       {
+        path: 'How to Access Data',
+        lazy: () =>
+          import('@/pages/HowToAccessData').then(convertModuleToRouteObject),
+      },
+      {
         path: 'Data Access',
         children: [
           {

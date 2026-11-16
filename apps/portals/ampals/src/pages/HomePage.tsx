@@ -175,7 +175,7 @@ export default function HomePage() {
         />
       </SectionLayout>
       {/* <AMPALSExploreTheData sql={upsetPlotSql} /> */}
-      <HowToAccessData />
+      <HowToAccessData moreInfoPath="/How to Access Data" />
       <SectionLayout
         ContainerProps={{
           className: 'home-spacer',
