@@ -2,8 +2,10 @@ import Add from '@mui/icons-material/Add'
 import ArrowUpward from '@mui/icons-material/ArrowUpward'
 import { Box, IconButton, TextareaAutosize, Tooltip } from '@mui/material'
 import {
+  Dispatch,
   FormEventHandler,
   KeyboardEventHandler,
+  SetStateAction,
   useMemo,
   useState,
 } from 'react'
@@ -24,9 +26,12 @@ export const MAX_CHAT_INPUT_ROWS = 6
 export type ChatInputAreaProps = {
   value: string
   onValueChange: (value: string) => void
+  attachments: ChatAttachment[]
+  onAttachmentsChange: Dispatch<SetStateAction<ChatAttachment[]>>
+  /** The caller clears `value` and `attachments` once the message has been sent. */
   onSend: (message: string, attachments: ChatAttachment[]) => void
   placeholder?: string
-  /** No session yet, or a response is in flight. */
+  /** A session is being created, or a response is in flight. */
   disabled?: boolean
   /** @default false */
   allowAttachments?: boolean
@@ -43,20 +48,20 @@ const actionButtonSx = {
 /**
  * The chat composer: a bordered card containing a conditional attachment strip, an
  * auto-growing borderless text input, and a right-aligned row of actions (attach + send).
- * Owns attachment upload state end-to-end; the message text itself is controlled by the
- * caller since it can also be set from outside the card (e.g. suggested-prompt pills).
+ * Owns attachment upload progress. The message text and attachments are controlled by the caller,
+ * which sets the text from outside the card (e.g. suggested-prompt pills) and clears both only
+ * once a send goes through, so a failed send keeps them.
  */
 export function ChatInputArea({
   value,
   onValueChange,
+  attachments,
+  onAttachmentsChange,
   onSend,
   placeholder,
   disabled = false,
   allowAttachments = false,
 }: ChatInputAreaProps) {
-  const [pendingAttachments, setPendingAttachments] = useState<
-    ChatAttachment[]
-  >([])
   const [isAddFilesDialogOpen, setIsAddFilesDialogOpen] = useState(false)
   const [isUploadingAttachments, setIsUploadingAttachments] = useState(false)
 
@@ -66,8 +71,7 @@ export function ChatInputArea({
     if (isSendDisabled) {
       return
     }
-    onSend(value.trim(), pendingAttachments)
-    setPendingAttachments([])
+    onSend(value.trim(), attachments)
   }
 
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = event => {
@@ -86,12 +90,12 @@ export function ChatInputArea({
 
   const attachmentItems: AttachmentStripItem[] = useMemo(
     () =>
-      pendingAttachments.map(attachment => ({
+      attachments.map(attachment => ({
         fileHandleId: attachment.fileHandleId,
         label: attachment.fileName,
         contentType: attachment.contentType,
       })),
-    [pendingAttachments],
+    [attachments],
   )
 
   return (
@@ -101,7 +105,7 @@ export function ChatInputArea({
           <ChatAttachmentStrip
             items={attachmentItems}
             onRemove={fileHandleId =>
-              setPendingAttachments(prev =>
+              onAttachmentsChange(prev =>
                 prev.filter(a => a.fileHandleId !== fileHandleId),
               )
             }
@@ -147,9 +151,9 @@ export function ChatInputArea({
         <AddFilesDialog
           open={isAddFilesDialogOpen}
           onClose={() => setIsAddFilesDialogOpen(false)}
-          currentAttachmentCount={pendingAttachments.length}
+          currentAttachmentCount={attachments.length}
           onAttachmentUploaded={attachment =>
-            setPendingAttachments(prev => [...prev, attachment])
+            onAttachmentsChange(prev => [...prev, attachment])
           }
           onUploadStateChange={state =>
             setIsUploadingAttachments(state === 'UPLOADING')

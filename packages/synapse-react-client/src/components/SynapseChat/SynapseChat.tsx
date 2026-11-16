@@ -210,11 +210,14 @@ export function SynapseChat({
   }
   const presentAtMount = presentAtMountRef.current
 
-  // Keep track of the text that the user is currently typing into the textfield
+  // The composer's text and attachments, which are cleared only once the message is sent
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
+  const [composerAttachments, setComposerAttachments] = useState<
+    ChatAttachment[]
+  >([])
 
   // A copy of the attachments sent with the last interaction, so it can still show rich
-  // (name/type) chips after ChatInputArea has cleared its own attachment state. This is passed to
+  // (name/type) chips after the composer's attachments are cleared. This is passed to
   // the last interaction for its entire lifetime -- sent, then processing, then completed -- as a
   // fallback filename source, since the request body (FileHandleAssociation) never carries a
   // filename and the server-resolved filename (attachmentStatuses) only arrives once the job
@@ -318,13 +321,16 @@ export function SynapseChat({
   }, [initialMessage, agentSession, sendMessage, startSessionAndSend])
 
   const handleSend = (message: string, attachments: ChatAttachment[]) => {
-    const clearTextfield = () => setUserChatTextfieldValue('')
+    const clearComposer = () => {
+      setUserChatTextfieldValue('')
+      setComposerAttachments([])
+    }
     if (agentSession) {
       sendMessage({ message, attachments })
-      clearTextfield()
+      clearComposer()
     } else {
       // The message stays in the composer until it is sent, so a failed session creation keeps it
-      startSessionAndSend({ message, attachments }, clearTextfield)
+      startSessionAndSend({ message, attachments }, clearComposer)
     }
   }
 
@@ -494,6 +500,8 @@ export function SynapseChat({
           <ChatInputArea
             value={userChatTextfieldValue}
             onValueChange={setUserChatTextfieldValue}
+            attachments={composerAttachments}
+            onAttachmentsChange={setComposerAttachments}
             onSend={handleSend}
             placeholder={
               variant === 'curie' ? 'Ask anything' : `Message ${chatbotName}`

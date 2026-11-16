@@ -11,6 +11,8 @@ const meta = {
   component: ChatInputArea,
   args: {
     onValueChange: fn(),
+    attachments: [],
+    onAttachmentsChange: fn(),
     onSend: fn(),
     placeholder: 'Message SynapseChat',
   },
@@ -18,9 +20,10 @@ const meta = {
     stack: 'mock',
   },
   render: function Render(args) {
-    // ChatInputArea controls its text value externally -- a trivial useState wrapper is enough
-    // to demo it in isolation, without an agent session or chat MSW handlers.
+    // ChatInputArea controls its text value and attachments externally -- trivial useState
+    // wrappers are enough to demo it in isolation, without an agent session or chat MSW handlers.
     const [value, setValue] = useState(args.value)
+    const [attachments, setAttachments] = useState(args.attachments)
     return (
       <ChatInputArea
         {...args}
@@ -28,6 +31,11 @@ const meta = {
         onValueChange={newValue => {
           setValue(newValue)
           args.onValueChange(newValue)
+        }}
+        attachments={attachments}
+        onAttachmentsChange={newAttachments => {
+          setAttachments(newAttachments)
+          args.onAttachmentsChange(newAttachments)
         }}
       />
     )

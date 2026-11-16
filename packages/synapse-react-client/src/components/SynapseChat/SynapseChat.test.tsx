@@ -582,8 +582,8 @@ describe('SynapseChat - creating the agent session', () => {
     )
   })
 
-  it('keeps the message and shows the error when the session cannot be created, so the user can retry', async () => {
-    const { user } = renderWithoutSession()
+  it('keeps the message and its attachments and shows the error when the session cannot be created, so the user can retry', async () => {
+    const { user } = renderWithoutSession({ allowAttachments: true })
     let failSessionCreation = true
     server.use(
       http.post(`${repoOrigin}${AGENT_SESSION}`, () =>
@@ -596,24 +596,29 @@ describe('SynapseChat - creating the agent session', () => {
       ),
     )
 
+    await user.click(screen.getByRole('button', { name: 'Add files' }))
+    await user.click(
+      screen.getByRole('button', { name: 'Simulate attachment uploaded' }),
+    )
     await sendMessage(user)
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'The agent is unavailable',
     )
     expect(screen.getByRole('textbox')).toHaveValue('hello')
+    expect(screen.getByText('report.pdf')).toBeInTheDocument()
     expect(mockSendChat).not.toHaveBeenCalled()
 
     failSessionCreation = false
     await user.click(screen.getByRole('button', { name: 'Send message' }))
 
-    await waitFor(() =>
-      expect(mockSendChat).toHaveBeenCalledExactlyOnceWith(
-        'hello',
-        undefined,
-        mockAgentSession.sessionId,
-      ),
-    )
+    await waitFor(() => expect(mockSendChat).toHaveBeenCalledTimes(1))
+    const [message, attachments, sessionId] = mockSendChat.mock.calls[0]
+    expect(message).toBe('hello')
+    expect(attachments).toHaveLength(1)
+    expect(sessionId).toBe(mockAgentSession.sessionId)
+    expect(screen.getByRole('textbox')).toHaveValue('')
+    expect(screen.queryByText('report.pdf')).not.toBeInTheDocument()
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
