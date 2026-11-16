@@ -6,7 +6,6 @@ import {
   useState,
 } from 'react'
 import { Alert, Box, Button, Link, Skeleton } from '@mui/material'
-import { RJSFSchema } from '@rjsf/utils'
 import { useGetAridhiaDatasetSettings } from '@/aridhia-queries/useGetAridhiaDatasetSettings'
 import { useGetAridhiaWorkflow } from '@/aridhia-queries/useGetAridhiaWorkflow'
 import { useGetAridhiaDictionaries } from '@/aridhia-queries/useGetAridhiaDictionaries'
@@ -19,7 +18,8 @@ import {
   fairSectionToRjsf,
   FairField,
   FairFormPayload,
-  getFairFormatErrors,
+  FairRjsfSection,
+  getFairFieldErrors,
   parseFairFormSections,
   summarizeFormAnswers,
 } from '@/components/Aridhia/fairFormToRjsf'
@@ -56,17 +56,17 @@ type StepKey = 'destination' | 'workspace' | 'project' | 'about' | 'complete'
 const SUPPORT_PORTAL_URL =
   'https://sagebionetworks.jira.com/servicedesk/customer/portal/9'
 
-/** Every required field is answered, and no formatted field holds a malformed value. */
+/** Every required field is answered, and no answer breaks one of RDCA-DAP's field rules. */
 function isSectionValid(
-  schema: RJSFSchema,
+  section: FairRjsfSection,
   values: Record<string, unknown>,
 ): boolean {
-  const isComplete = (schema.required ?? []).every(key => {
+  const isComplete = (section.schema.required ?? []).every(key => {
     const value = values[key]
     return value !== undefined && value !== null && value !== ''
   })
   return (
-    isComplete && Object.keys(getFairFormatErrors(schema, values)).length === 0
+    isComplete && Object.keys(getFairFieldErrors(section, values)).length === 0
   )
 }
 
@@ -277,17 +277,17 @@ function useAridhiaDarWizardParts(
         return (
           !workspaceFormQuery.isLoading &&
           !!draft.workspaceReference?.trim() &&
-          (!workspaceRjsf || isSectionValid(workspaceRjsf.schema, draft.values))
+          (!workspaceRjsf || isSectionValid(workspaceRjsf, draft.values))
         )
       case 'about':
         return (
           !workflowQuery.isLoading &&
-          (!aboutRjsf || isSectionValid(aboutRjsf.schema, draft.values))
+          (!aboutRjsf || isSectionValid(aboutRjsf, draft.values))
         )
       case 'project':
         return (
           !workflowQuery.isLoading &&
-          (!projectRjsf || isSectionValid(projectRjsf.schema, draft.values))
+          (!projectRjsf || isSectionValid(projectRjsf, draft.values))
         )
       case 'complete':
         return draft.termsAccepted

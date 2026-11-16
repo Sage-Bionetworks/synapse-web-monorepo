@@ -1,8 +1,10 @@
 import { describe, expect, test } from 'vitest'
+import dayjs from 'dayjs'
+import allFieldTypesWorkflow from '@/mocks/aridhia/cpathBasicAllAccessRequestV2Workflow.json'
 import {
   FAIR_FORMAT_MESSAGES,
   fairSectionToRjsf,
-  getFairFormatErrors,
+  getFairFieldErrors,
   FairField,
   FairFormSection,
   parseFairFormSections,
@@ -128,7 +130,8 @@ describe('FAIR string formats', () => {
       { name: 'plain', type: 'string' },
     ],
   }
-  const { schema } = fairSectionToRjsf(formattedSection)
+  const form = fairSectionToRjsf(formattedSection)
+  const { schema } = form
 
   test('email, uri and uuid string fields carry their JSON-schema format', () => {
     expect(schema.properties!.email).toMatchObject({ format: 'email' })
@@ -143,7 +146,7 @@ describe('FAIR string formats', () => {
 
   test('flags malformed values with FAIR’s own messages', () => {
     expect(
-      getFairFormatErrors(schema, {
+      getFairFieldErrors(form, {
         email: 'jane@',
         website: 'not a url',
         orcid_uuid: '1234',
@@ -159,7 +162,7 @@ describe('FAIR string formats', () => {
 
   test('accepts well-formed values', () => {
     expect(
-      getFairFormatErrors(schema, {
+      getFairFieldErrors(form, {
         email: 'jane@example.edu',
         website: 'https://example.org/lab',
         orcid_uuid: '123e4567-e89b-12d3-a456-426614174000',
@@ -169,12 +172,224 @@ describe('FAIR string formats', () => {
 
   test('does not flag blank values (undefined, null, or empty string)', () => {
     expect(
-      getFairFormatErrors(schema, {
+      getFairFieldErrors(form, {
         email: '',
         website: null,
         orcid_uuid: undefined,
       }),
     ).toEqual({})
+  })
+})
+
+describe('FAIR number fields', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      {
+        name: 'number_type',
+        type: 'number',
+        label: 'Number',
+        validation: { minimum: 1, maximum: 10, required: true },
+        defaultValue: 10,
+      },
+      // The spec types bounds and defaults as strings.
+      {
+        name: 'ratio',
+        type: 'number',
+        validation: { minimum: '0', maximum: '0.5' },
+        defaultValue: '0.25',
+      },
+    ],
+  })
+
+  test('map to a JSON-schema number with value bounds, not length bounds', () => {
+    expect(form.unsupported).toEqual([])
+    expect(form.schema.properties!.number_type).toEqual({
+      type: 'number',
+      title: 'Number',
+      minimum: 1,
+      maximum: 10,
+      default: 10,
+    })
+    expect(form.schema.properties!.ratio).toMatchObject({
+      type: 'number',
+      minimum: 0,
+      maximum: 0.5,
+      default: 0.25,
+    })
+    expect(form.schema.properties!.number_type).not.toHaveProperty('minLength')
+    expect(form.schema.required).toEqual(['number_type'])
+  })
+
+  test('flag values outside the bounds with RDCA-DAP’s messages', () => {
+    expect(getFairFieldErrors(form, { number_type: 0, ratio: 0.75 })).toEqual({
+      number_type: 'Minimum of 1',
+      ratio: 'Maximum of 0.5',
+    })
+    expect(getFairFieldErrors(form, { number_type: 11 })).toEqual({
+      number_type: 'Maximum of 10',
+    })
+  })
+
+  test('accept in-range values, including decimals and bounds themselves', () => {
+    expect(getFairFieldErrors(form, { number_type: 1, ratio: 0 })).toEqual({})
+    expect(getFairFieldErrors(form, { number_type: 9.5, ratio: 0.5 })).toEqual(
+      {},
+    )
+  })
+
+  test('flag a non-numeric value', () => {
+    expect(getFairFieldErrors(form, { number_type: '9' })).toEqual({
+      number_type: 'Must be a number',
+    })
+  })
+})
+
+describe('FAIR text length bounds', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      {
+        name: 'summary',
+        type: 'markdown',
+        validation: { minimum: 5, maximum: 10 },
+      },
+      { name: 'title', type: 'string', validation: { minimum: '2' } },
+      { name: 'phone', type: 'phone', validation: { maximum: 6 } },
+    ],
+  })
+
+  test('flag values shorter or longer than the bounds with RDCA-DAP’s messages', () => {
+    expect(
+      getFairFieldErrors(form, {
+        summary: 'abc',
+        title: 'a',
+        phone: '+1 2345',
+      }),
+    ).toEqual({
+      summary: 'Minimum of 5 characters',
+      title: 'Minimum of 2 characters',
+      phone: 'Maximum of 6 characters',
+    })
+    expect(getFairFieldErrors(form, { summary: 'abcdefghijk' })).toEqual({
+      summary: 'Maximum of 10 characters',
+    })
+  })
+
+  test('accept values within the bounds', () => {
+    expect(
+      getFairFieldErrors(form, {
+        summary: 'abcde',
+        title: 'ab',
+        phone: '+1 23',
+      }),
+    ).toEqual({})
+  })
+})
+
+describe('FAIR date minimum', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      { name: 'start', type: 'date', validation: { minimum: 'today' } },
+      { name: 'end', type: 'date', validation: { minimum: '2027-03-05' } },
+      { name: 'other', type: 'date', validation: { minimum: 'tomorrow' } },
+    ],
+  })
+  const utcMidnight = (date: dayjs.Dayjs) =>
+    `${date.format('YYYY-MM-DD')}T00:00:00.000Z`
+
+  test('restricts the date picker for `today` and ISO dates only', () => {
+    expect(form.uiSchema.start).toEqual({
+      'ui:widget': 'DateWidget',
+      'ui:options': { minDate: 'today' },
+    })
+    expect(form.uiSchema.end).toEqual({
+      'ui:widget': 'DateWidget',
+      'ui:options': { minDate: '2027-03-05' },
+    })
+    expect(form.uiSchema.other).toEqual({ 'ui:widget': 'DateWidget' })
+  })
+
+  test('flags a date before the minimum', () => {
+    expect(
+      getFairFieldErrors(form, {
+        start: utcMidnight(dayjs().subtract(1, 'day')),
+        end: '2027-03-04T00:00:00.000Z',
+        other: '2000-01-01T00:00:00.000Z',
+      }),
+    ).toEqual({
+      start: 'Must be today or later',
+      end: 'Must be Mar 5, 2027 or later',
+    })
+  })
+
+  test('accepts the minimum date itself', () => {
+    expect(
+      getFairFieldErrors(form, {
+        start: utcMidnight(dayjs()),
+        end: '2027-03-05T00:00:00.000Z',
+      }),
+    ).toEqual({})
+  })
+
+  test('flags a date the picker could not parse, with or without a minimum', () => {
+    expect(
+      getFairFieldErrors(form, {
+        end: 'Invalid DateT00:00:00.000Z',
+        other: 'Invalid DateT00:00:00.000Z',
+      }),
+    ).toEqual({
+      end: 'Please enter a valid date',
+      other: 'Please enter a valid date',
+    })
+  })
+})
+
+describe('FAIR default values', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      { name: 'opt_out', type: 'boolean', defaultValue: false },
+      { name: 'opt_in', type: 'boolean', defaultValue: true },
+      { name: 'count', type: 'number', defaultValue: 0 },
+      { name: 'blank', type: 'string', defaultValue: '' },
+      { name: 'nulled', type: 'string', defaultValue: null },
+    ],
+  })
+
+  test('keep falsy defaults (`false`, `0`) with their own types', () => {
+    expect(form.schema.properties!.opt_out).toMatchObject({ default: false })
+    expect(form.schema.properties!.opt_in).toMatchObject({ default: true })
+    expect(form.schema.properties!.count).toMatchObject({ default: 0 })
+  })
+
+  test('treat an empty-string or null default as no default', () => {
+    expect(form.schema.properties!.blank).not.toHaveProperty('default')
+    expect(form.schema.properties!.nulled).not.toHaveProperty('default')
+  })
+})
+
+describe('the live omop_als1001 request form', () => {
+  test('renders every field it contains, of every RDCA-DAP field type', () => {
+    const sections = parseFairFormSections(allFieldTypesWorkflow)
+    expect(sections.map(s => s.key)).toEqual(['about', 'project'])
+    expect(new Set(sections.flatMap(s => s.fields.map(f => f.type)))).toEqual(
+      new Set([
+        'string',
+        'text',
+        'markdown',
+        'phone',
+        'date',
+        'label',
+        'boolean',
+        'number',
+        'list',
+      ]),
+    )
+    for (const section of sections) {
+      expect(fairSectionToRjsf(section).unsupported).toEqual([])
+    }
   })
 })
 

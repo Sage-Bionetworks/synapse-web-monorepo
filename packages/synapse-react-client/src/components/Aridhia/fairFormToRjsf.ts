@@ -2,6 +2,7 @@ import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'
 import dayjs from 'dayjs'
 import { FairField, FairFormPayload } from '@/aridhia-queries/FairFormPayload'
+import { resolveMinDate } from '@/components/JsonSchemaForm/widgets/DateWidget'
 
 export type { FairField, FairFormPayload }
 
@@ -24,6 +25,7 @@ const RENDERABLE_TYPES = new Set([
   'markdown',
   'boolean',
   'date',
+  'number',
   'list',
   'phone',
   'label',
@@ -63,9 +65,30 @@ export function parseFairFormSections(
   return []
 }
 
-/** FAIR sends `minimum`/`maximum` as strings; `undefined` in, `undefined` out. */
-function num(value: string | undefined): number | undefined {
-  return value == null ? undefined : Number(value)
+/** FAIR sends numeric bounds as numbers or numeric strings; anything else is no bound. */
+function num(value: unknown): number | undefined {
+  let parsed = Number.NaN
+  if (typeof value === 'number') {
+    parsed = value
+  } else if (typeof value === 'string' && value.trim() !== '') {
+    parsed = Number(value)
+  }
+  return Number.isFinite(parsed) ? parsed : undefined
+}
+
+/**
+ * A `date` field's `validation.minimum`, as a `DateWidget` `minDate` option: `today`, or the
+ * calendar date of an ISO 8601 date/date-time. Other values (RDCA-DAP also understands e.g.
+ * `tomorrow`) are ignored.
+ */
+function minDateOption(minimum: unknown): string | undefined {
+  if (typeof minimum !== 'string') {
+    return undefined
+  }
+  if (minimum.toLowerCase() === 'today') {
+    return 'today'
+  }
+  return /^\d{4}-\d{2}-\d{2}/.test(minimum) ? minimum.slice(0, 10) : undefined
 }
 
 /**
@@ -141,10 +164,24 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
         break
       }
       case 'date': {
-        // The FAIR API expects a `date-time`; the only date field is project_end_date
-        // so a simple date picker (DateWidget) is ideal.
+        // The FAIR API expects a `date-time`, but FAIR date fields ask for a calendar date
+        // only, so a simple date picker (DateWidget) is ideal.
         properties[name] = { type: 'string', format: 'date-time' }
-        uiSchema[name] = { 'ui:widget': 'DateWidget' }
+        const minDate = minDateOption(v.minimum)
+        uiSchema[name] = {
+          'ui:widget': 'DateWidget',
+          ...(minDate ? { 'ui:options': { minDate } } : {}),
+        }
+        break
+      }
+      case 'number': {
+        // FAIR has no integer flag, so decimals are allowed.
+        properties[name] = {
+          type: 'number',
+          minimum: num(v.minimum),
+          maximum: num(v.maximum),
+        }
+        uiSchema[name] = { 'ui:placeholder': field.placeholder }
         break
       }
       case 'list': {
@@ -181,8 +218,15 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
       properties[name].title = field.label
     }
 
-    if (field.defaultValue) {
-      properties[name].default = field.defaultValue
+    const { defaultValue } = field
+    // FAIR sends `''` for "no default"; `false` and `0` are real defaults.
+    if (
+      defaultValue !== undefined &&
+      defaultValue !== null &&
+      defaultValue !== ''
+    ) {
+      properties[name].default =
+        field.type === 'number' ? num(defaultValue) : defaultValue
     }
   }
 
@@ -197,28 +241,95 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
   }
 }
 
+/** The `fairSectionToRjsf` output the field checks need. */
+type FairRjsfForm = Pick<FairRjsfSection, 'schema' | 'uiSchema'>
+
+const INVALID_DATE_MESSAGE = 'Please enter a valid date'
+
+/** The message for the first rule `value` breaks, if any: RDCA-DAP's own wherever it has one. */
+function getFairFieldError(
+  property: RJSFSchema,
+  minDate: unknown,
+  value: unknown,
+): string | undefined {
+  if (property.type === 'number') {
+    if (typeof value !== 'number' || !Number.isFinite(value)) {
+      return 'Must be a number'
+    }
+    if (property.minimum !== undefined && value < property.minimum) {
+      return `Minimum of ${property.minimum}`
+    }
+    if (property.maximum !== undefined && value > property.maximum) {
+      return `Maximum of ${property.maximum}`
+    }
+    return undefined
+  }
+  if (typeof value !== 'string') {
+    return undefined
+  }
+  if (property.format === 'date-time') {
+    // The date picker reports a date typed in full that doesn't exist (e.g. 02/30) as an
+    // invalid date, which `DateWidget` stores as a non-ISO string.
+    if (!/^\d{4}-\d{2}-\d{2}/.test(value)) {
+      return INVALID_DATE_MESSAGE
+    }
+    // `DateWidget` values are UTC midnight of the picked calendar date, so comparing the
+    // `YYYY-MM-DD` prefixes compares calendar dates.
+    if (typeof minDate !== 'string') {
+      return undefined
+    }
+    const earliest = resolveMinDate(minDate)
+    if (value.slice(0, 10) >= earliest) {
+      return undefined
+    }
+    return minDate === 'today'
+      ? 'Must be today or later'
+      : `Must be ${dayjs(earliest).format('MMM D, YYYY')} or later`
+  }
+  if (property.minLength !== undefined && value.length < property.minLength) {
+    return `Minimum of ${property.minLength} characters`
+  }
+  if (property.maxLength !== undefined && value.length > property.maxLength) {
+    return `Maximum of ${property.maxLength} characters`
+  }
+  if (isFairFormat(property.format)) {
+    const formatSchema: RJSFSchema = {
+      type: 'string',
+      format: property.format,
+    }
+    if (!validator.isValid(formatSchema, value, formatSchema)) {
+      return FAIR_FORMAT_MESSAGES[property.format]
+    }
+  }
+  return undefined
+}
+
 /**
- * Checks a `fairSectionToRjsf` schema's formatted (`email`/`uri`/`uuid`) fields, returning
- * FAIR's message for each one holding a value that doesn't match its format, keyed by field
- * name. Blank values are left to the section's `required` check, so optional fields may stay
- * empty.
+ * Checks answers against the rules RDCA-DAP's own form enforces beyond `required`: text
+ * length bounds, `email`/`uri`/`uuid` formats, number value bounds, and a date field's
+ * earliest date. Returns RDCA-DAP's message for each field breaking one, keyed by field name.
+ * Blank values are left to the section's `required` check, so optional fields may stay empty.
  */
-export function getFairFormatErrors(
-  schema: RJSFSchema,
+export function getFairFieldErrors(
+  form: FairRjsfForm,
   values: Record<string, unknown>,
 ): Record<string, string> {
   const errors: Record<string, string> = {}
-  for (const [name, property] of Object.entries(schema.properties ?? {})) {
-    if (typeof property === 'boolean' || !isFairFormat(property.format)) {
-      continue
-    }
+  for (const [name, property] of Object.entries(form.schema.properties ?? {})) {
     const value = values[name]
-    if (value === undefined || value === null || value === '') {
+    if (
+      typeof property === 'boolean' ||
+      value === undefined ||
+      value === null ||
+      value === ''
+    ) {
       continue
     }
-    const formatSchema: RJSFSchema = { type: 'string', format: property.format }
-    if (!validator.isValid(formatSchema, value, formatSchema)) {
-      errors[name] = FAIR_FORMAT_MESSAGES[property.format]
+    const fieldUiSchema = form.uiSchema[name] as UiSchema | undefined
+    const minDate: unknown = fieldUiSchema?.['ui:options']?.minDate
+    const message = getFairFieldError(property, minDate, value)
+    if (message) {
+      errors[name] = message
     }
   }
   return errors

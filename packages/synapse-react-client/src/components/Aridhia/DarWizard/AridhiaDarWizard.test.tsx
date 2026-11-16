@@ -2,12 +2,15 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { UserEvent } from '@testing-library/user-event'
 import { HttpHandler, HttpResponse } from 'msw'
+import dayjs from 'dayjs'
 import { RequestPost } from '@sage-bionetworks/aridhia-client/generated/models'
+import allFieldTypesWorkflow from '@/mocks/aridhia/cpathBasicAllAccessRequestV2Workflow.json'
 import {
   getAridhiaAuthenticateHandler,
   getAridhiaDatasetSettingsHandler,
   getAridhiaDarWizardHandlers,
   getAridhiaSubmitRequestHandler,
+  getAridhiaWorkflowBodyHandler,
   getAridhiaWorkflowHandler,
   getAridhiaWorkspaceRequestFormHandler,
   MOCK_ARIDHIA_ABOUT_FIELDS,
@@ -54,6 +57,29 @@ const PROJECT_END_DATE_FIELD = {
   type: 'date',
   label: 'Project end date',
   validation: { required: false },
+}
+
+const PROJECT_START_DATE_FIELD = {
+  name: 'project_start_date',
+  type: 'date',
+  label: 'Project start date',
+  validation: { required: true, minimum: 'today' },
+}
+
+const STUDY_PHASE_FIELD = {
+  name: 'study_phase',
+  type: 'list',
+  label: 'Study phase',
+  validation: { required: true },
+  options: [
+    { text: 'Phase 1', value: '1' },
+    { text: 'Phase 2', value: '2' },
+  ],
+}
+
+/** How the date picker expects a typed/pasted date. */
+function pickerDate(date: dayjs.Dayjs) {
+  return date.format('MM/DD/YYYY')
 }
 
 /**
@@ -759,6 +785,249 @@ describe('AridhiaDarWizard', () => {
     expect(capturedRequestBodies[0].fields.project_end_date).toBe(
       '2027-03-05T00:00:00.000Z',
     )
+  })
+
+  it('blocks leaving the Project step while a number is out of range, with an inline message', async () => {
+    const user = userEvent.setup()
+    server.use(...getAridhiaDarWizardHandlers())
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+
+    const teamSize = getRjsfTextField('team size')
+    expect(teamSize).toHaveAttribute('type', 'number')
+    // Decimals are allowed, and the browser's spinner stays within the bounds.
+    expect(teamSize).toHaveAttribute('step', 'any')
+    expect(teamSize).toHaveAttribute('min', '1')
+    expect(teamSize).toHaveAttribute('max', '10')
+    await user.type(teamSize, '0')
+    await user.tab()
+    expect(screen.getByText('Minimum of 1')).toBeInTheDocument()
+    expect(teamSize).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    await user.clear(teamSize)
+    await user.type(teamSize, '11')
+    expect(screen.getByText('Maximum of 10')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    await user.clear(teamSize)
+    await user.type(teamSize, '2.5')
+    expect(screen.queryByText(/^(Minimum|Maximum) of/)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
+  })
+
+  it('submits a number answer as a JSON number, keeps it in the draft, and shows it on the review step', async () => {
+    const user = userEvent.setup()
+    server.use(...getAridhiaDarWizardHandlers(), submittedOkHandler())
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    await fillRjsfTextField(user, 'team size', '9')
+    const draft = JSON.parse(sessionStorage.getItem(DRAFT_KEY)!) as DarDraft
+    expect(draft.values.team_size).toBe(9)
+    await clickNext(user)
+    await fillAboutStep(user)
+    await clickNext(user)
+
+    await waitFor(() =>
+      expect(screen.getByRole('row', { name: 'Team size 9' })).toBeVisible(),
+    )
+    await acceptTermsAndSubmit(user)
+
+    await waitFor(() => expect(capturedRequestBodies).toHaveLength(1))
+    expect(capturedRequestBodies[0].fields.team_size).toBe(9)
+  })
+
+  it('blocks leaving the Project step while a date is earlier than its minimum of today', async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(
+        getAridhiaWorkflowHandler({
+          project: [...MOCK_ARIDHIA_PROJECT_FIELDS, PROJECT_START_DATE_FIELD],
+        }),
+      ),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+
+    const startDate = screen.getByLabelText(/^project start date/i)
+    await user.click(startDate)
+    await user.paste(pickerDate(dayjs().subtract(1, 'day')))
+    await user.tab()
+    expect(screen.getByText('Must be today or later')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    await user.clear(startDate)
+    await user.click(startDate)
+    await user.paste(pickerDate(dayjs()))
+    expect(screen.queryByText('Must be today or later')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
+  })
+
+  it('completes and submits the live omop_als1001 form, which uses every RDCA-DAP field type', async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(getAridhiaWorkflowBodyHandler(allFieldTypesWorkflow)),
+      submittedOkHandler(),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+
+    await waitFor(() =>
+      expect(getRjsfTextField('string - single line')).toBeInTheDocument(),
+    )
+    expect(
+      screen.queryByText(/field types the portal cannot render/i),
+    ).not.toBeInTheDocument()
+    // Defaults of every type are applied, including the number default as a number.
+    expect(getRjsfTextField('number = numeric input')).toHaveValue(10)
+    expect(
+      screen.getByRole('checkbox', { name: /^Boolean - toggle switch/ }),
+    ).toBeChecked()
+    // The markdown field's own default is shorter than its minimum length, and is flagged as
+    // soon as the step opens.
+    expect(screen.getByText('Minimum of 200 characters')).toBeInTheDocument()
+
+    const tomorrow = dayjs().add(1, 'day')
+    await user.click(screen.getByLabelText(/^date - renders a date input/i))
+    await user.paste(pickerDate(tomorrow))
+    await fillRjsfTextField(
+      user,
+      'text - multiline',
+      'At least twenty characters',
+    )
+    // Every required field is answered, but the markdown default is still too short.
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    const markdown = getRjsfTextField('markdown - multiline')
+    await user.clear(markdown)
+    await user.click(markdown)
+    await user.paste('m'.repeat(200))
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
+    await clickNext(user)
+
+    await waitFor(() =>
+      expect(getRjsfTextField('request name')).toBeInTheDocument(),
+    )
+    await fillRjsfTextField(user, 'request name', 'All field types')
+    await fillRjsfTextField(user, 'position', 'Tester')
+    await fillRjsfTextField(user, 'phone number', '2025550123')
+    await fillRjsfTextField(user, 'address', 'Somewhere, USA')
+    await clickNext(user)
+
+    await acceptTermsAndSubmit(user)
+
+    await waitFor(() => expect(capturedRequestBodies).toHaveLength(1))
+    const body = capturedRequestBodies[0]
+    expect(body.name).toBe('All field types')
+    expect(body.fields).toMatchObject({
+      position: 'Tester',
+      address: 'Somewhere, USA',
+      date_type: `${tomorrow.format('YYYY-MM-DD')}T00:00:00.000Z`,
+      markdown_type: 'm'.repeat(200),
+      phone_type: '+44 131 111 2222',
+      string_type: 'default value',
+      text_type: 'At least twenty characters',
+      boolean_type: true,
+      number_type: 10,
+      phone_number: '+1 202 555 0123',
+    })
+    // The optional list was left unanswered, so it is not pre-filled with its first option.
+    expect(body.fields).not.toHaveProperty('list_type')
+  })
+
+  it('leaves an optional list without a default unanswered, and pre-selects a list’s default_options', async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(
+        getAridhiaWorkflowHandler({
+          project: [
+            ...MOCK_ARIDHIA_PROJECT_FIELDS,
+            { ...STUDY_PHASE_FIELD, validation: { required: false } },
+            {
+              ...STUDY_PHASE_FIELD,
+              name: 'cohort',
+              label: 'Cohort',
+              default_options: '2',
+            },
+          ],
+        }),
+      ),
+      submittedOkHandler(),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    expect(screen.getByRole('combobox', { name: /^study phase/i })).toHaveValue(
+      '',
+    )
+    expect(screen.getByRole('combobox', { name: /^cohort/i })).toHaveValue(
+      'Phase 2',
+    )
+    await clickNext(user)
+    await fillAboutStep(user)
+    await clickNext(user)
+    await acceptTermsAndSubmit(user)
+
+    await waitFor(() => expect(capturedRequestBodies).toHaveLength(1))
+    const { fields } = capturedRequestBodies[0]
+    expect(fields).not.toHaveProperty('study_phase')
+    expect(fields).toMatchObject({ cohort: '2' })
+  })
+
+  it('blocks leaving the Project step until a required list without a default is answered', async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(
+        getAridhiaWorkflowHandler({
+          project: [...MOCK_ARIDHIA_PROJECT_FIELDS, STUDY_PHASE_FIELD],
+        }),
+      ),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    await user.click(screen.getByRole('combobox', { name: /^study phase/i }))
+    await user.click(await screen.findByRole('option', { name: 'Phase 1' }))
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
+  })
+
+  it('restores a number answer from the draft as a number, flagging it if out of range', async () => {
+    const user = userEvent.setup()
+    server.use(...getAridhiaDarWizardHandlers())
+    const { unmount } = renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    await fillRjsfTextField(user, 'team size', '0')
+    unmount()
+
+    renderWizard()
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled(),
+    )
+    await clickNext(user)
+    await waitFor(() => expect(getRjsfTextField('team size')).toHaveValue(0))
+    // A restored value the user didn't just type is flagged without a blur.
+    expect(screen.getByText('Minimum of 1')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
   })
 
   it('retries a failed submission with the identical request code', async () => {
