@@ -29,3 +29,17 @@
 #footer {
   background: linear-gradient(263.11deg, #8bb4ce 2.14%, #3e7293 50.63%);
 }
+
+// Tighter navbar spacing so the full ALS KP nav and Sign In fit on laptop
+// widths before the shared navbar collapses to MENU (PORTALS-4587).
+@media screen and (min-width: 1281px) {
+  .nav.top-nav .nav-link-container {
+    .nav-button {
+      padding: 0 8px;
+      min-width: 0;
+    }
+    .nav-button-signin {
+      margin-left: 8px;
+    }
+  }
+}
