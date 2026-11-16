@@ -24,6 +24,13 @@ export const publicationsCardConfiguration: CardConfiguration = {
       matchColumnName: 'studyName',
     },
     {
+      isMarkdown: false,
+      baseURL: 'Explore/Studies',
+      URLColumnName: 'citedStudyId',
+      urlParamStyle: 'path-segment',
+      matchColumnName: 'citedStudyId',
+    },
+    {
       isMarkdown: true,
       matchColumnName: 'doi',
     },
@@ -42,6 +49,8 @@ export const publicationsCardConfiguration: CardConfiguration = {
       'diseaseFocus',
       'manifestation',
       'fundingAgency',
+      'citedStudyId',
+      'citedStudyFunder',
       'pmid',
       'doi',
     ],
@@ -66,6 +75,8 @@ const publications: QueryWrapperPlotNavProps = {
       'studyName',
       'diseaseFocus',
       'manifestation',
+      'citedStudyId',
+      'citedStudyFunder',
     ],
   },
 }
