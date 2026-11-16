@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import {
   PropsWithChildren,
   ReactNode,
@@ -56,10 +57,13 @@ const SUPPORT_PORTAL_URL =
   'https://sagebionetworks.jira.com/servicedesk/customer/portal/9'
 
 function useFairSection(data: FairFormPayload | null | undefined, key: string) {
+  // A date field's `today` minimum is part of the schema, so rebuild it once the user's local
+  // date changes.
+  const today = dayjs().format('YYYY-MM-DD')
   return useMemo(() => {
     const section = parseFairFormSections(data).find(s => s.key === key)
-    return section ? fairSectionToRjsf(section) : undefined
-  }, [data, key])
+    return section ? fairSectionToRjsf(section, today) : undefined
+  }, [data, key, today])
 }
 
 type DarSectionStepProps = PropsWithChildren<{
@@ -263,19 +267,18 @@ function useAridhiaDarWizardParts(
           !workspaceFormQuery.isLoading &&
           !!draft.workspaceReference?.trim() &&
           (!workspaceRjsf ||
-            validateFairSection(workspaceRjsf.schema, draft.values).isValid)
+            validateFairSection(workspaceRjsf, draft.values).isValid)
         )
       case 'about':
         return (
           !workflowQuery.isLoading &&
-          (!aboutRjsf ||
-            validateFairSection(aboutRjsf.schema, draft.values).isValid)
+          (!aboutRjsf || validateFairSection(aboutRjsf, draft.values).isValid)
         )
       case 'project':
         return (
           !workflowQuery.isLoading &&
           (!projectRjsf ||
-            validateFairSection(projectRjsf.schema, draft.values).isValid)
+            validateFairSection(projectRjsf, draft.values).isValid)
         )
       case 'complete':
         return draft.termsAccepted
