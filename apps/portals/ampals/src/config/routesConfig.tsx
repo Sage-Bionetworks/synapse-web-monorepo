@@ -57,6 +57,12 @@ const routes: RouteObject[] = [
         path: 'Data Access',
         children: [
           {
+            index: true,
+            element: (
+              <Navigate to="/Data Access/Data Access Overview" replace />
+            ),
+          },
+          {
             path: 'Data Access Overview',
             lazy: () =>
               import('@/pages/resources/ForResearchers').then(
