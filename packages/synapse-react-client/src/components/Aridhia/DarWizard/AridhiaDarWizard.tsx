@@ -6,7 +6,6 @@ import {
   useState,
 } from 'react'
 import { Alert, Box, Button, Link, Skeleton } from '@mui/material'
-import { RJSFSchema } from '@rjsf/utils'
 import { useGetAridhiaDatasetSettings } from '@/aridhia-queries/useGetAridhiaDatasetSettings'
 import { useGetAridhiaWorkflow } from '@/aridhia-queries/useGetAridhiaWorkflow'
 import { useGetAridhiaDictionaries } from '@/aridhia-queries/useGetAridhiaDictionaries'
@@ -21,6 +20,7 @@ import {
   FairFormPayload,
   parseFairFormSections,
   summarizeFormAnswers,
+  validateFairSection,
 } from '@/components/Aridhia/fairFormToRjsf'
 import { RdcaDapEligibilityExplainer } from '@/components/Aridhia/RdcaDapEligibilityDialog'
 import { useDarDraft } from './useDarDraft'
@@ -54,16 +54,6 @@ type StepKey = 'destination' | 'workspace' | 'project' | 'about' | 'complete'
 /** Sage's general-purpose issue portal; RDCA-DAP/ALSKP has no dedicated service desk. */
 const SUPPORT_PORTAL_URL =
   'https://sagebionetworks.jira.com/servicedesk/customer/portal/9'
-
-function isSectionComplete(
-  schema: RJSFSchema,
-  values: Record<string, unknown>,
-): boolean {
-  return (schema.required ?? []).every(key => {
-    const value = values[key]
-    return value !== undefined && value !== null && value !== ''
-  })
-}
 
 function useFairSection(data: FairFormPayload | null | undefined, key: string) {
   return useMemo(() => {
@@ -273,17 +263,19 @@ function useAridhiaDarWizardParts(
           !workspaceFormQuery.isLoading &&
           !!draft.workspaceReference?.trim() &&
           (!workspaceRjsf ||
-            isSectionComplete(workspaceRjsf.schema, draft.values))
+            validateFairSection(workspaceRjsf.schema, draft.values).isValid)
         )
       case 'about':
         return (
           !workflowQuery.isLoading &&
-          (!aboutRjsf || isSectionComplete(aboutRjsf.schema, draft.values))
+          (!aboutRjsf ||
+            validateFairSection(aboutRjsf.schema, draft.values).isValid)
         )
       case 'project':
         return (
           !workflowQuery.isLoading &&
-          (!projectRjsf || isSectionComplete(projectRjsf.schema, draft.values))
+          (!projectRjsf ||
+            validateFairSection(projectRjsf.schema, draft.values).isValid)
         )
       case 'complete':
         return draft.termsAccepted

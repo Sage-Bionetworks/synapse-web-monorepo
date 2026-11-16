@@ -1,4 +1,8 @@
 import { RJSFSchema, UiSchema } from '@rjsf/utils'
+import {
+  ALLOWED_VALUES_MESSAGE,
+  jsonSchemaFormValidator,
+} from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 import dayjs from 'dayjs'
 import { FairField, FairFormPayload } from '@/aridhia-queries/FairFormPayload'
 
@@ -67,6 +71,20 @@ function num(value: string | undefined): number | undefined {
   return value == null ? undefined : Number(value)
 }
 
+/**
+ * The FAIR `string` field formats that are also JSON-schema `format`s, checked by the shared
+ * `jsonSchemaFormValidator`. Any other FAIR format is not validated.
+ */
+const FAIR_FORMATS: Record<string, true> = {
+  email: true,
+  uri: true,
+  uuid: true,
+}
+
+function isFairFormat(format: unknown): format is string {
+  return typeof format === 'string' && FAIR_FORMATS[format] === true
+}
+
 /** Translates one FAIR form section into an RJSF schema/uiSchema pair. */
 export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
   const properties: Record<string, RJSFSchema> = {}
@@ -98,6 +116,7 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
           type: 'string',
           maxLength: num(v.maximum),
           minLength: num(v.minimum),
+          ...(isFairFormat(v.format) ? { format: v.format } : {}),
         }
         uiSchema[name] = { 'ui:placeholder': field.placeholder }
         break
@@ -174,6 +193,46 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
     uiSchema,
     unsupported,
   }
+}
+
+export type FairSectionValidation = {
+  /** Every required field is answered, and every answer passes the section schema's rules. */
+  isValid: boolean
+  /**
+   * The shared validator's message for each answered field breaking one of the schema's rules,
+   * keyed by field name. Unanswered required fields are not listed: they only block `isValid`.
+   */
+  fieldErrors: Record<string, string>
+}
+
+/**
+ * Validates answers against a `fairSectionToRjsf` schema with the shared
+ * `jsonSchemaFormValidator`, so the messages match every other JSON-schema form. Blank answers
+ * count as unanswered: they fail `required`, and optional fields may stay empty.
+ */
+export function validateFairSection(
+  schema: RJSFSchema,
+  values: Record<string, unknown>,
+): FairSectionValidation {
+  const answers = Object.fromEntries(
+    Object.entries(values).filter(
+      ([, value]) => value !== undefined && value !== null && value !== '',
+    ),
+  )
+  const { errors } = jsonSchemaFormValidator.validateFormData(answers, schema)
+  const fieldErrors: Record<string, string> = {}
+  for (const { name, property, message } of errors) {
+    // A top-level field's error `property` is `.<field name>`
+    const field = property?.replace(/^\./, '').split('.')[0]
+    if (name === 'required' || !field || !message || field in fieldErrors) {
+      continue
+    }
+    // A `list` field is a `oneOf` of option consts: a value that isn't an option (e.g. from a
+    // draft saved before the options changed) breaks every `const` and the `oneOf`.
+    fieldErrors[field] =
+      name === 'const' || name === 'oneOf' ? ALLOWED_VALUES_MESSAGE : message
+  }
+  return { isValid: errors.length === 0, fieldErrors }
 }
 
 export type AnsweredField = { label: string; value: string }

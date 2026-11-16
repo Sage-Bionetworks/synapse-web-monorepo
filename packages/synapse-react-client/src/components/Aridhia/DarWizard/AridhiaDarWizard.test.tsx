@@ -632,6 +632,109 @@ describe('AridhiaDarWizard', () => {
     expect(screen.getByText('jane@example.edu')).toBeInTheDocument()
   })
 
+  it('blocks leaving the About step until the email is valid, with an inline message', async () => {
+    const user = userEvent.setup()
+    server.use(...getAridhiaDarWizardHandlers())
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    await clickNext(user)
+
+    await waitFor(() =>
+      expect(getRjsfTextField('your name')).toBeInTheDocument(),
+    )
+    await fillRjsfTextField(user, 'your name', REQUESTER_NAME)
+    await fillRjsfTextField(user, 'email address', 'jane@')
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+    // Not flagged while the user is still typing...
+    expect(
+      screen.queryByText('Enter a valid email address'),
+    ).not.toBeInTheDocument()
+
+    // ...but flagged once they leave the field.
+    await user.tab()
+    expect(screen.getByText('Enter a valid email address')).toBeInTheDocument()
+    expect(getRjsfTextField('email address')).toHaveAttribute(
+      'aria-invalid',
+      'true',
+    )
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    await fillRjsfTextField(user, 'email address', 'example.edu')
+    expect(
+      screen.queryByText('Enter a valid email address'),
+    ).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
+  })
+
+  it('flags a malformed email restored from the draft without a blur', async () => {
+    const user = userEvent.setup()
+    server.use(...getAridhiaDarWizardHandlers())
+    const { unmount } = renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    await clickNext(user)
+    await waitFor(() =>
+      expect(getRjsfTextField('your name')).toBeInTheDocument(),
+    )
+    await fillRjsfTextField(user, 'your name', REQUESTER_NAME)
+    await fillRjsfTextField(user, 'email address', 'jane@')
+    unmount()
+
+    renderWizard()
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled(),
+    )
+    await clickNext(user)
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled(),
+    )
+    await clickNext(user)
+    await waitFor(() =>
+      expect(getRjsfTextField('email address')).toHaveValue('jane@'),
+    )
+    expect(screen.getByText('Enter a valid email address')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+  })
+
+  it('does not flag an optional formatted field left blank', async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(
+        getAridhiaWorkflowHandler({
+          about: [
+            ...MOCK_ARIDHIA_ABOUT_FIELDS,
+            {
+              name: 'lab_website',
+              type: 'string',
+              label: 'Lab website',
+              validation: { required: false, format: 'uri' },
+            },
+          ],
+        }),
+      ),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    await clickNext(user)
+
+    await fillAboutStep(user)
+    // Type and then erase a value, leaving the field blank.
+    await fillRjsfTextField(user, 'lab website', 'x')
+    await user.clear(getRjsfTextField('lab website'))
+    await user.tab()
+
+    expect(screen.queryByText('Enter a valid URL')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
+  })
+
   it('renders the Project end date field with a date-only picker, no time of day', async () => {
     const user = userEvent.setup()
     server.use(

@@ -5,6 +5,7 @@ import {
   FairFormSection,
   parseFairFormSections,
   summarizeFormAnswers,
+  validateFairSection,
 } from './fairFormToRjsf'
 
 // Comprehensive set of FairField variants
@@ -112,6 +113,119 @@ describe('fairSectionToRjsf', () => {
     const { schema, unsupported } = fairSectionToRjsf(sectionWithAuthField)
     expect(unsupported.map(f => f.name)).toEqual(['sso_login'])
     expect(schema.properties).not.toHaveProperty('sso_login')
+  })
+})
+
+describe('FAIR string formats', () => {
+  const formattedSection: FairFormSection = {
+    key: 'about',
+    fields: [
+      { name: 'email', type: 'string', validation: { format: 'email' } },
+      { name: 'website', type: 'string', validation: { format: 'uri' } },
+      { name: 'orcid_uuid', type: 'string', validation: { format: 'uuid' } },
+      { name: 'other', type: 'string', validation: { format: 'ipv4' } },
+      { name: 'plain', type: 'string' },
+    ],
+  }
+  const { schema } = fairSectionToRjsf(formattedSection)
+
+  test('email, uri and uuid string fields carry their JSON-schema format', () => {
+    expect(schema.properties!.email).toMatchObject({ format: 'email' })
+    expect(schema.properties!.website).toMatchObject({ format: 'uri' })
+    expect(schema.properties!.orcid_uuid).toMatchObject({ format: 'uuid' })
+  })
+
+  test('unknown formats and unformatted fields get no format', () => {
+    expect(schema.properties!.other).not.toHaveProperty('format')
+    expect(schema.properties!.plain).not.toHaveProperty('format')
+  })
+
+  test('flags malformed values with the shared validator’s messages', () => {
+    expect(
+      validateFairSection(schema, {
+        email: 'jane@',
+        website: 'not a url',
+        orcid_uuid: '1234',
+        other: 'anything',
+        plain: 'anything',
+      }),
+    ).toEqual({
+      isValid: false,
+      fieldErrors: {
+        email: 'Enter a valid email address',
+        website: 'Enter a valid URL',
+        orcid_uuid: 'Enter a valid UUID',
+      },
+    })
+  })
+
+  test('accepts well-formed values', () => {
+    expect(
+      validateFairSection(schema, {
+        email: 'jane@example.edu',
+        website: 'https://example.org/lab',
+        orcid_uuid: '123e4567-e89b-12d3-a456-426614174000',
+      }),
+    ).toEqual({ isValid: true, fieldErrors: {} })
+  })
+
+  test('does not flag blank values (undefined, null, or empty string)', () => {
+    expect(
+      validateFairSection(schema, {
+        email: '',
+        website: null,
+        orcid_uuid: undefined,
+      }),
+    ).toEqual({ isValid: true, fieldErrors: {} })
+  })
+})
+
+describe('validateFairSection', () => {
+  const { schema } = fairSectionToRjsf({
+    key: 'about',
+    fields: [
+      { name: 'name', type: 'string', validation: { required: true } },
+      {
+        name: 'summary',
+        type: 'text',
+        validation: { minimum: '20', maximum: '200' },
+      },
+      {
+        name: 'phase',
+        type: 'list',
+        options: [
+          { text: 'Phase 1', value: '1' },
+          { text: 'Phase 2', value: '2' },
+        ],
+      },
+    ],
+  })
+
+  test('counts a blank required answer as unanswered, without a field message', () => {
+    expect(validateFairSection(schema, { name: '' })).toEqual({
+      isValid: false,
+      fieldErrors: {},
+    })
+    expect(validateFairSection(schema, { name: 'Jane' }).isValid).toBe(true)
+  })
+
+  test('flags a text answer outside FAIR’s length limits', () => {
+    expect(
+      validateFairSection(schema, { name: 'Jane', summary: 'Too short' }),
+    ).toEqual({
+      isValid: false,
+      fieldErrors: { summary: 'Must be at least 20 characters' },
+    })
+  })
+
+  test('flags a list answer that is not one of its options', () => {
+    expect(validateFairSection(schema, { name: 'Jane', phase: '3' })).toEqual({
+      isValid: false,
+      fieldErrors: { phase: 'Must be one of the allowed values' },
+    })
+    expect(
+      validateFairSection(schema, { name: 'Jane', phase: '2' }).isValid,
+    ).toBe(true)
   })
 })
 
