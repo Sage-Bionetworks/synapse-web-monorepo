@@ -12,9 +12,6 @@ export enum FeatureFlagEnum {
   // If enabled, account settings will link to a page to manage webhooks
   WEBHOOKS_UI = 'WEBHOOKS_UI',
 
-  // If enabled, load the Crisp chat widget
-  CRISP_CHAT = 'CRISP_CHAT',
-
   // If enabled, show the SynapseChat dialog in portals
   PORTAL_CHAT = 'PORTAL_CHAT',
 
@@ -73,7 +70,6 @@ export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
   [FeatureFlagEnum.PORTAL_SEARCH_HEADER]: { scopes: [] },
   [FeatureFlagEnum.HOMEPAGE_CHATBOT]: { scopes: [] },
   [FeatureFlagEnum.WEBHOOKS_UI]: { scopes: ['ACCOUNTS'] },
-  [FeatureFlagEnum.CRISP_CHAT]: { scopes: [] },
   [FeatureFlagEnum.PORTAL_CHAT]: { scopes: [] },
   [FeatureFlagEnum.CURIE_CHAT_WIDGET]: { scopes: [] },
   [FeatureFlagEnum.CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON]: {
