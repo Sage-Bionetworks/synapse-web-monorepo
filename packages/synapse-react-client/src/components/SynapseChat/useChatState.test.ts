@@ -45,6 +45,29 @@ describe('useChatState', () => {
     )
   })
 
+  it('sends in the session passed to sendChat, before the hook has received that session', async () => {
+    const getAgentChatAsyncJobResults = vi
+      .spyOn(SynapseClient, 'getAgentChatAsyncJobResults')
+      .mockReturnValue(new Promise(() => {}))
+    const { wrapperFn } = createWrapperAndQueryClient()
+    const { result } = renderHook(() => useChatState(undefined), {
+      wrapper: wrapperFn,
+    })
+
+    result.current.sendChat('hello', undefined, 'just-created-session')
+
+    await waitFor(() =>
+      expect(getAgentChatAsyncJobResults).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          chatText: 'hello',
+          sessionId: 'just-created-session',
+        }),
+        MOCK_ACCESS_TOKEN,
+        expect.any(Function),
+      ),
+    )
+  })
+
   it('shows the user message immediately, keeps the same interaction id once the job is registered, and clears isAwaitingResponse once the turn settles', async () => {
     // The job stays PROCESSING for one poll before completing, giving a real window in which the
     // turn is in flight - a real job never completes within the same tick that it was started.

@@ -12,8 +12,9 @@ export type SynapsePortalChatDialogProps = SynapseChatProps & {
 /**
  * A dialog that wraps SynapseChat with externally-controlled open/close state.
  *
- * Anonymous users are allowed to open the dialog: SynapseChat attempts to create a session, and if
- * the agent is not open to anonymous chat, the user is redirected to log in.
+ * Anonymous users are allowed to open the dialog. If the agent is not open to anonymous chat, the
+ * user is redirected to log in when SynapseChat tries to create a session, and the message they were
+ * sending is sent once they return.
  */
 export function SynapsePortalChatDialog({
   open,
@@ -32,11 +33,12 @@ export function SynapsePortalChatDialog({
       <SynapseChat
         hideTitle={true}
         textboxPositionOffset="16px"
-        onSessionCreationUnauthenticated={() => {
-          // Remember the chat was open so it can be reopened after the login round-trip.
+        onSessionCreationUnauthenticated={unsentMessage => {
+          // Remember the chat was open, and the message being sent, so the chat reopens after the login
+          // round-trip and sends it as its initial message.
           persistPortalChatReopenIntent({
             variant: chatDialogProps.variant,
-            initialMessage: chatDialogProps.initialMessage,
+            initialMessage: unsentMessage,
           })
           storeRedirectURLForOneSageLoginAndGotoURL(oneSageUrl.toString())
         }}

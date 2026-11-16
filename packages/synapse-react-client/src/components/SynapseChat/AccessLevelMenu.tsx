@@ -6,6 +6,7 @@ import DropdownSelect from '../DropdownSelect'
 export type AccessLevelMenuProps = {
   initAccessLevel: AgentAccessLevel
   onChange: (newAccessLevel: AgentAccessLevel) => void
+  disabled?: boolean
 }
 
 const accessLevelOptions = [
@@ -23,6 +24,7 @@ const accessLevelOptions = [
 export function AccessLevelMenu({
   onChange,
   initAccessLevel,
+  disabled = false,
 }: AccessLevelMenuProps) {
   const initOption = accessLevelOptions.findIndex(
     v => v.value == initAccessLevel,
@@ -46,6 +48,7 @@ export function AccessLevelMenu({
       <DropdownSelect
         variant={'outlined'}
         buttonGroupAriaLabel={'Access Level Menu'}
+        disabled={disabled}
         options={options}
         selectedIndex={selectedIndex}
         setSelectedIndex={index => {

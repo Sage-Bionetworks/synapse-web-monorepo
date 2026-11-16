@@ -24,7 +24,9 @@ import {
 import {
   CreateAgentSessionRequest,
   FileHandleAssociateType,
+  GridAgentSessionContext,
 } from '@sage-bionetworks/synapse-client'
+import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
@@ -57,6 +59,12 @@ const mockPrompts = [
   'Help me understand this',
   'Find missing fields',
 ]
+
+const mockGridAgentSessionContext: GridAgentSessionContext = {
+  concreteType: 'org.sagebionetworks.repo.model.agent.GridAgentSessionContext',
+  gridSessionId: 'grid-session',
+  usersReplicaId: 1,
+}
 
 const defaultProps: SynapseChatProps = {
   externalSession: mockAgentSession,
@@ -125,20 +133,6 @@ describe('SynapseChat - suggestedPrompts', () => {
 
     expect(screen.getByRole('textbox')).toHaveValue(mockPrompts[0])
     expect(mockSendChat).not.toHaveBeenCalled()
-  })
-
-  it('chips are disabled when no agent session exists', () => {
-    renderComponent({
-      suggestedPrompts: mockPrompts,
-      externalSession: undefined,
-    })
-
-    mockPrompts.forEach(prompt => {
-      expect(screen.getByRole('button', { name: prompt })).toHaveAttribute(
-        'aria-disabled',
-        'true',
-      )
-    })
   })
 
   it('chips are hidden while a message is pending', () => {
@@ -299,7 +293,12 @@ describe('SynapseChat - allowAttachments', () => {
     await user.type(screen.getByRole('textbox'), 'hello')
     await user.click(screen.getByRole('button', { name: 'Send message' }))
 
-    expect(mockSendChat).toHaveBeenCalledExactlyOnceWith('hello', undefined)
+    // No attachments, and no session ID override in an existing session
+    expect(mockSendChat).toHaveBeenCalledExactlyOnceWith(
+      'hello',
+      undefined,
+      undefined,
+    )
   })
 
   it('shows a rich attachment chip on the pending message once sent, before the interaction has a jobId', async () => {
@@ -411,7 +410,7 @@ describe('SynapseChat - allowAttachments', () => {
   })
 })
 
-describe('SynapseChat - createSessionOnFirstMessage', () => {
+describe('SynapseChat - creating the agent session', () => {
   beforeAll(() => {
     window.HTMLElement.prototype.scrollIntoView = vi.fn()
   })
@@ -422,42 +421,62 @@ describe('SynapseChat - createSessionOnFirstMessage', () => {
     mockAddFilesDialogUpload()
   })
 
-  let renderCount = 0
-
   /**
-   * Renders without a session and returns a live count of the session requests this render makes.
-   * Requests from other tests can still be in flight under load, so each render uses its own agent
-   * registration ID and only requests with that ID are counted.
+   * Renders without a session and records the session requests this render makes. Requests from
+   * other tests can still be in flight under load, so each render uses its own agent registration
+   * ID and only requests with that ID are recorded. With `holdResponse`, each response waits for
+   * `release`.
    */
-  function renderWithoutSession(props?: Partial<SynapseChatProps>) {
-    const agentRegistrationId = `first-message-agent-${++renderCount}`
-    const sessionCreation = { count: 0 }
+  function renderWithoutSession(
+    props?: Partial<SynapseChatProps>,
+    { holdResponse = false } = {},
+  ) {
+    const agentRegistrationId = crypto.randomUUID()
+    const { promise: released, resolve: release } =
+      Promise.withResolvers<void>()
+    if (!holdResponse) {
+      release()
+    }
+    const sessionRequests: CreateAgentSessionRequest[] = []
     server.use(
       http.post(`${repoOrigin}${AGENT_SESSION}`, async ({ request }) => {
         const body = (await request.json()) as CreateAgentSessionRequest
         if (body.agentRegistrationId === agentRegistrationId) {
-          sessionCreation.count++
+          sessionRequests.push(body)
         }
+        await released
         return HttpResponse.json(mockAgentSession, { status: 201 })
       }),
     )
     const result = renderComponent({
       externalSession: undefined,
-      createSessionOnFirstMessage: true,
       agentRegistrationId,
       ...props,
     })
-    return { sessionCreation, ...result }
+    return { sessionRequests, release, ...result }
+  }
+
+  async function sendMessage(
+    user: ReturnType<typeof userEvent.setup>,
+    message = 'hello',
+  ) {
+    await user.type(screen.getByRole('textbox'), message)
+    await user.click(screen.getByRole('button', { name: 'Send message' }))
+  }
+
+  /** Waits long enough for a request that an effect started to reach its handler */
+  async function waitForRequestsToArrive() {
+    await act(() => new Promise(resolve => setTimeout(resolve, 50)))
   }
 
   it('does not create a session on mount, and the composer and prompts are usable', async () => {
-    const { sessionCreation } = renderWithoutSession({
+    const { sessionRequests } = renderWithoutSession({
       suggestedPrompts: mockPrompts,
     })
-    // Let any effect that would create the session run
-    await act(async () => {})
 
-    expect(sessionCreation.count).toBe(0)
+    await waitForRequestsToArrive()
+
+    expect(sessionRequests).toHaveLength(0)
     expect(screen.getByRole('textbox')).toBeEnabled()
     mockPrompts.forEach(prompt => {
       expect(screen.getByRole('button', { name: prompt })).not.toHaveAttribute(
@@ -466,44 +485,172 @@ describe('SynapseChat - createSessionOnFirstMessage', () => {
     })
   })
 
-  it('creates the session when the first message is sent, then sends the message', async () => {
-    const { user, sessionCreation } = renderWithoutSession()
+  it('creates the session when the first message is sent, then sends the message in it', async () => {
+    const { user, sessionRequests, release } = renderWithoutSession(
+      {},
+      { holdResponse: true },
+    )
 
-    await user.type(screen.getByRole('textbox'), 'hello')
-    await user.click(screen.getByRole('button', { name: 'Send message' }))
+    await sendMessage(user)
+    await waitFor(() => expect(sessionRequests).toHaveLength(1))
+
+    // The message stays in the composer, which can't send again, until it is sent
+    expect(mockSendChat).not.toHaveBeenCalled()
+    expect(screen.getByRole('textbox')).toHaveValue('hello')
+    expect(screen.getByRole('button', { name: 'Send message' })).toBeDisabled()
+
+    release()
 
     await waitFor(() =>
-      expect(mockSendChat).toHaveBeenCalledExactlyOnceWith('hello', undefined),
+      expect(mockSendChat).toHaveBeenCalledExactlyOnceWith(
+        'hello',
+        undefined,
+        mockAgentSession.sessionId,
+      ),
     )
-    expect(sessionCreation.count).toBe(1)
     expect(screen.getByRole('textbox')).toHaveValue('')
+    expect(sessionRequests).toHaveLength(1)
   })
 
-  it('sends the first message with its attachments once the session exists', async () => {
-    const { user } = renderWithoutSession({ allowAttachments: true })
+  it('disables the prompts and the access level menu while the session is being created', async () => {
+    const { user, sessionRequests, release } = renderWithoutSession(
+      { suggestedPrompts: mockPrompts, showAccessLevelMenu: true },
+      { holdResponse: true },
+    )
+    const accessLevelMenu = screen.getByRole('button', {
+      name: 'Access Level Menu',
+    })
+    expect(accessLevelMenu).toBeEnabled()
+
+    await sendMessage(user)
+    await waitFor(() => expect(sessionRequests).toHaveLength(1))
+
+    expect(accessLevelMenu).toBeDisabled()
+    mockPrompts.forEach(prompt => {
+      expect(screen.getByRole('button', { name: prompt })).toHaveAttribute(
+        'aria-disabled',
+        'true',
+      )
+    })
+
+    release()
+
+    await waitFor(() => expect(accessLevelMenu).toBeEnabled())
+  })
+
+  it('creates the session with the access level chosen before it exists', async () => {
+    const { user, sessionRequests } = renderWithoutSession({
+      showAccessLevelMenu: true,
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Access Level Menu' }))
+    await user.click(
+      screen.getByRole('menuitem', { name: 'Read Your Private Data' }),
+    )
+    await sendMessage(user)
+
+    await waitFor(() => expect(sessionRequests).toHaveLength(1))
+    expect(sessionRequests[0].agentAccessLevel).toBe(
+      AgentAccessLevel.READ_YOUR_PRIVATE_DATA,
+    )
+  })
+
+  it('sends the first message with its attachments once the session is created', async () => {
+    const { user, sessionRequests, release } = renderWithoutSession(
+      { allowAttachments: true },
+      { holdResponse: true },
+    )
 
     await user.click(screen.getByRole('button', { name: 'Add files' }))
     await user.click(
       screen.getByRole('button', { name: 'Simulate attachment uploaded' }),
     )
-    await user.type(screen.getByRole('textbox'), 'hello')
-    await user.click(screen.getByRole('button', { name: 'Send message' }))
+    await sendMessage(user)
+    await waitFor(() => expect(sessionRequests).toHaveLength(1))
+    expect(mockSendChat).not.toHaveBeenCalled()
+
+    release()
 
     await waitFor(() => expect(mockSendChat).toHaveBeenCalledTimes(1))
-    const [message, attachments] = mockSendChat.mock.calls[0]
+    const [message, attachments, sessionId] = mockSendChat.mock.calls[0]
     expect(message).toBe('hello')
+    expect(sessionId).toBe(mockAgentSession.sessionId)
     expect(attachments).toHaveLength(1)
+    expect(attachments[0].associateObjectId).toBe(attachments[0].fileHandleId)
+    expect(attachments[0].associateObjectType).toBe(
+      FileHandleAssociateType.FileEntity,
+    )
   })
 
-  it('creates the session on mount when there is an initial message', async () => {
-    const { sessionCreation } = renderWithoutSession({
-      initialMessage: 'Start here',
-    })
+  it('keeps the message and shows the error when the session cannot be created, so the user can retry', async () => {
+    const { user } = renderWithoutSession()
+    let failSessionCreation = true
+    server.use(
+      http.post(`${repoOrigin}${AGENT_SESSION}`, () =>
+        failSessionCreation
+          ? HttpResponse.json(
+              { reason: 'The agent is unavailable' },
+              { status: 500 },
+            )
+          : HttpResponse.json(mockAgentSession, { status: 201 }),
+      ),
+    )
+
+    await sendMessage(user)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'The agent is unavailable',
+    )
+    expect(screen.getByRole('textbox')).toHaveValue('hello')
+    expect(mockSendChat).not.toHaveBeenCalled()
+
+    failSessionCreation = false
+    await user.click(screen.getByRole('button', { name: 'Send message' }))
 
     await waitFor(() =>
-      expect(mockSendChat).toHaveBeenCalledExactlyOnceWith('Start here'),
+      expect(mockSendChat).toHaveBeenCalledExactlyOnceWith(
+        'hello',
+        undefined,
+        mockAgentSession.sessionId,
+      ),
     )
-    expect(sessionCreation.count).toBe(1)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  // A parent that re-renders while the session is being created, with a new session context each
+  // time, must not start another session
+  it('creates one session on mount for an initial message, however often it re-renders', async () => {
+    const { sessionRequests, release, rerender } = renderWithoutSession(
+      { initialMessage: 'Start here' },
+      { holdResponse: true },
+    )
+    await waitFor(() => expect(sessionRequests).toHaveLength(1))
+
+    rerender({ sessionContext: { ...mockGridAgentSessionContext } })
+    rerender({ sessionContext: { ...mockGridAgentSessionContext } })
+    release()
+
+    await waitFor(() =>
+      expect(mockSendChat).toHaveBeenCalledExactlyOnceWith(
+        'Start here',
+        undefined,
+        mockAgentSession.sessionId,
+      ),
+    )
+    await waitForRequestsToArrive()
+    expect(sessionRequests).toHaveLength(1)
+  })
+
+  it('sends an initial message in an existing session without creating another', async () => {
+    const { sessionRequests } = renderWithoutSession({
+      initialMessage: 'Start here',
+      externalSession: mockAgentSession,
+    })
+
+    await waitFor(() => expect(mockSendChat).toHaveBeenCalledTimes(1))
+    expect(mockSendChat.mock.calls[0][0]).toBe('Start here')
+    await waitForRequestsToArrive()
+    expect(sessionRequests).toHaveLength(0)
   })
 })
 
@@ -517,19 +664,23 @@ describe('SynapseChat - anonymous session creation', () => {
     mockUseChatState.mockReturnValue(defaultMockChatState)
   })
 
-  function renderWithAuth(
+  /** Renders without a session and sends a first message, which creates the session */
+  async function renderAndSendFirstMessage(
     isAuthenticated: boolean,
     props?: Partial<SynapseChatProps>,
   ) {
-    // No external session, so SynapseChat creates one on mount.
-    return render(
+    const user = userEvent.setup()
+    render(
       <SynapseChat {...defaultProps} externalSession={undefined} {...props} />,
       {
         wrapper: createWrapper({ isAuthenticated }),
       },
     )
+    await user.type(screen.getByRole('textbox'), FIRST_MESSAGE)
+    await user.click(screen.getByRole('button', { name: 'Send message' }))
   }
 
+  const FIRST_MESSAGE = 'Which datasets mention ALS?'
   const unauthorizedReason = 'This agent is not available to anonymous users.'
 
   function mockSessionCreationFailure(status: number, reason: string) {
@@ -540,14 +691,16 @@ describe('SynapseChat - anonymous session creation', () => {
     )
   }
 
-  it('invokes onSessionCreationUnauthenticated when an anonymous session is rejected', async () => {
+  it('invokes onSessionCreationUnauthenticated with the unsent message when an anonymous session is rejected', async () => {
     const onSessionCreationUnauthenticated = vi.fn()
     mockSessionCreationFailure(403, unauthorizedReason)
 
-    renderWithAuth(false, { onSessionCreationUnauthenticated })
+    await renderAndSendFirstMessage(false, { onSessionCreationUnauthenticated })
 
     await waitFor(() =>
-      expect(onSessionCreationUnauthenticated).toHaveBeenCalledTimes(1),
+      expect(onSessionCreationUnauthenticated).toHaveBeenCalledExactlyOnceWith(
+        FIRST_MESSAGE,
+      ),
     )
   })
 
@@ -555,7 +708,7 @@ describe('SynapseChat - anonymous session creation', () => {
     const onSessionCreationUnauthenticated = vi.fn()
     mockSessionCreationFailure(403, unauthorizedReason)
 
-    renderWithAuth(true, { onSessionCreationUnauthenticated })
+    await renderAndSendFirstMessage(true, { onSessionCreationUnauthenticated })
 
     // The inline error is shown once session creation has failed
     await screen.findByRole('alert')
@@ -566,7 +719,7 @@ describe('SynapseChat - anonymous session creation', () => {
     const onSessionCreationUnauthenticated = vi.fn()
     mockSessionCreationFailure(400, 'boom')
 
-    renderWithAuth(false, { onSessionCreationUnauthenticated })
+    await renderAndSendFirstMessage(false, { onSessionCreationUnauthenticated })
 
     // The inline error is shown once session creation has failed
     await screen.findByRole('alert')
@@ -577,7 +730,7 @@ describe('SynapseChat - anonymous session creation', () => {
     const onSessionCreationUnauthenticated = vi.fn()
     mockSessionCreationFailure(403, unauthorizedReason)
 
-    renderWithAuth(false, { onSessionCreationUnauthenticated })
+    await renderAndSendFirstMessage(false, { onSessionCreationUnauthenticated })
 
     await waitFor(() =>
       expect(onSessionCreationUnauthenticated).toHaveBeenCalledTimes(1),
@@ -591,7 +744,7 @@ describe('SynapseChat - anonymous session creation', () => {
   it('shows the inline error when there is no login fallback', async () => {
     mockSessionCreationFailure(403, unauthorizedReason)
 
-    renderWithAuth(false)
+    await renderAndSendFirstMessage(false)
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
       unauthorizedReason,

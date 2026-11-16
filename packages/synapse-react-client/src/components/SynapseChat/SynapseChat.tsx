@@ -3,7 +3,7 @@ import {
   useCreateAgentSession,
   useUpdateAgentSession,
 } from '@/synapse-queries/chat/useChat'
-import { useSynapseContext } from '@/utils'
+import { SynapseClientError, useSynapseContext } from '@/utils'
 import {
   Alert,
   Box,
@@ -73,7 +73,11 @@ const CURIE_AVATAR = (
 )
 
 export type SynapseChatProps = {
-  initialMessage?: string //optional initial message
+  /**
+   * A message sent as soon as the chat mounts, which creates the agent session right away. Without
+   * one, the session is created when the user sends their first message.
+   */
+  initialMessage?: string
   agentRegistrationId?: string // if provided, use this agent
   chatbotName?: string // optional name of this chatbot agent
   variant?: 'default' | 'curie'
@@ -109,21 +113,26 @@ export type SynapseChatProps = {
   /**
    * Invoked when creating the agent session fails because the current (anonymous) user is not
    * authorized to start a session with this agent. Callers should use this to prompt the user to
-   * log in. When omitted, the session creation error is shown inline instead.
+   * log in, and can keep `unsentMessage` to send once they have. When omitted, the session creation
+   * error is shown inline instead.
    */
-  onSessionCreationUnauthenticated?: () => void
-  /**
-   * Whether to create the agent session when the user sends their first message instead of when
-   * this mounts, so a chat that is shown but never used does not start a session. The chat is usable
-   * before the session exists. Ignored when `initialMessage` is set, since that needs a session right away.
-   * @default false
-   */
-  createSessionOnFirstMessage?: boolean
+  onSessionCreationUnauthenticated?: (unsentMessage: string) => void
 }
 
 type OutgoingMessage = {
   message: string
   attachments: ChatAttachment[]
+}
+
+/**
+ * Whether creating a session failed because an anonymous user may not chat with this agent. A
+ * registration that the ACT has not opened to anonymous chat rejects them with a 401 or 403.
+ */
+function isAnonymousUserTurnedAway(
+  error: SynapseClientError,
+  isAuthenticated: boolean,
+) {
+  return !isAuthenticated && (error.status === 401 || error.status === 403)
 }
 
 export function SynapseChat({
@@ -143,9 +152,8 @@ export function SynapseChat({
   suggestedPrompts,
   allowAttachments = false,
   onSessionCreationUnauthenticated,
-  createSessionOnFirstMessage = false,
 }: SynapseChatProps) {
-  const { accessToken, isAuthenticated } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
   const { userId } = useApplicationSessionContext()
 
   const baseDisclaimerText = chatbotName + ' can make mistakes'
@@ -166,13 +174,6 @@ export function SynapseChat({
     error: createAgentSessionError,
   } = useCreateAgentSession({
     onSuccess: newAgentSession => setAgentSession(newAgentSession),
-    onError: err => {
-      // A registration that the ACT has not opened to anonymous chat rejects an anonymous
-      // session with a 401/403. Defer to the caller to prompt the user to log in.
-      if (!isAuthenticated && (err.status === 401 || err.status === 403)) {
-        onSessionCreationUnauthenticated?.()
-      }
-    },
   })
 
   const { mutate: updateAgentSession } = useUpdateAgentSession({
@@ -211,7 +212,6 @@ export function SynapseChat({
 
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
-  const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
 
   // A copy of the attachments sent with the last interaction, so it can still show rich
   // (name/type) chips after ChatInputArea has cleared its own attachment state. This is passed to
@@ -246,40 +246,8 @@ export function SynapseChat({
   //   [sessionHistoryInfiniteData],
   // )
 
-  const waitsForFirstMessage = createSessionOnFirstMessage && !initialMessage
-  // A chat that waits for its first message is usable before its session exists
-  const isPreparingSession =
-    !agentSession && (!waitsForFirstMessage || isCreatingAgentSession)
-  const [pendingFirstMessage, setPendingFirstMessage] =
-    useState<OutgoingMessage>()
-
-  const startAgentSession = useCallback(
-    () =>
-      createAgentSession({
-        agentAccessLevel,
-        agentRegistrationId,
-        sessionContext,
-      }),
-    [createAgentSession, agentAccessLevel, agentRegistrationId, sessionContext],
-  )
-
-  useEffect(() => {
-    // on mount, create a new agent session!
-    if (!agentSession && !waitsForFirstMessage) {
-      startAgentSession()
-    }
-  }, [agentSession, accessToken, waitsForFirstMessage, startAgentSession])
-
-  useEffect(() => {
-    // on mount, resolve the initial message chat interaction (if set)
-    if (agentSession && initialMessage && !initialMessageProcessed) {
-      sendChat(initialMessage)
-      setInitialMessageProcessed(true)
-    }
-  }, [agentSession, initialMessage, initialMessageProcessed, sendChat])
-
   const sendMessage = useCallback(
-    ({ message, attachments }: OutgoingMessage) => {
+    ({ message, attachments }: OutgoingMessage, sessionId?: string) => {
       sendChat(
         message,
         attachments.length
@@ -294,46 +262,80 @@ export function SynapseChat({
               associateObjectType: FileHandleAssociateType.FileEntity,
             }))
           : undefined,
+        sessionId,
       )
       setLastSentAttachments(attachments)
     },
     [sendChat],
   )
 
+  const startSessionAndSend = useCallback(
+    (outgoing: OutgoingMessage, onSent?: () => void) => {
+      createAgentSession(
+        { agentAccessLevel, agentRegistrationId, sessionContext },
+        {
+          // The new session reaches `agentSession` only on the next render, so pass its ID directly
+          onSuccess: newAgentSession => {
+            sendMessage(outgoing, newAgentSession.sessionId)
+            onSent?.()
+          },
+          onError: error => {
+            if (
+              onSessionCreationUnauthenticated &&
+              isAnonymousUserTurnedAway(error, isAuthenticated)
+            ) {
+              onSessionCreationUnauthenticated(outgoing.message)
+            }
+          },
+        },
+      )
+    },
+    [
+      createAgentSession,
+      agentAccessLevel,
+      agentRegistrationId,
+      sessionContext,
+      sendMessage,
+      isAuthenticated,
+      onSessionCreationUnauthenticated,
+    ],
+  )
+
+  // The initial message is sent once per mount, so it starts at most one session however often
+  // this effect's dependencies change while that session is being created
+  const initialMessageSentRef = useRef(false)
   useEffect(() => {
-    // The first message waits for the session it started, which sendChat needs
-    if (agentSession && pendingFirstMessage) {
-      sendMessage(pendingFirstMessage)
-      setPendingFirstMessage(undefined)
+    if (!initialMessage || initialMessageSentRef.current) {
+      return
     }
-  }, [agentSession, pendingFirstMessage, sendMessage])
+    initialMessageSentRef.current = true
+    const outgoing = { message: initialMessage, attachments: [] }
+    if (agentSession) {
+      sendMessage(outgoing)
+    } else {
+      startSessionAndSend(outgoing)
+    }
+  }, [initialMessage, agentSession, sendMessage, startSessionAndSend])
 
   const handleSend = (message: string, attachments: ChatAttachment[]) => {
+    const clearTextfield = () => setUserChatTextfieldValue('')
     if (agentSession) {
       sendMessage({ message, attachments })
+      clearTextfield()
     } else {
-      setPendingFirstMessage({ message, attachments })
-      startAgentSession()
+      // The message stays in the composer until it is sent, so a failed session creation keeps it
+      startSessionAndSend({ message, attachments }, clearTextfield)
     }
-    setUserChatTextfieldValue('')
   }
 
-  if (createAgentSessionError) {
-    // When an anonymous user can't start a session, the caller is redirecting them to log in, so
-    // suppress the inline error in favor of that flow.
-    const deferredToLogin =
-      !isAuthenticated &&
-      !!onSessionCreationUnauthenticated &&
-      (createAgentSessionError.status === 401 ||
-        createAgentSessionError.status === 403)
-    if (!deferredToLogin) {
-      return (
-        <Alert severity={'error'} sx={{ my: 2 }}>
-          {createAgentSessionError.reason}
-        </Alert>
-      )
-    }
-  }
+  // The caller prompts an anonymous user who was turned away to log in, so no error is shown for that
+  const isDeferredToLogin =
+    !!createAgentSessionError &&
+    !!onSessionCreationUnauthenticated &&
+    isAnonymousUserTurnedAway(createAgentSessionError, isAuthenticated)
+  const sessionCreationError = isDeferredToLogin
+    ? null
+    : createAgentSessionError
 
   return (
     <Box
@@ -366,6 +368,8 @@ export function SynapseChat({
       {showAccessLevelMenu && variant !== 'curie' && isAuthenticated && (
         <AccessLevelMenu
           initAccessLevel={agentAccessLevel}
+          // A change while the session is being created would apply to neither the request nor the session
+          disabled={isCreatingAgentSession}
           onChange={newAccessLevel => {
             setAgentAccessLevel(newAccessLevel)
             // Without a session yet, the new level applies when the session is created
@@ -378,8 +382,13 @@ export function SynapseChat({
           }}
         />
       )}
-      {isPreparingSession && <SkeletonParagraph numRows={10} />}
-      {!isPreparingSession && (
+      {sessionCreationError && (
+        <Alert severity={'error'} sx={{ my: 2 }}>
+          {sessionCreationError.reason}
+        </Alert>
+      )}
+      {isCreatingAgentSession && <SkeletonParagraph numRows={10} />}
+      {!isCreatingAgentSession && (
         <Box
           sx={{
             flexGrow: 1,
@@ -475,7 +484,7 @@ export function SynapseChat({
                   label={prompt}
                   variant="outlined"
                   onClick={() => setUserChatTextfieldValue(prompt)}
-                  disabled={isPreparingSession}
+                  disabled={isCreatingAgentSession}
                   sx={{ cursor: 'pointer' }}
                 />
               ))}
@@ -489,7 +498,7 @@ export function SynapseChat({
             placeholder={
               variant === 'curie' ? 'Ask anything' : `Message ${chatbotName}`
             }
-            disabled={isPreparingSession || isAwaitingResponse}
+            disabled={isCreatingAgentSession || isAwaitingResponse}
             allowAttachments={allowAttachments}
           />
         </Box>
