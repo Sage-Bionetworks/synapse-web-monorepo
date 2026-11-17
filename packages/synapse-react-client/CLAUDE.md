@@ -37,7 +37,7 @@ This package (`synapse-react-client`) lives in a pnpm monorepo. Key sibling pack
 
 ```
 src/
-  components/       React UI components (one folder per component, with index.ts re-export)
+  components/       React UI components (one folder per component)
   synapse-queries/  TanStack Query hooks wrapping Synapse API calls (organized by domain)
   synapse-client/   Low-level REST API call functions (thin wrappers over synapse-client package)
   utils/
@@ -107,6 +107,6 @@ onSuccess: async (data, variables, ...rest) => {
 
 ### Exposing new components
 
-- To expose via the main npm package: export from `src/components/index.ts` → `src/index.ts`
+- To expose via the main npm package: add the export to `src/components/index.ts`, the package's public export list (re-exported by `src/index.ts`)
 - To expose to SWC (GWT): export from `src/SWC.index.ts`
-- Each component should have its own folder under `src/components/` with an `index.ts` re-exporting its public API
+- Each component gets its own folder under `src/components/`. Don't add an `index.ts` re-export to the folder; import from the component's own file (e.g. `@/components/Foo/Foo`). Barrel files are avoided because they slow module loading and make circular dependencies easy to create.
