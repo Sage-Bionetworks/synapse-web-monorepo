@@ -1,3 +1,4 @@
+import { RJSFSchema } from '@rjsf/utils'
 import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import { act, renderHook } from '@testing-library/react'
 import { resolveSchemaPropertyAtPointer } from '@/utils/jsonschema/submissionContext'
@@ -9,7 +10,7 @@ describe('useFormTemplateDraft', () => {
     const { result } = renderHook(() => useFormTemplateDraft())
 
     expect(result.current.steps).toHaveLength(1)
-    expect(result.current.steps[0].fields).toEqual([])
+    expect(result.current.steps[0].fieldPaths).toEqual([])
     expect(result.current.existingPropertyKeys.size).toBe(0)
     expect(result.current.jsonSchema.allOf).toEqual([
       { $ref: ACCESS_REQUIREMENT_BASE_SCHEMA_ID },
@@ -34,9 +35,7 @@ describe('useFormTemplateDraft', () => {
       resolveSchemaPropertyAtPointer(result.current.jsonSchema, '/age'),
     ).toMatchObject({ subSchema: { title: 'Age' } })
     expect(result.current.editingPropertyKey).toBe('age')
-    expect(result.current.steps[0].fields.map(f => f.schemaPath)).toEqual([
-      '/age',
-    ])
+    expect(result.current.steps[0].fieldPaths).toEqual(['/age'])
     expect(result.current.unboundProperties).toEqual([])
   })
 
@@ -67,5 +66,31 @@ describe('useFormTemplateDraft', () => {
       ...initialTemplate,
       name: 'Renamed',
     })
+  })
+
+  it('keeps an unbound property’s settings when a raw schema edit drops it and brings it back, and applies them once it is bound', () => {
+    const jsonSchema: RJSFSchema = {
+      type: 'object',
+      properties: { a: { type: 'string' } },
+    }
+    const { result } = renderHook(() =>
+      useFormTemplateDraft(undefined, jsonSchema),
+    )
+
+    act(() =>
+      result.current.handleUpdateFieldSettings('/a', { isPublic: true }),
+    )
+    act(() =>
+      result.current.setJsonSchema({
+        type: 'object',
+        properties: { ax: { type: 'string' } },
+      }),
+    )
+    act(() => result.current.setJsonSchema(jsonSchema))
+    act(() => result.current.bindField('a', result.current.steps[0].uiKey))
+
+    expect(result.current.formTemplateSteps[0].fields).toEqual([
+      { schemaPath: '/a', uiDefinition: {}, isPublic: true },
+    ])
   })
 })
