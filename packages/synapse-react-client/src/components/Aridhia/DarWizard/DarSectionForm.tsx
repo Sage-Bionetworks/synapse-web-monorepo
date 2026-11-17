@@ -29,6 +29,11 @@ export function DarSectionForm(props: DarFormSectionStepProps) {
   const { fieldErrors } = validateFairSection(schema, formData)
   // Flag a field once the user leaves it rather than while they're still typing. Values that
   // arrive already invalid (e.g. from a restored draft) are flagged right away.
+  // TODO(RJSF upgrade): replace this blur tracking and `extraErrors` with RJSF's own
+  // `liveValidate="onBlur"` plus `liveErrors="field"` (per-field errors once a field is left).
+  // Neither exists in the pinned 6.0.0-beta.10 (`liveValidate` is boolean-only); `onBlur` shipped
+  // in 6.0.0 and `liveErrors` is on RJSF's main branch, unreleased as of 6.11.1. `onBlur` alone
+  // would show every field's errors on the first blur.
   const [visitedFields, setVisitedFields] = useState<ReadonlySet<string>>(
     () => new Set(Object.keys(fieldErrors)),
   )
