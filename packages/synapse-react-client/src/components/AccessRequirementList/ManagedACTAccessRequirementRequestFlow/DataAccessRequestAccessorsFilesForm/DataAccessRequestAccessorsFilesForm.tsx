@@ -42,6 +42,10 @@ import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequi
 import SigningOfficialFields from '../SigningOfficialFields'
 import { useInitializeRequestAccessors } from '../useInitializeRequestAccessors'
 import { UploadDocumentField } from '../UploadDocumentField'
+import {
+  isRequestCreationRejected,
+  RequestCreationRejectedAlert,
+} from '../../RequestCreationRejectedAlert'
 
 // PORTALS-4376: eDUC DARs cap total accessors at 100 (submitter + PI + 97 collaborators + 1 slack).
 export const EDUC_COLLABORATOR_LIMIT = 97
@@ -100,6 +104,9 @@ export default function DataAccessRequestAccessorsFilesForm(
   const { isAuthenticated } = useSynapseContext()
   const { data: user } = useGetCurrentUserProfile({ enabled: isAuthenticated })
   const [alert, setAlert] = useState<AlertProps | undefined>()
+  const [requestCreationRejection, setRequestCreationRejection] = useState<
+    SynapseClientError | undefined
+  >()
   const isEDucEnabled = Boolean(managedACTAccessRequirement.eDucTemplateId)
   const [accessorChanges, setAccessorChanges] = useState<
     AccessorChange[] | undefined
@@ -143,7 +150,13 @@ export default function DataAccessRequestAccessorsFilesForm(
     mutateAsync: updateRequestAsync,
     isPending: updateDataAccessRequestIsPending,
   } = useUpdateDataAccessRequest({
-    onError: onError,
+    onError: (e, savedRequest) => {
+      if (isRequestCreationRejected(e, savedRequest)) {
+        setRequestCreationRejection(e)
+      } else {
+        onError(e)
+      }
+    },
   })
 
   const isLoading =
@@ -159,7 +172,9 @@ export default function DataAccessRequestAccessorsFilesForm(
     isLoadingGetDataAccessRequest || submitDataAccessRequestIsPending
 
   const disableSubmitButton =
-    submitDataAccessRequestIsPending || (isEDucEnabled && (!soName || !soEmail))
+    submitDataAccessRequestIsPending ||
+    Boolean(requestCreationRejection) ||
+    (isEDucEnabled && (!soName || !soEmail))
 
   useInitializeRequestAccessors({
     dataAccessRequest,
@@ -227,9 +242,15 @@ export default function DataAccessRequestAccessorsFilesForm(
   async function handleSubmit() {
     if (dataAccessRequest) {
       // Save the request
-      const requestObject = await updateRequestAsync(
-        getDataAccessRequestWithLocalState(),
-      )
+      let requestObject: Request | Renewal
+      try {
+        requestObject = await updateRequestAsync(
+          getDataAccessRequestWithLocalState(),
+        )
+      } catch {
+        // The mutation's onError displays the message
+        return
+      }
       if (onEDucContinue) {
         onEDucContinue()
         return
@@ -499,7 +520,14 @@ export default function DataAccessRequestAccessorsFilesForm(
             }
           </Box>
         </ManagedACTAccessRequirementFormWikiWrapper>
-        {alert && <Alert severity={alert.key}>{alert.message}</Alert>}
+        {requestCreationRejection ? (
+          <RequestCreationRejectedAlert
+            error={requestCreationRejection}
+            identityProviders={managedACTAccessRequirement.identityProviders}
+          />
+        ) : (
+          alert && <Alert severity={alert.key}>{alert.message}</Alert>
+        )}
       </DialogContent>
       <DialogActions>
         <Button

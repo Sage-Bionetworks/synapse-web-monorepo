@@ -18,6 +18,7 @@ import {
   StepLabel,
   Stepper,
 } from '@mui/material'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   FileHandleAssociateType,
   JsonSchemaAccessRequirement,
@@ -29,6 +30,10 @@ import {
 import { RJSFSchema } from '@rjsf/utils'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { DialogBaseTitle } from '../../DialogBase'
+import {
+  isRequestCreationRejected,
+  RequestCreationRejectedAlert,
+} from '../RequestCreationRejectedAlert'
 import RequesterInformationFields from './RequesterInformationFields'
 import {
   isRequesterInformationComplete,
@@ -152,6 +157,9 @@ function JsonSchemaRequestWizardContent(
 
   const [activeStepIndex, setActiveStepIndex] = useState(0)
   const [alertMessage, setAlertMessage] = useState<string | undefined>()
+  const [requestCreationRejection, setRequestCreationRejection] = useState<
+    SynapseClientError | undefined
+  >()
   const [requesterInformation, setRequesterInformation] =
     useState<RequesterInformationValues>(() =>
       toRequesterInformationValues(request, currentUserId),
@@ -185,7 +193,13 @@ function JsonSchemaRequestWizardContent(
 
   const { mutateAsync: updateRequest, isPending: isSaving } =
     useUpdateDataAccessRequest({
-      onError: e => setAlertMessage(e.reason),
+      onError: (e, savedRequest) => {
+        if (isRequestCreationRejected(e, savedRequest)) {
+          setRequestCreationRejection(e)
+        } else {
+          setAlertMessage(e.reason)
+        }
+      },
     })
   const { mutate: submit, isPending: isSubmitting } =
     useSubmitDataAccessRequest({
@@ -279,7 +293,7 @@ function JsonSchemaRequestWizardContent(
 
   async function saveAndAdvance(latestSchemaData: SchemaData = schemaData) {
     // Enter in a field also submits the step, so this is guarded as well as the Next button
-    if (isUploading || isBusy) {
+    if (isUploading || isBusy || requestCreationRejection) {
       return
     }
     const saved = await saveRequest(latestSchemaData)
@@ -335,6 +349,7 @@ function JsonSchemaRequestWizardContent(
   const disableNext =
     isBusy ||
     isUploading ||
+    Boolean(requestCreationRejection) ||
     (isRequesterInformationStep &&
       !isRequesterInformationComplete(requesterInformation, isEDucEnabled))
 
@@ -385,6 +400,12 @@ function JsonSchemaRequestWizardContent(
             onSchemaDataChange={onSchemaDataChange}
             fileHandleWidgetContext={fileHandleWidgetContext}
             onValid={latestSchemaData => void saveAndAdvance(latestSchemaData)}
+          />
+        )}
+        {requestCreationRejection && (
+          <RequestCreationRejectedAlert
+            error={requestCreationRejection}
+            identityProviders={accessRequirement.identityProviders}
           />
         )}
         {alertMessage && (
