@@ -43,8 +43,8 @@ import SigningOfficialFields from '../SigningOfficialFields'
 import { useInitializeRequestAccessors } from '../useInitializeRequestAccessors'
 import { UploadDocumentField } from '../UploadDocumentField'
 import {
-  isRequestCreationRejected,
   RequestCreationRejectedAlert,
+  useRequestCreationRejection,
 } from '../../RequestCreationRejectedAlert'
 
 // PORTALS-4376: eDUC DARs cap total accessors at 100 (submitter + PI + 97 collaborators + 1 slack).
@@ -104,9 +104,6 @@ export default function DataAccessRequestAccessorsFilesForm(
   const { isAuthenticated } = useSynapseContext()
   const { data: user } = useGetCurrentUserProfile({ enabled: isAuthenticated })
   const [alert, setAlert] = useState<AlertProps | undefined>()
-  const [requestCreationRejection, setRequestCreationRejection] = useState<
-    SynapseClientError | undefined
-  >()
   const isEDucEnabled = Boolean(managedACTAccessRequirement.eDucTemplateId)
   const [accessorChanges, setAccessorChanges] = useState<
     AccessorChange[] | undefined
@@ -137,6 +134,9 @@ export default function DataAccessRequestAccessorsFilesForm(
     })
   }
 
+  const { requestCreationRejection, onUpdateRequestError } =
+    useRequestCreationRejection(onError)
+
   const { mutate: submit, isPending: submitDataAccessRequestIsPending } =
     useSubmitDataAccessRequest({
       onSuccess: submission => {
@@ -149,15 +149,7 @@ export default function DataAccessRequestAccessorsFilesForm(
     mutate: updateRequest,
     mutateAsync: updateRequestAsync,
     isPending: updateDataAccessRequestIsPending,
-  } = useUpdateDataAccessRequest({
-    onError: (e, savedRequest) => {
-      if (isRequestCreationRejected(e, savedRequest)) {
-        setRequestCreationRejection(e)
-      } else {
-        onError(e)
-      }
-    },
-  })
+  } = useUpdateDataAccessRequest({ onError: onUpdateRequestError })
 
   const isLoading =
     isLoadingGetDataAccessRequest ||
@@ -524,6 +516,7 @@ export default function DataAccessRequestAccessorsFilesForm(
           <RequestCreationRejectedAlert
             error={requestCreationRejection}
             identityProviders={managedACTAccessRequirement.identityProviders}
+            sx={{ mt: 2 }}
           />
         ) : (
           alert && <Alert severity={alert.key}>{alert.message}</Alert>

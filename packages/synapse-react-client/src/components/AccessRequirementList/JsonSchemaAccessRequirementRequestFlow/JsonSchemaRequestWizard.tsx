@@ -18,7 +18,6 @@ import {
   StepLabel,
   Stepper,
 } from '@mui/material'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   FileHandleAssociateType,
   JsonSchemaAccessRequirement,
@@ -31,8 +30,8 @@ import { RJSFSchema } from '@rjsf/utils'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { DialogBaseTitle } from '../../DialogBase'
 import {
-  isRequestCreationRejected,
   RequestCreationRejectedAlert,
+  useRequestCreationRejection,
 } from '../RequestCreationRejectedAlert'
 import RequesterInformationFields from './RequesterInformationFields'
 import {
@@ -157,9 +156,6 @@ function JsonSchemaRequestWizardContent(
 
   const [activeStepIndex, setActiveStepIndex] = useState(0)
   const [alertMessage, setAlertMessage] = useState<string | undefined>()
-  const [requestCreationRejection, setRequestCreationRejection] = useState<
-    SynapseClientError | undefined
-  >()
   const [requesterInformation, setRequesterInformation] =
     useState<RequesterInformationValues>(() =>
       toRequesterInformationValues(request, currentUserId),
@@ -191,16 +187,10 @@ function JsonSchemaRequestWizardContent(
   const savedRequestRef = useRef(request)
   const saveQueueRef = useRef<Promise<unknown>>(Promise.resolve())
 
+  const { requestCreationRejection, onUpdateRequestError } =
+    useRequestCreationRejection(e => setAlertMessage(e.reason))
   const { mutateAsync: updateRequest, isPending: isSaving } =
-    useUpdateDataAccessRequest({
-      onError: (e, savedRequest) => {
-        if (isRequestCreationRejected(e, savedRequest)) {
-          setRequestCreationRejection(e)
-        } else {
-          setAlertMessage(e.reason)
-        }
-      },
-    })
+    useUpdateDataAccessRequest({ onError: onUpdateRequestError })
   const { mutate: submit, isPending: isSubmitting } =
     useSubmitDataAccessRequest({
       onSuccess: submission => onSubmissionCreated(submission.submissionId),
@@ -406,6 +396,7 @@ function JsonSchemaRequestWizardContent(
           <RequestCreationRejectedAlert
             error={requestCreationRejection}
             identityProviders={accessRequirement.identityProviders}
+            sx={{ mt: 2 }}
           />
         )}
         {alertMessage && (
