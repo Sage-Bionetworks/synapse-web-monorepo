@@ -9,7 +9,6 @@ import { Box, Typography } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { GridAgentSidebar } from './GridAgentSidebar'
-import { OpenGridAgentSidebarButton } from './OpenGridAgentSidebarButton'
 
 const COLUMN_KEYS = Array.from({ length: 12 }, (_, i) => `column${i + 1}`)
 const columns = COLUMN_KEYS.map(key => ({
@@ -48,14 +47,13 @@ function DockedBesideGrid({
           </Typography>
         }
         sidebar={
-          <>
-            {!open && (
-              <OpenGridAgentSidebarButton onClick={() => setOpen(true)} />
-            )}
-            <GridAgentSidebar open={open} onClose={() => setOpen(false)}>
-              <Typography>Chat content</Typography>
-            </GridAgentSidebar>
-          </>
+          <GridAgentSidebar
+            open={open}
+            onOpen={() => setOpen(true)}
+            onClose={() => setOpen(false)}
+          >
+            <Typography>Chat content</Typography>
+          </GridAgentSidebar>
         }
       >
         <Box sx={{ px: 2, pb: 2 }}>

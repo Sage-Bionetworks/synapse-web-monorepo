@@ -1,6 +1,7 @@
+import CurieAvatarHead from '@/assets/mui_components/CurieAvatarHead'
 import { useHeightInViewport } from '@/utils/hooks/useHeightInViewport'
 import CloseIcon from '@mui/icons-material/Close'
-import { IconButton, Typography } from '@mui/material'
+import { Fab, IconButton, Tooltip, Typography } from '@mui/material'
 import { ReactNode, useId, useState } from 'react'
 import styles from './GridAgentSidebar.module.scss'
 
@@ -11,6 +12,7 @@ export const GRID_AGENT_SIDEBAR_DEFAULT_WIDTH = 400
 
 export type GridAgentSidebarProps = {
   open: boolean
+  onOpen: () => void
   onClose: () => void
   children: ReactNode
 }
@@ -20,40 +22,57 @@ export type GridAgentSidebarProps = {
  * the page and is at least as tall as the viewport. Its header and content stay on screen while the
  * page scrolls, whatever the page shows above or below the layout. Closing it hides it without
  * unmounting its children, so their state (such as a chat draft) survives closing and reopening.
+ * While it is closed, a floating button in the bottom-right corner of the viewport reopens it.
  */
 export function GridAgentSidebar({
   open,
+  onOpen,
   onClose,
   children,
 }: GridAgentSidebarProps) {
   const titleId = useId()
   const [sidebarElement, setSidebarElement] = useState<HTMLElement | null>(null)
-  const heightInViewport = useHeightInViewport(sidebarElement)
+  // A hidden sidebar measures as empty, so it is not measured while closed and reopens at its last height
+  const heightInViewport = useHeightInViewport(open ? sidebarElement : null)
 
   return (
-    <aside
-      ref={setSidebarElement}
-      className={styles.sidebar}
-      style={{ width: GRID_AGENT_SIDEBAR_DEFAULT_WIDTH }}
-      hidden={!open}
-      aria-labelledby={titleId}
-    >
-      <div className={styles.panel} style={{ height: heightInViewport }}>
-        <div className={styles.header}>
-          <Typography id={titleId} variant="headline3" component="h2">
-            {GRID_AGENT_SIDEBAR_TITLE}
-          </Typography>
-          <IconButton
-            aria-label={CLOSE_GRID_AGENT_SIDEBAR_LABEL}
+    <>
+      {!open && (
+        <Tooltip title={OPEN_GRID_AGENT_SIDEBAR_LABEL} placement="left">
+          <Fab
             size="small"
-            onClick={onClose}
+            aria-label={OPEN_GRID_AGENT_SIDEBAR_LABEL}
+            className={styles.openButton}
+            onClick={onOpen}
           >
-            <CloseIcon fontSize="small" />
-          </IconButton>
+            <CurieAvatarHead />
+          </Fab>
+        </Tooltip>
+      )}
+      <aside
+        ref={setSidebarElement}
+        className={styles.sidebar}
+        style={{ width: GRID_AGENT_SIDEBAR_DEFAULT_WIDTH }}
+        hidden={!open}
+        aria-labelledby={titleId}
+      >
+        <div className={styles.panel} style={{ height: heightInViewport }}>
+          <div className={styles.header}>
+            <Typography id={titleId} variant="headline3" component="h2">
+              {GRID_AGENT_SIDEBAR_TITLE}
+            </Typography>
+            <IconButton
+              aria-label={CLOSE_GRID_AGENT_SIDEBAR_LABEL}
+              size="small"
+              onClick={onClose}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </div>
+          <div className={styles.body}>{children}</div>
         </div>
-        <div className={styles.body}>{children}</div>
-      </div>
-    </aside>
+      </aside>
+    </>
   )
 }
 

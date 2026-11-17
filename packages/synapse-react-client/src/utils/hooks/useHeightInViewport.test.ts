@@ -1,7 +1,31 @@
-import { act, renderHook } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { useHeightInViewport } from './useHeightInViewport'
 
 const VIEWPORT_HEIGHT = 800
+
+let reportResize: ResizeObserverCallback | undefined
+
+// jsdom has no layout, so its ResizeObserver never reports. The test reports in its place.
+class FakeResizeObserver implements Pick<
+  ResizeObserver,
+  'observe' | 'unobserve' | 'disconnect'
+> {
+  constructor(callback: ResizeObserverCallback) {
+    reportResize = callback
+  }
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+function reportElementResized(element: Element) {
+  act(() => {
+    reportResize?.(
+      [{ target: element } as ResizeObserverEntry],
+      {} as ResizeObserver,
+    )
+  })
+}
 
 function createElementAt(top: number, bottom: number) {
   const element = document.createElement('div')
@@ -18,6 +42,16 @@ function dispatchWindowEvent(type: 'scroll' | 'resize') {
 }
 
 describe('useHeightInViewport', () => {
+  beforeAll(() => {
+    // @react-hookz/web creates its one shared ResizeObserver on first use, so the fake must be in
+    // place before the first render in this file
+    vi.stubGlobal('ResizeObserver', FakeResizeObserver)
+  })
+
+  afterAll(() => {
+    vi.unstubAllGlobals()
+  })
+
   beforeEach(() => {
     vi.spyOn(window, 'innerHeight', 'get').mockReturnValue(VIEWPORT_HEIGHT)
   })
@@ -57,6 +91,15 @@ describe('useHeightInViewport', () => {
     dispatchWindowEvent('scroll')
 
     expect(result.current).toBe(expected)
+  })
+
+  it('measures the element when it is observed or resizes, without a scroll', async () => {
+    const element = createElementAt(-200, 600)
+    const { result } = renderHook(() => useHeightInViewport(element))
+
+    reportElementResized(element)
+
+    await waitFor(() => expect(result.current).toBe(600))
   })
 
   it('measures again when the viewport resizes', () => {

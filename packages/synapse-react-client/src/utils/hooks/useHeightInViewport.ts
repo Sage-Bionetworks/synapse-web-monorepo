@@ -6,6 +6,8 @@ const PASSIVE = { passive: true }
 /**
  * The height of the part of `element` that is inside the viewport, kept current as the page
  * scrolls and as the viewport or the element resizes. `undefined` until the element is measured.
+ * With a `null` element, it keeps the last height, so a caller can pass `null` while the element is
+ * hidden, which would measure as empty.
  */
 export function useHeightInViewport(element: HTMLElement | null) {
   const [heightInViewport, setHeightInViewport] = useState<number>()
