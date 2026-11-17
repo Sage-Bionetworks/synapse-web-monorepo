@@ -303,6 +303,19 @@ describe('field settings', () => {
     })
   })
 
+  it('merges an update into existing settings, keeping the keys it does not name', () => {
+    const next = updateFieldSettings(
+      draft(undefined, null, { '/institution': publicWithHint }),
+      '/institution',
+      { isPublic: false },
+    )
+
+    expect(next.fieldSettings['/institution']).toEqual({
+      ...publicWithHint,
+      isPublic: false,
+    })
+  })
+
   it('keeps settings when a field is unbound and bound to another step', () => {
     const bound = draft([step('s1', ['/institution']), step('s2')], null, {
       '/institution': publicWithHint,
@@ -350,6 +363,20 @@ describe('field settings', () => {
     )
 
     expect(next.fieldSettings).toEqual({})
+  })
+
+  it('replaces the settings under the key a property is renamed to with its own', () => {
+    const leftover = { uiDefinition: {}, isPublic: false }
+    const next = renamePropertyKey(
+      draft(undefined, null, {
+        '/institution': publicWithHint,
+        '/org': leftover,
+      }),
+      'institution',
+      'org',
+    )
+
+    expect(next.fieldSettings).toEqual({ '/org': publicWithHint })
   })
 })
 

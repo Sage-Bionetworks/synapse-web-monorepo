@@ -68,7 +68,7 @@ describe('useFormTemplateDraft', () => {
     })
   })
 
-  it('restores an unbound property’s settings when a raw schema edit drops it and brings it back', () => {
+  it('keeps an unbound property’s settings when a raw schema edit drops it and brings it back, and applies them once it is bound', () => {
     const jsonSchema: RJSFSchema = {
       type: 'object',
       properties: { a: { type: 'string' } },
@@ -87,9 +87,10 @@ describe('useFormTemplateDraft', () => {
       }),
     )
     act(() => result.current.setJsonSchema(jsonSchema))
+    act(() => result.current.bindField('a', result.current.steps[0].uiKey))
 
-    expect(result.current.fieldSettings['/a']).toMatchObject({
-      isPublic: true,
-    })
+    expect(result.current.formTemplateSteps[0].fields).toEqual([
+      { schemaPath: '/a', uiDefinition: {}, isPublic: true },
+    ])
   })
 })
