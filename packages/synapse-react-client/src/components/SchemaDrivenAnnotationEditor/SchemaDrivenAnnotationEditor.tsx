@@ -274,7 +274,6 @@ export function SchemaDrivenAnnotationEditor(
           )}
           <JsonSchemaForm
             liveValidate={liveValidate}
-            noHtml5Validate={true}
             formRef={ref}
             disabled={updateIsPending}
             translateString={customTranslateString}

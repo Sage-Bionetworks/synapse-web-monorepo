@@ -1,10 +1,15 @@
+import { localToday } from '@/utils/functions/DateTimeUtils'
 import { customizeValidator, Localizer } from '@rjsf/validator-ajv8'
 import dayjs from 'dayjs'
+import pluralize from 'pluralize'
 
 type AjvError = NonNullable<Parameters<Localizer>[0]>[number]
 
 /** Shown when a value isn't one of a field's allowed values. */
 export const ALLOWED_VALUES_MESSAGE = 'Must be one of the allowed values'
+
+/** Shown when a required field has no answer. */
+export const REQUIRED_MESSAGE = 'This field is required'
 
 const FORMAT_MESSAGES: Record<string, string> = {
   email: 'Enter a valid email address',
@@ -13,10 +18,6 @@ const FORMAT_MESSAGES: Record<string, string> = {
   uuid: 'Enter a valid UUID',
   date: 'Enter a valid date',
   'date-time': 'Enter a valid date and time',
-}
-
-function characters(count: number) {
-  return count === 1 ? '1 character' : `${count} characters`
 }
 
 /**
@@ -28,9 +29,7 @@ function calendarDate(limit: unknown): string | undefined {
     return undefined
   }
   const date = limit.slice(0, 10)
-  return date === dayjs().format('YYYY-MM-DD')
-    ? 'today'
-    : dayjs(date).format('MMM D, YYYY')
+  return date === localToday() ? 'today' : dayjs(date).format('MMM D, YYYY')
 }
 
 /** The ajv error `params` the messages below use, per ajv's (and ajv-formats') error objects. */
@@ -41,11 +40,11 @@ function getMessage(error: AjvError): string | undefined {
   const { limit, format } = error.params as LimitParams
   switch (error.keyword) {
     case 'required':
-      return 'This field is required'
+      return REQUIRED_MESSAGE
     case 'minLength':
-      return `Must be at least ${characters(Number(limit))}`
+      return `Must be at least ${pluralize('character', Number(limit), true)}`
     case 'maxLength':
-      return `Must be at most ${characters(Number(limit))}`
+      return `Must be at most ${pluralize('character', Number(limit), true)}`
     case 'minimum':
       return `Must be ${limit} or more`
     case 'maximum':
@@ -77,7 +76,7 @@ function getMessage(error: AjvError): string | undefined {
  * includes the rule's limit. It is keyed on each ajv error's `keyword` and `params`, never on
  * ajv's message text. Rules without a message here keep ajv's own message.
  */
-export const localizeValidationErrors: Localizer = errors => {
+const localizeValidationErrors: Localizer = errors => {
   errors?.forEach(error => {
     const message = getMessage(error)
     if (message !== undefined) {

@@ -88,7 +88,6 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
       <JsonSchemaForm
         formRef={formRef}
         schema={schema}
-        noHtml5Validate
         uiSchema={{
           'ui:submitButtonOptions': {
             norender: true,

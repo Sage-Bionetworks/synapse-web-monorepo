@@ -51,6 +51,9 @@ export function JsonSchemaForm<T = any>(
       ref={props.formRef}
       validator={jsonSchemaFormValidator}
       className={styles.jsonSchemaForm}
+      // The inputs carry schema limits such as `min`/`max`; without this, the browser's own
+      // validation would block `submit()` before RJSF could show its messages.
+      noHtml5Validate
       {...props}
       templates={{
         ArrayFieldDescriptionTemplate: ArrayFieldDescriptionTemplate,

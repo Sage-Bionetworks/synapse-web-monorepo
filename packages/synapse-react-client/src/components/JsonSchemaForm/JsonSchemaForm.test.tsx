@@ -1,7 +1,10 @@
+import RJSFForm from '@rjsf/core'
 import { RJSFSchema } from '@rjsf/utils'
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { createRef } from 'react'
 import { JsonSchemaForm } from './JsonSchemaForm'
+import { REQUIRED_MESSAGE } from './JsonSchemaFormValidator'
 
 const schema: RJSFSchema = {
   type: 'object',
@@ -29,15 +32,12 @@ describe('JsonSchemaForm', () => {
         schema={schema}
         formData={{ teamSize: 11 }}
         showErrorList={false}
-        noHtml5Validate
       />,
     )
 
     await user.click(screen.getByRole('button', { name: 'Submit' }))
 
-    expect(
-      await screen.findByText('This field is required'),
-    ).toBeInTheDocument()
+    expect(await screen.findByText(REQUIRED_MESSAGE)).toBeInTheDocument()
     expect(screen.getByText('Must be 10 or less')).toBeInTheDocument()
   })
 
@@ -55,7 +55,6 @@ describe('JsonSchemaForm', () => {
           )
         }
         showErrorList={false}
-        noHtml5Validate
       />,
     )
 
@@ -68,10 +67,7 @@ describe('JsonSchemaForm', () => {
   it('names the field of each required-field error in its error list', async () => {
     const user = userEvent.setup()
     render(
-      <JsonSchemaForm
-        schema={{ ...schema, required: ['name', 'teamSize'] }}
-        noHtml5Validate
-      />,
+      <JsonSchemaForm schema={{ ...schema, required: ['name', 'teamSize'] }} />,
     )
 
     await user.click(screen.getByRole('button', { name: 'Submit' }))
@@ -80,8 +76,29 @@ describe('JsonSchemaForm', () => {
       .map(item => item.textContent)
       .filter(text => text?.includes(':'))
     expect(items).toEqual([
-      'name:  This field is required',
-      'teamSize:  This field is required',
+      `name:  ${REQUIRED_MESSAGE}`,
+      `teamSize:  ${REQUIRED_MESSAGE}`,
     ])
+  })
+
+  it('shows its own messages, not the browser’s, when submitted through its ref', async () => {
+    // `submit()` calls `requestSubmit()`, which runs the browser's constraint validation
+    // against the input's `max` unless `noHtml5Validate` is set.
+    const formRef = createRef<RJSFForm>()
+    const onError = vi.fn()
+    render(
+      <JsonSchemaForm
+        formRef={formRef}
+        schema={schema}
+        formData={{ name: 'abc', teamSize: 11 }}
+        showErrorList={false}
+        onError={onError}
+      />,
+    )
+
+    act(() => formRef.current?.submit())
+
+    expect(await screen.findByText('Must be 10 or less')).toBeInTheDocument()
+    expect(onError).toHaveBeenCalled()
   })
 })

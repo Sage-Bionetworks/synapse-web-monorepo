@@ -41,6 +41,7 @@ import {
   CreateOrUpdateDoiModal,
   CreateOrUpdateDoiModalProps,
 } from './CreateOrUpdateDoiModal'
+import { REQUIRED_MESSAGE } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 
 vi.mock('@/components/ToastMessage/ToastMessage')
 vi.mock(
@@ -306,7 +307,7 @@ describe('CreateOrUpdateDoiModal', () => {
     const saveButton = screen.getByText(/Save/i)
     await user.click(saveButton)
 
-    await screen.findByText('This field is required')
+    await screen.findByText(REQUIRED_MESSAGE)
     expect(onDoiRequest).not.toHaveBeenCalled()
   })
 

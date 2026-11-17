@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import {
   ALLOWED_VALUES_MESSAGE,
   jsonSchemaFormValidator,
+  REQUIRED_MESSAGE,
 } from './JsonSchemaFormValidator'
 
 /** The messages the shared validator gives `value`, the only property of a one-field form. */
@@ -23,7 +24,7 @@ function messagesFor(property: RJSFSchema, value: unknown, required = false) {
 describe('jsonSchemaFormValidator', () => {
   it('flags a missing required field', () => {
     expect(messagesFor({ type: 'string' }, undefined, true)).toEqual([
-      'This field is required',
+      REQUIRED_MESSAGE,
     ])
   })
 
@@ -41,7 +42,7 @@ describe('jsonSchemaFormValidator', () => {
         name: 'required',
         property: 'field',
         params: { missingProperty: 'field' },
-        message: 'This field is required',
+        message: REQUIRED_MESSAGE,
       }),
     ])
   })
