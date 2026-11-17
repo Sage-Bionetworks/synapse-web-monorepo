@@ -1,5 +1,4 @@
 import ampAlsAccessColumn from '@/components/AmpAlsAccessColumn'
-import { DatasetCardAdornment } from '@/components/DatasetCardAdornment'
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { CardLink } from 'synapse-react-client/components/CardContainer/CardLink'
 import type { LabelLinkConfig } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
@@ -122,10 +121,27 @@ export const datasetCardConfiguration: CardConfiguration = {
 
 // Explore cards open the dataset's details page from the title; the adornment
 // carries access status and the direct link to the files.
+/**
+ * Opt-in dataset card hosting features: a chip showing where the files live
+ * and a Download / "Access at {repository}" action, driven by the `hosting`,
+ * `repository` and `url` columns.
+ */
+export const datasetHostingSchemaFields: Pick<
+  TableToGenericCardMapping,
+  'synapseEntityConfig' | 'hostingConfig'
+> = {
+  synapseEntityConfig: { id: { source: 'column', columnName: 'id' } },
+  hostingConfig: {
+    hostingColumn: 'hosting',
+    repositoryColumn: 'repository',
+    externalUrlColumn: 'url',
+  },
+}
+
 const datasetExploreCardConfiguration: CardConfiguration = {
   ...datasetCardConfiguration,
+  genericCardSchema: { ...datasetSchema, ...datasetHostingSchemaFields },
   titleLinkConfig: datasetDetailsPageLink,
-  CardTypeAdornment: DatasetCardAdornment,
 }
 
 export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
