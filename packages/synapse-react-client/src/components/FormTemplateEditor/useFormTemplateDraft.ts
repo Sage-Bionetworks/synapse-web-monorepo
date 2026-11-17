@@ -169,8 +169,8 @@ export function useFormTemplateDraft(
   )
 
   const formTemplateSteps = useMemo(
-    () => toFormTemplateSteps(steps, fieldSettings),
-    [steps, fieldSettings],
+    () => toFormTemplateSteps(steps, fieldSettings, jsonSchema),
+    [steps, fieldSettings, jsonSchema],
   )
   const previewTemplate: FormTemplate = useMemo(
     () => ({

@@ -22,6 +22,7 @@ Consequences:
 - Binding, unbinding, moving a field between steps, and drag cancel only change `fieldPaths`, so a field keeps its settings across unbind and rebind.
 - Renaming a property moves its settings entry; removing it deletes the entry. Raw JSON Schema edits leave settings alone, so a property the raw editor drops mid-edit gets its settings back when it returns. A key the guided editor creates (`createField`, or a rename onto it) starts from defaults instead of inheriting leftovers.
 - The `FormTemplateStep[]` shape exists only at the boundary. `toEditableSteps` splits loaded steps into `steps` and `fieldSettings`; `toFormTemplateSteps` joins them back. The hook exposes the joined result as `formTemplateSteps`; validation, the preview and save read it.
+- The join leaves out the `templateFileHandleId` of a property that isn't a file field: only a file field's row shows the template document, so the author couldn't see or clear it. The settings entry keeps it for when the property is a file field again.
 
 A new per-slot setting goes into `FieldSettings`, edited through the `updateFieldSettings` transition. Keep it out of `EditableFormTemplateStep`. A new derived view of the draft goes in `useFormTemplateDraft` as a `useMemo` over draft state; keep a second copy of the data out of the draft.
 

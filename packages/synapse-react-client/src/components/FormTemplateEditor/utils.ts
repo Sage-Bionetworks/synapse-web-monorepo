@@ -1,10 +1,14 @@
+import { RJSFSchema } from '@rjsf/utils'
 import {
   FormTemplate,
   FormTemplateField,
   FormTemplateStep,
 } from '@sage-bionetworks/synapse-client'
+import omit from 'lodash-es/omit'
 import { TemplateFileSource } from '@/components/JsonSchemaForm/CustomFormContext'
+import { resolveSchemaPropertyAtPointer } from '@/utils/jsonschema/submissionContext'
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
+import { detectFieldType } from './schemaFieldUtils'
 
 export { moveItem } from '@/utils/functions/ArrayUtils'
 
@@ -77,18 +81,37 @@ export function toEditableSteps(steps: FormTemplateStep[]): {
   return { steps: editableSteps, fieldSettings }
 }
 
-/** Join the draft's steps with their properties' slot settings into the steps a template stores. */
+/**
+ * Join the draft's steps with their properties' slot settings into the steps a template stores.
+ * A slot carries a `templateFileHandleId` only while its property is a file field.
+ */
 export function toFormTemplateSteps(
   steps: EditableFormTemplateStep[],
   fieldSettings: FieldSettingsByPath,
+  jsonSchema: RJSFSchema,
 ): FormTemplateStep[] {
   return steps.map(({ uiKey: _uiKey, fieldPaths, ...step }) => ({
     ...step,
     fields: fieldPaths.map(schemaPath => ({
       schemaPath,
-      ...fieldSettingsFor(fieldSettings, schemaPath),
+      ...slotSettings(jsonSchema, fieldSettings, schemaPath),
     })),
   }))
+}
+
+function slotSettings(
+  jsonSchema: RJSFSchema,
+  fieldSettings: FieldSettingsByPath,
+  schemaPath: string,
+): FieldSettings {
+  const settings = fieldSettingsFor(fieldSettings, schemaPath)
+  // Only a file field's row shows its template document, so any other field would save one the
+  // author can neither see nor clear. The entry keeps it for when the property is a file field again.
+  const isFileField =
+    detectFieldType(
+      resolveSchemaPropertyAtPointer(jsonSchema, schemaPath)?.subSchema,
+    ) === 'file'
+  return isFileField ? settings : omit(settings, 'templateFileHandleId')
 }
 
 /**
