@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t}from"./DiscussionThread-C5_9OE0t.js";import{n}from"./ForumPage-BoF9S8E9.js";function r(){return(r=e((()=>{t(),n()})))()}export{r as t};
