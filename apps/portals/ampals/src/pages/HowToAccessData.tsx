@@ -54,40 +54,73 @@ const ACCESS_TYPES: AccessType[] = [
 
 type AccessStep = { title: string; body: ReactNode }
 
+const DATA_ACCESS_POLICY_PATH = '/Data Access/Data Access Overview'
+const DUC_URL = 'https://www.synapse.org/Synapse:syn68932033'
+const ORCID_REGISTER_URL = 'https://orcid.org/register'
+
+function PolicyLink(props: { children: ReactNode }) {
+  return (
+    <Link component={RouterLink} to={DATA_ACCESS_POLICY_PATH}>
+      {props.children}
+    </Link>
+  )
+}
+
 function useAccessSteps(): AccessStep[] {
   const registrationUrl = useOneSageURL('/register1')
   return [
     {
-      title: 'Create an account',
+      title: 'Create an account with Sage Bionetworks',
       body: (
         <Typography>
-          <Link href={registrationUrl.toString()}>
-            Register for a Synapse account
+          <Link href={registrationUrl.toString()}>Register for an account</Link>
+          . Account registration requires an ORCID and an institutional email
+          address (see the <PolicyLink>data access requirements</PolicyLink> for
+          what counts as an institutional email).{' '}
+          <Link href={ORCID_REGISTER_URL} target="_blank" rel="noreferrer">
+            Get an ORCID
           </Link>{' '}
-          using your institutional email address, and link your ORCID profile.
-          Every person who will work with controlled data needs their own
-          account.
+          if you don&apos;t have one.
         </Typography>
       ),
     },
     {
-      title: 'Identify your team and a lead data access requester',
+      title: 'Identify team members for your project',
       body: (
-        <Typography>
-          Decide who on your team will access the data. Choose one person to act
-          as the lead data access requester. That person submits the request on
-          behalf of the team and is the main contact for the Synapse Access and
-          Compliance Team (ACT).
-        </Typography>
+        <Stack sx={{ gap: 1 }}>
+          <Typography>
+            Data access requests require a signed agreement, known as a{' '}
+            <Link href={DUC_URL} target="_blank" rel="noreferrer">
+              Data Use Certificate (DUC)
+            </Link>
+            , between Sage Bionetworks and any member of your team who will
+            access requested data. Your research team must include a senior
+            researcher (typically an academic professor or scientific project
+            manager) who will serve as the lead data access requester. This
+            person must be a permanent employee of their institution with direct
+            responsibility over all team members who will access data as part of
+            the project. Lab technicians, staff scientists, and trainees
+            (postdocs and students) cannot serve as a lead data access
+            requester.
+          </Typography>
+          <Typography>
+            If your position does not fall under the category of a senior
+            researcher, you may still submit a data access request to the ALS
+            KP. However, the team lead of your research group must sign a DUC on
+            your behalf as the lead data access requester. See the full{' '}
+            <PolicyLink>eligibility requirements</PolicyLink>.
+          </Typography>
+        </Stack>
       ),
     },
     {
-      title: 'Make sure each team member is registered',
+      title: 'Invite your team members to the project',
       body: (
         <Typography>
-          The lead requester adds team members to the request by their Synapse
-          username, so each team member must complete step 1 before the request
-          is submitted.
+          All team members must create an account with Sage Bionetworks (step
+          1). Account registration requires an ORCID and an institutional email
+          address. When you submit the request, you add each team member by
+          their username, so everyone needs an account first.
         </Typography>
       ),
     },
@@ -96,27 +129,40 @@ function useAccessSteps(): AccessStep[] {
       body: (
         <Stack sx={{ gap: 1 }}>
           <Typography>
-            Find the dataset on the{' '}
+            Find the datasets you wish to access on the{' '}
             <Link component={RouterLink} to="/Explore/Datasets">
               Datasets
             </Link>{' '}
-            page and request access. The lead requester submits:
+            page and request access in Synapse. You will be asked to:
           </Typography>
-          <Box component="ul" sx={{ m: 0 }}>
+          <Box component="ol" sx={{ m: 0 }}>
+            <li>
+              <Typography>identify the datasets you wish to access</Typography>
+            </li>
             <li>
               <Typography>
-                A Data Use Certificate (DUC), signed by your institution&apos;s
-                signing official
+                submit an executed{' '}
+                <Link href={DUC_URL} target="_blank" rel="noreferrer">
+                  DUC
+                </Link>
               </Typography>
             </li>
             <li>
               <Typography>
-                An Intended Data Use (IDU) statement describing your research
+                submit an Intended Data Use (IDU) statement
               </Typography>
             </li>
           </Box>
           <Typography>
-            ACT reviews the request and emails you when a decision is made.
+            The DUC must be signed by the lead data access requester, any team
+            members who will access data, and your institution&apos;s authorized
+            signing official.
+          </Typography>
+          <Typography>
+            The IDU is a brief summary (500 words or less) of the scientific
+            purpose, analysis, computing environment, data safety measures, and
+            outputs of your planned research. The IDU questions, with examples,
+            are in the <PolicyLink>data access requirements</PolicyLink>.
           </Typography>
         </Stack>
       ),
@@ -153,7 +199,7 @@ function HowToAccessData() {
         </Stack>
         <Stack component="section" sx={{ gap: 2 }}>
           <Typography variant="headline2">
-            Requesting controlled access in Synapse
+            Requesting controlled access
           </Typography>
           <Box>
             {accessSteps.map((step, index) => (
@@ -169,9 +215,9 @@ function HowToAccessData() {
           </Box>
         </Stack>
         <Alert severity="info">
-          Questions about accessing data?{' '}
+          Need help?{' '}
           <Link component={RouterLink} to="/ContactUs">
-            Contact us
+            Get in touch with us
           </Link>
           .
         </Alert>

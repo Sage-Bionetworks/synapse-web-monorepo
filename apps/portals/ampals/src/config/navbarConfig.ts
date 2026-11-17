@@ -28,7 +28,7 @@ export const navbarConfig: NavbarConfig = {
         //   path: '/Resources/For Persons With Lived Experience',
         // },
         {
-          name: 'Data Access Overview',
+          name: 'Data Access Policy & Requirements',
           path: '/Data Access/Data Access Overview',
         },
         {
