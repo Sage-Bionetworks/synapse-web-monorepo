@@ -9,8 +9,8 @@ export const columnAliases = {
   nf2Genotype: 'NF2 Genotype',
   studyId: 'On Synapse',
   age: 'Donor Age (years)',
-  citedStudyId: 'Cites Studies',
-  citedStudyFunder: 'Cited Study Funders',
+  citedStudyId: 'Cited Study Name',
+  citedStudyFunder: 'Cited Study Funder',
 }
 
 export const searchConfiguration = {
