@@ -49,10 +49,10 @@ export const publicationsCardConfiguration: CardConfiguration = {
       'diseaseFocus',
       'manifestation',
       'fundingAgency',
-      'citedStudyId',
-      'citedStudyFunder',
       'pmid',
       'doi',
+      'citedStudyId',
+      'citedStudyFunder',
     ],
   },
 }
