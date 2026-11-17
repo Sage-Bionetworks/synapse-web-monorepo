@@ -6,13 +6,18 @@ import {
   MOCK_CONTEXT_VALUE,
 } from '@/mocks/MockSynapseContext'
 import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
+import { searchManagementServices } from '@/mocks/msw/handlers/searchManagementHandlers'
 import { server } from '@/mocks/msw/server'
 import defaultFileViewColumnModels from '@/mocks/query/defaultFileViewColumnModels'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { BackendDestinationEnum } from '@/utils/functions'
 import { getEndpoint } from '@/utils/functions/getEndpoint'
-import { EntityType } from '@sage-bionetworks/synapse-client'
+import {
+  EntityType,
+  SearchIndexConcreteTypeEnum,
+} from '@sage-bionetworks/synapse-client'
 import {
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
   ENTITY_VIEW_TYPE_MASK_FILE,
@@ -620,6 +625,85 @@ describe('CreateTableWizard integration tests', () => {
       )
       expect(onComplete).toHaveBeenCalledWith(expect.stringMatching(/syn\d+/))
     })
+  })
+  test('Create a search index with a search configuration', async () => {
+    server.use(
+      getFeatureFlagsOverride({
+        portalOrigin: getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT),
+        overrides: { [FeatureFlagEnum.SEARCH_INDEX_MANAGEMENT]: true },
+      }),
+    )
+    searchManagementServices.SEARCH_CONFIGURATION.clear()
+    const searchConfiguration =
+      searchManagementServices.SEARCH_CONFIGURATION.create({
+        organizationName: 'org.example',
+        name: 'publications',
+      })
+    const onComplete = vi.fn()
+    const { user } = renderComponent({
+      open: true,
+      parentId: mockProjectEntityData.id,
+      onComplete,
+      onCancel: vi.fn(),
+    })
+
+    await user.click(await screen.findByRole('menuitem', { name: 'View' }))
+    await user.click(
+      await screen.findByRole('menuitem', { name: /Search Index/ }),
+    )
+
+    const nextButton = screen.getByRole('button', { name: 'Next' })
+    expect(nextButton).toBeDisabled()
+    await user.type(
+      await screen.findByRole('textbox', { name: 'Defining SQL' }),
+      'SELECT * FROM syn123',
+    )
+    await user.click(
+      screen.getByRole('combobox', { name: 'Search Configuration' }),
+    )
+    await user.click(
+      await screen.findByRole('option', { name: /org\.example-publications/ }),
+    )
+    await user.click(nextButton)
+
+    await user.type(
+      await screen.findByRole('textbox', { name: 'Name' }),
+      'searchIndexName',
+    )
+    await user.click(screen.getByRole('button', { name: 'Finish' }))
+
+    await waitFor(() => {
+      expect(createEntitySpy).toHaveBeenCalledWith(
+        {
+          name: 'searchIndexName',
+          concreteType:
+            SearchIndexConcreteTypeEnum.org_sagebionetworks_repo_model_search_table_SearchIndex,
+          parentId: mockProjectEntityData.id,
+          definingSQL: 'SELECT * FROM syn123',
+          searchConfigurationId: searchConfiguration.id,
+        },
+        MOCK_ACCESS_TOKEN,
+      )
+      expect(onComplete).toHaveBeenCalledWith(expect.stringMatching(/syn\d+/))
+    })
+    // The defining SQL validation service doesn't accept Search Indexes
+    expect(validateDefiningSqlSpy).not.toHaveBeenCalled()
+    expect(createColumnModelsSpy).not.toHaveBeenCalled()
+  })
+  test('Does not offer a search index when the feature flag is disabled', async () => {
+    const { user } = renderComponent({
+      open: true,
+      parentId: mockProjectEntityData.id,
+      onComplete: vi.fn(),
+      onCancel: vi.fn(),
+    })
+
+    await user.click(await screen.findByRole('menuitem', { name: 'View' }))
+
+    await screen.findByRole('menuitem', { name: /Virtual Table/ })
+    expect(
+      screen.queryByRole('menuitem', { name: /Search Index/ }),
+    ).not.toBeInTheDocument()
   })
   test('DefiningSql must be valid before advancing', async () => {
     const onComplete = vi.fn()

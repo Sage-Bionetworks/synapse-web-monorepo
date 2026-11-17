@@ -21,6 +21,7 @@ import { SetOptional } from 'type-fest'
 import { DialogBase } from '../DialogBase'
 import EntityViewMaskEditor from '../EntityViewScopeEditor/EntityViewMaskEditor'
 import EntityViewScopeEditor from '../EntityViewScopeEditor/EntityViewScopeEditor'
+import { SearchResourceAutocomplete } from '../SearchManagement/SearchResourceAutocomplete'
 import SqlDefinedTableEditor from '../SqlDefinedTableEditor/SqlDefinedTableEditor'
 import SubmissionViewScopeEditor from '../SubmissionViewScopeEditor/SubmissionViewScopeEditor'
 import TableColumnSchemaForm, {
@@ -35,6 +36,7 @@ import {
   maybeSetColumnIds,
   maybeSetDefiningSQL,
   maybeSetScopeIds,
+  maybeSetSearchConfigurationId,
   maybeSetViewTypeMask,
 } from './CreateTableViewWizardUtils'
 import TableNameForm from './TableNameForm'
@@ -85,6 +87,9 @@ export default function CreateTableViewWizard(
   const columnSchemaFormRef = useRef<SubmitHandle>(null)
 
   const [sql, setSql] = useState('')
+  const [searchConfigurationId, setSearchConfigurationId] = useState<
+    string | null
+  >(null)
 
   const viewScope: ViewScope | undefined = useMemo(() => {
     if (entityType === EntityType.entityview) {
@@ -177,7 +182,8 @@ export default function CreateTableViewWizard(
       columnModels &&
       // Do not create columns if this is a SQL-defined view
       entityType !== EntityType.materializedview &&
-      entityType !== EntityType.virtualtable
+      entityType !== EntityType.virtualtable &&
+      entityType !== EntityType.searchindex
     ) {
       try {
         createdColumnModels = await createColumnModels(
@@ -209,6 +215,11 @@ export default function CreateTableViewWizard(
     )
     maybeSetViewTypeMask(entityToCreate, entityType, viewTypeMask)
     maybeSetDefiningSQL(entityToCreate, entityType, sql)
+    maybeSetSearchConfigurationId(
+      entityToCreate,
+      entityType,
+      searchConfigurationId,
+    )
 
     try {
       await createEntity(entityToCreate)
@@ -226,6 +237,7 @@ export default function CreateTableViewWizard(
     entityViewScopeIds,
     submissionViewScopeIds,
     sql,
+    searchConfigurationId,
     viewTypeMask,
   ])
 
@@ -260,6 +272,9 @@ export default function CreateTableViewWizard(
   const onNextButtonClicked = useCallback(() => {
     if (isLastStep(step)) {
       void onFinish()
+    } else if (step === 'TABLE_SQL' && entityType === EntityType.searchindex) {
+      // The defining SQL validation service doesn't support Search Indexes; the SQL is validated on creation.
+      setStep('TABLE_NAME')
     } else if (step === 'TABLE_SQL' && entityType) {
       validateSql({ sql, entityType })
     } else if (step === 'TABLE_COLUMNS') {
@@ -303,9 +318,14 @@ export default function CreateTableViewWizard(
         (isLoadingDefaultColumns && !errorFetchingDefaultColumns)
       )
     }
+    if (step === 'TABLE_SQL' && entityType === EntityType.searchindex) {
+      return sql.trim() === ''
+    }
     return false
   }, [
     entityViewScopeIds.length,
+    entityType,
+    sql,
     submissionViewScopeIds.length,
     step,
     viewTypeMask,
@@ -385,6 +405,18 @@ export default function CreateTableViewWizard(
                 entityType={entityType}
               />
             </Box>
+            {entityType === EntityType.searchindex && (
+              <Box sx={{ mt: 2 }}>
+                <SearchResourceAutocomplete
+                  resourceType="SEARCH_CONFIGURATION"
+                  valueType="id"
+                  label="Search Configuration"
+                  value={searchConfigurationId}
+                  onChange={setSearchConfigurationId}
+                  helperText="Optional. If omitted, the search index uses the closest search configuration bound to a parent folder or project, or the platform defaults if none is bound."
+                />
+              </Box>
+            )}
             {errorContent}
           </>
         )
@@ -422,6 +454,7 @@ export default function CreateTableViewWizard(
     name,
     description,
     sql,
+    searchConfigurationId,
     entityType,
     errorContent,
     columnModels,

@@ -1,3 +1,5 @@
+import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { Link } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { ENTITY_VIEW_TYPE_MASK_PROJECT } from '@sage-bionetworks/synapse-types'
@@ -90,6 +92,13 @@ const VIRTUAL_TABLE_DESCRIPTION = (
   </WizardChoiceButtonDescription>
 )
 
+const SEARCH_INDEX_DESCRIPTION = (
+  <WizardChoiceButtonDescription>
+    A full-text and semantic search index over the rows of one table or view,
+    defined by a SQL statement.
+  </WizardChoiceButtonDescription>
+)
+
 export type ViewTypeSelectionProps = {
   /* Callback including the chosen type, and optional viewTypeMask if included in the choice (e.g. Project Views) */
   onTypeSelected: (type: EntityType, viewTypeMask?: number) => void
@@ -101,6 +110,9 @@ export type ViewTypeSelectionProps = {
  */
 export default function ViewTypeSelection(props: ViewTypeSelectionProps) {
   const { onTypeSelected } = props
+  const isSearchIndexEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.SEARCH_INDEX_MANAGEMENT,
+  )
 
   return (
     <WizardChoiceButtonGroup>
@@ -139,6 +151,15 @@ export default function ViewTypeSelection(props: ViewTypeSelectionProps) {
           onTypeSelected(EntityType.virtualtable)
         }}
       />
+      {isSearchIndexEnabled && (
+        <WizardChoiceButton
+          title={'Search Index'}
+          description={SEARCH_INDEX_DESCRIPTION}
+          onClick={() => {
+            onTypeSelected(EntityType.searchindex)
+          }}
+        />
+      )}
     </WizardChoiceButtonGroup>
   )
 }

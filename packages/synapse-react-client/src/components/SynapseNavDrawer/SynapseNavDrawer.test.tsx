@@ -13,7 +13,9 @@ import {
   SubmissionSearchResult,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { FeatureFlagEnum, FeatureFlags } from '@/utils/featureflag/FeatureFlags'
 import { SynapseClient } from '../../index'
 import { SynapseNavDrawer, SynapseNavDrawerProps } from './SynapseNavDrawer'
 
@@ -92,6 +94,7 @@ vi.spyOn(SynapseClient, 'searchAccessSubmission').mockResolvedValue({
 })
 
 const mockGetUserBundle = vi.spyOn(SynapseClient, 'getMyUserBundle')
+const mockGetFeatureFlags = vi.spyOn(SynapseClient, 'getFeatureFlags')
 
 describe('SynapseNavDrawer tests', () => {
   beforeEach(() => {
@@ -223,5 +226,38 @@ describe('SynapseNavDrawer tests', () => {
     expect(
       screen.queryByLabelText('Data Access Management'),
     ).not.toBeInTheDocument()
+  })
+
+  it('Links to Search Management when the feature flag is enabled', async () => {
+    mockGetUserBundle.mockResolvedValue({
+      ...mockUserBundle,
+      isARReviewer: false,
+    })
+    mockGetFeatureFlags.mockResolvedValue({
+      [FeatureFlagEnum.SEARCH_INDEX_MANAGEMENT]: true,
+    } as FeatureFlags)
+
+    renderComponent()
+
+    const searchManagementButton =
+      await screen.findByLabelText('Search Management')
+    await userEvent.click(searchManagementButton)
+    expect(defaultProps.gotoPlace).toHaveBeenCalledWith('/SearchManagement:0')
+  })
+
+  it('Hides the Search Management link when the feature flag is disabled', async () => {
+    mockGetUserBundle.mockResolvedValue({
+      ...mockUserBundle,
+      isARReviewer: false,
+    })
+    mockGetFeatureFlags.mockResolvedValue({
+      [FeatureFlagEnum.SEARCH_INDEX_MANAGEMENT]: false,
+    } as FeatureFlags)
+
+    renderComponent()
+
+    await screen.findByLabelText('Trash Can')
+    await waitFor(() => expect(mockGetFeatureFlags).toHaveBeenCalled())
+    expect(screen.queryByLabelText('Search Management')).not.toBeInTheDocument()
   })
 })

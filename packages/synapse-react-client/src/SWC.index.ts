@@ -196,6 +196,15 @@ const SynapseComponents = {
   ReviewerDashboard: lazy(
     () => import('./components/dataaccess/ReviewerDashboard'),
   ),
+  SearchConfigBindingModal: lazy(
+    () => import('./components/SearchConfigBinding/SearchConfigBindingModal'),
+  ),
+  SearchIndexEditorModal: lazy(
+    () => import('./components/SearchIndexEditor/SearchIndexEditorModal'),
+  ),
+  SearchManagementPage: lazy(
+    () => import('./components/SearchManagement/SearchManagementPage'),
+  ),
   SearchQueryWrapperPlotNav: lazy(
     () =>
       import('./components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'),

@@ -1,5 +1,5 @@
 import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
-import { EntityType } from '@sage-bionetworks/synapse-client'
+import { EntityType, SearchIndex } from '@sage-bionetworks/synapse-client'
 import {
   ColumnModel,
   Entity,
@@ -32,7 +32,9 @@ export function getModalTitle(
     case 'SUBMISSION_VIEW_SCOPE':
       return `Define ${entityTypeToFriendlyName(entityType!)} Scope`
     case 'TABLE_SQL':
-      return 'Create a SQL-Defined View'
+      return entityType === EntityType.searchindex
+        ? 'Define the Search Index'
+        : 'Create a SQL-Defined View'
 
     case 'TABLE_COLUMNS':
       return `Add Columns to ${entityTypeToFriendlyName(entityType!)}`
@@ -78,11 +80,9 @@ export function getPreviousStep(
         return 'TABLE_COLUMNS'
       } else if (
         entityType === EntityType.materializedview ||
-        entityType === EntityType.virtualtable
+        entityType === EntityType.virtualtable ||
+        entityType === EntityType.searchindex
       ) {
-        // TODO: Currently, this block is unreachable
-        // TABLE_SQL is the last step, but after PLFM-8209 is complete, TABLE_SQL can come before TABLE_NAME, where this will make more sense
-        // Other than removing this comment, no change will be needed here
         return 'TABLE_SQL'
       }
       break
@@ -109,7 +109,8 @@ export function getStepAfterTypeSelection(
   }
   if (
     entityType === EntityType.materializedview ||
-    entityType === EntityType.virtualtable
+    entityType === EntityType.virtualtable ||
+    entityType === EntityType.searchindex
   ) {
     return 'TABLE_SQL'
   }
@@ -171,8 +172,21 @@ export function maybeSetDefiningSQL(
   const hasDefiningSQLTypes: EntityType[] = [
     EntityType.materializedview,
     EntityType.virtualtable,
+    EntityType.searchindex,
   ]
   if (hasDefiningSQLTypes.includes(entityType)) {
     ;(entityToCreate as MaterializedView | VirtualTable)['definingSQL'] = sql
+  }
+}
+
+export function maybeSetSearchConfigurationId(
+  entityToCreate: Entity,
+  entityType: EntityType,
+  searchConfigurationId: string | null,
+) {
+  if (entityType === EntityType.searchindex && searchConfigurationId) {
+    ;(entityToCreate as Entity & Pick<SearchIndex, 'searchConfigurationId'>)[
+      'searchConfigurationId'
+    ] = searchConfigurationId
   }
 }

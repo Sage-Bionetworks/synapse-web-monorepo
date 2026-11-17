@@ -45,6 +45,7 @@ import { getAllWikiHandlers } from './handlers/wikiHandlers'
 import { getDataciteHandler } from './handlers/dataciteHandlers'
 import { getAuthHandlers } from './handlers/authHandlers'
 import { getHandlersForSearchQuery } from './handlers/searchQueryHandlers'
+import { getSearchManagementHandlers } from './handlers/searchManagementHandlers'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
 export type SynapseApiResponse<TData, TError = BaseError> = TData | TError
@@ -104,6 +105,7 @@ export function getHandlersForStorybook(
     doi: getDoiHandler(backendOrigin),
     shortIo: getShortIoHandlers(),
     search: getHandlersForSearchQuery(backendOrigin),
+    searchManagement: getSearchManagementHandlers(backendOrigin),
     webhook: getWebhookHandlers(backendOrigin),
     validationSchema: getValidationSchemaHandlers(backendOrigin),
     datacite: getDataciteHandler(),
