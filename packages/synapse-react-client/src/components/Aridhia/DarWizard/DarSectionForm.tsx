@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { Alert } from '@mui/material'
 import { ErrorSchema, RJSFSchema, UiSchema } from '@rjsf/utils'
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
 import { DateWidget } from '@/components/JsonSchemaForm/widgets/DateWidget'
@@ -16,6 +17,10 @@ export type DarFormSectionStepProps = {
 /** RJSF's default `idPrefix`/`idSeparator`: a top-level field's widget id is `root_<name>`. */
 const FIELD_ID_PREFIX = 'root_'
 
+/** Shown when a section's schema can't be compiled, so its answers can't be checked. */
+export const SCHEMA_ERROR_MESSAGE =
+  "This form couldn't be checked. Contact support."
+
 /**
  * Renders one `fairSectionToRjsf` schema/uiSchema pair via `JsonSchemaForm`, with the shared
  * `JsonSchemaForm` customizations needed for the Aridhia DAR flow.
@@ -26,14 +31,16 @@ const FIELD_ID_PREFIX = 'root_'
  */
 export function DarSectionForm(props: DarFormSectionStepProps) {
   const { schema, uiSchema, formData, onChange } = props
-  const { fieldErrors } = validateFairSection(schema, formData)
+  const { fieldErrors, schemaError } = validateFairSection(schema, formData)
+  useEffect(() => {
+    if (schemaError) {
+      console.error(`DAR form section schema failed to compile: ${schemaError}`)
+    }
+  }, [schemaError])
   // Flag a field once the user leaves it rather than while they're still typing. Values that
   // arrive already invalid (e.g. from a restored draft) are flagged right away.
-  // TODO(RJSF upgrade): replace this blur tracking and `extraErrors` with RJSF's own
-  // `liveValidate="onBlur"` plus `liveErrors="field"` (per-field errors once a field is left).
-  // Neither exists in the pinned 6.0.0-beta.10 (`liveValidate` is boolean-only); `onBlur` shipped
-  // in 6.0.0 and `liveErrors` is on RJSF's main branch, unreleased as of 6.11.1. `onBlur` alone
-  // would show every field's errors on the first blur.
+  // TODO(PORTALS-4456, RJSF 7): replace this blur tracking and `extraErrors` with RJSF's
+  // `liveValidate="onBlur"` plus `liveErrors="field"`.
   const [visitedFields, setVisitedFields] = useState<ReadonlySet<string>>(
     () => new Set(Object.keys(fieldErrors)),
   )
@@ -44,27 +51,34 @@ export function DarSectionForm(props: DarFormSectionStepProps) {
   ) as ErrorSchema<Record<string, unknown>>
 
   return (
-    <JsonSchemaForm<Record<string, unknown>>
-      schema={schema}
-      uiSchema={uiSchema}
-      formData={formData}
-      fields={{ fairLabel: FairLabelField }}
-      widgets={{ DateWidget, PhoneWidget }}
-      formContext={{ booleanWidget: 'checkbox' }}
-      onChange={({ formData: next }) => onChange(next ?? {})}
-      onBlur={id => {
-        const name = id.startsWith(FIELD_ID_PREFIX)
-          ? id.slice(FIELD_ID_PREFIX.length)
-          : id
-        if (!visitedFields.has(name)) {
-          setVisitedFields(new Set([...visitedFields, name]))
-        }
-      }}
-      extraErrors={extraErrors}
-      showErrorList={false}
-    >
-      {/* Suppress the built-in submit button; the wizard owns navigation. */}
-      <></>
-    </JsonSchemaForm>
+    <>
+      {schemaError && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {SCHEMA_ERROR_MESSAGE}
+        </Alert>
+      )}
+      <JsonSchemaForm<Record<string, unknown>>
+        schema={schema}
+        uiSchema={uiSchema}
+        formData={formData}
+        fields={{ fairLabel: FairLabelField }}
+        widgets={{ DateWidget, PhoneWidget }}
+        formContext={{ booleanWidget: 'checkbox' }}
+        onChange={({ formData: next }) => onChange(next ?? {})}
+        onBlur={id => {
+          const name = id.startsWith(FIELD_ID_PREFIX)
+            ? id.slice(FIELD_ID_PREFIX.length)
+            : id
+          if (!visitedFields.has(name)) {
+            setVisitedFields(new Set([...visitedFields, name]))
+          }
+        }}
+        extraErrors={extraErrors}
+        showErrorList={false}
+      >
+        {/* Suppress the built-in submit button; the wizard owns navigation. */}
+        <></>
+      </JsonSchemaForm>
+    </>
   )
 }

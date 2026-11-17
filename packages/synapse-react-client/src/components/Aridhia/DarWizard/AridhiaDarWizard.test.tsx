@@ -669,6 +669,39 @@ describe('AridhiaDarWizard', () => {
     expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
   })
 
+  it('blocks leaving the Project step while an answer breaks a FAIR length limit', async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(
+        getAridhiaWorkflowHandler({
+          project: [
+            {
+              ...MOCK_ARIDHIA_PROJECT_FIELDS[0],
+              validation: { required: true, minimum: '5' },
+            },
+          ],
+        }),
+      ),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await waitFor(() =>
+      expect(getRjsfTextField('project name')).toBeInTheDocument(),
+    )
+    await fillRjsfTextField(user, 'project name', 'ALS')
+    await user.tab()
+
+    expect(
+      screen.getByText('Must be at least 5 characters'),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    await fillRjsfTextField(user, 'project name', ' study')
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
+  })
+
   it('flags a malformed email restored from the draft without a blur', async () => {
     const user = userEvent.setup()
     server.use(...getAridhiaDarWizardHandlers())
