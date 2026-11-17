@@ -16,6 +16,7 @@ import {
   AGENT_CHAT_TRACE,
   AGENT_SESSION,
   ASYNCHRONOUS_JOB_TOKEN,
+  UPDATE_AGENT_SESSION,
 } from '@/utils/APIConstants'
 import {
   BackendDestinationEnum,
@@ -474,14 +475,15 @@ describe('SynapseChat - creating the agent session', () => {
   }
 
   it('does not create a session on mount, and the composer and prompts are usable', async () => {
-    const { sessionRequests } = renderWithoutSession({
+    const { user, sessionRequests } = renderWithoutSession({
       suggestedPrompts: mockPrompts,
     })
 
     await waitForRequestsToArrive()
 
     expect(sessionRequests).toHaveLength(0)
-    expect(screen.getByRole('textbox')).toBeEnabled()
+    await user.type(screen.getByRole('textbox'), 'hi')
+    expect(screen.getByRole('button', { name: 'Send message' })).toBeEnabled()
     mockPrompts.forEach(prompt => {
       expect(screen.getByRole('button', { name: prompt })).not.toHaveAttribute(
         'aria-disabled',
@@ -516,7 +518,7 @@ describe('SynapseChat - creating the agent session', () => {
     expect(sessionRequests).toHaveLength(1)
   })
 
-  it('sends the first message even if the chat is closed while its session is being created', async () => {
+  it('sends the first message even if the chat is closed while its session is being created, when the caller keeps the chat state', async () => {
     const { user, sessionRequests, release, unmount } = renderWithoutSession(
       {},
       { holdResponse: true },
@@ -534,6 +536,49 @@ describe('SynapseChat - creating the agent session', () => {
         mockAgentSession.sessionId,
       ),
     )
+  })
+
+  it('does not send the first message if the chat is closed while its session is being created, when the chat state closes with it', async () => {
+    const { user, sessionRequests, release, unmount } = renderWithoutSession(
+      { externalChatState: undefined },
+      { holdResponse: true },
+    )
+
+    await sendMessage(user)
+    await waitFor(() => expect(sessionRequests).toHaveLength(1))
+    unmount()
+    release()
+
+    await waitForRequestsToArrive()
+    expect(mockSendChat).not.toHaveBeenCalled()
+  })
+
+  it('does not let attachments be removed while their message waits for its session', async () => {
+    const { user, sessionRequests, release } = renderWithoutSession(
+      { allowAttachments: true },
+      { holdResponse: true },
+    )
+    await user.click(screen.getByRole('button', { name: 'Add files' }))
+    await user.click(
+      screen.getByRole('button', { name: 'Simulate attachment uploaded' }),
+    )
+    expect(
+      screen.getByRole('button', { name: 'Remove report.pdf' }),
+    ).toBeInTheDocument()
+
+    await sendMessage(user)
+    await waitFor(() => expect(sessionRequests).toHaveLength(1))
+
+    expect(
+      screen.queryByRole('button', { name: 'Remove report.pdf' }),
+    ).not.toBeInTheDocument()
+
+    release()
+
+    await waitFor(() => expect(mockSendChat).toHaveBeenCalledTimes(1))
+    expect(mockSendChat.mock.calls[0][1]).toHaveLength(1)
+    // The sent attachment leaves the composer
+    expect(screen.queryByText('report.pdf')).not.toBeInTheDocument()
   })
 
   it('keeps edits made while the session is being created in the composer', async () => {
@@ -706,6 +751,64 @@ describe('SynapseChat - creating the agent session', () => {
     expect(mockSendChat.mock.calls[0][0]).toBe('Start here')
     await waitForRequestsToArrive()
     expect(sessionRequests).toHaveLength(0)
+  })
+
+  // An initial message can be one the user sent before logging in, so it must not be lost
+  it('puts an initial message in the composer when its session cannot be created, so the user can retry', async () => {
+    const { user } = renderWithoutSession({ initialMessage: 'Start here' })
+    let failSessionCreation = true
+    server.use(
+      http.post(`${repoOrigin}${AGENT_SESSION}`, () =>
+        failSessionCreation
+          ? HttpResponse.json(
+              { reason: 'The agent is unavailable' },
+              { status: 500 },
+            )
+          : HttpResponse.json(mockAgentSession, { status: 201 }),
+      ),
+    )
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'The agent is unavailable',
+    )
+    expect(screen.getByRole('textbox')).toHaveValue('Start here')
+    expect(mockSendChat).not.toHaveBeenCalled()
+
+    failSessionCreation = false
+    await user.click(screen.getByRole('button', { name: 'Send message' }))
+
+    await waitFor(() =>
+      expect(mockSendChat).toHaveBeenCalledExactlyOnceWith(
+        'Start here',
+        undefined,
+        mockAgentSession.sessionId,
+      ),
+    )
+    expect(screen.getByRole('textbox')).toHaveValue('')
+  })
+
+  it('updates the session when the access level changes after it exists', async () => {
+    const updates: { agentAccessLevel?: string }[] = []
+    server.use(
+      http.put(
+        `${repoOrigin}${UPDATE_AGENT_SESSION(mockAgentSession.sessionId)}`,
+        async ({ request }) => {
+          updates.push((await request.json()) as { agentAccessLevel?: string })
+          return HttpResponse.json(mockAgentSession, { status: 200 })
+        },
+      ),
+    )
+    const { user } = renderComponent({ showAccessLevelMenu: true })
+
+    await user.click(screen.getByRole('button', { name: 'Access Level Menu' }))
+    await user.click(
+      screen.getByRole('menuitem', { name: 'Read Your Private Data' }),
+    )
+
+    await waitFor(() => expect(updates).toHaveLength(1))
+    expect(updates[0].agentAccessLevel).toBe(
+      AgentAccessLevel.READ_YOUR_PRIVATE_DATA,
+    )
   })
 })
 

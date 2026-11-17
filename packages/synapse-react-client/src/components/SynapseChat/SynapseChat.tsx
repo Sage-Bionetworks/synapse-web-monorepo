@@ -19,6 +19,7 @@ import {
   GridAgentSessionContext,
 } from '@sage-bionetworks/synapse-client'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
+import { useIsMounted } from '@react-hookz/web'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { SkeletonParagraph } from '../Skeleton'
 import { displayToast } from '../ToastMessage'
@@ -272,40 +273,65 @@ export function SynapseChat({
     [sendChat],
   )
 
-  const startSessionAndSend = useCallback(
-    (outgoing: OutgoingMessage, onSent?: () => void) => {
-      void createAgentSession({
-        agentAccessLevel,
-        agentRegistrationId,
-        sessionContext,
-      }).then(
-        // A promise continuation, unlike a `mutate` callback, runs after the chat closes, so a
-        // caller that keeps the chat state across close and reopen (GridAgentChat) still gets the
-        // message. The new session reaches `agentSession` only on the next render, so its ID is
-        // passed directly.
-        newAgentSession => {
-          sendMessage(outgoing, newAgentSession.sessionId)
-          onSent?.()
-        },
-        (error: unknown) => {
-          if (
-            onSessionCreationUnauthenticated &&
-            error instanceof SynapseClientError &&
-            isAnonymousUserTurnedAway(error, isAuthenticated)
-          ) {
-            onSessionCreationUnauthenticated(outgoing.message)
-          }
-        },
+  // The caller prompts an anonymous user who was turned away to log in, instead of an error showing
+  const isDeferredToLogin = useCallback(
+    (error: unknown) =>
+      !!onSessionCreationUnauthenticated &&
+      error instanceof SynapseClientError &&
+      isAnonymousUserTurnedAway(error, isAuthenticated),
+    [onSessionCreationUnauthenticated, isAuthenticated],
+  )
+
+  // Clears a sent message from the composer, keeping anything edited while its session was created
+  const clearSentMessage = useCallback(
+    ({ message, attachments }: OutgoingMessage) => {
+      setUserChatTextfieldValue(current =>
+        current.trim() === message ? '' : current,
       )
+      setComposerAttachments(current =>
+        current === attachments ? [] : current,
+      )
+    },
+    [],
+  )
+
+  const isMounted = useIsMounted()
+  const startSessionAndSend = useCallback(
+    async (outgoing: OutgoingMessage) => {
+      let newAgentSession: AgentSession
+      try {
+        newAgentSession = await createAgentSession({
+          agentAccessLevel,
+          agentRegistrationId,
+          sessionContext,
+        })
+      } catch (error) {
+        if (isDeferredToLogin(error)) {
+          onSessionCreationUnauthenticated?.(outgoing.message)
+        }
+        return
+      }
+      // Unlike a `mutate` callback, this still runs after the chat closes. A caller that keeps the
+      // chat state across close and reopen (GridAgentChat) still gets the message; a chat whose
+      // state closed with it has nowhere to show the message or its response, so it isn't sent.
+      if (!isMounted() && !externalChatState) {
+        return
+      }
+      // The new session reaches `agentSession` only on the next render, so its ID is passed directly
+      sendMessage(outgoing, newAgentSession.sessionId)
+      clearSentMessage(outgoing)
     },
     [
       createAgentSession,
       agentAccessLevel,
       agentRegistrationId,
       sessionContext,
-      sendMessage,
-      isAuthenticated,
+      isDeferredToLogin,
       onSessionCreationUnauthenticated,
+      isMounted,
+      externalChatState,
+      sendMessage,
+      clearSentMessage,
     ],
   )
 
@@ -321,35 +347,25 @@ export function SynapseChat({
     if (agentSession) {
       sendMessage(outgoing)
     } else {
-      startSessionAndSend(outgoing)
+      // Like a typed first message, it waits in the composer, so the user can retry it if its
+      // session can't be created
+      setUserChatTextfieldValue(initialMessage)
+      void startSessionAndSend(outgoing)
     }
   }, [initialMessage, agentSession, sendMessage, startSessionAndSend])
 
   const handleSend = (message: string, attachments: ChatAttachment[]) => {
-    // Edits made while the session is being created are kept for the next message
-    const clearComposer = () => {
-      setUserChatTextfieldValue(current =>
-        current.trim() === message ? '' : current,
-      )
-      setComposerAttachments(current =>
-        current === attachments ? [] : current,
-      )
-    }
+    const outgoing = { message, attachments }
     if (agentSession) {
-      sendMessage({ message, attachments })
-      clearComposer()
+      sendMessage(outgoing)
+      clearSentMessage(outgoing)
     } else {
       // The message stays in the composer until it is sent, so a failed session creation keeps it
-      startSessionAndSend({ message, attachments }, clearComposer)
+      void startSessionAndSend(outgoing)
     }
   }
 
-  // The caller prompts an anonymous user who was turned away to log in, so no error is shown for that
-  const isDeferredToLogin =
-    !!createAgentSessionError &&
-    !!onSessionCreationUnauthenticated &&
-    isAnonymousUserTurnedAway(createAgentSessionError, isAuthenticated)
-  const sessionCreationError = isDeferredToLogin
+  const sessionCreationError = isDeferredToLogin(createAgentSessionError)
     ? null
     : createAgentSessionError
 

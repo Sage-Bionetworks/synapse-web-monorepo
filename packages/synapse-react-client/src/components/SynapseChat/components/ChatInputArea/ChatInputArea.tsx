@@ -104,10 +104,14 @@ export function ChatInputArea({
         {allowAttachments && (
           <ChatAttachmentStrip
             items={attachmentItems}
-            onRemove={fileHandleId =>
-              onAttachmentsChange(prev =>
-                prev.filter(a => a.fileHandleId !== fileHandleId),
-              )
+            // While disabled, the attachments may already be on their way with a message
+            onRemove={
+              disabled
+                ? undefined
+                : fileHandleId =>
+                    onAttachmentsChange(prev =>
+                      prev.filter(a => a.fileHandleId !== fileHandleId),
+                    )
             }
           />
         )}

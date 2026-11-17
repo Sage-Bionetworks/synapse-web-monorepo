@@ -2,7 +2,7 @@ import { FILE } from '@/utils/APIConstants'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { delay, http } from 'msw'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { fn, userEvent, within, waitFor, expect } from 'storybook/test'
 import { ChatInputArea } from './ChatInputArea'
 
@@ -24,6 +24,11 @@ const meta = {
     // wrappers are enough to demo it in isolation, without an agent session or chat MSW handlers.
     const [value, setValue] = useState(args.value)
     const [attachments, setAttachments] = useState(args.attachments)
+    // ChatInputArea passes state updaters, so log the attachments they produce rather than the updater
+    const { onAttachmentsChange } = args
+    useEffect(() => {
+      onAttachmentsChange(attachments)
+    }, [onAttachmentsChange, attachments])
     return (
       <ChatInputArea
         {...args}
@@ -33,10 +38,7 @@ const meta = {
           args.onValueChange(newValue)
         }}
         attachments={attachments}
-        onAttachmentsChange={newAttachments => {
-          setAttachments(newAttachments)
-          args.onAttachmentsChange(newAttachments)
-        }}
+        onAttachmentsChange={setAttachments}
       />
     )
   },
