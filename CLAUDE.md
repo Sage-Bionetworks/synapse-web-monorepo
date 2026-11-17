@@ -11,7 +11,7 @@ This is a **pnpm + Nx monorepo** for Sage Bionetworks' Synapse web applications.
 - `packages/synapse-types` — Legacy TypeScript type definitions for the Synapse API (prefer using synapse-client over synapse-types)
 - `packages/vite-config` — Shared Vite/Vitest config builder used by all packages
 - `apps/synapse-portal-framework` — Shared library for data portals
-- `apps/portals/` — 14 individual data portal apps (adknowledgeportal, nf, genie, etc.)
+- `apps/portals/` — individual data portal apps (adknowledgeportal, nf, genie, etc.)
 - `apps/SageAccountWeb` — User account management app
 - `apps/synapse-oauth-signin` — OAuth2/OIDC authentication app
 - `apps/portals-e2e` — Playwright E2E tests for data portal apps
@@ -47,10 +47,10 @@ pnpm nx affected --target=test --base=remotes/origin/main
 ```bash
 # From the package directory
 cd packages/synapse-react-client
-pnpm test DataGrid.test.tsx
+pnpm test run DataGrid.test.tsx
 
 # Or with filter from root
-pnpm --filter synapse-react-client test DataGrid.test.tsx
+pnpm --filter synapse-react-client test run DataGrid.test.tsx
 ```
 
 ### Storybook (synapse-react-client)

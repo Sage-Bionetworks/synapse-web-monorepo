@@ -21,7 +21,7 @@ pnpm nx type-check <portalName>
 pnpm nx lint <portalName>
 ```
 
-There are no unit tests for portal code — portals are configuration-heavy and tested via the shared `synapse-portal-framework` and `synapse-react-client` packages.
+Portal code is mostly configuration and is tested through the shared `synapse-portal-framework` and `synapse-react-client` packages. A portal with its own logic can have co-located Vitest tests (e.g. `challenges`).
 
 ## Dependency Builds
 
@@ -166,7 +166,7 @@ When creating a new portal, copy the structure from an existing portal (e.g., `n
 2. `package.json` with the portal name and all required scripts
 3. `routesConfig.tsx` with portal-specific routes
 4. `sitemapConfig.ts` with detail page configurations (if applicable)
-5. Styling overrides in `src/style/`
+5. Styling overrides in `src/config/style/`
 
 ## Common Patterns
 
