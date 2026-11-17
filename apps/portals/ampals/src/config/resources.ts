@@ -5,7 +5,15 @@ export const datasetCollectionsSql =
   'SELECT * FROM syn67801190 ORDER BY ItemOrder'
 export const filesSql = `SELECT * FROM syn66271104`
 
-export const sankeyPlotSql = `SELECT COALESCE(source, 'Unknown'), count(*), sum(datasetItemCount) FROM syn66496326 group by source`
+export const sankeyTableId = 'syn66496326'
+// Blank and missing repositories are grouped into one labeled flow so every
+// dataset in the collection is counted and visible.
+export const UNKNOWN_REPOSITORY_LABEL = 'Unknown'
+const sankeyRepositoryExpression = `COALESCE(NULLIF(repository, ''), '${UNKNOWN_REPOSITORY_LABEL}')`
+export const sankeyPlotSql = `SELECT ${sankeyRepositoryExpression}, count(*), sum(datasetItemCount) FROM ${sankeyTableId} group by ${sankeyRepositoryExpression}`
+// Per-dataset metadata behind each Sankey flow. Fetched once and summarized
+// client side, so hovering a flow does not trigger a query.
+export const sankeyDetailsSql = `SELECT repository, assay, dataType, species, participant_count FROM ${sankeyTableId}`
 export const partnersSql = `SELECT * FROM syn68804819`
 
 export const datasetsSearchIndexId = 'syn75169900'
