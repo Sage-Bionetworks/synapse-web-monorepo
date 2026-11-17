@@ -1,16 +1,15 @@
-import {
-  citedBySql,
-  publicationsSql,
-  studiesSql,
-  toolStudySql,
-} from '@/config/resources'
+import { publicationsSql, studiesSql, toolStudySql } from '@/config/resources'
+import { columnAliases } from '@/config/synapseConfigs/commonProps'
 import { publicationsCardConfiguration } from '@/config/synapseConfigs/publications'
 import { studyCardConfiguration } from '@/config/synapseConfigs/studies'
 import { toolsCardConfiguration } from '@/config/synapseConfigs/tools'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from '@sage-bionetworks/synapse-types'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import { NoContentPlaceholderType } from 'synapse-react-client/components/SynapseTable/NoContentPlaceholderType'
 
@@ -75,11 +74,25 @@ function StudyDetailsTab() {
           id: 'Cited By',
           title: 'Cited By',
           element: (
+            // Papers citing this study, each card showing the paper's own
+            // studies and funders; citedStudyId lists the portal studies it
+            // reuses, reviews or mentions (an ENTITYID_LIST, matched with HAS)
             <CardContainerLogic
-              sql={citedBySql}
+              query={{
+                sql: publicationsSql,
+                additionalFilters: [
+                  {
+                    concreteType:
+                      'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
+                    columnName: 'citedStudyId',
+                    function: ColumnMultiValueFunction.HAS,
+                    _function: ColumnMultiValueFunction.HAS,
+                    values: [studyId],
+                  },
+                ],
+              }}
               cardConfiguration={publicationsCardConfiguration}
-              // studyName holds the linked studies' Synapse IDs (ENTITYID_LIST)
-              searchParams={{ studyName: studyId }}
+              columnAliases={columnAliases}
             />
           ),
         },
