@@ -1,7 +1,7 @@
 import '@/mocks/msw/server'
 import { RJSFSchema } from '@rjsf/utils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { StepFieldRow } from './StepFieldRow'
 import { FieldSettings } from './utils'
@@ -20,9 +20,9 @@ function renderRow(
   const onRemove = vi.fn()
   render(
     <StepFieldRow
-      sortableId="slot:0:0"
+      sortableId="slot:/institution"
       sortableIndex={0}
-      sortableGroup="step:0"
+      sortableGroup="slots:step-0"
       schemaPath="/institution"
       settings={baseSettings}
       resolvedProperty={textProperty}
@@ -43,10 +43,10 @@ function renderRow(
 }
 
 describe('StepFieldRow', () => {
-  it('shows the resolved property title and type', () => {
+  it('names the row by the resolved property title and shows its type', () => {
     renderRow()
-    expect(screen.getByText('Institution')).toBeInTheDocument()
-    expect(screen.getByText('Text')).toBeInTheDocument()
+    const row = screen.getByRole('group', { name: 'Institution' })
+    expect(within(row).getByText('Text')).toBeInTheDocument()
   })
 
   it('flags an unresolved slot with the schema path', () => {

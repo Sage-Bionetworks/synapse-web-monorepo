@@ -17,7 +17,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import UpIcon from '@mui/icons-material/ArrowUpward'
 import { RJSFSchema } from '@rjsf/utils'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import {
   SchemaPropertyContext,
   submissionContextLabel,
@@ -79,6 +79,7 @@ export function StepFieldRow({
   onRemove,
 }: StepFieldRowProps) {
   const [expanded, setExpanded] = useState(false)
+  const labelId = useId()
 
   const { ref, handleRef, isDragging } = useSortable({
     id: sortableId,
@@ -108,10 +109,14 @@ export function StepFieldRow({
   return (
     <Paper
       ref={ref}
+      component="fieldset"
+      aria-labelledby={labelId}
       variant="outlined"
       className={styles.dragSource}
       data-dragging={isDragging}
       sx={{
+        m: 0,
+        minWidth: 0,
         p: 1,
         backgroundColor: 'action.hover',
         borderColor: isUnresolved ? 'error.main' : undefined,
@@ -140,7 +145,7 @@ export function StepFieldRow({
           )}
         </IconButton>
         <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-          <Typography variant="body2" noWrap title={displayLabel}>
+          <Typography id={labelId} variant="body2" noWrap title={displayLabel}>
             {displayLabel}
           </Typography>
           <Typography

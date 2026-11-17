@@ -13,8 +13,8 @@ import {
   BIND_FIELD_LABEL,
   createEditableStep,
   EditableFormTemplateStep,
-  FieldSettings,
   FieldSettingsByPath,
+  FieldSettingsChangeHandler,
   moveItem,
 } from './utils'
 
@@ -30,10 +30,7 @@ export type FormStructurePanelProps = {
   /** Current validation errors; those against a whole step are shown on that step's card. */
   validationErrors: FormTemplateFieldValidationError[]
   onStepsChange: (next: EditableFormTemplateStep[]) => void
-  onFieldSettingsChange: (
-    schemaPath: string,
-    patch: Partial<FieldSettings>,
-  ) => void
+  onFieldSettingsChange: FieldSettingsChangeHandler
   onBindField: (propertyKey: string, stepKey: string) => void
 }
 

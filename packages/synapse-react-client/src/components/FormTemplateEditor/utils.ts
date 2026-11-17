@@ -36,6 +36,12 @@ export type FieldSettings = Omit<FormTemplateField, 'schemaPath'>
 /** Each property's slot settings, keyed by `schemaPath`. */
 export type FieldSettingsByPath = Record<string, FieldSettings>
 
+/** Merges `patch` into the slot settings of the property at `schemaPath`. */
+export type FieldSettingsChangeHandler = (
+  schemaPath: string,
+  patch: Partial<FieldSettings>,
+) => void
+
 /** The slot settings of a property that has none of its own yet. */
 export const DEFAULT_FIELD_SETTINGS: FieldSettings = {
   uiDefinition: {},

@@ -5,6 +5,7 @@
  * property unbinds it from every step and drops its settings, etc).
  */
 import { RJSFSchema } from '@rjsf/utils'
+import omit from 'lodash-es/omit'
 import {
   listResolvedSchemaProperties,
   propertyKeyToPointer,
@@ -32,10 +33,11 @@ export type FormTemplateDraftState = {
   /**
    * Slot settings by `schemaPath`. A property binds to at most one slot, so these are per-property
    * and kept whether or not a step binds the property: unbinding, rebinding and moving a field
-   * leave them alone. An entry also outlives its property in the raw JSON Schema, so an edit that
-   * drops a property and brings it back (a key typed over, an undo) restores it. Only
-   * `removeProperty` deletes one, and a key the guided editor creates (`createField`,
-   * `renamePropertyKey`) starts fresh. A property without an entry has `DEFAULT_FIELD_SETTINGS`.
+   * leave them alone. An entry also outlives its property in the raw JSON Schema, so a property an
+   * edit drops and brings back (a key typed over, an undo) still has it. `renamePropertyKey` moves
+   * an entry to the new key and only `removeProperty` deletes one; a key the guided editor creates
+   * (`createField`, or a rename onto it) never inherits a leftover entry. A property without an
+   * entry has `DEFAULT_FIELD_SETTINGS`.
    */
   fieldSettings: FieldSettingsByPath
   /** The property open in the field definition drawer, if any. */
@@ -79,8 +81,7 @@ export function createField(
     NEW_FIELD_TITLE,
     schemaPropertyKeys(state.jsonSchema),
   )
-  const { [propertyKeyToPointer(key)]: _stale, ...fieldSettings } =
-    state.fieldSettings
+  const fieldSettings = omit(state.fieldSettings, propertyKeyToPointer(key))
   return {
     ...state,
     jsonSchema: setSchemaProperty(
@@ -114,19 +115,23 @@ export function renamePropertyKey(
       ...step,
       fieldPaths: step.fieldPaths.map(p => (p === oldPath ? newPath : p)),
     })),
-    fieldSettings: moveKey(state.fieldSettings, oldPath, newPath),
+    fieldSettings: moveEntry(state.fieldSettings, oldPath, newPath),
     editingPropertyKey:
       state.editingPropertyKey === oldKey ? newKey : state.editingPropertyKey,
   }
 }
 
-/** `record` with `oldKey`'s entry, or none, under `newKey` instead. */
-function moveKey<T>(
+/**
+ * Move `oldKey`'s entry in `record` to `newKey`, discarding any entry already under `newKey`. If
+ * `oldKey` has no entry, `newKey` ends up with none.
+ */
+function moveEntry<T>(
   record: Record<string, T>,
   oldKey: string,
   newKey: string,
 ): Record<string, T> {
-  const { [oldKey]: value, [newKey]: _replaced, ...rest } = record
+  const value = record[oldKey]
+  const rest = omit(record, oldKey, newKey)
   return value === undefined ? rest : { ...rest, [newKey]: value }
 }
 
@@ -215,7 +220,7 @@ export function removeProperty(
   key: string,
 ): FormTemplateDraftState {
   const path = propertyKeyToPointer(key)
-  const { [path]: _removed, ...fieldSettings } = state.fieldSettings
+  const fieldSettings = omit(state.fieldSettings, path)
   return {
     jsonSchema: removeSchemaProperty(state.jsonSchema, key),
     steps: state.steps.map(step => ({

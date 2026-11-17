@@ -34,8 +34,8 @@ import { createNewFormTemplateSchema } from './formTemplateSchema'
 import {
   createEditableStep,
   EditableFormTemplateStep,
-  FieldSettings,
   FieldSettingsByPath,
+  FieldSettingsChangeHandler,
   toEditableSteps,
   toFormTemplateSteps,
 } from './utils'
@@ -50,10 +50,7 @@ export interface FormTemplateDraft {
   setSteps: (steps: EditableFormTemplateStep[]) => void
   /** Each property's slot settings by `schemaPath`, whether or not a step binds it. */
   fieldSettings: FieldSettingsByPath
-  handleUpdateFieldSettings: (
-    schemaPath: string,
-    patch: Partial<FieldSettings>,
-  ) => void
+  handleUpdateFieldSettings: FieldSettingsChangeHandler
   /** The steps as the template stores them: each bound path joined with its slot settings. */
   formTemplateSteps: FormTemplateStep[]
   editingPropertyKey: string | null
@@ -162,8 +159,8 @@ export function useFormTemplateDraft(
       setDraft(prev => bindField(prev, propertyKey, stepKey)),
     [],
   )
-  const handleUpdateFieldSettings = useCallback(
-    (schemaPath: string, patch: Partial<FieldSettings>) =>
+  const handleUpdateFieldSettings = useCallback<FieldSettingsChangeHandler>(
+    (schemaPath, patch) =>
       setDraft(prev => updateFieldSettings(prev, schemaPath, patch)),
     [],
   )

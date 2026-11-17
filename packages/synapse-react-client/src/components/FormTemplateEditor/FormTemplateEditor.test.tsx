@@ -494,7 +494,7 @@ describe('FormTemplateEditor', () => {
     )
   })
 
-  it("keeps a field's slot settings, including uiDefinition keys the editor doesn't author, through edit, unbind, rebind, move, save, and reopen", async () => {
+  it("keeps a field's slot settings, including uiDefinition keys the editor doesn't author, when its title is edited and it is unbound, bound on another step, moved up within that step, saved, and reopened", async () => {
     const user = userEvent.setup()
     const templates = getFormTemplateService()
     const registeredSchemas = [mockGenomicsSchema as JSONSchema7]
@@ -543,8 +543,11 @@ describe('FormTemplateEditor', () => {
     )
     // Move it ahead of the other field, then drop the now-empty first step.
     const movedStep = screen.getByRole('region', { name: /^Step 2:/ })
+    const movedRow = within(movedStep).getByRole('group', {
+      name: 'Intended Data Use Statement (detailed)',
+    })
     await user.click(
-      within(movedStep).getAllByRole('button', { name: 'Move field up' })[1],
+      within(movedRow).getByRole('button', { name: 'Move field up' }),
     )
     await user.click(
       within(screen.getByRole('region', { name: /^Step 1:/ })).getByRole(

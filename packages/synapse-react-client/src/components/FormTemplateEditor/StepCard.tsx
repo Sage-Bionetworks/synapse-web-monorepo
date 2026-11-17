@@ -42,8 +42,8 @@ import {
 import {
   BIND_FIELD_LABEL,
   EditableFormTemplateStep,
-  FieldSettings,
   FieldSettingsByPath,
+  FieldSettingsChangeHandler,
   fieldSettingsFor,
   moveItem,
 } from './utils'
@@ -74,10 +74,7 @@ export type StepCardProps = {
   /** If true, render expanded by default (first step). */
   defaultExpanded: boolean
   onChange: (patch: StepPatch) => void
-  onFieldSettingsChange: (
-    schemaPath: string,
-    patch: Partial<FieldSettings>,
-  ) => void
+  onFieldSettingsChange: FieldSettingsChangeHandler
   onBindField: (propertyKey: string) => void
   onMoveUp: () => void
   onMoveDown: () => void
