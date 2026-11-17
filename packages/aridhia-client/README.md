@@ -99,6 +99,7 @@ and `WorkspacesApi`.
 - **Requests** (`RequestsApi`)
   - `GET /requests/` - List all requests
   - `GET /requests/{code}` - Get request by code
+  - `GET /requests/{code}/workspace` - Get the status of a request's workspace (`workspace_url`, `workspace_status`, ...); the request itself can report `workspace_url: null` even when its workspace exists
   - `POST /requests/` - Create a new data access request
   - `GET /workflows/{code}` - Get a workflow's form fields by workflow key
 
