@@ -16,6 +16,7 @@ import userEvent from '@testing-library/user-event'
 import { s } from 'json-joy/lib/json-crdt'
 import { http, HttpResponse } from 'msw'
 import { createRef, ReactNode } from 'react'
+import { GridModel } from './DataGridTypes'
 import SynapseGrid, { SynapseGridHandle, SynapseGridProps } from './SynapseGrid'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 
@@ -32,6 +33,7 @@ const HEADER_TEXT = 'Working Copy'
 const CONTENT_CLASS_NAME = 'test-grid-content'
 const GRID_ERROR = 'The grid connection failed'
 const HEADER_ERROR = 'The page title failed'
+const INVALID_CELL_MESSAGE = '#/c0: cannot be empty'
 
 const mockGridSession: GridSession = {
   sessionId: SESSION_ID,
@@ -82,7 +84,7 @@ async function renderGridWithSession(props: SynapseGridProps = {}) {
   // The toolbar renders with the loaded grid
   await screen.findByRole('link', { name: 'Help and Instructions' })
 
-  return { user, ...result }
+  return { user, ref, ...result }
 }
 
 /** Mocks a websocket that is connected to a grid with a real model */
@@ -106,19 +108,25 @@ function mockConnectedWebSocket(
   })
 }
 
-/** Mocks a connected grid whose first row failed validation with one error */
-function mockConnectedWebSocketWithInvalidRow() {
-  const model = createTestModel(2, 2, REPLICA_ID)
-  // Written after the row data, so the row's validation is up to date and the row is invalid
+/** Mocks a connected websocket holding `model` as it is now */
+function mockConnectedWebSocketWithModel(model: GridModel) {
+  mockConnectedWebSocket({ model, modelSnapshot: model.api.getSnapshot() })
+}
+
+/** Writes a validation result for the first row, which is valid if there are no messages */
+function setFirstRowValidation(
+  model: GridModel,
+  allValidationMessages: string[],
+) {
+  // Written after the row data, so the row's validation is up to date rather than pending
   model.api.obj(['rows', '0']).set({
     metadata: s.obj({
       rowValidation: s.con({
-        isValid: false,
-        allValidationMessages: ['#/c0: cannot be empty'],
+        isValid: allValidationMessages.length === 0,
+        allValidationMessages,
       }),
     }),
   })
-  mockConnectedWebSocket({ model, modelSnapshot: model.api.getSnapshot() })
 }
 
 function renderWithHeader(header: ReactNode = <h1>{HEADER_TEXT}</h1>) {
@@ -178,7 +186,9 @@ describe('SynapseGrid', () => {
   })
 
   it('hides the validation errors banner behind a summary in the toolbar, and shows it again', async () => {
-    mockConnectedWebSocketWithInvalidRow()
+    const model = createTestModel(2, 2, REPLICA_ID)
+    setFirstRowValidation(model, [INVALID_CELL_MESSAGE])
+    mockConnectedWebSocketWithModel(model)
     const { user } = await renderGridWithSession()
 
     expect(screen.getByText('Validation errors')).toBeInTheDocument()
@@ -205,6 +215,35 @@ describe('SynapseGrid', () => {
     expect(
       screen.getByRole('button', { name: 'Hide validation errors' }),
     ).toHaveFocus()
+  })
+
+  it('leaves focus in place when validation results switch the banner between no errors and errors', async () => {
+    const model = createTestModel(2, 2, REPLICA_ID)
+    mockConnectedWebSocketWithModel(model)
+    const { ref, rerender } = await renderGridWithSession()
+
+    expect(screen.getByText('No validation errors')).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Hide validation errors' }),
+    ).not.toHaveFocus()
+
+    const helpLink = screen.getByRole('link', { name: 'Help and Instructions' })
+    act(() => helpLink.focus())
+
+    // Each result remounts the Hide link in the banner's other form, with no click on Hide or Show
+    function receiveFirstRowValidation(allValidationMessages: string[]) {
+      setFirstRowValidation(model, allValidationMessages)
+      mockConnectedWebSocketWithModel(model)
+      rerender(<SynapseGrid ref={ref} />)
+    }
+
+    receiveFirstRowValidation([INVALID_CELL_MESSAGE])
+    expect(screen.getByText('Validation errors')).toBeInTheDocument()
+    expect(helpLink).toHaveFocus()
+
+    receiveFirstRowValidation([])
+    expect(screen.getByText('No validation errors')).toBeInTheDocument()
+    expect(helpLink).toHaveFocus()
   })
 
   describe('errors', () => {
