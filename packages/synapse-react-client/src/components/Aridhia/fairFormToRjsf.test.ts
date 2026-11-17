@@ -279,7 +279,9 @@ describe('fairSectionToRjsf keeps the schema compilable', () => {
       bio: { type: 'string' },
       phone: { type: 'string' },
     })
-    expect(validateFairSection(rjsf, { name: 'Jane' }).schemaError).toBeUndefined()
+    expect(
+      validateFairSection(rjsf, { name: 'Jane' }).schemaError,
+    ).toBeUndefined()
   })
 })
 
