@@ -18,7 +18,7 @@ export const navbarConfig: NavbarConfig = {
     // },
     { name: 'Datasets', path: '/Explore/Datasets' },
     { name: 'Collections', path: '/Explore/Collections' },
-    { name: 'How to Access Data', path: '/How to Access Data' },
+    { name: 'Access Data', path: '/How to Access Data' },
     {
       name: 'Resources',
       path: '/Resources',
