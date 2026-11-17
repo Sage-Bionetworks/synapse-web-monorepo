@@ -1,10 +1,13 @@
 /*
  * Editing state for the FormTemplateEditor: a thin React shell over the pure transitions in
  * `formTemplateDraftState`. Has no knowledge of persistence — callers read `jsonSchema`/`name`/
- * `steps` to save, and seed the initial values from an existing template when editing one.
+ * `formTemplateSteps` to save, and seed the initial values from an existing template when editing.
  */
 import { RJSFSchema } from '@rjsf/utils'
-import { FormTemplate } from '@sage-bionetworks/synapse-client'
+import {
+  FormTemplate,
+  FormTemplateStep,
+} from '@sage-bionetworks/synapse-client'
 import { useCallback, useMemo, useState } from 'react'
 import {
   ResolvedSchemaProperty,
@@ -24,12 +27,15 @@ import {
   renamePropertyKey,
   replaceProperty,
   schemaPropertyKeys,
+  updateFieldSettings,
   updateProperty,
 } from './formTemplateDraftState'
 import { createNewFormTemplateSchema } from './formTemplateSchema'
 import {
   createEditableStep,
   EditableFormTemplateStep,
+  FieldSettingsByPath,
+  FieldSettingsChangeHandler,
   toEditableSteps,
   toFormTemplateSteps,
 } from './utils'
@@ -42,6 +48,11 @@ export interface FormTemplateDraft {
   setJsonSchema: (jsonSchema: RJSFSchema) => void
   steps: EditableFormTemplateStep[]
   setSteps: (steps: EditableFormTemplateStep[]) => void
+  /** Each property's slot settings by `schemaPath`, whether or not a step binds it. */
+  fieldSettings: FieldSettingsByPath
+  handleUpdateFieldSettings: FieldSettingsChangeHandler
+  /** The steps as the template stores them: each bound path joined with its slot settings. */
+  formTemplateSteps: FormTemplateStep[]
   editingPropertyKey: string | null
   setEditingPropertyKey: (key: string | null) => void
   /** The `schemaPath` of every field bound to a step. */
@@ -69,12 +80,12 @@ export function useFormTemplateDraft(
   const [name, setName] = useState(initialTemplate?.name ?? '')
   const [draft, setDraft] = useState<FormTemplateDraftState>(() => ({
     jsonSchema: initialJsonSchema ?? createNewFormTemplateSchema(),
-    steps: initialTemplate
+    ...(initialTemplate
       ? toEditableSteps(initialTemplate.steps)
-      : [createEditableStep()],
+      : { steps: [createEditableStep()], fieldSettings: {} }),
     editingPropertyKey: null,
   }))
-  const { jsonSchema, steps, editingPropertyKey } = draft
+  const { jsonSchema, steps, fieldSettings, editingPropertyKey } = draft
 
   const setJsonSchema = useCallback(
     (next: RJSFSchema) => setDraft(prev => ({ ...prev, jsonSchema: next })),
@@ -148,15 +159,24 @@ export function useFormTemplateDraft(
       setDraft(prev => bindField(prev, propertyKey, stepKey)),
     [],
   )
+  const handleUpdateFieldSettings = useCallback<FieldSettingsChangeHandler>(
+    (schemaPath, patch) =>
+      setDraft(prev => updateFieldSettings(prev, schemaPath, patch)),
+    [],
+  )
 
+  const formTemplateSteps = useMemo(
+    () => toFormTemplateSteps(steps, fieldSettings, jsonSchema),
+    [steps, fieldSettings, jsonSchema],
+  )
   const previewTemplate: FormTemplate = useMemo(
     () => ({
       ...initialTemplate,
       name,
       schema$id: (jsonSchema.$id as string) ?? '',
-      steps: toFormTemplateSteps(steps),
+      steps: formTemplateSteps,
     }),
-    [initialTemplate, name, jsonSchema.$id, steps],
+    [initialTemplate, name, jsonSchema.$id, formTemplateSteps],
   )
 
   return {
@@ -166,6 +186,9 @@ export function useFormTemplateDraft(
     setJsonSchema,
     steps,
     setSteps,
+    fieldSettings,
+    handleUpdateFieldSettings,
+    formTemplateSteps,
     editingPropertyKey,
     setEditingPropertyKey,
     usedPaths,
