@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
+import { ChatAttachment } from '../../utils/types'
 import {
   AddFilesDialog,
   AddFilesDialogProps,
@@ -22,7 +23,12 @@ const mockUploadedAttachment = {
 }
 
 function renderChatInputArea(
-  props: Partial<Omit<ChatInputAreaProps, 'value' | 'onValueChange'>> & {
+  props: Partial<
+    Omit<
+      ChatInputAreaProps,
+      'value' | 'onValueChange' | 'attachments' | 'onAttachmentsChange'
+    >
+  > & {
     initialValue?: string
   } = {},
 ) {
@@ -31,10 +37,13 @@ function renderChatInputArea(
 
   function Harness() {
     const [value, setValue] = useState(props.initialValue ?? '')
+    const [attachments, setAttachments] = useState<ChatAttachment[]>([])
     return (
       <ChatInputArea
         value={value}
         onValueChange={setValue}
+        attachments={attachments}
+        onAttachmentsChange={setAttachments}
         onSend={onSend}
         placeholder={props.placeholder}
         disabled={props.disabled}
@@ -141,7 +150,7 @@ describe('ChatInputArea', () => {
     expect(mockAddFilesDialog).not.toHaveBeenCalled()
   })
 
-  it('sends attachments alongside the message, then clears them', async () => {
+  it('sends attachments alongside the message, and keeps them until the caller clears them', async () => {
     const { user, onSend } = renderChatInputArea({
       initialValue: 'hello',
       allowAttachments: true,
@@ -158,7 +167,7 @@ describe('ChatInputArea', () => {
     expect(onSend).toHaveBeenCalledExactlyOnceWith('hello', [
       mockUploadedAttachment,
     ])
-    expect(screen.queryByText('report.pdf')).not.toBeInTheDocument()
+    expect(screen.getByText('report.pdf')).toBeInTheDocument()
   })
 
   it('removing an attachment chip does not submit the message, even with text present', async () => {
