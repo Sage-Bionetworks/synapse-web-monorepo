@@ -37,6 +37,10 @@ export class AridhiaKeyFactory {
     return this.getKey('requests', code)
   }
 
+  public requestWorkspace(code: string): QueryKey {
+    return this.getKey('requests', code, 'workspace')
+  }
+
   public datasetSettings(datasetCode: string): QueryKey {
     return this.getKey('dataset', datasetCode, 'settings')
   }

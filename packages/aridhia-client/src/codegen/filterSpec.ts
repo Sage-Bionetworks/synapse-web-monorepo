@@ -1,11 +1,12 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'fs'
-import { join } from 'path'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
 
 // Endpoints kept from the vendored upstream FAIR spec (fair-api-full.json)
 const ENDPOINTS_TO_KEEP = [
   'GET /requests/',
   'POST /requests/',
   'GET /requests/{code}',
+  'GET /requests/{code}/workspace',
   'GET /datasets/{code}',
   'GET /datasets/{code}/settings',
   'GET /datasets/{code}/dictionaries/',
@@ -205,7 +206,7 @@ function getByPointer(root: any, pointer: string): any {
   const parts = pointer
     .replace(/^#\//, '')
     .split('/')
-    .map(p => p.replace(/~1/g, '/').replace(/~0/g, '~'))
+    .map(p => p.replaceAll(/~1/g, '/').replaceAll(/~0/g, '~'))
   let cur = root
   for (const part of parts) {
     if (cur == null) return undefined
