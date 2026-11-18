@@ -15,11 +15,11 @@ import {
 import noop from 'lodash-es/noop'
 import throttle from 'lodash-es/throttle'
 import { type DebouncedFunc } from 'lodash-es'
-import { Decoder as SnapshotDecoder } from 'json-joy/lib/json-crdt/codec/indexed/binary/Decoder'
-import { decode as decodeCbor } from 'cbor2'
-import type { IndexedFields } from 'json-joy/lib/json-crdt/codec/indexed/binary'
-import { ClockTable } from 'json-joy/lib/json-crdt-patch/codec/clock/ClockTable'
-import { Timestamp } from 'json-joy/lib/json-crdt-patch/clock'
+import {
+  decodeServerSnapshot,
+  HubClockEntry,
+  toHubClock,
+} from '@/components/DataGrid/utils/hubClock'
 import { fetchWithExponentialTimeout } from '@sage-bionetworks/synapse-client'
 
 enum SynapseGridWebSocketMessagePayloadType {
@@ -67,47 +67,6 @@ const DEFAULT_PATCH_THROTTLE_MS = 250
 // A patch is acknowledged only after the server has stored it, so a missing acknowledgement means the connection is unusable
 const DEFAULT_PATCH_ACK_TIMEOUT_MS = 15 * 1000
 
-/**
- * Decodes a server snapshot into a model that writes as `replicaId`.
- *
- * The indexed binary decoder builds the clock from the first clock-table entry only
- * (https://github.com/streamich/json-joy/issues/1059). Every replica in the table other
- * than `replicaId` must become a peer: a replica missing from the sync clock gets all of its patches resent, and until
- * they arrive local edits lose last-writer-wins against the cells it wrote. A peer holds the last sequence seen, and
- * exported snapshots hold each replica's next one, so each is recorded at `time - 1`. Initial snapshots hold the
- * highest node ID instead, for which `time - 1` only makes the hub resend that replica's patch at that ID.
- */
-function decodeServerSnapshot(
-  decoder: SnapshotDecoder,
-  fields: IndexedFields,
-  replicaId: number,
-): GridModel {
-  const model = decoder.decode(fields) as unknown as GridModel
-  model.setSid(replicaId)
-  // setSid records the decoded replica as a peer at its table entry, not at `time - 1`. Drop it so the loop below
-  // records every replica, that one included, from the clock table.
-  model.clock.peers.clear()
-  const reader = decoder.dec.reader
-  reader.reset(fields.c)
-  for (const { sid, time: nextTime } of ClockTable.decode(reader).byIdx) {
-    model.clock.observe(new Timestamp(sid, nextTime - 1), 1)
-  }
-  return model
-}
-
-type HubClockEntry = [replicaId: number, nextSequenceNumber: number]
-
-/**
- * The clock for a `synchronize-clock` request. The hub resends each replica's patches from the sequence number given
- * for it, as its own replica clocks do, so every entry is that replica's next sequence number: this replica's local
- * time, and one past the last operation seen from each peer.
- */
-function toHubClock(clock: GridModel['clock']): HubClockEntry[] {
-  const hubClock: HubClockEntry[] = [[clock.sid, clock.time]]
-  clock.peers.forEach(peer => hubClock.push([peer.sid, peer.time + 1]))
-  return hubClock
-}
-
 export class DataGridWebSocket {
   private readonly socket: WebSocket
   private model: GridModel | null = null
@@ -115,7 +74,6 @@ export class DataGridWebSocket {
   private readonly replicaId: number
   private readonly maxPayloadSizeBytes: number
   private readonly throttledSendPatch: DebouncedFunc<() => void>
-  private readonly snapshotDecoder = new SnapshotDecoder()
   // Oldest first. The server must receive patches in order, so only the head is ever on the wire
   // (identified by inFlightPatchRequestId); the rest wait for its acknowledgement.
   private readonly unacknowledgedPatches: CompactCodecPatch[]
@@ -527,7 +485,6 @@ export class DataGridWebSocket {
     const response = await fetchWithExponentialTimeout(snapshotUrl)
     const blob = await response.blob()
     const buffer = await blob.arrayBuffer()
-    const fields = decodeCbor(new Uint8Array(buffer)) as IndexedFields
-    return decodeServerSnapshot(this.snapshotDecoder, fields, this.replicaId)
+    return decodeServerSnapshot(new Uint8Array(buffer), this.replicaId)
   }
 }
