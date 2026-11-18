@@ -40,6 +40,7 @@ Terms:
 - **Missing acknowledgement.** If none arrives within 15 seconds, the client drops the socket and reconnects.
 - **Reconnect.** `useDataGridWebSocket` creates a new `DataGridWebSocket` for each connection. For the same session and replica, it passes the old model and the result of `getPendingPatches()` to the new one. Patches left over from any dropped connection are resent in order. Resending is safe because the server ignores patches it already stored.
 - **Disconnect.** `disconnect()` sends what is queued, one patch at a time, and closes after the last acknowledgement. It must never send the whole queue at once.
+- **Sync clocks hold next sequence numbers.** The server resends every patch whose id is at or after a replica's entry in the `synchronize-clock` clock, and its own replica clocks hold each replica's next sequence number. A json-joy peer holds the last one seen, so `toHubClock` sends each peer at its time plus one. Sending a peer's time as-is gets its last patch back on every sync when that patch is a single operation, such as a row delete, so the sync never completes.
 
 Clock sync messages (`synchronize-clock`) do not need ordering and do not use the queue.
 

@@ -12,8 +12,6 @@ import {
   CompactCodecPatch,
   decode,
 } from 'json-joy/lib/json-crdt-patch/codec/compact'
-import { Encoder as VerboseEncoder } from 'json-joy/lib/json-crdt/codec/structural/verbose/Encoder'
-import { JsonCrdtVerboseLogicalTimestamp } from 'json-joy/lib/json-crdt/codec/structural/verbose/types'
 import noop from 'lodash-es/noop'
 import throttle from 'lodash-es/throttle'
 import { type DebouncedFunc } from 'lodash-es'
@@ -89,8 +87,9 @@ export function adoptReplicaSession(model: GridModel, replicaId: number): void {
  *
  * The indexed binary decoder builds the clock from the first clock-table entry only. Every other replica in the
  * table must become a peer too: a replica missing from the sync clock gets all of its patches resent, and until
- * they arrive local edits lose last-writer-wins against the cells it wrote. The server's clock-table entries are
- * each replica's next sequence number, and a peer holds the last sequence seen, so each is recorded at `time - 1`.
+ * they arrive local edits lose last-writer-wins against the cells it wrote. A peer holds the last sequence seen, and
+ * exported snapshots hold each replica's next one, so each is recorded at `time - 1`. Initial snapshots hold the
+ * highest node ID instead, for which `time - 1` only makes the hub resend that replica's patch at that ID.
  */
 function decodeServerSnapshot(
   decoder: SnapshotDecoder,
@@ -114,12 +113,24 @@ function decodeServerSnapshot(
   return model
 }
 
+type HubClockEntry = [replicaId: number, nextSequenceNumber: number]
+
+/**
+ * The clock for a `synchronize-clock` request. The hub resends each replica's patches from the sequence number given
+ * for it, as its own replica clocks do, so every entry is that replica's next sequence number: this replica's local
+ * time, and one past the last operation seen from each peer.
+ */
+function toHubClock(clock: GridModel['clock']): HubClockEntry[] {
+  const hubClock: HubClockEntry[] = [[clock.sid, clock.time]]
+  clock.peers.forEach(peer => hubClock.push([peer.sid, peer.time + 1]))
+  return hubClock
+}
+
 export class DataGridWebSocket {
   private readonly socket: WebSocket
   private model: GridModel | null = null
   private readonly messageCounter: MessageCounter
   private readonly replicaId: number
-  private readonly verboseEncoder = new VerboseEncoder()
   private readonly maxPayloadSizeBytes: number
   private readonly throttledSendPatch: DebouncedFunc<() => void>
   private readonly snapshotDecoder = new SnapshotDecoder()
@@ -274,8 +285,7 @@ export class DataGridWebSocket {
     const patchesWereSent = this.sendPatchImmediate()
     if (!patchesWereSent) {
       // We've flushed all of our changes, so now we can receive changes from the server
-      const verbModel = this.verboseEncoder.encode(this.model)
-      this.sendSyncMessage(verbModel.time)
+      this.sendSyncMessage(toHubClock(this.model.clock))
     }
   }
 
@@ -325,8 +335,13 @@ export class DataGridWebSocket {
     try {
       const patches = encodedPatch.map(decode)
       if (!this.model) {
-        const model = Model.fromPatches(patches) as unknown as GridModel
-        adoptReplicaSession(model, this.replicaId)
+        // Not Model.fromPatches, which writes as the first patch's replica: switching to this replica afterwards
+        // records that one at the newest time in the patches, past its own operations
+        const model = Model.create(
+          undefined,
+          this.replicaId,
+        ) as unknown as GridModel
+        model.applyBatch(patches)
         this.model = model
         this.onModelCreate(this.model)
       } else {
@@ -374,7 +389,7 @@ export class DataGridWebSocket {
     } else if (this.isSyncExchangeOpen && this.model) {
       // The sync was answered with local patches instead of a clock. Now that they are stored,
       // confirm the clock so the server can complete the exchange.
-      this.sendSyncMessage(this.verboseEncoder.encode(this.model).time)
+      this.sendSyncMessage(toHubClock(this.model.clock))
     }
   }
 
@@ -389,9 +404,7 @@ export class DataGridWebSocket {
 
       case 'connected':
         console.debug('Server ready to receive patches')
-        this.sendSyncMessage(
-          this.model ? this.verboseEncoder.encode(this.model).time : undefined,
-        )
+        this.sendSyncMessage(this.model ? toHubClock(this.model.clock) : [])
         // Resend patches an earlier connection never saw acknowledged
         this.sendNextPatch()
         break
@@ -409,9 +422,9 @@ export class DataGridWebSocket {
           break
         }
         {
-          const verbModel = this.verboseEncoder.encode(this.model)
-          console.debug('New patch received, syncing data:', verbModel.time)
-          this.sendSyncMessage(verbModel.time)
+          const clock = toHubClock(this.model.clock)
+          console.debug('New patch received, syncing data:', clock)
+          this.sendSyncMessage(clock)
         }
         break
 
@@ -515,11 +528,11 @@ export class DataGridWebSocket {
     this.onStatusChange(false, this)
   }
 
-  private sendSyncMessage(clock?: number | JsonCrdtVerboseLogicalTimestamp[]) {
+  private sendSyncMessage(clock: HubClockEntry[]) {
     const message = new JsonRxRequestComplete(
       this.messageCounter.getNext(),
       'synchronize-clock',
-      clock ?? [],
+      clock,
     )
     this.isSyncExchangeOpen = true
     this.onSyncStart()

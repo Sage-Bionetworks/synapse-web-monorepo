@@ -201,6 +201,40 @@ function buildImportedHistory() {
   }
 }
 
+const OTHER_REPLICA = 7776543
+
+/** Server history whose newest patch is another replica's delete, a single operation as a row delete is, so a span of 1 */
+function buildDeleteHistory() {
+  const server = Model.create(undefined, INTERNAL_REPLICA).setSchema(
+    gridSchema,
+    false,
+  )
+  const serverPatches: Patch[] = [server.api.flush()]
+  const otherSession = server.fork(OTHER_REPLICA)
+  otherSession.api.arr(['columnOrder']).ins(0, ['a', 'b'])
+  serverPatches.push(otherSession.api.flush())
+  otherSession.api.arr(['columnOrder']).del(0, 1)
+  const deletePatch = otherSession.api.flush()
+  serverPatches.push(deletePatch)
+  return { serverPatches, deletePatch }
+}
+
+/**
+ * The patches the hub answers a sync clock with (GridDaoImpl.listMissingPatchInfoForClock): every patch of a replica
+ * absent from the clock, and each patch whose ID is at or after its replica's entry
+ */
+function patchesHubResends(
+  patches: Patch[],
+  clock: [number, number][],
+): Patch[] {
+  const nextTimes = new Map(clock)
+  return patches.filter(patch => {
+    const { sid, time } = patch.getId()!
+    const nextTime = nextTimes.get(sid)
+    return nextTime === undefined || time >= nextTime
+  })
+}
+
 /**
  * Encode a snapshot the way the server does: CBOR of the indexed binary fields, with a clock table holding each
  * replica's next sequence number.
@@ -237,32 +271,39 @@ function expectLocalEditsAfter(model: GridModel, earlierPatch: Patch) {
   )
 }
 
+function lastSyncClock(mockSocket: MockWebSocket): [number, number][] {
+  const syncRequest = parseSentMessages(mockSocket).findLast(
+    message => message[2] === 'synchronize-clock',
+  )!
+  return syncRequest[3] as [number, number][]
+}
+
 /** The clock sent to the server must report this replica at the model's local time, not an older entry */
 function expectSyncClockReportsLocalTime(
   mockSocket: MockWebSocket,
   model: GridModel,
 ) {
-  const syncRequest = parseSentMessages(mockSocket).find(
-    message => message[2] === 'synchronize-clock',
-  )!
-  const clock = syncRequest[3] as [number, number][]
-  expect(clock.filter(([sid]) => sid === replicaId)).toEqual([
-    [replicaId, model.clock.time],
-  ])
+  expect(
+    lastSyncClock(mockSocket).filter(([sid]) => sid === replicaId),
+  ).toEqual([[replicaId, model.clock.time]])
 }
 
-/** The clock sent to the server must be exactly the model's clock: this replica's time and every peer */
-function expectSyncClockMatchesModel(
+/**
+ * The clock sent to the server must hold every replica the model has seen at its next sequence number, as the hub's
+ * clocks do: this replica at the local time, and each peer one past its last operation
+ */
+function expectSyncClockReportsNextTimes(
   mockSocket: MockWebSocket,
   model: GridModel,
 ) {
-  const syncRequest = parseSentMessages(mockSocket).find(
-    message => message[2] === 'synchronize-clock',
-  )!
   const { sid, time, peers } = describeClock(model)
-  expect(syncRequest[3]).toHaveLength(peers.length + 1)
-  expect(syncRequest[3]).toEqual(
-    expect.arrayContaining([[sid, time], ...peers]),
+  const clock = lastSyncClock(mockSocket)
+  expect(clock).toHaveLength(peers.length + 1)
+  expect(clock).toEqual(
+    expect.arrayContaining([
+      [sid, time],
+      ...peers.map(([peerSid, lastTime]) => [peerSid, lastTime + 1]),
+    ]),
   )
 }
 
@@ -860,7 +901,42 @@ describe('DataGridWebSocket', () => {
       expect(onModelCreate).toHaveBeenCalledTimes(1)
       const createdModel = onModelCreate.mock.calls[0][0] as GridModel
       expect(createdModel.clock.sid).toEqual(replicaId)
-      expectSyncClockMatchesModel(mockSocket, createdModel)
+      expectSyncClockReportsNextTimes(mockSocket, createdModel)
+    })
+
+    it("reports each replica at its own next sequence number, though another replica's patches are newer", () => {
+      vi.spyOn(console, 'debug').mockImplementation(() => {})
+      vi.spyOn(console, 'log').mockImplementation(() => {})
+      const { createPatch, importPatch } = buildImportedHistory()
+      const { mockSocket } = createDataGridWebSocket({ model: null })
+
+      mockSocket.simulateMessage(
+        buildPatchesEnvelope([createPatch, importPatch]),
+      )
+
+      const clock = lastSyncClock(mockSocket)
+      expect(clock).toEqual(
+        expect.arrayContaining([
+          [replicaId, importPatch.nextTime()],
+          [INTERNAL_REPLICA, createPatch.nextTime()],
+          [IMPORT_REPLICA, importPatch.nextTime()],
+        ]),
+      )
+      expect(clock).toHaveLength(3)
+    })
+
+    it('is resent no patch once it has applied every patch, though the newest is a single operation', () => {
+      vi.spyOn(console, 'debug').mockImplementation(() => {})
+      vi.spyOn(console, 'log').mockImplementation(() => {})
+      const { serverPatches, deletePatch } = buildDeleteHistory()
+      expect(deletePatch.span()).toBe(1)
+      const { mockSocket } = createDataGridWebSocket({ model: null })
+
+      mockSocket.simulateMessage(buildPatchesEnvelope(serverPatches))
+
+      expect(
+        patchesHubResends(serverPatches, lastSyncClock(mockSocket)),
+      ).toEqual([])
     })
 
     describe('for a reconnecting replica', () => {
@@ -933,7 +1009,7 @@ describe('DataGridWebSocket', () => {
       const createdModel = onModelCreate.mock.calls[0][0] as GridModel
       expect(createdModel.clock.sid).toEqual(replicaId)
       expect(createdModel.api.getSnapshot()).toEqual(server.api.getSnapshot())
-      expectSyncClockMatchesModel(mockSocket, createdModel)
+      expectSyncClockReportsNextTimes(mockSocket, createdModel)
     })
 
     it('reports the local time for a reconnecting replica in the sync clock, not its stale entry from the snapshot', async () => {
@@ -991,22 +1067,20 @@ describe('DataGridWebSocket', () => {
         ],
       }
       for (const [tableName, leadingEntries] of Object.entries(tables)) {
-        it(`reports every snapshot replica at its last sequence number in the sync clock, for a clock table ${tableName}`, async () => {
+        it(`reports every snapshot replica at the server's next sequence number in the sync clock, for a clock table ${tableName}`, async () => {
           const { mockSocket, createPatch, importPatch } =
             await openImportedSnapshot(leadingEntries)
 
-          const syncRequest = parseSentMessages(mockSocket).find(
-            message => message[2] === 'synchronize-clock',
-          )!
+          const clock = lastSyncClock(mockSocket)
           // The import replica is the newest, so local time is its next sequence number
-          expect(syncRequest[3]).toEqual(
+          expect(clock).toEqual(
             expect.arrayContaining([
               [replicaId, importPatch.nextTime()],
-              [INTERNAL_REPLICA, createPatch.nextTime() - 1],
-              [IMPORT_REPLICA, importPatch.nextTime() - 1],
+              [INTERNAL_REPLICA, createPatch.nextTime()],
+              [IMPORT_REPLICA, importPatch.nextTime()],
             ]),
           )
-          expect(syncRequest[3]).toHaveLength(3)
+          expect(clock).toHaveLength(3)
         })
       }
 
@@ -1137,8 +1211,7 @@ describe('DataGridWebSocket', () => {
       const sent = parseSentMessages(mockSocket)
       expect(sent.length).toBeGreaterThanOrEqual(1)
       expect(sent[0][2]).toBe('synchronize-clock')
-      // When no model, verbModel is null so sendSyncMessage receives undefined,
-      // which falls back to the default of []
+      // Without a model the clock is empty, which asks the server for a snapshot
       expect(sent[0][3]).toEqual([])
     })
 
@@ -1155,6 +1228,23 @@ describe('DataGridWebSocket', () => {
       const sent = parseSentMessages(mockSocket)
       expect(sent.length).toBeGreaterThanOrEqual(1)
       expect(sent[0][2]).toBe('synchronize-clock')
+    })
+
+    it('is resent no patch on "new-patch" when it already holds every patch, though the newest is a single operation', () => {
+      vi.spyOn(console, 'debug').mockImplementation(() => {})
+      vi.spyOn(console, 'log').mockImplementation(() => {})
+      const { serverPatches } = buildDeleteHistory()
+      const existingModel = Model.create(undefined, replicaId)
+      existingModel.applyBatch(serverPatches)
+      const { mockSocket } = createDataGridWebSocket({
+        model: existingModel as unknown as GridModel,
+      })
+
+      mockSocket.simulateMessage([8, 'new-patch'])
+
+      expect(
+        patchesHubResends(serverPatches, lastSyncClock(mockSocket)),
+      ).toEqual([])
     })
 
     it('logs a warning on "new-patch" notification when model is null', () => {
