@@ -17,6 +17,8 @@ import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { getIdentityProviderDisplayName } from '@/utils/functions/IdentityProviderNameUtils'
+import { IdentityProviderName } from '@sage-bionetworks/synapse-client'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
@@ -334,6 +336,40 @@ describe('JsonSchemaRequestWizard', () => {
     )
   })
 
+  it('blocks the wizard and explains how to sign in when the request cannot be created', async () => {
+    const identityProviderRejection =
+      'A data access request for this access requirement can only be created after signing in through one of the identity providers it accepts.'
+    const rasAccessRequirement: JsonSchemaAccessRequirement = {
+      ...genomicsAccessRequirement,
+      identityProviders: [IdentityProviderName.NIH_RESEARCHER_AUTH_SERVICE],
+    }
+    const { savedRequests } = mockRequestServices(
+      rasAccessRequirement,
+      // The request the user has not created yet
+      createRequest(rasAccessRequirement, { id: undefined }),
+    )
+    server.use(
+      http.post(`${REPO_ENDPOINT}/repo/v1/dataAccessRequest`, () =>
+        HttpResponse.json(
+          { reason: identityProviderRejection },
+          { status: 403 },
+        ),
+      ),
+    )
+    const user = userEvent.setup()
+    const props = renderWizard(rasAccessRequirement)
+    await advanceToStep(user)
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent(
+      `${identityProviderRejection} To request access, sign out, then sign in with ${getIdentityProviderDisplayName(IdentityProviderName.NIH_RESEARCHER_AUTH_SERVICE)}.`,
+    )
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeEnabled()
+    expect(savedRequests).toHaveLength(0)
+    expect(props.onSubmissionCreated).not.toHaveBeenCalled()
+  })
+
   it('restores answers saved to the request', async () => {
     mockRequestServices(
       genomicsAccessRequirement,
@@ -457,7 +493,7 @@ describe('JsonSchemaRequestWizard', () => {
       )
     }
 
-    it('offers the template file through the access requirement', async () => {
+    it('offers the template file through the form template', async () => {
       mockRequestServices(
         clinicalAccessRequirement,
         createRequest(clinicalAccessRequirement),
@@ -469,9 +505,9 @@ describe('JsonSchemaRequestWizard', () => {
       expect(getFileLinks()).toEqual([
         {
           fileHandleId: MOCK_FILE_HANDLE_ID,
-          associateObjectType:
-            FileHandleAssociateType.AccessRequirementAttachment,
-          associateObjectId: String(clinicalAccessRequirement.id),
+          associateObjectType: FileHandleAssociateType.FormTemplateAttachment,
+          associateObjectId:
+            clinicalAccessRequirement.formTemplateRef.templateId,
         },
       ])
       // The template download is a call-to-action button

@@ -38,6 +38,10 @@ type DataGridProps = {
   handleSelectionChange: (opts: { selection: SelectionWithId | null }) => void
   remoteSelections?: readonly RemoteSelection[]
   upsertKey?: string[]
+  /** Called for the undo shortcut while a cell is active and not being edited */
+  onUndo?: () => void
+  /** Called for the redo shortcut while a cell is active and not being edited */
+  onRedo?: () => void
 }
 
 /**
@@ -59,6 +63,8 @@ export default function DataGrid(props: DataGridProps) {
     handleSelectionChange,
     remoteSelections,
     upsertKey,
+    onUndo,
+    onRedo,
   } = props
 
   // Move columnWidths state into DataGrid
@@ -273,6 +279,8 @@ export default function DataGrid(props: DataGridProps) {
         onChange={handleChange}
         onActiveCellChange={handleActiveCellChange}
         onSelectionChange={handleSelectionChange}
+        onUndo={onUndo}
+        onRedo={onRedo}
       />
     </div>
   )

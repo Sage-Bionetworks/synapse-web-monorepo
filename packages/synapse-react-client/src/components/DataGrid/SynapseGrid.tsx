@@ -1,15 +1,17 @@
 import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
 import ExportCsvFromGridButton from '@/components/DataGrid/components/ExportCsvFromGridButton'
+import GridAgentChat from '@/components/DataGrid/components/GridAgentChat/GridAgentChat'
 import GridLoadingState from '@/components/DataGrid/components/GridLoadingState'
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import ReorderColumnsButton from '@/components/DataGrid/components/ReorderColumnsButton'
+import SynapseGridLayout from '@/components/DataGrid/components/SynapseGridLayout'
 import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
 import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid'
 import SyncGridWithSourceButton from '@/components/DataGrid/SyncGridWithSourceButton'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import { getNamedColumnIndices } from '@/components/DataGrid/utils/getNamedColumnIndices'
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
-import { SynapseErrorBoundary } from '@/components/error/ErrorBanner'
+import { ErrorFallbackComponent } from '@/components/error/ErrorBanner'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
 import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
 import { useGetEntity } from '@/synapse-queries/index'
@@ -37,6 +39,7 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { ClickableJsonCrdt } from 'clickable-json'
 import {
+  ReactNode,
   Ref,
   useCallback,
   useEffect,
@@ -45,9 +48,8 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
+import { ErrorBoundary, useErrorHandler } from 'react-error-boundary'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import GridAgentChat from '../SynapseChat/GridAgentChat'
 import { ValidationAlert } from './components/ValidationAlert'
 import DataGrid from './DataGrid'
 import { DataGridRow, GridModel, Operation } from './DataGridTypes'
@@ -68,6 +70,10 @@ const EMPTY_COLUMN_NAMES: string[] = []
 export type SynapseGridProps = {
   agentRegistrationId?: string
   showDebugInfo?: boolean
+  /** Content shown above the grid, such as the page title. It stays on screen if the grid fails. */
+  header?: ReactNode
+  /** Class name for the container around the grid content, which excludes `header` */
+  contentClassName?: string
   ref?: Ref<SynapseGridHandle>
 }
 
@@ -79,6 +85,8 @@ export type SynapseGridHandle = {
 function SynapseGridInner({
   agentRegistrationId,
   showDebugInfo = false,
+  header,
+  contentClassName,
   ref,
 }: SynapseGridProps) {
   const [session, setSession] = useState<GridSession | null>(null)
@@ -297,8 +305,14 @@ function SynapseGridInner({
     [model, applyAndCommitChanges],
   )
 
-  const { undoUI, redoUI, addOperationsToUndoStack, clearRedoStack } =
-    useGridUndoRedo(applyModelChangeFromUndoRedo)
+  const {
+    undoUI,
+    redoUI,
+    handleUndo,
+    handleRedo,
+    addOperationsToUndoStack,
+    clearRedoStack,
+  } = useGridUndoRedo(applyModelChangeFromUndoRedo)
 
   const handleChange = useCallback(
     (newValue: DataGridRow[], operations: Operation[]) => {
@@ -377,11 +391,15 @@ function SynapseGridInner({
   )
 
   if (!isLoading && !userBundle?.isCertified) {
-    return <CertificationRequirement />
+    return (
+      <SynapseGridLayout header={header} contentClassName={contentClassName}>
+        <CertificationRequirement />
+      </SynapseGridLayout>
+    )
   }
 
   return (
-    <div>
+    <SynapseGridLayout header={header} contentClassName={contentClassName}>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, xl: 8 }}>
           <StartGridSession
@@ -571,6 +589,8 @@ function SynapseGridInner({
                     handleSelectionChange={handleSelectionChange}
                     remoteSelections={remoteSelections}
                     upsertKey={upsertKey}
+                    onUndo={handleUndo}
+                    onRedo={handleRedo}
                   />
                 </Grid>
               </>
@@ -609,15 +629,25 @@ function SynapseGridInner({
           </>
         )}
       </Grid>
-    </div>
+    </SynapseGridLayout>
   )
 }
 
 function SynapseGrid(props: SynapseGridProps) {
+  const { header, contentClassName } = props
   return (
-    <SynapseErrorBoundary>
+    // The fallback keeps the page header, so an error in the grid doesn't hide the page title.
+    // Its "Try again" remounts the grid, which reloads the session.
+    <ErrorBoundary
+      // oxlint-disable-next-line react/no-unstable-nested-components -- fallbackRender is a function that ErrorBoundary calls, not a component it mounts, so a new function on each render does not remount the fallback
+      fallbackRender={fallbackProps => (
+        <SynapseGridLayout header={header} contentClassName={contentClassName}>
+          <ErrorFallbackComponent {...fallbackProps} />
+        </SynapseGridLayout>
+      )}
+    >
       <SynapseGridInner {...props} />
-    </SynapseErrorBoundary>
+    </ErrorBoundary>
   )
 }
 

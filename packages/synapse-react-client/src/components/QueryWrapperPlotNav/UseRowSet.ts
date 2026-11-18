@@ -80,6 +80,7 @@ function useGetPaginatedRowSet() {
  * Fetches the row data for a query and returns a RowSet that can be rendered as cards or a table. Respects the value of
  * QueryContext.isInfinite.
  * @param initialLimit
+ * @returns the RowSet, loading state, and the error of the row data query, if it failed
  */
 export function useRowSet(initialLimit?: number) {
   const { isInfinite } = useQueryContext()
@@ -114,11 +115,14 @@ export function useRowSet(initialLimit?: number) {
     ? infiniteQuery.isFetchingNextPage
     : paginatedQuery.isPlaceholderData
 
+  const error = isInfinite ? infiniteQuery.error : paginatedQuery.error
+
   return {
     rowSet,
     progressMessage,
     isLoading,
     isLoadingNewPage,
+    error,
     fetchNextPageOfInfiniteData: infiniteQuery.fetchNextPage,
     hasNextPageOfInfiniteData: infiniteQuery.hasNextPage,
   }

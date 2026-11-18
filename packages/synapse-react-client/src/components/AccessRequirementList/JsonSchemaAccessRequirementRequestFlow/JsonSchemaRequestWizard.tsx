@@ -29,6 +29,10 @@ import {
 import { RJSFSchema } from '@rjsf/utils'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { DialogBaseTitle } from '../../DialogBase'
+import {
+  RequestCreationRejectedAlert,
+  useRequestCreationRejection,
+} from '../RequestCreationRejectedAlert'
 import RequesterInformationFields from './RequesterInformationFields'
 import {
   isRequesterInformationComplete,
@@ -183,10 +187,10 @@ function JsonSchemaRequestWizardContent(
   const savedRequestRef = useRef(request)
   const saveQueueRef = useRef<Promise<unknown>>(Promise.resolve())
 
+  const { requestCreationRejection, onUpdateRequestError } =
+    useRequestCreationRejection(e => setAlertMessage(e.reason))
   const { mutateAsync: updateRequest, isPending: isSaving } =
-    useUpdateDataAccessRequest({
-      onError: e => setAlertMessage(e.reason),
-    })
+    useUpdateDataAccessRequest({ onError: onUpdateRequestError })
   const { mutate: submit, isPending: isSubmitting } =
     useSubmitDataAccessRequest({
       onSuccess: submission => onSubmissionCreated(submission.submissionId),
@@ -259,10 +263,10 @@ function JsonSchemaRequestWizardContent(
           }
         : undefined,
       answerFileHandleIds: request.attachments ?? [],
+      // Any version of the template may list a file, so the files are not filtered by the version of this form
       templateObject: {
-        associateObjectType:
-          FileHandleAssociateType.AccessRequirementAttachment,
-        associateObjectId: String(accessRequirement.id),
+        associateObjectType: FileHandleAssociateType.FormTemplateAttachment,
+        associateObjectId: accessRequirement.formTemplateRef.templateId,
       },
       // Saves are queued, so answers can change while one is in flight
       canEdit: !isSubmitting,
@@ -271,7 +275,7 @@ function JsonSchemaRequestWizardContent(
     [
       request.id,
       request.attachments,
-      accessRequirement.id,
+      accessRequirement.formTemplateRef.templateId,
       isSubmitting,
       onUploadingChange,
     ],
@@ -279,7 +283,7 @@ function JsonSchemaRequestWizardContent(
 
   async function saveAndAdvance(latestSchemaData: SchemaData = schemaData) {
     // Enter in a field also submits the step, so this is guarded as well as the Next button
-    if (isUploading || isBusy) {
+    if (isUploading || isBusy || requestCreationRejection) {
       return
     }
     const saved = await saveRequest(latestSchemaData)
@@ -335,6 +339,7 @@ function JsonSchemaRequestWizardContent(
   const disableNext =
     isBusy ||
     isUploading ||
+    Boolean(requestCreationRejection) ||
     (isRequesterInformationStep &&
       !isRequesterInformationComplete(requesterInformation, isEDucEnabled))
 
@@ -385,6 +390,13 @@ function JsonSchemaRequestWizardContent(
             onSchemaDataChange={onSchemaDataChange}
             fileHandleWidgetContext={fileHandleWidgetContext}
             onValid={latestSchemaData => void saveAndAdvance(latestSchemaData)}
+          />
+        )}
+        {requestCreationRejection && (
+          <RequestCreationRejectedAlert
+            error={requestCreationRejection}
+            identityProviders={accessRequirement.identityProviders}
+            sx={{ mt: 2 }}
           />
         )}
         {alertMessage && (

@@ -1,5 +1,5 @@
 import { useSortable } from '@dnd-kit/react/sortable'
-import { FormTemplateField } from '@sage-bionetworks/synapse-client'
+import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import {
   Box,
   Checkbox,
@@ -17,7 +17,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import UpIcon from '@mui/icons-material/ArrowUpward'
 import { RJSFSchema } from '@rjsf/utils'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import {
   SchemaPropertyContext,
   submissionContextLabel,
@@ -26,15 +26,19 @@ import styles from './dragHandle.module.scss'
 import { detectFieldType, fieldTypeLabel } from './schemaFieldUtils'
 import { SLOT_SORTABLE_TYPE } from './sortableIds'
 import { TemplateFileHandleField } from './TemplateFileHandleField'
+import { FieldSettings } from './utils'
 
 export type StepFieldRowProps = {
-  /** Sortable id assigned by parent: `slot:{stepIndex}:{fieldIndex}`. */
+  /** Sortable id assigned by parent, derived from `schemaPath`. */
   sortableId: string
-  /** Position within its step's fields array. */
+  /** Position within its step's fields. */
   sortableIndex: number
   /** Sortable group; slots only reorder within the same step. */
   sortableGroup: string
-  field: FormTemplateField
+  /** The property this slot binds. */
+  schemaPath: string
+  /** The bound property's slot settings. */
+  settings: FieldSettings
   /** The schema property this slot resolves to, if it still exists. */
   resolvedProperty: RJSFSchema | undefined
   /** Which submission context (per the schema's `x-synapse-submissionContext` convention)
@@ -44,9 +48,9 @@ export type StepFieldRowProps = {
   propertyKey: string
   isFirst: boolean
   isLast: boolean
-  /** The FormTemplate's id, if it has been saved. Used to build the template file download. */
-  formTemplateId: string | undefined
-  onChange: (patch: Partial<FormTemplateField>) => void
+  /** The saved version of the template, if any. Its attachments can be downloaded through it. */
+  savedTemplate: FormTemplate | undefined
+  onChange: (patch: Partial<FieldSettings>) => void
   onMoveUp: () => void
   onMoveDown: () => void
   onRemove: () => void
@@ -61,19 +65,21 @@ export function StepFieldRow({
   sortableId,
   sortableIndex,
   sortableGroup,
-  field,
+  schemaPath,
+  settings,
   resolvedProperty,
   context,
   propertyKey,
   isFirst,
   isLast,
-  formTemplateId,
+  savedTemplate,
   onChange,
   onMoveUp,
   onMoveDown,
   onRemove,
 }: StepFieldRowProps) {
   const [expanded, setExpanded] = useState(false)
+  const labelId = useId()
 
   const { ref, handleRef, isDragging } = useSortable({
     id: sortableId,
@@ -88,13 +94,13 @@ export function StepFieldRow({
   const isFileField = type === 'file'
   const isUnresolved = !resolvedProperty
 
-  let caption = `Missing field: ${field.schemaPath}`
+  let caption = `Missing field: ${schemaPath}`
   if (!isUnresolved) {
     const captionParts = [fieldTypeLabel(type)]
     if (context !== 'ALWAYS') {
       captionParts.push(submissionContextLabel(context))
     }
-    if (field.isPublic) {
+    if (settings.isPublic) {
       captionParts.push('Public')
     }
     caption = captionParts.join(' · ')
@@ -103,10 +109,14 @@ export function StepFieldRow({
   return (
     <Paper
       ref={ref}
+      component="fieldset"
+      aria-labelledby={labelId}
       variant="outlined"
       className={styles.dragSource}
       data-dragging={isDragging}
       sx={{
+        m: 0,
+        minWidth: 0,
         p: 1,
         backgroundColor: 'action.hover',
         borderColor: isUnresolved ? 'error.main' : undefined,
@@ -135,7 +145,7 @@ export function StepFieldRow({
           )}
         </IconButton>
         <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-          <Typography variant="body2" noWrap title={displayLabel}>
+          <Typography id={labelId} variant="body2" noWrap title={displayLabel}>
             {displayLabel}
           </Typography>
           <Typography
@@ -174,15 +184,15 @@ export function StepFieldRow({
         <Stack spacing={1} sx={{ pt: 1, pl: 4 }}>
           {isFileField && (
             <TemplateFileHandleField
-              fileHandleId={field.templateFileHandleId}
-              formTemplateId={formTemplateId}
+              fileHandleId={settings.templateFileHandleId}
+              savedTemplate={savedTemplate}
               onChange={next => onChange({ templateFileHandleId: next })}
             />
           )}
           <FormControlLabel
             control={
               <Checkbox
-                checked={field.isPublic ?? false}
+                checked={settings.isPublic ?? false}
                 onChange={e => onChange({ isPublic: e.target.checked })}
               />
             }

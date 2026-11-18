@@ -148,7 +148,7 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
           countText: formatFacetValueCount(
             facetValue.count,
             facet,
-            queryMetadata.facetPostProcessingApplied,
+            queryMetadata,
           ),
           renderedLabel: (() => {
             const rendered = renderFacetValue?.(
@@ -192,7 +192,7 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
     return [...sortedValues, ...valueNotSetFacetArray]
   }, [
     facet,
-    queryMetadata.facetPostProcessingApplied,
+    queryMetadata,
     columnModel,
     currentSelectedFacet?.facetValues,
     userGroupHeaders,

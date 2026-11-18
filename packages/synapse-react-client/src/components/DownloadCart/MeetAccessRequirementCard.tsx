@@ -19,6 +19,7 @@ import {
 import { useMemo, useState } from 'react'
 import AccessRequirementList from '../AccessRequirementList/AccessRequirementList'
 import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
+import { getFirstSubject } from './AccessRequirementSubjectUtils'
 
 export type MeetAccessRequirementCardProps = {
   accessRequirementId: number
@@ -97,9 +98,6 @@ export function MeetAccessRequirementCard({
   )
 
   const meetsAccessRequirement = Boolean(arStatus?.isApproved)
-  const hasSubjectId = ar?.subjectIds && ar?.subjectIds.length > 0
-  const subjectId = hasSubjectId ? ar?.subjectIds[0].id : undefined
-  const subjectType = hasSubjectId ? ar?.subjectIds[0].type : undefined
 
   return (
     <>
@@ -121,8 +119,7 @@ export function MeetAccessRequirementCard({
       />
       {isShowingAccessRequirement && ar && (
         <AccessRequirementList
-          subjectId={subjectId}
-          subjectType={subjectType}
+          {...getFirstSubject(ar)}
           accessRequirementFromProps={[ar]}
           renderAsModal={true}
           numberOfFilesAffected={count}

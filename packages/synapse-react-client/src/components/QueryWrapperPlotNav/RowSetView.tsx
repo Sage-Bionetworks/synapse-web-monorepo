@@ -5,11 +5,12 @@ import { CardConfiguration } from '../CardContainer/CardConfiguration'
 import LastUpdatedOn from './LastUpdatedOn'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
-import { SynapseErrorBoundary } from '../error'
+import { ErrorBanner, SynapseErrorBoundary } from '../error'
 import { useQueryContext } from '../QueryContext'
 import { Box } from '@mui/material'
 import { TablePagination } from '../SynapseTable/TablePagination'
 import { ViewMoreQueryResultsButton } from '../QueryWrapper/ViewMoreQueryResultsButton'
+import { getAggregateQueryError } from '../QueryWrapper/AggregateQueryErrorNotice'
 import { useRowSet } from './UseRowSet'
 
 export type RowSetViewProps = {
@@ -50,7 +51,11 @@ export function RowSetView(props: RowSetViewProps) {
     isLoadingNewPage,
     fetchNextPageOfInfiniteData,
     hasNextPageOfInfiniteData,
+    error,
   } = useRowSet(initialLimitIsApplied ? initialLimit : undefined)
+  // Rows withheld from an aggregate-only caller are withheld from every page, so there is nothing to page through. Other
+  // failures keep the paging controls, so the user can leave a page that failed to load.
+  const areRowsWithheld = getAggregateQueryError(error) !== undefined
 
   return (
     <SynapseErrorBoundary>
@@ -58,6 +63,7 @@ export function RowSetView(props: RowSetViewProps) {
         {isLoading && (
           <QueryWrapperLoadingScreen progressMessage={progressMessage} />
         )}
+        {error && <ErrorBanner error={error} />}
         {!isLoading && rowSet && (
           <>
             {tableConfiguration && (
@@ -77,12 +83,12 @@ export function RowSetView(props: RowSetViewProps) {
           </>
         )}
         <Suspense fallback={<></>}>
-          {!isInfinite && (
+          {!isInfinite && !areRowsWithheld && (
             <Box sx={{ mt: 2, textAlign: 'right' }}>
               <TablePagination />
             </Box>
           )}
-          {isInfinite && (
+          {isInfinite && !areRowsWithheld && (
             <ViewMoreQueryResultsButton
               initialLimit={initialLimit}
               initialLimitIsApplied={initialLimitIsApplied}

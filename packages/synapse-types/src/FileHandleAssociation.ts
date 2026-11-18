@@ -12,6 +12,7 @@ export enum FileHandleAssociateType {
   AccessRequirementAttachment = 'AccessRequirementAttachment',
   DataAccessRequestAttachment = 'DataAccessRequestAttachment',
   DataAccessSubmissionAttachment = 'DataAccessSubmissionAttachment',
+  FormTemplateAttachment = 'FormTemplateAttachment',
 }
 
 export type FileHandleAssociation = {

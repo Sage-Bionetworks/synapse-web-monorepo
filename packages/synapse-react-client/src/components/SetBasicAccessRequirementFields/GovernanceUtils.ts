@@ -46,3 +46,29 @@ export const hasAccessorRequirement = (
     ar.concreteType == JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
   )
 }
+
+/**
+ * Returns true iff the access requirement implements HasTwoFactorAuthRequirement, so it can require
+ * accessors to enable two-factor authentication
+ */
+export const hasTwoFactorAuthRequirement = (
+  ar: AccessRequirement,
+): ar is ManagedACTAccessRequirement | JsonSchemaAccessRequirement => {
+  return (
+    ar.concreteType === MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE ||
+    ar.concreteType === JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+  )
+}
+
+/**
+ * Returns true iff the access requirement implements HasIdentityProviderRequirement, so it can restrict
+ * which identity providers accessors must sign in with
+ */
+export const hasIdentityProviderRequirement = (
+  ar: AccessRequirement,
+): ar is ManagedACTAccessRequirement | JsonSchemaAccessRequirement => {
+  return (
+    ar.concreteType === MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE ||
+    ar.concreteType === JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+  )
+}

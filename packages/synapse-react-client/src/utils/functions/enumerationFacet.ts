@@ -4,6 +4,16 @@ import {
 } from '@sage-bionetworks/synapse-types'
 
 /**
+ * The count the server returns for a facet value whose count is below the AGGREGATE_DATA suppression threshold (k),
+ * in place of the count or, for a binned facet, the bin's lower bound (PLFM-10107).
+ */
+export const SUPPRESSED_FACET_VALUE_COUNT = -1
+
+export function isSuppressedFacetValueCount(count: number): boolean {
+  return count === SUPPRESSED_FACET_VALUE_COUNT
+}
+
+/**
  * An enumeration facet as the UI lists it, whether the server returned exact counts (FacetColumnResultValues) or
  * binned counts (FacetColumnResultBinnedValues, from the ROUNDING post-processing algorithm).
  */
@@ -13,7 +23,8 @@ export type EnumerationFacet = {
   jsonPath?: string
   /**
    * Every returned value. For a binned facet, each count is the midpoint of the value's bin, so a value whose exact
-   * count is 0 still has a positive count.
+   * count is 0 still has a positive count. A count below the suppression threshold is
+   * {@link SUPPRESSED_FACET_VALUE_COUNT}.
    */
   facetValues: FacetColumnResultValueCount[]
   /** Set for a binned facet: each value's exact count lies within count ± (binSize - 1) / 2. */
@@ -39,7 +50,9 @@ export function getEnumerationFacet(
         facetValues: facet.binnedValues.map(
           ({ value, binMin, isSelected }) => ({
             value,
-            count: binMin + halfBinWidth,
+            count: isSuppressedFacetValueCount(binMin)
+              ? SUPPRESSED_FACET_VALUE_COUNT
+              : binMin + halfBinWidth,
             isSelected,
           }),
         ),

@@ -3,6 +3,7 @@ import { UploadDocumentField } from '@/components/AccessRequirementList/ManagedA
 import {
   CustomFormContext,
   FileHandleAssociateObject,
+  getTemplateFileAssociation,
 } from '@/components/JsonSchemaForm/CustomFormContext'
 import { FileHandleLink } from '@/components/widgets/FileHandleLink'
 import {
@@ -68,8 +69,8 @@ export const FileHandleWidget: Widget = (props: WidgetProps) => {
           button={
             <FileLink
               fileHandleId={templateFileHandleId}
-              association={toAssociation(
-                context?.templateObject,
+              association={getTemplateFileAssociation(
+                context,
                 templateFileHandleId,
               )}
               buttonLabel="Download Template"

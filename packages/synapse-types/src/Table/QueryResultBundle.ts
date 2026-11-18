@@ -16,6 +16,7 @@ export interface QueryResultBundle {
   facets?: FacetColumnResult[] // The list of facets for the search results
   facetPostProcessingApplied?: boolean // True when a facet post-processing algorithm (rounding or noise) was applied to the returned facets, so facet counts are approximate. Absent or false when facet counts are exact.
   queryCountPostProcessingApplied?: boolean // True when a facet post-processing algorithm (rounding or noise) was applied to the queryCount, so the count is approximate. With rounding, the queryCount is the inclusive lower bound of its bin. Absent or false when the queryCount is exact.
+  suppressionThreshold?: number // The suppression threshold (k) of an aggregate-only read or an aggregate data preview. A facet count, or a count cell in the query results, of -1 is a non-zero count below this threshold that has been masked. Absent when the read is not aggregate-only.
   sumFileSizes?: SumFileSizes
   lastUpdatedOn?: string
   combinedSql?: string //The SQL that is combination of a the input SQL, FacetRequests, AdditionalFilters, Sorting, and Pagination. Use mask = 0x100 to include in the bundle.

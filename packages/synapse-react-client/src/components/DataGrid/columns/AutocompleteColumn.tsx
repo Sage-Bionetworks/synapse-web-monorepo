@@ -22,6 +22,9 @@ import {
   CellProps,
   Column,
 } from '@sage-bionetworks/react-datasheet-grid'
+import classNames from 'classnames'
+import styles from './GridCellDisplay.module.scss'
+import { LazyCellEditor } from './LazyCellEditor'
 import { useGridAutocompleteState } from './useGridAutocompleteState'
 
 // Static styles extracted to avoid recreation on every render
@@ -286,6 +289,20 @@ export const MemoizedAutocompleteCell = memo(
   AutocompleteCell,
   areAutocompleteCellPropsEqual,
 )
+
+/** Shows an autocomplete cell's value the way the inactive editor does */
+export function AutocompleteCellDisplay({
+  rowData,
+}: {
+  rowData: AutocompleteOption
+}) {
+  return (
+    <span className={classNames(styles.inputText, styles.autocompleteValue)}>
+      {castCellValueToString(rowData)}
+    </span>
+  )
+}
+
 export type AutocompleteColumnProps = {
   choices: AutocompleteOption[]
   colType?: JSONSchema7Type
@@ -302,12 +319,18 @@ export function autocompleteColumn({
 }: AutocompleteColumnProps): Partial<Column> {
   return {
     component: ((props: Omit<AutocompleteCellProps, 'choices'>) => (
-      <MemoizedAutocompleteCell
-        {...props}
-        choices={choices}
-        colType={colType}
-        parseFreeText={parseFreeText}
-        clearValue={clearValue}
+      <LazyCellEditor
+        active={props.active}
+        display={<AutocompleteCellDisplay rowData={props.rowData} />}
+        editor={
+          <MemoizedAutocompleteCell
+            {...props}
+            choices={choices}
+            colType={colType}
+            parseFreeText={parseFreeText}
+            clearValue={clearValue}
+          />
+        }
       />
     )) as CellComponent,
     // If we update our enums to support labels, then we can update copy to copy the label and paste to lookup the mapping from label -> value

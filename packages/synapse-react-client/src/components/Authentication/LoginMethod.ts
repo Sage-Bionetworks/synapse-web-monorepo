@@ -1,3 +1,5 @@
+import { getIdentityProviderDisplayName } from '@/utils/functions/IdentityProviderNameUtils'
+import { IdentityProviderName } from '@sage-bionetworks/synapse-client'
 import {
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_ARCUS,
@@ -20,17 +22,25 @@ export type LoginMethod = (typeof LoginMethods)[number]
 export function getLoginMethodFriendlyName(loginMethod: LoginMethod) {
   switch (loginMethod) {
     case LOGIN_METHOD_OAUTH2_ARCUS:
-      return 'Arcus Biosciences'
+      return getIdentityProviderDisplayName(
+        IdentityProviderName.ARCUS_BIOSCIENCES,
+      )
     case LOGIN_METHOD_OAUTH2_GOOGLE:
-      return 'Google'
+      return getIdentityProviderDisplayName(
+        IdentityProviderName.GOOGLE_OAUTH_2_0,
+      )
     case LOGIN_METHOD_OAUTH2_NIH_RESEARCHER_AUTH_SERVICE:
-      return 'Researcher Auth Service'
+      return getIdentityProviderDisplayName(
+        IdentityProviderName.NIH_RESEARCHER_AUTH_SERVICE,
+      )
     case LOGIN_METHOD_OAUTH2_ORCID:
-      return 'ORCiD'
+      return getIdentityProviderDisplayName(IdentityProviderName.ORCID)
     case LOGIN_METHOD_EMAIL:
       return 'your email'
     case LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS:
-      return 'Sage Bionetworks (Realm)'
+      return getIdentityProviderDisplayName(
+        IdentityProviderName.SAGE_BIONETWORKS,
+      )
     default:
       return 'unknown login method'
   }

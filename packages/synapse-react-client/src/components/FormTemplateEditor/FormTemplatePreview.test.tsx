@@ -322,12 +322,16 @@ describe('FormTemplatePreview', () => {
       },
     ])
 
-    it('offers a saved template’s file for download but does not allow uploading', () => {
+    it('offers a file that the saved template lists through the form template, but does not allow uploading', () => {
       render(
         <FormTemplatePreview
           template={fileTemplate}
           jsonSchema={fileSchema}
-          formTemplateId="template-1"
+          savedTemplate={{
+            ...fileTemplate,
+            id: 'template-1',
+            attachments: ['1234'],
+          }}
         />,
         { wrapper: createWrapper() },
       )
@@ -336,13 +340,27 @@ describe('FormTemplatePreview', () => {
         JSON.parse(screen.getByTestId('FileHandleLink').textContent ?? ''),
       ).toEqual({
         fileHandleId: '1234',
-        associateObjectType:
-          FileHandleAssociateType.AccessRequirementAttachment,
+        associateObjectType: FileHandleAssociateType.FormTemplateAttachment,
         associateObjectId: 'template-1',
       })
       expect(
         screen.getByRole('button', { name: 'Upload Signed agreement' }),
       ).toBeDisabled()
+    })
+
+    it('offers a file uploaded since the last save as one that the current user created', () => {
+      render(
+        <FormTemplatePreview
+          template={fileTemplate}
+          jsonSchema={fileSchema}
+          savedTemplate={{ ...fileTemplate, id: 'template-1', attachments: [] }}
+        />,
+        { wrapper: createWrapper() },
+      )
+
+      expect(
+        JSON.parse(screen.getByTestId('FileHandleLink').textContent ?? ''),
+      ).toEqual({ creatorFileHandleId: '1234' })
     })
 
     it('offers an unsaved template’s file as one that the current user created', () => {

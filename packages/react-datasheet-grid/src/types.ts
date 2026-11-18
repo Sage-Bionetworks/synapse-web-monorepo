@@ -163,6 +163,13 @@ export type DataSheetGridProps<T> = {
   onActiveCellChange?: (opts: { cell: CellWithId | null }) => void
   onSelectionChange?: (opts: { selection: SelectionWithId | null }) => void
   onScroll?: React.UIEventHandler<HTMLDivElement> | undefined
+  /**
+   * Called for Ctrl/Cmd+Z while a cell is active and not being edited. While a cell is being
+   * edited, its editor keeps the browser's own text undo, as in a spreadsheet.
+   */
+  onUndo?: () => void
+  /** Called for Ctrl+Y or Ctrl/Cmd+Shift+Z, under the same conditions as `onUndo` */
+  onRedo?: () => void
 }
 
 type CellWithIdInput = {

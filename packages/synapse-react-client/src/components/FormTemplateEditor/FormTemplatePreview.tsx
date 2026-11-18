@@ -23,17 +23,17 @@ import {
   Typography,
 } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
-import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { ReactNode, useId, useMemo, useRef, useState } from 'react'
 import styles from './FormTemplatePreview.module.scss'
+import { getTemplateFileSource } from './utils'
 
 export const VALIDATE_PREVIEW_RESPONSES_LABEL = 'Validate preview responses'
 
 type FormTemplatePreviewProps = {
   template: FormTemplate
   jsonSchema: RJSFSchema
-  /** The ID of the saved template, if it has been saved. Used to download the template files of file fields. */
-  formTemplateId?: string
+  /** The saved version of the template, if any. The template files of file fields that it lists are downloaded through it. */
+  savedTemplate?: FormTemplate
 }
 
 /**
@@ -45,7 +45,7 @@ type FormTemplatePreviewProps = {
 export function FormTemplatePreview({
   template,
   jsonSchema,
-  formTemplateId,
+  savedTemplate,
 }: FormTemplatePreviewProps) {
   const [activeStep, setActiveStep] = useState(0)
   // Kept across steps and request types so ACT can see how answers carry through the form
@@ -69,19 +69,10 @@ export function FormTemplatePreview({
   const fileHandleWidgetContext = useMemo<FileHandleWidgetContext>(
     () => ({
       answerFileHandleIds: [],
-      templateObject: formTemplateId
-        ? {
-            // AccessRequirementAttachment is a stand-in: a FormTemplate is not an
-            // AccessRequirement, so the server may not authorize this download.
-            // Supported FormTemplate template-file downloads are tracked in PLFM-10013.
-            associateObjectType:
-              FileHandleAssociateType.AccessRequirementAttachment,
-            associateObjectId: formTemplateId,
-          }
-        : undefined,
+      ...getTemplateFileSource(savedTemplate),
       canEdit: false,
     }),
-    [formTemplateId],
+    [savedTemplate],
   )
 
   const controls = (

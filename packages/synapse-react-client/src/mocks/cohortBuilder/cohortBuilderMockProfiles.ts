@@ -423,3 +423,10 @@ export const ADKP_MOCK_PROFILE: CohortBuilderMockProfile = {
     },
   },
 }
+
+/** The profile, with facet counts below its suppression threshold masked as -1 rather than excluded. */
+export function withMaskedCounts(
+  profile: CohortBuilderMockProfile,
+): CohortBuilderMockProfile {
+  return { ...profile, countSuppressionStrategy: 'MASK_BELOW_THRESHOLD' }
+}

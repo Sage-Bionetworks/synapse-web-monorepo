@@ -24,11 +24,11 @@ export const FundingBanner: React.FC = () => {
         </Box>
         <Box className={styles.textContent}>
           <Typography variant="body1" className={styles.headlineText}>
-            Seeking U.S. Researchers: Apply by January 26, 2026
+            Seeking U.S. Researchers: Apply by December 11, 2026
           </Typography>
           <Typography variant="body1" className={styles.mainText}>
-            For up to <strong>$132,500</strong> to expand Exceptional Longevity
-            research with NIA-funded data. <br></br>
+            For up to <strong>$132,500</strong> to expand Aging Rate Indicator
+            (ARI) research using NIA-funded data or biospecimens. <br></br>
             <Link
               href="https://www.longevityconsortium.org/funding-opportunity/"
               target="_blank"

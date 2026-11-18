@@ -2,7 +2,11 @@ import {
   FacetColumnResult,
   FacetColumnResultValues,
 } from '@sage-bionetworks/synapse-types'
-import { getEnumerationFacet, getEnumerationFacets } from './enumerationFacet'
+import {
+  getEnumerationFacet,
+  getEnumerationFacets,
+  SUPPRESSED_FACET_VALUE_COUNT,
+} from './enumerationFacet'
 
 const valuesFacet: FacetColumnResultValues = {
   concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
@@ -20,6 +24,7 @@ const binnedFacet: FacetColumnResult = {
   binnedValues: [
     { value: 'Female', binMin: 1565, isSelected: true },
     { value: 'Unknown', binMin: 0, isSelected: false },
+    { value: 'Other', binMin: SUPPRESSED_FACET_VALUE_COUNT, isSelected: false },
   ],
 }
 const rangeFacet: FacetColumnResult = {
@@ -49,6 +54,12 @@ describe('getEnumerationFacet', () => {
         { value: 'Female', count: 1567, isSelected: true },
         // 0–4
         { value: 'Unknown', count: 2, isSelected: false },
+        // Below the suppression threshold: kept as suppressed, not moved to a bin midpoint.
+        {
+          value: 'Other',
+          count: SUPPRESSED_FACET_VALUE_COUNT,
+          isSelected: false,
+        },
       ],
     })
   })

@@ -5,6 +5,7 @@ import testData from '@/mocks/mockQueryResponseDataWithManyEnumFacets'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '@/utils'
+import { SUPPRESSED_FACET_VALUE_COUNT } from '@/utils/functions/enumerationFacet'
 import {
   ColumnTypeEnum,
   FacetColumnResultValues,
@@ -282,7 +283,7 @@ describe('extractPlotDataArray', () => {
       0,
       'PIE',
       undefined,
-      true,
+      { facetPostProcessingApplied: true },
     )
 
     expect(plotData.labels.map(label => label.countText)).toEqual([
@@ -325,6 +326,37 @@ describe('extractPlotDataArray', () => {
       x: [10, 0],
       y: ['Female', 'Unknown'],
       hovertemplate: '<b>%{text}: </b><br>%{x} <br><extra></extra>',
+    })
+  })
+
+  it('draws a suppressed count as an empty bar and shows it as below k, even without post-processing', async () => {
+    const plotData = await extractPlotDataArray(
+      {
+        ...facet,
+        facetValues: [
+          { value: 'Female', count: 10, isSelected: false },
+          {
+            value: 'Unknown',
+            count: SUPPRESSED_FACET_VALUE_COUNT,
+            isSelected: false,
+          },
+        ],
+      },
+      ColumnTypeEnum.STRING,
+      0,
+      'HORIZONTAL_BAR',
+      undefined,
+      { suppressionThreshold: 20 },
+    )
+
+    expect(plotData.labels.map(label => label.countText)).toEqual([
+      '10',
+      '< 20',
+    ])
+    expect(plotData.data[0]).toMatchObject({
+      x: [10, 0],
+      customdata: ['10', '< 20'],
+      hovertemplate: '<b>%{text}: </b><br>%{customdata} <br><extra></extra>',
     })
   })
 })

@@ -16,9 +16,14 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(advancedFormat)
 
+/** The time zone the picker shows its value in, as the picker labels it */
+export function getPickerTimeZoneLabel(utcTime: boolean): string {
+  return utcTime ? 'UTC' : dayjs().tz(dayjs.tz.guess()).format('z')
+}
+
 function TextFieldWithTzShown(props: TextFieldProps) {
   const { utcTime } = useSynapseContext()
-  const tzDisplay = utcTime ? 'UTC' : dayjs().tz(dayjs.tz.guess()).format('z')
+  const tzDisplay = getPickerTimeZoneLabel(utcTime)
 
   return (
     <TextField

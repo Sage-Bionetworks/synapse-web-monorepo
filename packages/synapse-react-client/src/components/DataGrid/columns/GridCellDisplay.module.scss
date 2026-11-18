@@ -1,0 +1,133 @@
+// A cell's display stands in for its MUI editor until the editor mounts, which
+// happens as soon as the pointer moves over the cell. Each class reproduces the
+// editor's resting layout so the cell's content does not move when the editor
+// replaces it. The editors are MUI inputs, which the theme's MuiInputBase
+// override sets in 14px text.
+
+.display {
+  display: flex;
+  box-sizing: border-box;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.inputText {
+  position: relative;
+  // An input draws its text 1px lower than other elements with the same line
+  // height do
+  top: 1px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--synapse-gray-900);
+  font-size: 14px;
+  line-height: 1.4375em;
+}
+
+// Autocomplete pads its input root by 10px and its input text by 5px. While the
+// cell has a value, the root reserves 65px on the right for the clear and popup
+// buttons, and the input pads its text by 4px more.
+.autocompleteValue {
+  flex: 1;
+  padding: 0 69px 0 15px;
+
+  :global(.dsg-cell-disabled) & {
+    color: var(--synapse-gray-700);
+  }
+}
+
+.multipleValues {
+  padding: 0 65px 0 10px;
+}
+
+// MUI Chip, as rendered by GridAutocompleteChip in an Autocomplete tag. Its
+// max width is set inline from INACTIVE_CHIP_MAX_WIDTH, which the editor uses
+// too.
+.chip {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  height: 24px;
+  margin: 1px;
+  border-radius: 16px;
+  background-color: rgba(0, 0, 0, 0.08);
+  color: var(--synapse-gray-900);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.chipLabel {
+  padding: 0 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chipDeleteIcon {
+  display: inline-flex;
+  margin: 0 5px 0 -6px;
+  color: color-mix(in srgb, var(--synapse-gray-900) 26%, transparent);
+  font-size: 22px;
+}
+
+// The "+N" that Autocomplete shows for tags past its limit. It is a span, not
+// an input, so it takes the input's font without .inputText's offset.
+.moreTags {
+  flex-shrink: 0;
+  margin: 1px;
+  color: var(--synapse-gray-900);
+  font-size: 14px;
+  line-height: 1.4375em;
+}
+
+// The picker's input pads its text by 14px on the left
+.dateValue {
+  flex: 1;
+  padding-left: 14px;
+}
+
+.placeholder {
+  // MUI's input placeholder opacity
+  opacity: 0.42;
+}
+
+// The time zone that the date-time picker shows after its input
+.timeZone {
+  margin: 0 14px 0 4px;
+  color: var(--synapse-gray-900);
+  font-size: 14px;
+  line-height: 1.4375em;
+}
+
+// The date picker's open button, a 24px icon inside a 40px IconButton that
+// overhangs the input root's 14px right padding
+.calendarIcon {
+  display: inline-flex;
+  margin: 0 10px 0 16px;
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 24px;
+}
+
+// MUI's palette.text.disabled and palette.action.disabled, which a disabled
+// picker uses for its text and its open button
+.disabledPicker {
+  .dateValue,
+  .timeZone {
+    color: rgba(0, 0, 0, 0.38);
+  }
+
+  .calendarIcon {
+    color: rgba(0, 0, 0, 0.26);
+  }
+}
+
+// DateTimeCell shows a value the picker can't parse as plain text in the
+// cell's own font
+.unparseableValue {
+  min-width: 0;
+  padding: 0 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

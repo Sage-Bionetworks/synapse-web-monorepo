@@ -1,18 +1,15 @@
 import '@/mocks/msw/server'
-import { FormTemplateField } from '@sage-bionetworks/synapse-client'
 import { RJSFSchema } from '@rjsf/utils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { StepFieldRow } from './StepFieldRow'
+import { FieldSettings } from './utils'
 
 const textProperty: RJSFSchema = { type: 'string', title: 'Institution' }
 const fileProperty: RJSFSchema = { format: 'synapse-filehandle-id' }
 
-const baseField: FormTemplateField = {
-  schemaPath: '/institution',
-  uiDefinition: null,
-}
+const baseSettings: FieldSettings = { uiDefinition: null }
 
 function renderRow(
   overrides: Partial<Parameters<typeof StepFieldRow>[0]> = {},
@@ -23,16 +20,17 @@ function renderRow(
   const onRemove = vi.fn()
   render(
     <StepFieldRow
-      sortableId="slot:0:0"
+      sortableId="slot:/institution"
       sortableIndex={0}
-      sortableGroup="step:0"
-      field={baseField}
+      sortableGroup="slots:step-0"
+      schemaPath="/institution"
+      settings={baseSettings}
       resolvedProperty={textProperty}
       context="ALWAYS"
       propertyKey="institution"
       isFirst={false}
       isLast={false}
-      formTemplateId={undefined}
+      savedTemplate={undefined}
       onChange={onChange}
       onMoveUp={onMoveUp}
       onMoveDown={onMoveDown}
@@ -45,10 +43,10 @@ function renderRow(
 }
 
 describe('StepFieldRow', () => {
-  it('shows the resolved property title and type', () => {
+  it('names the row by the resolved property title and shows its type', () => {
     renderRow()
-    expect(screen.getByText('Institution')).toBeInTheDocument()
-    expect(screen.getByText('Text')).toBeInTheDocument()
+    const row = screen.getByRole('group', { name: 'Institution' })
+    expect(within(row).getByText('Text')).toBeInTheDocument()
   })
 
   it('flags an unresolved slot with the schema path', () => {
@@ -59,7 +57,7 @@ describe('StepFieldRow', () => {
   it('appends the submission context when not ALWAYS, and Public when set', () => {
     renderRow({
       context: 'RENEWAL_ONLY',
-      field: { ...baseField, isPublic: true },
+      settings: { ...baseSettings, isPublic: true },
     })
     expect(screen.getByText('Text · Renewal only · Public')).toBeInTheDocument()
   })
@@ -91,7 +89,7 @@ describe('StepFieldRow', () => {
     const user = userEvent.setup()
     const { onChange } = renderRow({
       resolvedProperty: fileProperty,
-      field: { ...baseField, templateFileHandleId: '123' },
+      settings: { ...baseSettings, templateFileHandleId: '123' },
     })
     await user.click(screen.getByRole('button', { name: 'Expand field' }))
     await user.click(

@@ -1,5 +1,8 @@
 import { FormContextType } from '@rjsf/utils'
-import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
+import {
+  FileHandleAssociateType,
+  FileHandleAssociation,
+} from '@sage-bionetworks/synapse-types'
 
 /** A Synapse object that files can be associated with */
 export type FileHandleAssociateObject = {
@@ -28,10 +31,40 @@ export type FileHandleWidgetContext = {
    * case they are downloaded as file handles that the current user created.
    */
   templateObject?: FileHandleAssociateObject
+  /**
+   * If set, only these template files can be downloaded through `templateObject`; any other is downloaded as a file
+   * handle that the current user created. If unset, every template file is downloaded through `templateObject`.
+   */
+  templateFileHandleIds?: string[]
   /** Whether the user can upload, replace, or clear a file */
   canEdit: boolean
   /** Invoked when an upload of a field's file starts and when it finishes. Its identity must not change. */
   onUploadingChange?: (fieldId: string, isUploading: boolean) => void
+}
+
+/** Where the template files of fields are downloaded from: the part of {@link FileHandleWidgetContext} about them. */
+export type TemplateFileSource = Pick<
+  FileHandleWidgetContext,
+  'templateObject' | 'templateFileHandleIds'
+>
+
+/**
+ * The association that downloads a field's template file through `source.templateObject`, or undefined if it cannot
+ * serve the file, in which case the file is downloaded as a file handle that the current user created.
+ */
+export function getTemplateFileAssociation(
+  source: TemplateFileSource | undefined,
+  fileHandleId: string,
+): FileHandleAssociation | undefined {
+  const templateObject = source?.templateObject
+  if (
+    !templateObject ||
+    (source.templateFileHandleIds &&
+      !source.templateFileHandleIds.includes(fileHandleId))
+  ) {
+    return undefined
+  }
+  return { fileHandleId, ...templateObject }
 }
 
 export interface CustomFormContext extends FormContextType {

@@ -1,4 +1,7 @@
-import { FormTemplateReference } from '@sage-bionetworks/synapse-client'
+import {
+  FormTemplateReference,
+  IdentityProviderName,
+} from '@sage-bionetworks/synapse-client'
 import ACCESS_TYPE from '../ACCESS_TYPE'
 import { RestrictableObjectDescriptor } from './RestrictableObjectDescriptor'
 
@@ -33,6 +36,8 @@ export type JsonSchemaAccessRequirement = {
   expirationPeriod: number
   isTwoFaRequired: boolean
   eDucTemplateId?: string
+  /* If not empty, then accessor must have authenticated through one of the listed identity providers. If null or empty, then there is no requirement on how the accessor authenticated. */
+  identityProviders?: IdentityProviderName[]
   /* The FormTemplate version that describes the form shown to requesters. The template's pinned schema is the data contract. */
   formTemplateRef: FormTemplateReference
 }

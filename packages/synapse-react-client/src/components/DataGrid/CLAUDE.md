@@ -53,8 +53,9 @@ Grids can have thousands of rows and dozens of columns. "Add N rows" with N of 1
 4. **Per-row work in render must be cheap.** `modelRowsToGrid` and `enrichRowsWithChangeInfo` run for every row, and for every cell, each time the model changes. Avoid new CRDT path lookups, deep comparisons, or object spreads there unless they are needed. Unchanged rows keep the same object in each snapshot, so per-row memoization can key on the snapshot row.
 5. **Remember that selection moves are model changes.** Moving the cursor writes `SET_SELECTION` into the model, and that triggers a snapshot and a full row rebuild. Keep anything on the selection path small. `computeReplicaSelectionModel` and `replicaSelectionToGridSelection` call `getSnapshot()` only to read a few values. That is cheap while json-joy still has the snapshot cached, but reading `arr(...).length()` and `vec(['columnNames']).view()` directly stays cheap if they ever run after a change.
 6. **Never do heavy work in a click handler.** The throttled send can run inside the handler if the main thread was busy past the throttle time, so expensive work in the send path blocks the click.
+7. **Cells the user has not reached must be cheap.** Scrolling mounts a row or column of new cells at a time, so a cell that mounts an MUI editor (Autocomplete, a date picker) for every value makes scrolling slow. Columns with such an editor render through `LazyCellEditor`: a lightweight display until the pointer moves over the cell, rests on it, or the cell is activated, then the editor for as long as the cell stays mounted. Scrolling moves cells under the pointer without firing `pointermove`, and the rest delay is longer than a cell stays under the pointer during a scroll, so scrolling does not mount editors. A display must match its editor's resting look (see `GridCellDisplay.module.scss`) so the cell does not change when the editor replaces it.
 
-When you change code on these paths, test with a large grid (several thousand rows, 20+ columns), not only a handful of rows. A regression test can spy on `getSnapshot` or `JSON.stringify` and check how often they run, which is more reliable than a timing test.
+When you change code on these paths, test with a large grid (several thousand rows, 20+ columns), not only a handful of rows. The `LargeGrid` story in `DataGrid.stories` has 1,000,000 cells of every column type. A regression test can spy on `getSnapshot` or `JSON.stringify` and check how often they run, which is more reliable than a timing test.
 
 ## Where things live
 
@@ -68,7 +69,7 @@ When you change code on these paths, test with a large grid (several thousand ro
 - `SyncGridWithSourceButton`, `useMergeGridWithSource`, `useMergeGridWithTable`: merge the grid with its source data.
 - `utils/`: helpers. Most are pure: `applyModelChange`, `splitPatch`, `modelRowsToGrid`, selection conversion, column factories, paste parsing.
 - `hooks/`: undo and redo, remote selections, replica users, grid schema loading, CSV export, column resize.
-- `columns/`: custom DSG column types (autocomplete, date-time, number).
+- `columns/`: custom DSG column types (autocomplete, date-time, number), and `LazyCellEditor`, which defers mounting their editors.
 - `components/`: toolbar buttons, dialogs, the loading state, and the context menu.
 
 ## Testing

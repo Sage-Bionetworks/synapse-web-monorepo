@@ -1,6 +1,12 @@
+import { IdentityProviderName } from '@sage-bionetworks/synapse-client'
+
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/ActionRequiredCount.html
 
-export type Action = RequestDownload | MeetAccessRequirement | EnableTwoFa
+export type Action =
+  | RequestDownload
+  | MeetAccessRequirement
+  | EnableTwoFa
+  | AuthenticateWithIdentityProvider
 
 export type ActionRequiredCount = {
   action: Action // An action that the user must take in order to download a file.
@@ -30,4 +36,14 @@ export type EnableTwoFa = {
   concreteType: 'org.sagebionetworks.repo.model.download.EnableTwoFa'
   /* The ID of the first access requirement that requires two-factor authentication. */
   accessRequirementId: number
+}
+
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/AuthenticateWithIdentityProvider.html
+// In order to download a file the user will need to authenticate through one of the identity providers that an access requirement accepts.
+export type AuthenticateWithIdentityProvider = {
+  concreteType: 'org.sagebionetworks.repo.model.download.AuthenticateWithIdentityProvider'
+  /* The ID of the first access requirement that does not accept the identity provider the user authenticated through. */
+  accessRequirementId: number
+  /* The identity providers that the access requirement accepts. The user must authenticate through one of them. */
+  identityProviders?: IdentityProviderName[]
 }

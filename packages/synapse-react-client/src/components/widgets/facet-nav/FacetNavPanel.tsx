@@ -2,7 +2,10 @@ import StyledFormControl from '@/components/styled/StyledFormControl'
 import SynapseClient from '@/synapse-client'
 import { SynapseConstants } from '@/utils'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { formatFacetValueCount } from '@/utils/functions/facetCountUtils'
+import {
+  FacetCountDisplayOptions,
+  formatFacetValueCount,
+} from '@/utils/functions/facetCountUtils'
 import { getCorrespondingColumnForFacet } from '@/utils/functions/queryUtils'
 import InfoOutlined from '@mui/icons-material/InfoOutlined'
 import {
@@ -13,7 +16,10 @@ import {
   Stack,
   Tooltip,
 } from '@mui/material'
-import { EnumerationFacet } from '@/utils/functions/enumerationFacet'
+import {
+  EnumerationFacet,
+  isSuppressedFacetValueCount,
+} from '@/utils/functions/enumerationFacet'
 import {
   ColumnTypeEnum,
   FacetColumnRequest,
@@ -74,8 +80,9 @@ export type GraphData = {
 }
 
 /**
- * @param facetPostProcessingApplied the QueryResultBundle's `facetPostProcessingApplied`. When set, counts are shown as
- * approximate (see `formatFacetValueCount`) and pie percentages are omitted.
+ * @param countDisplayOptions the QueryResultBundle that the facet belongs to. Counts are shown as formatted by
+ * `formatFacetValueCount`. When the facet counts are post-processed, or any count is suppressed, hover text shows that
+ * formatted count instead of the exact value and pie percentages are omitted; a suppressed count is plotted as 0.
  */
 export async function extractPlotDataArray(
   facetToPlot: EnumerationFacet,
@@ -83,7 +90,7 @@ export async function extractPlotDataArray(
   index: number,
   plotType: PlotType,
   accessToken?: string,
-  facetPostProcessingApplied?: boolean,
+  countDisplayOptions: FacetCountDisplayOptions = {},
 ) {
   const colorPalette = getContrastColorPalette(
     // Use only the odd palette, using the same offset for all plots until palettes are improved.
@@ -140,7 +147,7 @@ export async function extractPlotDataArray(
       countText: formatFacetValueCount(
         facetValue.count,
         facetToPlot,
-        facetPostProcessingApplied,
+        countDisplayOptions,
       ),
     }))
   }
@@ -176,8 +183,12 @@ export async function extractPlotDataArray(
               .replace(')', ', 0.25)'),
       )
     : colorPalette
-  const counts: Plotly.Datum[] = facetToPlot.facetValues.map(
-    facet => facet.count,
+  // A suppressed count is plotted with no length; its hover and legend show that it is suppressed.
+  const counts: Plotly.Datum[] = facetToPlot.facetValues.map(facet =>
+    isSuppressedFacetValueCount(facet.count) ? 0 : facet.count,
+  )
+  const isAnyCountSuppressed = facetToPlot.facetValues.some(facet =>
+    isSuppressedFacetValueCount(facet.count),
   )
   const valueLabels = facetToPlot.facetValues.map(
     facet => labels.find(label => label.facet === facet)?.label ?? facet.value,
@@ -195,21 +206,22 @@ export async function extractPlotDataArray(
     y = new Array(x.length).fill('Proportional') // single value for every x value
   }
 
-  // Approximate counts are hovered as their display text, without a misleading exact value or percentage.
+  // Approximate or suppressed counts are hovered as their display text, without a misleading exact value or percentage.
   let exactHoverCount = '%{value}'
   if (plotType === 'PIE') {
     exactHoverCount = '%{value} (%{percent})'
   } else if (plotType === 'HORIZONTAL_BAR') {
     exactHoverCount = '%{x}'
   }
-  const hoverCount = facetPostProcessingApplied
-    ? '%{customdata}'
-    : exactHoverCount
+  const isHoveredAsCountText =
+    countDisplayOptions.facetPostProcessingApplied === true ||
+    isAnyCountSuppressed
+  const hoverCount = isHoveredAsCountText ? '%{customdata}' : exactHoverCount
   const singleChartData: Plotly.Data = {
     values: plotType === 'PIE' ? counts : undefined,
     labels: labels.map(el => el.label),
     text,
-    customdata: facetPostProcessingApplied
+    customdata: isHoveredAsCountText
       ? labels.map(el => el.countText)
       : undefined,
     x,
@@ -394,6 +406,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
       plotType,
       accessToken,
       queryMetadata?.facetPostProcessingApplied,
+      queryMetadata?.suppressionThreshold,
     ],
 
     queryFn: () =>
@@ -403,7 +416,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
         index,
         plotType,
         accessToken,
-        queryMetadata?.facetPostProcessingApplied,
+        queryMetadata,
       ),
 
     enabled: !!facetToPlot,
