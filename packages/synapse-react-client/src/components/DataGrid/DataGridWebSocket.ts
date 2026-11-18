@@ -70,7 +70,8 @@ const DEFAULT_PATCH_ACK_TIMEOUT_MS = 15 * 1000
 /**
  * Decodes a server snapshot into a model that writes as `replicaId`.
  *
- * The indexed binary decoder builds the clock from the first clock-table entry only. Every replica in the table other
+ * The indexed binary decoder builds the clock from the first clock-table entry only
+ * (https://github.com/streamich/json-joy/issues/1059). Every replica in the table other
  * than `replicaId` must become a peer: a replica missing from the sync clock gets all of its patches resent, and until
  * they arrive local edits lose last-writer-wins against the cells it wrote. A peer holds the last sequence seen, and
  * exported snapshots hold each replica's next one, so each is recorded at `time - 1`. Initial snapshots hold the
