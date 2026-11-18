@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 // Stretches to the docking layout's height, so the panel can stay in view while the page scrolls
 // past the layout. At least as tall as the viewport, so a short grid still gets a full-height chat.
 .sidebar {
@@ -14,13 +16,19 @@
   }
 }
 
+// The handle is wider than the line it draws on the sidebar's edge, so it is easy to grab
+$resize-handle-width: 8px;
+$resize-line-width: 2px;
+$resize-line-start: math.div($resize-handle-width - $resize-line-width, 2);
+$resize-line-end: $resize-line-start + $resize-line-width;
+
 // Spans the sidebar's full height, so the part of it that is on screen can be grabbed
 .resizeHandle {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: -4px;
-  width: 8px;
+  left: math.div(-$resize-handle-width, 2);
+  width: $resize-handle-width;
   z-index: 1;
   cursor: col-resize;
   touch-action: none;
@@ -31,10 +39,10 @@
     outline: none;
     background: linear-gradient(
       to right,
-      transparent 3px,
-      var(--synapse-primary-action-color) 3px,
-      var(--synapse-primary-action-color) 5px,
-      transparent 5px
+      transparent $resize-line-start,
+      var(--synapse-primary-action-color) $resize-line-start,
+      var(--synapse-primary-action-color) $resize-line-end,
+      transparent $resize-line-end
     );
   }
 }

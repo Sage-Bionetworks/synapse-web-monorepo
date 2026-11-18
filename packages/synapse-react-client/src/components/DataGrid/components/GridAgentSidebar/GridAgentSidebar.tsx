@@ -1,11 +1,12 @@
 import CurieAvatarHead from '@/assets/mui_components/CurieAvatarHead'
 import { SynapseErrorBoundary } from '@/components/error/ErrorBanner'
+import { useElementWidth } from '@/utils/hooks/useElementWidth'
 import { useHeightInViewport } from '@/utils/hooks/useHeightInViewport'
 import CloseIcon from '@mui/icons-material/Close'
 import { Fab, IconButton, Tooltip, Typography } from '@mui/material'
-import classNames from 'classnames'
 import { ReactNode, useId, useState } from 'react'
 import styles from './GridAgentSidebar.module.scss'
+import { GridAgentSidebarResizeHandle } from './GridAgentSidebarResizeHandle'
 import { useGridAgentSidebarResize } from './useGridAgentSidebarResize'
 
 export const GRID_AGENT_SIDEBAR_TITLE = 'AI Assistant'
@@ -36,11 +37,12 @@ export function GridAgentSidebar({
   children,
 }: GridAgentSidebarProps) {
   const titleId = useId()
+  const sidebarId = useId()
   const [sidebarElement, setSidebarElement] = useState<HTMLElement | null>(null)
   // A hidden sidebar measures as empty, so it is measured only while open
   const heightInViewport = useHeightInViewport(open ? sidebarElement : null)
-  const { width, minWidth, maxWidth, isDragging, handleProps } =
-    useGridAgentSidebarResize(sidebarElement?.parentElement ?? null)
+  const layoutWidth = useElementWidth(sidebarElement?.parentElement ?? null)
+  const resize = useGridAgentSidebarResize(layoutWidth)
 
   return (
     <>
@@ -57,25 +59,17 @@ export function GridAgentSidebar({
         </Tooltip>
       )}
       <aside
+        id={sidebarId}
         ref={setSidebarElement}
         className={styles.sidebar}
-        style={{ width }}
+        style={{ width: resize.width }}
         hidden={!open}
         aria-labelledby={titleId}
       >
-        <div
-          // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- a focusable separator is the ARIA window splitter pattern, which a static <hr> cannot express
-          role="separator"
-          aria-orientation="vertical"
-          aria-label={`Resize ${GRID_AGENT_SIDEBAR_TITLE}`}
-          aria-valuenow={width}
-          aria-valuemin={minWidth}
-          aria-valuemax={maxWidth}
-          tabIndex={0}
-          className={classNames(styles.resizeHandle, {
-            [styles.dragging]: isDragging,
-          })}
-          {...handleProps}
+        <GridAgentSidebarResizeHandle
+          resize={resize}
+          titleId={titleId}
+          sidebarId={sidebarId}
         />
         <div className={styles.panel} style={{ height: heightInViewport }}>
           <div className={styles.header}>

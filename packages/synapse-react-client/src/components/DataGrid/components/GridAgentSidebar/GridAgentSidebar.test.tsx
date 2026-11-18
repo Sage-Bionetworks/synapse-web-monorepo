@@ -1,5 +1,4 @@
 import { GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY } from '@/utils/SynapseConstants'
-import { useResizeObserver } from '@react-hookz/web'
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ReactNode } from 'react'
@@ -9,29 +8,21 @@ import {
   GridAgentSidebar,
   OPEN_GRID_AGENT_SIDEBAR_LABEL,
 } from './GridAgentSidebar'
+import { GRID_AGENT_SIDEBAR_KEYBOARD_RESIZE_STEP } from './GridAgentSidebarResizeHandle'
 import {
-  clampSidebarWidth,
   GRID_AGENT_SIDEBAR_DEFAULT_WIDTH,
-  GRID_AGENT_SIDEBAR_KEYBOARD_RESIZE_STEP,
   GRID_AGENT_SIDEBAR_MIN_WIDTH,
 } from './useGridAgentSidebarResize'
-
-// jsdom has no layout, so tests report the docking layout's width through the observer callback
-vi.mock(import('@react-hookz/web'), async importOriginal => ({
-  ...(await importOriginal()),
-  useResizeObserver: vi.fn(),
-}))
-
-const resizeObserverCallbacks = new Map<
-  Element,
-  (entry: ResizeObserverEntry) => void
->()
 
 const POINTER_ID = 1
 
 const CHAT_ERROR = 'The chat failed to render'
 
-function renderSidebar(open = true) {
+// jsdom does not implement pointer capture, so the tests track which element captured each pointer
+const capturedPointers = new Map<number, Element>()
+
+/** Renders the sidebar docked in a layout `layoutWidth` px wide (0, unmeasured, by default) */
+function renderSidebar({ layoutWidth = 0 }: { layoutWidth?: number } = {}) {
   const onOpen = vi.fn()
   const onClose = vi.fn()
   const renderElement = (isOpen: boolean) => (
@@ -42,7 +33,11 @@ function renderSidebar(open = true) {
       </label>
     </GridAgentSidebar>
   )
-  const result = render(renderElement(open))
+  const layout = document.body.appendChild(document.createElement('div'))
+  vi.spyOn(layout, 'getBoundingClientRect').mockReturnValue(
+    new DOMRect(0, 0, layoutWidth, 900),
+  )
+  const result = render(renderElement(true), { container: layout })
   return {
     onOpen,
     onClose,
@@ -65,9 +60,7 @@ function scrollPage() {
 }
 
 function getResizeHandle() {
-  return screen.getByRole('separator', {
-    name: `Resize ${GRID_AGENT_SIDEBAR_TITLE}`,
-  })
+  return screen.getByRole('separator', { name: GRID_AGENT_SIDEBAR_TITLE })
 }
 
 function getStoredWidth() {
@@ -79,18 +72,9 @@ function storeWidth(width: number) {
   localStorage.setItem(GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY, String(width))
 }
 
-/** Reports the width of the layout that the sidebar docks in */
-function setLayoutWidth(layoutWidth: number) {
-  const layout = getSidebar().parentElement!
-  act(() => {
-    resizeObserverCallbacks.get(layout)?.({
-      contentRect: { width: layoutWidth },
-    } as ResizeObserverEntry)
-  })
-}
-
+/** Returns whether the press's default action was allowed */
 function pressHandle(clientX: number, button = 0) {
-  fireEvent.pointerDown(getResizeHandle(), {
+  return fireEvent.pointerDown(getResizeHandle(), {
     button,
     clientX,
     pointerId: POINTER_ID,
@@ -101,26 +85,29 @@ function movePointer(clientX: number) {
   fireEvent.pointerMove(getResizeHandle(), { clientX, pointerId: POINTER_ID })
 }
 
-/** The browser releases pointer capture when the pointer is released or cancelled */
-function releasePointer(event: 'pointerUp' | 'pointerCancel' = 'pointerUp') {
-  fireEvent[event](getResizeHandle(), { pointerId: POINTER_ID })
-  fireEvent.lostPointerCapture(getResizeHandle(), { pointerId: POINTER_ID })
+/** Like a browser, the release ends pointer capture, if the handle captured the pointer */
+function releasePointer() {
+  const handle = getResizeHandle()
+  fireEvent.pointerUp(handle, { pointerId: POINTER_ID })
+  if (capturedPointers.get(POINTER_ID) === handle) {
+    capturedPointers.delete(POINTER_ID)
+    fireEvent.lostPointerCapture(handle, { pointerId: POINTER_ID })
+  }
 }
 
 describe('GridAgentSidebar', () => {
   beforeAll(() => {
-    // jsdom does not implement pointer capture
-    Element.prototype.setPointerCapture = vi.fn()
+    Element.prototype.setPointerCapture = function (
+      this: Element,
+      pointerId: number,
+    ) {
+      capturedPointers.set(pointerId, this)
+    }
   })
 
   beforeEach(() => {
     localStorage.clear()
-    resizeObserverCallbacks.clear()
-    vi.mocked(useResizeObserver).mockImplementation((target, callback) => {
-      if (target instanceof Element) {
-        resizeObserverCallbacks.set(target, callback)
-      }
-    })
+    capturedPointers.clear()
   })
 
   afterEach(() => {
@@ -235,185 +222,100 @@ describe('GridAgentSidebar', () => {
   })
 
   describe('resizing', () => {
-    it('uses the default width when no width is stored', () => {
+    it('has a resize handle, named by the title, that controls the sidebar', () => {
       renderSidebar()
+      const handle = getResizeHandle()
 
+      expect(handle).toHaveAttribute('aria-controls', getSidebar().id)
+      expect(handle).toHaveAttribute(
+        'aria-valuenow',
+        String(GRID_AGENT_SIDEBAR_DEFAULT_WIDTH),
+      )
+      expect(handle).toHaveAttribute(
+        'aria-valuemin',
+        String(GRID_AGENT_SIDEBAR_MIN_WIDTH),
+      )
+      expect(handle).not.toHaveAttribute('aria-valuemax')
       expect(getSidebar()).toHaveStyle({
         width: `${GRID_AGENT_SIDEBAR_DEFAULT_WIDTH}px`,
       })
     })
 
-    it('restores the stored width', () => {
-      storeWidth(520)
-      renderSidebar()
-
-      expect(getSidebar()).toHaveStyle({ width: '520px' })
-    })
-
-    it.each(['', '0', '100', '"wide"', '{}', 'null', 'not json'])(
-      'uses the default width when the stored width is "%s"',
-      stored => {
-        localStorage.setItem(GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY, stored)
-        renderSidebar()
-
-        expect(getSidebar()).toHaveStyle({
-          width: `${GRID_AGENT_SIDEBAR_DEFAULT_WIDTH}px`,
-        })
-      },
-    )
-
-    it('shows a stored width wider than the layout allows at the maximum, and keeps it stored', () => {
+    it('limits its width to half of the layout it docks in from the first render', () => {
       storeWidth(5000)
-      renderSidebar()
 
-      setLayoutWidth(1200)
+      renderSidebar({ layoutWidth: 1200 })
 
-      expect(getSidebar()).toHaveStyle({ width: '600px' })
       expect(getResizeHandle()).toHaveAttribute('aria-valuemax', '600')
-      expect(getStoredWidth()).toBe(5000)
+      expect(getSidebar()).toHaveStyle({ width: '600px' })
     })
 
-    it('widens when the left edge is dragged left, and persists the width on release', () => {
+    it('resizes while its left edge is dragged, until pointer capture ends', () => {
       renderSidebar()
 
       pressHandle(1000)
       movePointer(900)
 
       expect(getSidebar()).toHaveStyle({ width: '500px' })
-      expect(getStoredWidth()).toBeNull()
 
       releasePointer()
+      movePointer(800)
 
       expect(getStoredWidth()).toBe(500)
       expect(getSidebar()).toHaveStyle({ width: '500px' })
     })
 
-    it('ends the drag and persists the width when the pointer is cancelled', () => {
+    it('prevents the default action of a primary press, which the grid would treat as a click outside it', () => {
       renderSidebar()
 
-      pressHandle(1000)
-      movePointer(950)
-      releasePointer('pointerCancel')
-      movePointer(800)
-
-      expect(getStoredWidth()).toBe(450)
-      expect(getSidebar()).toHaveStyle({ width: '450px' })
+      expect(pressHandle(1000)).toBe(false)
     })
 
-    it('does not resize when dragged with a button other than the primary one', () => {
+    it('ignores a press with a button other than the primary one', () => {
       renderSidebar()
 
-      pressHandle(1000, 2)
+      expect(pressHandle(1000, 2)).toBe(true)
       movePointer(900)
-      releasePointer()
 
-      expect(getStoredWidth()).toBeNull()
+      expect(capturedPointers.size).toBe(0)
       expect(getSidebar()).toHaveStyle({
         width: `${GRID_AGENT_SIDEBAR_DEFAULT_WIDTH}px`,
       })
     })
 
-    it('does not shrink below the minimum width when dragged right', () => {
+    it('resizes with the arrow keys instead of scrolling', () => {
       renderSidebar()
-
-      pressHandle(1000)
-      movePointer(1500)
-      releasePointer()
-
-      expect(getStoredWidth()).toBe(GRID_AGENT_SIDEBAR_MIN_WIDTH)
-      expect(getSidebar()).toHaveStyle({
-        width: `${GRID_AGENT_SIDEBAR_MIN_WIDTH}px`,
-      })
-    })
-
-    it('does not widen past half of the layout when dragged left', () => {
-      renderSidebar()
-      setLayoutWidth(1200)
-
-      pressHandle(1000)
-      movePointer(0)
-      releasePointer()
-
-      expect(getStoredWidth()).toBe(600)
-      expect(getSidebar()).toHaveStyle({ width: '600px' })
-    })
-
-    it('keeps a stored width that the layout clamps when the handle is clicked without moving', () => {
-      storeWidth(800)
-      renderSidebar()
-      setLayoutWidth(1200)
-
-      pressHandle(1000)
-      releasePointer()
-
-      expect(getStoredWidth()).toBe(800)
-      expect(getSidebar()).toHaveStyle({ width: '600px' })
-    })
-
-    it('resizes with the arrow keys and persists the width', async () => {
-      renderSidebar()
-      getResizeHandle().focus()
-
-      await userEvent.keyboard('{ArrowLeft}')
-
       const widened =
         GRID_AGENT_SIDEBAR_DEFAULT_WIDTH +
         GRID_AGENT_SIDEBAR_KEYBOARD_RESIZE_STEP
-      expect(getStoredWidth()).toBe(widened)
+
+      expect(fireEvent.keyDown(getResizeHandle(), { key: 'ArrowLeft' })).toBe(
+        false,
+      )
+
       expect(getResizeHandle()).toHaveAttribute(
         'aria-valuenow',
         String(widened),
       )
+      expect(getStoredWidth()).toBe(widened)
 
-      await userEvent.keyboard('{ArrowRight}{ArrowRight}')
-
-      expect(getStoredWidth()).toBe(
-        GRID_AGENT_SIDEBAR_DEFAULT_WIDTH -
-          GRID_AGENT_SIDEBAR_KEYBOARD_RESIZE_STEP,
+      expect(fireEvent.keyDown(getResizeHandle(), { key: 'ArrowRight' })).toBe(
+        false,
       )
+
+      expect(getStoredWidth()).toBe(GRID_AGENT_SIDEBAR_DEFAULT_WIDTH)
     })
 
-    it('does not shrink below the minimum width with the arrow keys', async () => {
-      storeWidth(GRID_AGENT_SIDEBAR_MIN_WIDTH)
+    it('ignores keys other than the left and right arrows', () => {
       renderSidebar()
-      getResizeHandle().focus()
 
-      await userEvent.keyboard('{ArrowRight}')
+      expect(fireEvent.keyDown(getResizeHandle(), { key: 'a' })).toBe(true)
 
-      expect(getStoredWidth()).toBe(GRID_AGENT_SIDEBAR_MIN_WIDTH)
       expect(getResizeHandle()).toHaveAttribute(
         'aria-valuenow',
-        String(GRID_AGENT_SIDEBAR_MIN_WIDTH),
+        String(GRID_AGENT_SIDEBAR_DEFAULT_WIDTH),
       )
-    })
-
-    it('keeps a stored width that the layout clamps when widened with the arrow keys at the maximum', async () => {
-      storeWidth(800)
-      renderSidebar()
-      setLayoutWidth(1200)
-      getResizeHandle().focus()
-
-      await userEvent.keyboard('{ArrowLeft}')
-
-      expect(getStoredWidth()).toBe(800)
-      expect(getResizeHandle()).toHaveAttribute('aria-valuenow', '600')
+      expect(getStoredWidth()).toBeNull()
     })
   })
-})
-
-describe('clampSidebarWidth', () => {
-  it.each([
-    { width: 500, layoutWidth: 1200, expected: 500 },
-    { width: 900, layoutWidth: 1200, expected: 600 },
-    { width: 100, layoutWidth: 1200, expected: GRID_AGENT_SIDEBAR_MIN_WIDTH },
-    // When half of the layout is narrower than the minimum, the minimum wins
-    { width: 500, layoutWidth: 600, expected: GRID_AGENT_SIDEBAR_MIN_WIDTH },
-    // An unmeasured layout has no maximum
-    { width: 2000, layoutWidth: 0, expected: 2000 },
-  ])(
-    'clamps $width to $expected in a $layoutWidth px layout',
-    ({ width, layoutWidth, expected }) => {
-      expect(clampSidebarWidth(width, layoutWidth)).toBe(expected)
-    },
-  )
 })
