@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";function t(e,...t){e?.addEventListener?.(...t)}function n(e,...t){e?.removeEventListener?.(...t)}var r;function i(){return(i=e((()=>{r=(e,t)=>Object.hasOwn(e,t)})))()}export{t as i,i as n,n as r,r as t};
