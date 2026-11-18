@@ -68,25 +68,10 @@ const DEFAULT_PATCH_THROTTLE_MS = 250
 const DEFAULT_PATCH_ACK_TIMEOUT_MS = 15 * 1000
 
 /**
- * Makes `model` write as `replicaId`, equivalently to `model.fork(replicaId)` but without copying it.
- * The model is mutated in place, so call this only on a model nothing else holds yet, such as one just
- * decoded from the server.
- */
-export function adoptReplicaSession(model: GridModel, replicaId: number): void {
-  // The clock is a Lamport clock: its
-  // time is already past every operation in the model, including any by `replicaId` from an earlier
-  // connection, so new local operations stay newer than all of them. `setSid` keeps a peer entry for
-  // `replicaId` if the model saw its operations; `fork` drops it. Drop it too, otherwise the clock sent in
-  // sync messages reports that stale entry instead of the local time.
-  model.setSid(replicaId)
-  model.clock.peers.delete(replicaId)
-}
-
-/**
  * Decodes a server snapshot into a model that writes as `replicaId`.
  *
- * The indexed binary decoder builds the clock from the first clock-table entry only. Every other replica in the
- * table must become a peer too: a replica missing from the sync clock gets all of its patches resent, and until
+ * The indexed binary decoder builds the clock from the first clock-table entry only. Every replica in the table other
+ * than `replicaId` must become a peer: a replica missing from the sync clock gets all of its patches resent, and until
  * they arrive local edits lose last-writer-wins against the cells it wrote. A peer holds the last sequence seen, and
  * exported snapshots hold each replica's next one, so each is recorded at `time - 1`. Initial snapshots hold the
  * highest node ID instead, for which `time - 1` only makes the hub resend that replica's patch at that ID.
@@ -97,18 +82,14 @@ function decodeServerSnapshot(
   replicaId: number,
 ): GridModel {
   const model = decoder.decode(fields) as unknown as GridModel
+  model.setSid(replicaId)
+  // setSid records the decoded replica as a peer at its table entry, not at `time - 1`. Drop it so the loop below
+  // records every replica, that one included, from the clock table.
+  model.clock.peers.clear()
   const reader = decoder.dec.reader
   reader.reset(fields.c)
-  const clockTable = ClockTable.decode(reader)
-  const [first, ...others] = clockTable.byIdx
-  for (const { sid, time } of others) {
-    model.clock.observe(new Timestamp(sid, time - 1), 1)
-  }
-  adoptReplicaSession(model, replicaId)
-  if (first.sid !== replicaId) {
-    // adoptReplicaSession records the first replica at the local time, which the other entries may have raised
-    // above that replica's own
-    model.clock.peers.set(first.sid, new Timestamp(first.sid, first.time - 1))
+  for (const { sid, time: nextTime } of ClockTable.decode(reader).byIdx) {
+    model.clock.observe(new Timestamp(sid, nextTime - 1), 1)
   }
   return model
 }

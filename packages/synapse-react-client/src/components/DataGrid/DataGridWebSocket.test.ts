@@ -7,12 +7,11 @@ import {
 import { Patch } from 'json-joy/lib/json-crdt-patch'
 import { Timestamp } from 'json-joy/lib/json-crdt-patch/clock'
 import { ClockTable } from 'json-joy/lib/json-crdt-patch/codec/clock/ClockTable'
-import { Decoder as SnapshotDecoder } from 'json-joy/lib/json-crdt/codec/indexed/binary/Decoder'
 import { Encoder as SnapshotEncoder } from 'json-joy/lib/json-crdt/codec/indexed/binary/Encoder'
 import { encode as encodeCbor } from 'cbor2'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { GridModel, gridSchema } from './DataGridTypes'
-import { adoptReplicaSession, DataGridWebSocket } from './DataGridWebSocket'
+import { DataGridWebSocket } from './DataGridWebSocket'
 
 // Mock the compact codec to allow intercepting decode() in specific tests
 const mockDecode = vi.fn()
@@ -220,8 +219,8 @@ function buildDeleteHistory() {
 }
 
 /**
- * The patches the hub answers a sync clock with (GridDaoImpl.listMissingPatchInfoForClock): every patch of a replica
- * absent from the clock, and each patch whose ID is at or after its replica's entry
+ * The patches the hub answers a sync clock with: every patch of a replica absent from the clock, and each patch whose
+ * ID is at or after its replica's entry
  */
 function patchesHubResends(
   patches: Patch[],
@@ -254,12 +253,6 @@ function serveSnapshot(body: Uint8Array) {
   vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
     Promise.resolve(new Response(body as BodyInit)),
   )
-}
-
-function decodeSnapshot(model: GridModel): GridModel {
-  return new SnapshotDecoder().decode(
-    new SnapshotEncoder().encode(model as unknown as Model),
-  ) as unknown as GridModel
 }
 
 function expectLocalEditsAfter(model: GridModel, earlierPatch: Patch) {
@@ -960,32 +953,6 @@ describe('DataGridWebSocket', () => {
         expectLocalEditsAfter(createdModel, previousReplicaPatch)
       })
     })
-  })
-
-  describe('adoptReplicaSession', () => {
-    const histories = {
-      'a replica with no edits in the history': buildFreshReplicaHistory,
-      'a reconnecting replica': buildReconnectingReplicaHistory,
-    }
-    const loaders = {
-      'a decoded snapshot': (history: ServerHistory) =>
-        decodeSnapshot(history.server),
-      'a model built from patches': (history: ServerHistory) =>
-        Model.fromPatches(history.serverPatches) as unknown as GridModel,
-    }
-    for (const [historyName, buildHistory] of Object.entries(histories)) {
-      for (const [loaderName, load] of Object.entries(loaders)) {
-        it(`gives ${loaderName} the clock fork would, for ${historyName}`, () => {
-          const history = buildHistory()
-          const adopted = load(history)
-          const forked = load(history).fork(replicaId) as unknown as GridModel
-
-          adoptReplicaSession(adopted, replicaId)
-
-          expect(describeClock(adopted)).toEqual(describeClock(forked))
-        })
-      }
-    }
   })
 
   describe('messageHandler — snapshot response', () => {
