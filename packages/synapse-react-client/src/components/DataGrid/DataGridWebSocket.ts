@@ -20,6 +20,8 @@ import { type DebouncedFunc } from 'lodash-es'
 import { Decoder as SnapshotDecoder } from 'json-joy/lib/json-crdt/codec/indexed/binary/Decoder'
 import { decode as decodeCbor } from 'cbor2'
 import type { IndexedFields } from 'json-joy/lib/json-crdt/codec/indexed/binary'
+import { ClockTable } from 'json-joy/lib/json-crdt-patch/codec/clock/ClockTable'
+import { Timestamp } from 'json-joy/lib/json-crdt-patch/clock'
 import { fetchWithExponentialTimeout } from '@sage-bionetworks/synapse-client'
 
 enum SynapseGridWebSocketMessagePayloadType {
@@ -80,6 +82,36 @@ export function adoptReplicaSession(model: GridModel, replicaId: number): void {
   // sync messages reports that stale entry instead of the local time.
   model.setSid(replicaId)
   model.clock.peers.delete(replicaId)
+}
+
+/**
+ * Decodes a server snapshot into a model that writes as `replicaId`.
+ *
+ * The indexed binary decoder builds the clock from the first clock-table entry only. Every other replica in the
+ * table must become a peer too: a replica missing from the sync clock gets all of its patches resent, and until
+ * they arrive local edits lose last-writer-wins against the cells it wrote. The server's clock-table entries are
+ * each replica's next sequence number, so each peer is recorded at `time - 1`.
+ */
+function decodeSnapshot(
+  decoder: SnapshotDecoder,
+  fields: IndexedFields,
+  replicaId: number,
+): GridModel {
+  const model = decoder.decode(fields) as unknown as GridModel
+  const reader = decoder.dec.reader
+  reader.reset(fields.c)
+  const clockTable = ClockTable.decode(reader)
+  const [first, ...others] = clockTable.byIdx
+  for (const { sid, time } of others) {
+    model.clock.observe(new Timestamp(sid, time - 1), 1)
+  }
+  adoptReplicaSession(model, replicaId)
+  if (first.sid !== replicaId) {
+    // adoptReplicaSession records the first replica at the local time, which the other replicas may have advanced
+    // past that replica's own time
+    model.clock.peers.set(first.sid, new Timestamp(first.sid, first.time - 1))
+  }
+  return model
 }
 
 export class DataGridWebSocket {
@@ -310,7 +342,6 @@ export class DataGridWebSocket {
     console.debug('Received snapshot URL from server:', snapshotUrl)
     try {
       const decodedModel = await this.fetchAndDecodeSnapshot(snapshotUrl)
-      adoptReplicaSession(decodedModel, this.replicaId)
       this.model = decodedModel
       this.onModelCreate(this.model)
       this.sendClockSync()
@@ -501,10 +532,7 @@ export class DataGridWebSocket {
     const response = await fetchWithExponentialTimeout(snapshotUrl)
     const blob = await response.blob()
     const buffer = await blob.arrayBuffer()
-    const decodedFromCbor = decodeCbor(new Uint8Array(buffer))
-    const decodedModel = this.snapshotDecoder.decode(
-      decodedFromCbor as IndexedFields,
-    ) as unknown as GridModel
-    return decodedModel
+    const fields = decodeCbor(new Uint8Array(buffer)) as IndexedFields
+    return decodeSnapshot(this.snapshotDecoder, fields, this.replicaId)
   }
 }
