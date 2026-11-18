@@ -90,9 +90,9 @@ export function adoptReplicaSession(model: GridModel, replicaId: number): void {
  * The indexed binary decoder builds the clock from the first clock-table entry only. Every other replica in the
  * table must become a peer too: a replica missing from the sync clock gets all of its patches resent, and until
  * they arrive local edits lose last-writer-wins against the cells it wrote. The server's clock-table entries are
- * each replica's next sequence number, so each peer is recorded at `time - 1`.
+ * each replica's next sequence number, and a peer holds the last sequence seen, so each is recorded at `time - 1`.
  */
-function decodeSnapshot(
+function decodeServerSnapshot(
   decoder: SnapshotDecoder,
   fields: IndexedFields,
   replicaId: number,
@@ -107,8 +107,8 @@ function decodeSnapshot(
   }
   adoptReplicaSession(model, replicaId)
   if (first.sid !== replicaId) {
-    // adoptReplicaSession records the first replica at the local time, which the other replicas may have advanced
-    // past that replica's own time
+    // adoptReplicaSession records the first replica at the local time, which the other entries may have raised
+    // above that replica's own
     model.clock.peers.set(first.sid, new Timestamp(first.sid, first.time - 1))
   }
   return model
@@ -533,6 +533,6 @@ export class DataGridWebSocket {
     const blob = await response.blob()
     const buffer = await blob.arrayBuffer()
     const fields = decodeCbor(new Uint8Array(buffer)) as IndexedFields
-    return decodeSnapshot(this.snapshotDecoder, fields, this.replicaId)
+    return decodeServerSnapshot(this.snapshotDecoder, fields, this.replicaId)
   }
 }

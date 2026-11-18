@@ -960,12 +960,13 @@ describe('DataGridWebSocket', () => {
     })
 
     describe('for a snapshot written by several replicas', () => {
-      async function openImportedSnapshot() {
+      async function openImportedSnapshot(leadingEntries: Timestamp[] = []) {
         vi.spyOn(console, 'debug').mockImplementation(() => {})
         vi.spyOn(console, 'log').mockImplementation(() => {})
         const { server, createPatch, importPatch } = buildImportedHistory()
         serveSnapshot(
           encodeServerSnapshot(server, [
+            ...leadingEntries,
             new Timestamp(INTERNAL_REPLICA, createPatch.nextTime()),
             new Timestamp(IMPORT_REPLICA, importPatch.nextTime()),
           ]),
@@ -983,23 +984,31 @@ describe('DataGridWebSocket', () => {
         return { model, mockSocket, createPatch, importPatch }
       }
 
-      it('reports every snapshot replica at its last sequence number in the sync clock', async () => {
-        const { mockSocket, createPatch, importPatch } =
-          await openImportedSnapshot()
+      const tables = {
+        'led by another replica': [],
+        'led by this replica, from an earlier connection': [
+          new Timestamp(replicaId, 3),
+        ],
+      }
+      for (const [tableName, leadingEntries] of Object.entries(tables)) {
+        it(`reports every snapshot replica at its last sequence number in the sync clock, for a clock table ${tableName}`, async () => {
+          const { mockSocket, createPatch, importPatch } =
+            await openImportedSnapshot(leadingEntries)
 
-        const syncRequest = parseSentMessages(mockSocket).find(
-          message => message[2] === 'synchronize-clock',
-        )!
-        // The import replica is the newest, so local time is its next sequence number
-        expect(syncRequest[3]).toEqual(
-          expect.arrayContaining([
-            [replicaId, importPatch.nextTime()],
-            [INTERNAL_REPLICA, createPatch.nextTime() - 1],
-            [IMPORT_REPLICA, importPatch.nextTime() - 1],
-          ]),
-        )
-        expect(syncRequest[3]).toHaveLength(3)
-      })
+          const syncRequest = parseSentMessages(mockSocket).find(
+            message => message[2] === 'synchronize-clock',
+          )!
+          // The import replica is the newest, so local time is its next sequence number
+          expect(syncRequest[3]).toEqual(
+            expect.arrayContaining([
+              [replicaId, importPatch.nextTime()],
+              [INTERNAL_REPLICA, createPatch.nextTime() - 1],
+              [IMPORT_REPLICA, importPatch.nextTime() - 1],
+            ]),
+          )
+          expect(syncRequest[3]).toHaveLength(3)
+        })
+      }
 
       it('applies a local edit to a cell another replica wrote, immediately after opening', async () => {
         const { model } = await openImportedSnapshot()
