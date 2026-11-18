@@ -6,6 +6,11 @@
   min-height: 100dvh;
   background-color: var(--synapse-white);
   border-left: 1px solid var(--synapse-v2-gray-200);
+
+  // The global styles make every <aside> a block, which overrides the browser's own [hidden] rule
+  &[hidden] {
+    display: none;
+  }
 }
 
 // Stuck to the top of the viewport and sized by script to the part of the sidebar that is on

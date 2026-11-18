@@ -1,4 +1,5 @@
 import CurieAvatarHead from '@/assets/mui_components/CurieAvatarHead'
+import { SynapseErrorBoundary } from '@/components/error/ErrorBanner'
 import { useHeightInViewport } from '@/utils/hooks/useHeightInViewport'
 import CloseIcon from '@mui/icons-material/Close'
 import { Fab, IconButton, Tooltip, Typography } from '@mui/material'
@@ -22,7 +23,8 @@ export type GridAgentSidebarProps = {
  * the page and is at least as tall as the viewport. Its header and content stay on screen while the
  * page scrolls, whatever the page shows above or below the layout. Closing it hides it without
  * unmounting its children, so their state (such as a chat draft) survives closing and reopening.
- * While it is closed, a floating button in the bottom-right corner of the viewport reopens it.
+ * While it is closed, a floating button in the bottom-right corner of the viewport reopens it. An
+ * error in its children is shown in the sidebar instead of replacing the page.
  */
 export function GridAgentSidebar({
   open,
@@ -32,7 +34,7 @@ export function GridAgentSidebar({
 }: GridAgentSidebarProps) {
   const titleId = useId()
   const [sidebarElement, setSidebarElement] = useState<HTMLElement | null>(null)
-  // A hidden sidebar measures as empty, so it is not measured while closed and reopens at its last height
+  // A hidden sidebar measures as empty, so it is measured only while open
   const heightInViewport = useHeightInViewport(open ? sidebarElement : null)
 
   return (
@@ -69,7 +71,9 @@ export function GridAgentSidebar({
               <CloseIcon fontSize="small" />
             </IconButton>
           </div>
-          <div className={styles.body}>{children}</div>
+          <div className={styles.body}>
+            <SynapseErrorBoundary>{children}</SynapseErrorBoundary>
+          </div>
         </div>
       </aside>
     </>

@@ -1,11 +1,14 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { ReactNode } from 'react'
 import {
   CLOSE_GRID_AGENT_SIDEBAR_LABEL,
   GRID_AGENT_SIDEBAR_TITLE,
   GridAgentSidebar,
   OPEN_GRID_AGENT_SIDEBAR_LABEL,
 } from './GridAgentSidebar'
+
+const CHAT_ERROR = 'The chat failed to render'
 
 function renderSidebar(open = true) {
   const onOpen = vi.fn()
@@ -112,20 +115,43 @@ describe('GridAgentSidebar', () => {
     expect(getPanel()).toHaveStyle({ height: '500px' })
   })
 
-  it('reopens at the height it had before it was closed', () => {
+  it('sizes its panel when reopened, ignoring the empty size it measures while closed', () => {
     vi.spyOn(window, 'innerHeight', 'get').mockReturnValue(700)
     const { setOpen } = renderSidebar()
     const sidebar = getSidebar()
+    let rectWhileShown = new DOMRect(0, -100, 400, 600)
     vi.spyOn(sidebar, 'getBoundingClientRect').mockImplementation(() =>
       // Like a browser, a hidden sidebar measures as empty
-      sidebar.hidden ? new DOMRect() : new DOMRect(0, -100, 400, 600),
+      sidebar.hidden ? new DOMRect() : rectWhileShown,
     )
     scrollPage()
 
     setOpen(false)
+    // The page scrolls back to the top while the sidebar is closed
+    rectWhileShown = new DOMRect(0, 0, 400, 600)
     scrollPage()
     setOpen(true)
 
-    expect(getPanel()).toHaveStyle({ height: '500px' })
+    expect(getPanel()).toHaveStyle({ height: '600px' })
+  })
+
+  it('shows an error in place of content that throws, and can still be closed', async () => {
+    const user = userEvent.setup()
+    const onClose = vi.fn()
+    function FailingChat(): ReactNode {
+      throw new Error(CHAT_ERROR)
+    }
+
+    render(
+      <GridAgentSidebar open={true} onOpen={vi.fn()} onClose={onClose}>
+        <FailingChat />
+      </GridAgentSidebar>,
+    )
+
+    expect(within(getSidebar()).getByText(CHAT_ERROR)).toBeInTheDocument()
+    await user.click(
+      screen.getByRole('button', { name: CLOSE_GRID_AGENT_SIDEBAR_LABEL }),
+    )
+    expect(onClose).toHaveBeenCalledTimes(1)
   })
 })
