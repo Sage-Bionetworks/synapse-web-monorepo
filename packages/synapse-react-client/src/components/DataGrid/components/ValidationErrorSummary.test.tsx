@@ -1,7 +1,10 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import createValidationTestRow from '../utils/createValidationTestRow'
-import { ValidationErrorSummary } from './ValidationErrorSummary'
+import {
+  SHOW_VALIDATION_ERRORS_LABEL,
+  ValidationErrorSummary,
+} from './ValidationErrorSummary'
 
 describe('ValidationErrorSummary', () => {
   it('shows the error count, formatted with the locale', () => {
@@ -28,7 +31,7 @@ describe('ValidationErrorSummary', () => {
     render(<ValidationErrorSummary rowValues={[]} onShow={onShow} />)
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'Show validation errors' }),
+      screen.getByRole('button', { name: SHOW_VALIDATION_ERRORS_LABEL }),
     )
     expect(onShow).toHaveBeenCalledOnce()
   })

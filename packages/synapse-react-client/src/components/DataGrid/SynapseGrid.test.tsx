@@ -11,11 +11,16 @@ import {
   GridSession,
   ListGridReplicasResponse,
 } from '@sage-bionetworks/synapse-client'
-import { act, render, screen, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { s } from 'json-joy/lib/json-crdt'
 import { http, HttpResponse } from 'msw'
 import { createRef, ReactNode } from 'react'
+import { HIDE_VALIDATION_ERRORS_LABEL } from './components/ValidationAlert'
+import {
+  SHOW_VALIDATION_ERRORS_LABEL,
+  VALIDATION_ERROR_SUMMARY_LABEL,
+} from './components/ValidationErrorSummary'
 import { GridModel } from './DataGridTypes'
 import SynapseGrid, { SynapseGridHandle, SynapseGridProps } from './SynapseGrid'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
@@ -28,6 +33,7 @@ const mockUseDataGridWebSocket = vi.mocked(useDataGridWebSocket)
 const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
 const SESSION_ID = 'test-grid-session'
+const OTHER_SESSION_ID = 'other-test-grid-session'
 const REPLICA_ID = 7
 const HEADER_TEXT = 'Working Copy'
 const CONTENT_CLASS_NAME = 'test-grid-content'
@@ -44,8 +50,11 @@ const mockGridSession: GridSession = {
 
 function registerGridSessionHandlers() {
   server.use(
-    http.get(`${repoOrigin}/repo/v1/grid/session/:sessionId`, () =>
-      HttpResponse.json(mockGridSession, { status: 200 }),
+    http.get(`${repoOrigin}/repo/v1/grid/session/:sessionId`, ({ params }) =>
+      HttpResponse.json(
+        { ...mockGridSession, sessionId: String(params.sessionId) },
+        { status: 200 },
+      ),
     ),
     http.post(`${repoOrigin}/repo/v1/grid/session/:sessionId/replica`, () =>
       HttpResponse.json(
@@ -185,36 +194,72 @@ describe('SynapseGrid', () => {
     expect(requirement.closest(`.${CONTENT_CLASS_NAME}`)).not.toBeNull()
   })
 
-  it('hides the validation errors banner behind a summary in the toolbar, and shows it again', async () => {
+  it('hides the validation errors banner behind a summary in the toolbar, and shows it again collapsed', async () => {
     const model = createTestModel(2, 2, REPLICA_ID)
     setFirstRowValidation(model, [INVALID_CELL_MESSAGE])
     mockConnectedWebSocketWithModel(model)
     const { user } = await renderGridWithSession()
 
     expect(screen.getByText('Validation errors')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Expand' }))
     await user.click(
-      screen.getByRole('button', { name: 'Hide validation errors' }),
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
     )
 
     expect(screen.queryByText('Validation errors')).not.toBeInTheDocument()
     const summary = screen.getByRole('group', {
-      name: 'Validation errors summary',
+      name: VALIDATION_ERROR_SUMMARY_LABEL,
     })
     expect(within(summary).getByText('1')).toBeInTheDocument()
     const showLink = within(summary).getByRole('button', {
-      name: 'Show validation errors',
+      name: SHOW_VALIDATION_ERRORS_LABEL,
     })
     expect(showLink).toHaveFocus()
 
     await user.click(showLink)
 
     expect(screen.getByText('Validation errors')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Expand' })).toBeInTheDocument()
     expect(
-      screen.queryByRole('group', { name: 'Validation errors summary' }),
+      screen.queryByRole('group', { name: VALIDATION_ERROR_SUMMARY_LABEL }),
     ).not.toBeInTheDocument()
     expect(
-      screen.getByRole('button', { name: 'Hide validation errors' }),
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
     ).toHaveFocus()
+  })
+
+  it('keeps the banner hidden when another session loads', async () => {
+    const model = createTestModel(2, 2, REPLICA_ID)
+    setFirstRowValidation(model, [INVALID_CELL_MESSAGE])
+    mockConnectedWebSocketWithModel(model)
+    const { user, ref, rerender } = await renderGridWithSession()
+    await user.click(
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
+    )
+
+    // Connecting to another session clears the model until that session's grid loads
+    const connect = vi.fn()
+    mockConnectedWebSocket({
+      connect,
+      model: null,
+      modelSnapshot: null,
+      hasCompletedInitialSync: false,
+      hasCompletedInitialLoad: false,
+    })
+    act(() => {
+      ref.current!.loadExistingSession(OTHER_SESSION_ID)
+    })
+    await waitFor(() =>
+      expect(connect).toHaveBeenCalledWith(REPLICA_ID, OTHER_SESSION_ID),
+    )
+
+    mockConnectedWebSocketWithModel(createTestModel(2, 2, REPLICA_ID))
+    rerender(<SynapseGrid ref={ref} />)
+
+    expect(
+      screen.getByRole('group', { name: VALIDATION_ERROR_SUMMARY_LABEL }),
+    ).toBeInTheDocument()
+    expect(screen.queryByText('No validation errors')).not.toBeInTheDocument()
   })
 
   it('leaves focus in place when validation results switch the banner between no errors and errors', async () => {
@@ -224,7 +269,7 @@ describe('SynapseGrid', () => {
 
     expect(screen.getByText('No validation errors')).toBeInTheDocument()
     expect(
-      screen.getByRole('button', { name: 'Hide validation errors' }),
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
     ).not.toHaveFocus()
 
     const helpLink = screen.getByRole('link', { name: 'Help and Instructions' })

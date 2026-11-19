@@ -28,6 +28,8 @@ type GroupBy = 'row' | 'column' | 'message'
  *  can crash the tab. The badge still shows the full count. */
 export const MAX_LISTED_ERRORS = 100
 
+export const HIDE_VALIDATION_ERRORS_LABEL = 'Hide validation errors'
+
 type ValidationAlertProps = {
   rowValues: DataGridRow[]
   columnNames: string[]
@@ -118,7 +120,7 @@ function HideLink({
       variant="body1"
       ref={linkRef}
       onClick={onHide}
-      aria-label="Hide validation errors"
+      aria-label={HIDE_VALIDATION_ERRORS_LABEL}
       sx={headerLinkSx}
     >
       Hide
@@ -131,6 +133,15 @@ const bannerBaseSx = {
   borderLeft: '4px solid',
   borderRadius: 1,
   mb: 1,
+} as const
+
+// One line of banner content: the loading and no-errors banners, and the errors banner's header
+const bannerRowSx = {
+  display: 'flex',
+  alignItems: 'center',
+  px: 2,
+  py: 2,
+  gap: 1,
 } as const
 
 const tabSx = { minHeight: 36, py: 0.5 } as const
@@ -362,13 +373,9 @@ export const ValidationAlert = ({
       <Box
         sx={{
           ...bannerBaseSx,
+          ...bannerRowSx,
           borderColor: 'divider',
           borderLeftColor: 'divider',
-          px: 2,
-          py: 2,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
         }}
       >
         <SynapseSpinner size={14} margin="0" />
@@ -384,13 +391,9 @@ export const ValidationAlert = ({
       <Box
         sx={{
           ...bannerBaseSx,
+          ...bannerRowSx,
           borderColor: 'success.main',
           borderLeftColor: 'success.main',
-          px: 2,
-          py: 2,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
         }}
       >
         <Typography variant="body1" color="success.main">
@@ -410,15 +413,7 @@ export const ValidationAlert = ({
       }}
     >
       {/* Header */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          px: 2,
-          py: 2,
-          gap: 1,
-        }}
-      >
+      <Box sx={bannerRowSx}>
         <Chip
           label={allErrors.length.toLocaleString()}
           color="error"

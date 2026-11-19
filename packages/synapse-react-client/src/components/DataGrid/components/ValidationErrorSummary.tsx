@@ -4,6 +4,9 @@ import { DataGridRow } from '../DataGridTypes'
 import { countValidationErrors } from '../utils/groupValidationErrors'
 import styles from './ValidationErrorSummary.module.scss'
 
+export const VALIDATION_ERROR_SUMMARY_LABEL = 'Validation errors summary'
+export const SHOW_VALIDATION_ERRORS_LABEL = 'Show validation errors'
+
 type ValidationErrorSummaryProps = {
   rowValues: DataGridRow[]
   onShow: () => void
@@ -25,7 +28,7 @@ export function ValidationErrorSummary({
     <Stack
       direction="row"
       role="group"
-      aria-label="Validation errors summary"
+      aria-label={VALIDATION_ERROR_SUMMARY_LABEL}
       className={styles.container}
     >
       <Chip
@@ -41,7 +44,7 @@ export function ValidationErrorSummary({
         variant="body1"
         ref={showLinkRef}
         onClick={onShow}
-        aria-label="Show validation errors"
+        aria-label={SHOW_VALIDATION_ERRORS_LABEL}
       >
         Show
       </Link>

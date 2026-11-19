@@ -1,6 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MAX_LISTED_ERRORS, ValidationAlert } from './ValidationAlert'
+import {
+  HIDE_VALIDATION_ERRORS_LABEL,
+  MAX_LISTED_ERRORS,
+  ValidationAlert,
+} from './ValidationAlert'
 import { DataGridRow } from '../DataGridTypes'
 import createValidationTestRow from '../utils/createValidationTestRow'
 
@@ -10,8 +14,6 @@ const defaultProps = {
   onNavigateToCell: vi.fn(),
   onHide: vi.fn(),
 }
-
-const HIDE_LINK_NAME = 'Hide validation errors'
 
 const makeInvalidRow = (cellErrors: Record<string, string[]>) =>
   createValidationTestRow('invalid', cellErrors)
@@ -79,7 +81,9 @@ describe('ValidationAlert', () => {
       />,
     )
 
-    await userEvent.click(screen.getByRole('button', { name: HIDE_LINK_NAME }))
+    await userEvent.click(
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
+    )
     expect(onHide).toHaveBeenCalledOnce()
   })
 
@@ -88,7 +92,9 @@ describe('ValidationAlert', () => {
     render(<ValidationAlert {...defaultProps} rowValues={[]} onHide={onHide} />)
 
     expect(screen.getByText('No validation errors')).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: HIDE_LINK_NAME }))
+    await userEvent.click(
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
+    )
     expect(onHide).toHaveBeenCalledOnce()
   })
 
@@ -98,7 +104,7 @@ describe('ValidationAlert', () => {
       <ValidationAlert {...defaultProps} rowValues={rowValues} isLoading />,
     )
     expect(
-      screen.queryByRole('button', { name: HIDE_LINK_NAME }),
+      screen.queryByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
     ).not.toBeInTheDocument()
   })
 
