@@ -1,5 +1,7 @@
 import { ALLOWED_VALUES_MESSAGE } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 import { describe, expect, test, vi } from 'vitest'
+import dayjs from 'dayjs'
+import allFieldTypesWorkflow from '@/mocks/aridhia/cpathBasicAllAccessRequestV2Workflow.json'
 import {
   fairSectionToRjsf,
   FairField,
@@ -128,7 +130,8 @@ describe('FAIR string formats', () => {
       { name: 'plain', type: 'string' },
     ],
   }
-  const { schema } = fairSectionToRjsf(formattedSection)
+  const form = fairSectionToRjsf(formattedSection)
+  const { schema } = form
 
   test('email, uri and uuid string fields carry their JSON-schema format', () => {
     expect(schema.properties!.email).toMatchObject({ format: 'email' })
@@ -143,7 +146,7 @@ describe('FAIR string formats', () => {
 
   test('flags malformed values with the shared validator’s messages', () => {
     expect(
-      validateFairSection(schema, {
+      validateFairSection(form, {
         email: 'jane@',
         website: 'not a url',
         orcid_uuid: '1234',
@@ -162,7 +165,7 @@ describe('FAIR string formats', () => {
 
   test('accepts well-formed values', () => {
     expect(
-      validateFairSection(schema, {
+      validateFairSection(form, {
         email: 'jane@example.edu',
         website: 'https://example.org/lab',
         orcid_uuid: '123e4567-e89b-12d3-a456-426614174000',
@@ -172,7 +175,7 @@ describe('FAIR string formats', () => {
 
   test('does not flag blank values (undefined, null, or empty string)', () => {
     expect(
-      validateFairSection(schema, {
+      validateFairSection(form, {
         email: '',
         website: null,
         orcid_uuid: undefined,
@@ -182,7 +185,7 @@ describe('FAIR string formats', () => {
 })
 
 describe('validateFairSection', () => {
-  const { schema } = fairSectionToRjsf({
+  const form = fairSectionToRjsf({
     key: 'about',
     fields: [
       { name: 'name', type: 'string', validation: { required: true } },
@@ -203,16 +206,16 @@ describe('validateFairSection', () => {
   })
 
   test('counts a blank required answer as unanswered, without a field message', () => {
-    expect(validateFairSection(schema, { name: '' })).toEqual({
+    expect(validateFairSection(form, { name: '' })).toEqual({
       isValid: false,
       fieldErrors: {},
     })
-    expect(validateFairSection(schema, { name: 'Jane' }).isValid).toBe(true)
+    expect(validateFairSection(form, { name: 'Jane' }).isValid).toBe(true)
   })
 
   test('flags a text answer outside FAIR’s length limits', () => {
     expect(
-      validateFairSection(schema, { name: 'Jane', summary: 'Too short' }),
+      validateFairSection(form, { name: 'Jane', summary: 'Too short' }),
     ).toEqual({
       isValid: false,
       fieldErrors: { summary: 'Must be at least 20 characters' },
@@ -220,12 +223,12 @@ describe('validateFairSection', () => {
   })
 
   test('flags a list answer that is not one of its options', () => {
-    expect(validateFairSection(schema, { name: 'Jane', phase: '3' })).toEqual({
+    expect(validateFairSection(form, { name: 'Jane', phase: '3' })).toEqual({
       isValid: false,
       fieldErrors: { phase: ALLOWED_VALUES_MESSAGE },
     })
     expect(
-      validateFairSection(schema, { name: 'Jane', phase: '2' }).isValid,
+      validateFairSection(form, { name: 'Jane', phase: '2' }).isValid,
     ).toBe(true)
   })
 
@@ -233,8 +236,11 @@ describe('validateFairSection', () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {})
     const result = validateFairSection(
       {
-        type: 'object',
-        properties: { name: { type: 'string', minLength: -1 } },
+        schema: {
+          type: 'object',
+          properties: { name: { type: 'string', minLength: -1 } },
+        },
+        uiSchema: {},
       },
       { name: 'Jane' },
     )
@@ -256,7 +262,7 @@ describe('fairSectionToRjsf keeps the schema compilable', () => {
   })
 
   test('drops length limits that are not non-negative integers', () => {
-    const { schema } = fairSectionToRjsf({
+    const rjsf = fairSectionToRjsf({
       key: 'about',
       fields: [
         {
@@ -268,14 +274,262 @@ describe('fairSectionToRjsf keeps the schema compilable', () => {
         { name: 'phone', type: 'phone', validation: { maximum: '' } },
       ],
     })
-    expect(schema.properties).toEqual({
+    expect(rjsf.schema.properties).toEqual({
       name: { type: 'string' },
       bio: { type: 'string' },
       phone: { type: 'string' },
     })
     expect(
-      validateFairSection(schema, { name: 'Jane' }).schemaError,
+      validateFairSection(rjsf, { name: 'Jane' }).schemaError,
     ).toBeUndefined()
+  })
+})
+
+describe('FAIR number fields', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      {
+        name: 'number_type',
+        type: 'number',
+        label: 'Number',
+        validation: { minimum: 1, maximum: 10, required: true },
+        defaultValue: 10,
+      },
+      // The spec types bounds and defaults as strings.
+      {
+        name: 'ratio',
+        type: 'number',
+        validation: { minimum: '0', maximum: '0.5' },
+        defaultValue: '0.25',
+      },
+    ],
+  })
+
+  test('map to a JSON-schema number with value bounds, not length bounds', () => {
+    expect(form.unsupported).toEqual([])
+    expect(form.schema.properties!.number_type).toEqual({
+      type: 'number',
+      title: 'Number',
+      minimum: 1,
+      maximum: 10,
+      default: 10,
+    })
+    expect(form.schema.properties!.ratio).toMatchObject({
+      type: 'number',
+      minimum: 0,
+      maximum: 0.5,
+      default: 0.25,
+    })
+    expect(form.schema.properties!.number_type).not.toHaveProperty('minLength')
+    expect(form.schema.required).toEqual(['number_type'])
+  })
+
+  test('flag values outside the bounds with the shared validator’s messages', () => {
+    expect(
+      validateFairSection(form, { number_type: 0, ratio: 0.75 }).fieldErrors,
+    ).toEqual({
+      number_type: 'Must be 1 or more',
+      ratio: 'Must be 0.5 or less',
+    })
+    expect(validateFairSection(form, { number_type: 11 }).fieldErrors).toEqual({
+      number_type: 'Must be 10 or less',
+    })
+  })
+
+  test('accept in-range values, including decimals and bounds themselves', () => {
+    expect(validateFairSection(form, { number_type: 1, ratio: 0 })).toEqual({
+      isValid: true,
+      fieldErrors: {},
+    })
+    expect(
+      validateFairSection(form, { number_type: 9.5, ratio: 0.5 }).isValid,
+    ).toBe(true)
+  })
+
+  test('flag a non-numeric value', () => {
+    expect(validateFairSection(form, { number_type: '9' })).toEqual({
+      isValid: false,
+      fieldErrors: { number_type: 'must be number' },
+    })
+  })
+})
+
+describe('FAIR text length bounds', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      {
+        name: 'summary',
+        type: 'markdown',
+        validation: { minimum: 5, maximum: 10 },
+      },
+      { name: 'title', type: 'string', validation: { minimum: '2' } },
+      { name: 'phone', type: 'phone', validation: { maximum: 6 } },
+    ],
+  })
+
+  test('map to JSON-schema length bounds', () => {
+    expect(form.schema.properties!.summary).toMatchObject({
+      minLength: 5,
+      maxLength: 10,
+    })
+    expect(form.schema.properties!.phone).toMatchObject({ maxLength: 6 })
+  })
+
+  test('flag values shorter or longer than the bounds with the shared validator’s messages', () => {
+    expect(
+      validateFairSection(form, {
+        summary: 'abc',
+        title: 'a',
+        phone: '+1 2345',
+      }).fieldErrors,
+    ).toEqual({
+      summary: 'Must be at least 5 characters',
+      title: 'Must be at least 2 characters',
+      phone: 'Must be at most 6 characters',
+    })
+    expect(
+      validateFairSection(form, { summary: 'abcdefghijk' }).fieldErrors,
+    ).toEqual({ summary: 'Must be at most 10 characters' })
+  })
+
+  test('accept values within the bounds', () => {
+    expect(
+      validateFairSection(form, {
+        summary: 'abcde',
+        title: 'ab',
+        phone: '+1 23',
+      }),
+    ).toEqual({ isValid: true, fieldErrors: {} })
+  })
+})
+
+describe('FAIR date minimum', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      { name: 'start', type: 'date', validation: { minimum: 'today' } },
+      { name: 'end', type: 'date', validation: { minimum: '2027-03-05' } },
+      { name: 'other', type: 'date', validation: { minimum: 'tomorrow' } },
+    ],
+  })
+  const utcMidnight = (date: dayjs.Dayjs) =>
+    `${date.format('YYYY-MM-DD')}T00:00:00.000Z`
+
+  test('restricts the date picker and the schema for `today` and ISO dates only', () => {
+    expect(form.uiSchema.start).toEqual({
+      'ui:widget': 'DateWidget',
+      'ui:options': { minDate: 'today' },
+    })
+    expect(form.schema.properties!.start).toMatchObject({
+      formatMinimum: utcMidnight(dayjs()),
+    })
+    expect(form.uiSchema.end).toEqual({
+      'ui:widget': 'DateWidget',
+      'ui:options': { minDate: '2027-03-05' },
+    })
+    expect(form.schema.properties!.end).toMatchObject({
+      formatMinimum: '2027-03-05T00:00:00.000Z',
+    })
+    expect(form.uiSchema.other).toEqual({ 'ui:widget': 'DateWidget' })
+    expect(form.schema.properties!.other).not.toHaveProperty('formatMinimum')
+  })
+
+  test('resolves a `today` minimum to the given date', () => {
+    const later = fairSectionToRjsf(
+      {
+        key: 'project',
+        fields: [
+          { name: 'start', type: 'date', validation: { minimum: 'today' } },
+        ],
+      },
+      '2030-01-02',
+    )
+    expect(later.schema.properties!.start).toMatchObject({
+      formatMinimum: '2030-01-02T00:00:00.000Z',
+    })
+  })
+
+  test('flags a date before the minimum', () => {
+    expect(
+      validateFairSection(form, {
+        start: utcMidnight(dayjs().subtract(1, 'day')),
+        end: '2027-03-04T00:00:00.000Z',
+        other: '2000-01-01T00:00:00.000Z',
+      }).fieldErrors,
+    ).toEqual({
+      start: 'Must be today or later',
+      end: 'Must be Mar 5, 2027 or later',
+    })
+  })
+
+  test('accepts the minimum date itself', () => {
+    expect(
+      validateFairSection(form, {
+        start: utcMidnight(dayjs()),
+        end: '2027-03-05T00:00:00.000Z',
+      }),
+    ).toEqual({ isValid: true, fieldErrors: {} })
+  })
+
+  test('flags a date the picker could not parse, with or without a minimum', () => {
+    expect(
+      validateFairSection(form, {
+        end: 'Invalid DateT00:00:00.000Z',
+        other: 'Invalid DateT00:00:00.000Z',
+      }).fieldErrors,
+    ).toEqual({
+      end: 'Enter a valid date',
+      other: 'Enter a valid date',
+    })
+  })
+})
+
+describe('FAIR default values', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      { name: 'opt_out', type: 'boolean', defaultValue: false },
+      { name: 'opt_in', type: 'boolean', defaultValue: true },
+      { name: 'count', type: 'number', defaultValue: 0 },
+      { name: 'blank', type: 'string', defaultValue: '' },
+      { name: 'nulled', type: 'string', defaultValue: null },
+    ],
+  })
+
+  test('keep falsy defaults (`false`, `0`) with their own types', () => {
+    expect(form.schema.properties!.opt_out).toMatchObject({ default: false })
+    expect(form.schema.properties!.opt_in).toMatchObject({ default: true })
+    expect(form.schema.properties!.count).toMatchObject({ default: 0 })
+  })
+
+  test('treat an empty-string or null default as no default', () => {
+    expect(form.schema.properties!.blank).not.toHaveProperty('default')
+    expect(form.schema.properties!.nulled).not.toHaveProperty('default')
+  })
+})
+
+describe('the live omop_als1001 request form', () => {
+  test('renders every field it contains, of every RDCA-DAP field type', () => {
+    const sections = parseFairFormSections(allFieldTypesWorkflow)
+    expect(sections.map(s => s.key)).toEqual(['about', 'project'])
+    expect(new Set(sections.flatMap(s => s.fields.map(f => f.type)))).toEqual(
+      new Set([
+        'string',
+        'text',
+        'markdown',
+        'phone',
+        'date',
+        'label',
+        'boolean',
+        'number',
+        'list',
+      ]),
+    )
+    for (const section of sections) {
+      expect(fairSectionToRjsf(section).unsupported).toEqual([])
+    }
   })
 })
 

@@ -5,6 +5,7 @@ import {
 } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 import dayjs from 'dayjs'
 import { FairField, FairFormPayload } from '@/aridhia-queries/FairFormPayload'
+import { localToday } from '@/utils/functions/DateTimeUtils'
 
 export type { FairField, FairFormPayload }
 
@@ -27,6 +28,7 @@ const RENDERABLE_TYPES = new Set([
   'markdown',
   'boolean',
   'date',
+  'number',
   'list',
   'phone',
   'label',
@@ -66,14 +68,41 @@ export function parseFairFormSections(
   return []
 }
 
+/** FAIR sends numeric bounds as numbers or numeric strings; anything else is no bound. */
+function num(value: unknown): number | undefined {
+  let parsed = Number.NaN
+  if (typeof value === 'number') {
+    parsed = value
+  } else if (typeof value === 'string' && value.trim() !== '') {
+    parsed = Number(value)
+  }
+  return Number.isFinite(parsed) ? parsed : undefined
+}
+
 /**
- * A FAIR text length limit (sent as a string) as a JSON-schema `minLength`/`maxLength`, which
- * must be a non-negative integer. Anything else is no limit, so the schema still compiles.
+ * A FAIR text length limit as a JSON-schema `minLength`/`maxLength`, which must be a
+ * non-negative integer. Anything else is no limit, so the schema still compiles.
  */
-function lengthBound(value: string | undefined): number | undefined {
-  const bound =
-    value == null || value.trim() === '' ? Number.NaN : Number(value)
-  return Number.isInteger(bound) && bound >= 0 ? bound : undefined
+function lengthBound(value: unknown): number | undefined {
+  const bound = num(value)
+  return bound !== undefined && Number.isInteger(bound) && bound >= 0
+    ? bound
+    : undefined
+}
+
+/**
+ * A `date` field's `validation.minimum`, as a `DateWidget` `minDate` option: `today`, or the
+ * calendar date of an ISO 8601 date/date-time. Other values (RDCA-DAP also understands e.g.
+ * `tomorrow`) are ignored.
+ */
+function minDateOption(minimum: unknown): string | undefined {
+  if (typeof minimum !== 'string') {
+    return undefined
+  }
+  if (minimum.toLowerCase() === 'today') {
+    return 'today'
+  }
+  return /^\d{4}-\d{2}-\d{2}/.test(minimum) ? minimum.slice(0, 10) : undefined
 }
 
 /**
@@ -87,8 +116,14 @@ function isBlankAnswer(value: unknown): boolean {
   return value === undefined || value === null || value === ''
 }
 
-/** Translates one FAIR form section into an RJSF schema/uiSchema pair. */
-export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
+/**
+ * Translates one FAIR form section into an RJSF schema/uiSchema pair. `today` (`YYYY-MM-DD`,
+ * the user's local date by default) resolves a date field's `today` minimum.
+ */
+export function fairSectionToRjsf(
+  section: FairFormSection,
+  today: string = localToday(),
+): FairRjsfSection {
   const properties: Record<string, RJSFSchema> = {}
   const uiSchema: UiSchema = {
     'ui:order': section.fields.map(field => field.name!),
@@ -148,10 +183,28 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
         break
       }
       case 'date': {
-        // The FAIR API expects a `date-time`; the only date field is project_end_date
-        // so a simple date picker (DateWidget) is ideal.
+        // The FAIR API expects a `date-time`, but FAIR date fields ask for a calendar date
+        // only, so a simple date picker (DateWidget) is ideal.
         properties[name] = { type: 'string', format: 'date-time' }
         uiSchema[name] = { 'ui:widget': 'DateWidget' }
+        const minDate = minDateOption(v.minimum)
+        if (minDate) {
+          // `DateWidget` values are UTC midnight of the picked calendar date, so ajv-formats'
+          // `formatMinimum` against UTC midnight of the earliest date compares calendar dates.
+          properties[name].formatMinimum =
+            `${minDate === 'today' ? today : minDate}T00:00:00.000Z`
+          uiSchema[name]['ui:options'] = { minDate }
+        }
+        break
+      }
+      case 'number': {
+        // FAIR has no integer flag, so decimals are allowed.
+        properties[name] = {
+          type: 'number',
+          minimum: num(v.minimum),
+          maximum: num(v.maximum),
+        }
+        uiSchema[name] = { 'ui:placeholder': field.placeholder }
         break
       }
       case 'list': {
@@ -188,8 +241,15 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
       properties[name].title = field.label
     }
 
-    if (field.defaultValue) {
-      properties[name].default = field.defaultValue
+    const { defaultValue } = field
+    // FAIR sends `''` for "no default"; `false` and `0` are real defaults.
+    if (
+      defaultValue !== undefined &&
+      defaultValue !== null &&
+      defaultValue !== ''
+    ) {
+      properties[name].default =
+        field.type === 'number' ? num(defaultValue) : defaultValue
     }
   }
 
@@ -219,19 +279,25 @@ export type FairSectionValidation = {
   schemaError?: string
 }
 
+/** The shared validator's `date` format message, for date pickers storing a `date-time`. */
+const INVALID_DATE_MESSAGE = 'Enter a valid date'
+
 /**
  * Validates answers against a `fairSectionToRjsf` schema with the shared
  * `jsonSchemaFormValidator`, so the messages match every other JSON-schema form. Blank answers
  * count as unanswered: they fail `required`, and optional fields may stay empty.
  */
 export function validateFairSection(
-  schema: RJSFSchema,
+  section: Pick<FairRjsfSection, 'schema' | 'uiSchema'>,
   values: Record<string, unknown>,
 ): FairSectionValidation {
   const answers = Object.fromEntries(
     Object.entries(values).filter(([, value]) => !isBlankAnswer(value)),
   )
-  const { errors } = jsonSchemaFormValidator.validateFormData(answers, schema)
+  const { errors } = jsonSchemaFormValidator.validateFormData(
+    answers,
+    section.schema,
+  )
   // RJSF reports a schema ajv can't compile as a lone error with only a `stack`
   const schemaError = errors.find(error => !error.name)?.stack
   const fieldErrors: Record<string, string> = {}
@@ -241,10 +307,21 @@ export function validateFairSection(
     if (name === 'required' || !field || !message || field in fieldErrors) {
       continue
     }
-    // A `list` field is a `oneOf` of option consts: a value that isn't an option (e.g. from a
-    // draft saved before the options changed) breaks every `const` and the `oneOf`.
-    fieldErrors[field] =
-      name === 'const' || name === 'oneOf' ? ALLOWED_VALUES_MESSAGE : message
+    let fieldMessage = message
+    if (name === 'const' || name === 'oneOf') {
+      // A `list` field is a `oneOf` of option consts: a value that isn't an option (e.g. from a
+      // draft saved before the options changed) breaks every `const` and the `oneOf`.
+      fieldMessage = ALLOWED_VALUES_MESSAGE
+    } else if (
+      name === 'format' &&
+      (section.uiSchema[field] as UiSchema | undefined)?.['ui:widget'] ===
+        'DateWidget'
+    ) {
+      // `DateWidget` stores a date typed in full that doesn't exist (e.g. 02/30) as a non-ISO
+      // string. It only asks for a date, so the `date-time` format's message would mislead.
+      fieldMessage = INVALID_DATE_MESSAGE
+    }
+    fieldErrors[field] = fieldMessage
   }
   return { isValid: errors.length === 0, fieldErrors, schemaError }
 }
