@@ -24,8 +24,15 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { s } from 'json-joy/lib/json-crdt'
 import { http, HttpResponse } from 'msw'
 import { createRef, ReactNode } from 'react'
+import { HIDE_VALIDATION_ERRORS_LABEL } from './components/ValidationAlert'
+import {
+  SHOW_VALIDATION_ERRORS_LABEL,
+  VALIDATION_ERROR_SUMMARY_LABEL,
+} from './components/ValidationErrorSummary'
+import { GridModel } from './DataGridTypes'
 import SynapseGrid, { SynapseGridHandle, SynapseGridProps } from './SynapseGrid'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 
@@ -38,11 +45,13 @@ const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 const portalOrigin = getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)
 
 const SESSION_ID = 'test-grid-session'
+const OTHER_SESSION_ID = 'other-test-grid-session'
 const REPLICA_ID = 7
 const HEADER_TEXT = 'Working Copy'
 const CONTENT_CLASS_NAME = 'test-grid-content'
 const GRID_ERROR = 'The grid connection failed'
 const HEADER_ERROR = 'The page title failed'
+const INVALID_CELL_MESSAGE = '#/c0: cannot be empty'
 const MESSAGE = 'Which fields are missing?'
 const RESPONSE = /This is the only response this agent is told/
 const DRAFT = 'And which are optional'
@@ -56,8 +65,11 @@ const mockGridSession: GridSession = {
 
 function registerGridSessionHandlers() {
   server.use(
-    http.get(`${repoOrigin}/repo/v1/grid/session/:sessionId`, () =>
-      HttpResponse.json(mockGridSession, { status: 200 }),
+    http.get(`${repoOrigin}/repo/v1/grid/session/:sessionId`, ({ params }) =>
+      HttpResponse.json(
+        { ...mockGridSession, sessionId: String(params.sessionId) },
+        { status: 200 },
+      ),
     ),
     http.post(`${repoOrigin}/repo/v1/grid/session/:sessionId/replica`, () =>
       HttpResponse.json(
@@ -126,7 +138,7 @@ async function renderGridWithSession(props: SynapseGridProps = {}) {
   // The toolbar renders with the loaded grid
   await screen.findByRole('link', { name: 'Help and Instructions' })
 
-  return { user, ...result }
+  return { user, ref, ...result }
 }
 
 /** Mocks a websocket that is connected to a grid with a real model */
@@ -147,6 +159,27 @@ function mockConnectedWebSocket(
     errorEstablishingWebsocketConnection: null,
     websocketError: null,
     ...overrides,
+  })
+}
+
+/** Mocks a connected websocket holding `model` as it is now */
+function mockConnectedWebSocketWithModel(model: GridModel) {
+  mockConnectedWebSocket({ model, modelSnapshot: model.api.getSnapshot() })
+}
+
+/** Writes a validation result for the first row, which is valid if there are no messages */
+function setFirstRowValidation(
+  model: GridModel,
+  allValidationMessages: string[],
+) {
+  // Written after the row data, so the row's validation is up to date rather than pending
+  model.api.obj(['rows', '0']).set({
+    metadata: s.obj({
+      rowValidation: s.con({
+        isValid: allValidationMessages.length === 0,
+        allValidationMessages,
+      }),
+    }),
   })
 }
 
@@ -204,6 +237,103 @@ describe('SynapseGrid', () => {
     )
     expect(getHeader().closest(`.${CONTENT_CLASS_NAME}`)).toBeNull()
     expect(requirement.closest(`.${CONTENT_CLASS_NAME}`)).not.toBeNull()
+  })
+
+  it('hides the validation errors banner behind a summary in the toolbar, and shows it again collapsed', async () => {
+    const model = createTestModel(2, 2, REPLICA_ID)
+    setFirstRowValidation(model, [INVALID_CELL_MESSAGE])
+    mockConnectedWebSocketWithModel(model)
+    const { user } = await renderGridWithSession()
+
+    expect(screen.getByText('Validation errors')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Expand' }))
+    await user.click(
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
+    )
+
+    expect(screen.queryByText('Validation errors')).not.toBeInTheDocument()
+    const summary = screen.getByRole('group', {
+      name: VALIDATION_ERROR_SUMMARY_LABEL,
+    })
+    expect(within(summary).getByText('1')).toBeInTheDocument()
+    const showLink = within(summary).getByRole('button', {
+      name: SHOW_VALIDATION_ERRORS_LABEL,
+    })
+    expect(showLink).toHaveFocus()
+
+    await user.click(showLink)
+
+    expect(screen.getByText('Validation errors')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Expand' })).toBeInTheDocument()
+    expect(
+      screen.queryByRole('group', { name: VALIDATION_ERROR_SUMMARY_LABEL }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
+    ).toHaveFocus()
+  })
+
+  it('keeps the banner hidden when another session loads', async () => {
+    const model = createTestModel(2, 2, REPLICA_ID)
+    setFirstRowValidation(model, [INVALID_CELL_MESSAGE])
+    mockConnectedWebSocketWithModel(model)
+    const { user, ref, rerender } = await renderGridWithSession()
+    await user.click(
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
+    )
+
+    // Connecting to another session clears the model until that session's grid loads
+    const connect = vi.fn()
+    mockConnectedWebSocket({
+      connect,
+      model: null,
+      modelSnapshot: null,
+      hasCompletedInitialSync: false,
+      hasCompletedInitialLoad: false,
+    })
+    act(() => {
+      ref.current!.loadExistingSession(OTHER_SESSION_ID)
+    })
+    await waitFor(() =>
+      expect(connect).toHaveBeenCalledWith(REPLICA_ID, OTHER_SESSION_ID),
+    )
+
+    mockConnectedWebSocketWithModel(createTestModel(2, 2, REPLICA_ID))
+    rerender(<SynapseGrid ref={ref} />)
+
+    expect(
+      screen.getByRole('group', { name: VALIDATION_ERROR_SUMMARY_LABEL }),
+    ).toBeInTheDocument()
+    expect(screen.queryByText('No validation errors')).not.toBeInTheDocument()
+  })
+
+  it('leaves focus in place when validation results switch the banner between no errors and errors', async () => {
+    const model = createTestModel(2, 2, REPLICA_ID)
+    mockConnectedWebSocketWithModel(model)
+    const { ref, rerender } = await renderGridWithSession()
+
+    expect(screen.getByText('No validation errors')).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
+    ).not.toHaveFocus()
+
+    const helpLink = screen.getByRole('link', { name: 'Help and Instructions' })
+    act(() => helpLink.focus())
+
+    // Each result remounts the Hide link in the banner's other form, with no click on Hide or Show
+    function receiveFirstRowValidation(allValidationMessages: string[]) {
+      setFirstRowValidation(model, allValidationMessages)
+      mockConnectedWebSocketWithModel(model)
+      rerender(<SynapseGrid ref={ref} />)
+    }
+
+    receiveFirstRowValidation([INVALID_CELL_MESSAGE])
+    expect(screen.getByText('Validation errors')).toBeInTheDocument()
+    expect(helpLink).toHaveFocus()
+
+    receiveFirstRowValidation([])
+    expect(screen.getByText('No validation errors')).toBeInTheDocument()
+    expect(helpLink).toHaveFocus()
   })
 
   describe('errors', () => {

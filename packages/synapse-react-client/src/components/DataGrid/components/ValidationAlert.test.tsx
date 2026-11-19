@@ -1,27 +1,25 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MAX_LISTED_ERRORS, ValidationAlert } from './ValidationAlert'
+import {
+  HIDE_VALIDATION_ERRORS_LABEL,
+  MAX_LISTED_ERRORS,
+  ValidationAlert,
+} from './ValidationAlert'
 import { DataGridRow } from '../DataGridTypes'
+import createValidationTestRow from '../utils/createValidationTestRow'
 
 const defaultProps = {
   columnNames: ['patientId', 'platform', 'disease'],
   columnOrder: [0, 1, 2],
   onNavigateToCell: vi.fn(),
+  onHide: vi.fn(),
 }
 
-function makeInvalidRow(cellErrors: Record<string, string[]>): DataGridRow {
-  return {
-    __validationStatus: 'invalid',
-    __cellValidationResults: new Map(Object.entries(cellErrors)),
-  } as unknown as DataGridRow
-}
+const makeInvalidRow = (cellErrors: Record<string, string[]>) =>
+  createValidationTestRow('invalid', cellErrors)
 
-function makePendingRow(cellErrors: Record<string, string[]>): DataGridRow {
-  return {
-    __validationStatus: 'pending',
-    __cellValidationResults: new Map(Object.entries(cellErrors)),
-  } as unknown as DataGridRow
-}
+const makePendingRow = (cellErrors: Record<string, string[]>) =>
+  createValidationTestRow('pending', cellErrors)
 
 describe('ValidationAlert', () => {
   it('shows a no-errors message when there are no invalid rows', () => {
@@ -70,6 +68,44 @@ describe('ValidationAlert', () => {
     expect(screen.getByText('Expand')).toBeInTheDocument()
     await userEvent.click(screen.getByText('Expand'))
     expect(screen.getByText('Collapse')).toBeInTheDocument()
+  })
+
+  it('calls onHide when the Hide link is clicked', async () => {
+    const onHide = vi.fn()
+    const rowValues = [makeInvalidRow({ platform: ['cannot be empty'] })]
+    render(
+      <ValidationAlert
+        {...defaultProps}
+        rowValues={rowValues}
+        onHide={onHide}
+      />,
+    )
+
+    await userEvent.click(
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
+    )
+    expect(onHide).toHaveBeenCalledOnce()
+  })
+
+  it('offers Hide on the no-errors banner', async () => {
+    const onHide = vi.fn()
+    render(<ValidationAlert {...defaultProps} rowValues={[]} onHide={onHide} />)
+
+    expect(screen.getByText('No validation errors')).toBeInTheDocument()
+    await userEvent.click(
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
+    )
+    expect(onHide).toHaveBeenCalledOnce()
+  })
+
+  it('does not offer Hide while validation errors load', () => {
+    const rowValues = [makeInvalidRow({ platform: ['cannot be empty'] })]
+    render(
+      <ValidationAlert {...defaultProps} rowValues={rowValues} isLoading />,
+    )
+    expect(
+      screen.queryByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
+    ).not.toBeInTheDocument()
   })
 
   it('renders three tabs when expanded', async () => {

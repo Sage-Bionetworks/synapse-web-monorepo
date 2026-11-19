@@ -54,11 +54,13 @@ import {
 import { ErrorBoundary, useErrorHandler } from 'react-error-boundary'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { ValidationAlert } from './components/ValidationAlert'
+import { ValidationErrorSummary } from './components/ValidationErrorSummary'
 import DataGrid from './DataGrid'
 import { DataGridRow, GridModel, Operation } from './DataGridTypes'
 import { useGridReplicaUsers } from './hooks/useGridReplicaUsers'
 import { useGridUndoRedo } from './hooks/useGridUndoRedo'
 import { useRemoteSelections } from './hooks/useRemoteSelections'
+import { useValidationAlertToggle } from './hooks/useValidationAlertToggle'
 import { StartGridSession, StartGridSessionHandle } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { applyModelChange, ModelChange } from './utils/applyModelChange'
@@ -105,6 +107,7 @@ function SynapseGridInner({
   // The "Open Curie" dialog, used while the sidebar's feature flag is off
   const [chatOpen, setChatOpen] = useState(false)
   const closeChat = useCallback(() => setChatOpen(false), [])
+  const validationAlertToggle = useValidationAlertToggle()
   const [lastSelection, setLastSelection] = useState<SelectionWithId | null>(
     null,
   )
@@ -523,15 +526,19 @@ function SynapseGridInner({
             {/* Grid */}
             {hasCompletedInitialLoad && (
               <>
-                <Grid size={12}>
-                  <ValidationAlert
-                    rowValues={rowValues}
-                    columnNames={columnNames}
-                    columnOrder={columnOrder}
-                    onNavigateToCell={handleNavigateToCell}
-                    isLoading={!hasCompletedInitialSync}
-                  />
-                </Grid>
+                {!validationAlertToggle.isHidden && (
+                  <Grid size={12}>
+                    <ValidationAlert
+                      rowValues={rowValues}
+                      columnNames={columnNames}
+                      columnOrder={columnOrder}
+                      onNavigateToCell={handleNavigateToCell}
+                      isLoading={!hasCompletedInitialSync}
+                      onHide={validationAlertToggle.hide}
+                      hideLinkRef={validationAlertToggle.toggleLinkRef}
+                    />
+                  </Grid>
+                )}
                 <Grid size={12}>
                   <Stack
                     direction={'row'}
@@ -555,16 +562,24 @@ function SynapseGridInner({
                         </Typography>
                       </Box>
                     )}
-                    <GridMenuButton
-                      variant="outlined"
-                      startIcon={<HelpOutline />}
-                      href="https://docs.synapse.org/synapse-docs/managing-metadata-with-curator"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{ mr: 'auto' }}
-                    >
-                      Help and Instructions
-                    </GridMenuButton>
+                    <Stack direction="row" spacing={1} sx={{ mr: 'auto' }}>
+                      <GridMenuButton
+                        variant="outlined"
+                        startIcon={<HelpOutline />}
+                        href="https://docs.synapse.org/synapse-docs/managing-metadata-with-curator"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Help and Instructions
+                      </GridMenuButton>
+                      {validationAlertToggle.isHidden && (
+                        <ValidationErrorSummary
+                          rowValues={rowValues}
+                          onShow={validationAlertToggle.show}
+                          showLinkRef={validationAlertToggle.toggleLinkRef}
+                        />
+                      )}
+                    </Stack>
                     {undoUI}
                     {redoUI}
                     <ReorderColumnsButton
