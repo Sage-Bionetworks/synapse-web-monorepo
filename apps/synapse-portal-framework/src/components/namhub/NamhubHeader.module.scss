@@ -22,14 +22,15 @@
 .topSectionContainer {
   display: grid;
   grid-template-columns: 100%;
+  align-items: center;
+  padding-top: 40px;
+  background: url('./assets/namhub-header-bg.webp') right center / cover
+    no-repeat;
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
     grid-template-columns: 50% 50%;
+    padding: 40px 0;
   }
-}
-
-.headerContainer {
-  background: linear-gradient(90deg, #f6fcff 11.06%, #dceff9 100%);
 }
 
 .headerTextContainer {
@@ -54,9 +55,4 @@
   color: #386176;
   font-size: 20px;
   line-height: normal;
-}
-
-.headerImage {
-  height: 100%;
-  width: 100%;
 }

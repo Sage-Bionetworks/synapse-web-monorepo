@@ -30,4 +30,5 @@ export const navbarConfig: NavbarConfig = {
     },
   ],
   isPortalsDropdownEnabled: false,
+  layout: 'with-sticky-search',
 }

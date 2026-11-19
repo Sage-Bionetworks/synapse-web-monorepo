@@ -1,4 +1,4 @@
-import { index, layout, route } from '@react-router/dev/routes'
+import { index, layout, prefix, route } from '@react-router/dev/routes'
 import type { RouteConfig } from '@react-router/dev/routes'
 import { legacyDetailsPageRoutes } from '@sage-bionetworks/synapse-portal-framework/ssg/legacyDetailsPageRoutes'
 
@@ -25,6 +25,14 @@ export default [
         route('Studies', 'pages/Explore/studies.tsx'),
         route('Datasets', 'pages/Explore/datasets.tsx'),
         route('Publications', 'pages/Explore/publications.tsx'),
+      ]),
+
+      // Search
+      ...prefix('Search', [
+        index('pages/Search.tsx', { id: 'search-index' }),
+        route(':resourceType', 'pages/Search.tsx', {
+          id: 'search-resource-type',
+        }),
       ]),
 
       route('Explore/Datasets/:id', 'pages/DatasetDetailsPage.tsx'),
