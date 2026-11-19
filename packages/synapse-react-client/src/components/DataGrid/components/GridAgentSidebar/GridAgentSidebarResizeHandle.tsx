@@ -35,14 +35,14 @@ export function GridAgentSidebarResizeHandle({
     }
     // Prevents text selection and the compatibility mousedown, which the grid treats as a click outside of it
     e.preventDefault()
-    // Captured, the rest of the drag's pointer events go to the handle wherever the pointer moves
     e.currentTarget.setPointerCapture(e.pointerId)
     resize.startDrag(e.pointerId, e.clientX)
   }
 
   function handleKeyDown(e: KeyboardEvent<HTMLElement>) {
     const delta = KEYBOARD_RESIZE_DELTAS[e.key]
-    if (delta === undefined) {
+    // With a modifier, an arrow key is the browser's or the system's, such as Alt+ArrowLeft for Back
+    if (delta === undefined || e.altKey || e.ctrlKey || e.metaKey) {
       return
     }
     e.preventDefault()

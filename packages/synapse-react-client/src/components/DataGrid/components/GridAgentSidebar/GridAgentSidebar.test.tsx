@@ -1,6 +1,5 @@
-import { GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY } from '@/utils/SynapseConstants'
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import userEvent, { UserEvent } from '@testing-library/user-event'
 import { ReactNode } from 'react'
 import {
   CLOSE_GRID_AGENT_SIDEBAR_LABEL,
@@ -9,12 +8,14 @@ import {
   OPEN_GRID_AGENT_SIDEBAR_LABEL,
 } from './GridAgentSidebar'
 import { GRID_AGENT_SIDEBAR_KEYBOARD_RESIZE_STEP } from './GridAgentSidebarResizeHandle'
+import { getStoredWidth, storeWidth } from './gridAgentSidebarWidth.test-utils'
 import {
   GRID_AGENT_SIDEBAR_DEFAULT_WIDTH,
   GRID_AGENT_SIDEBAR_MIN_WIDTH,
 } from './useGridAgentSidebarResize'
 
-const POINTER_ID = 1
+// user-event's mouse, the first pointer it creates
+const MOUSE_POINTER_ID = 1
 
 const CHAT_ERROR = 'The chat failed to render'
 
@@ -63,51 +64,67 @@ function getResizeHandle() {
   return screen.getByRole('separator', { name: GRID_AGENT_SIDEBAR_TITLE })
 }
 
-function getStoredWidth() {
-  const stored = localStorage.getItem(GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY)
-  return stored === null ? null : (JSON.parse(stored) as number)
+/** Collects the resize handle's events of `type`, to check whether their default was prevented */
+function recordHandleEvents(type: 'pointerdown' | 'keydown') {
+  const events: Event[] = []
+  getResizeHandle().addEventListener(type, event => events.push(event))
+  return events
 }
 
-function storeWidth(width: number) {
-  localStorage.setItem(GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY, String(width))
-}
+type MouseButton = 'MouseLeft' | 'MouseRight'
 
-/** Returns whether the press's default action was allowed */
-function pressHandle(clientX: number, button = 0) {
-  return fireEvent.pointerDown(getResizeHandle(), {
-    button,
-    clientX,
-    pointerId: POINTER_ID,
+async function pressHandle(
+  user: UserEvent,
+  clientX: number,
+  button: MouseButton = 'MouseLeft',
+) {
+  await user.pointer({
+    keys: `[${button}>]`,
+    target: getResizeHandle(),
+    coords: { clientX },
   })
 }
 
-function movePointer(clientX: number) {
-  fireEvent.pointerMove(getResizeHandle(), { clientX, pointerId: POINTER_ID })
+async function movePointer(user: UserEvent, clientX: number) {
+  await user.pointer({ target: getResizeHandle(), coords: { clientX } })
 }
 
-/** Like a browser, the release ends pointer capture, if the handle captured the pointer */
-function releasePointer() {
+/** Like a browser, ends pointer capture after a release or a cancel, if the handle captured the pointer */
+function endPointerCapture() {
   const handle = getResizeHandle()
-  fireEvent.pointerUp(handle, { pointerId: POINTER_ID })
-  if (capturedPointers.get(POINTER_ID) === handle) {
-    capturedPointers.delete(POINTER_ID)
-    fireEvent.lostPointerCapture(handle, { pointerId: POINTER_ID })
+  if (capturedPointers.get(MOUSE_POINTER_ID) === handle) {
+    capturedPointers.delete(MOUSE_POINTER_ID)
+    // user-event cannot end pointer capture
+    fireEvent.lostPointerCapture(handle, { pointerId: MOUSE_POINTER_ID })
   }
+}
+
+async function releasePointer(
+  user: UserEvent,
+  button: MouseButton = 'MouseLeft',
+) {
+  await user.pointer({ keys: `[/${button}]`, target: getResizeHandle() })
+  endPointerCapture()
 }
 
 describe('GridAgentSidebar', () => {
   beforeAll(() => {
-    Element.prototype.setPointerCapture = function (
-      this: Element,
-      pointerId: number,
-    ) {
-      capturedPointers.set(pointerId, this)
-    }
+    // jsdom does not implement pointer capture, so this stub gives the spy a method to replace
+    Element.prototype.setPointerCapture = () => {}
+  })
+
+  afterAll(() => {
+    delete (Element.prototype as Partial<Element>).setPointerCapture
   })
 
   beforeEach(() => {
     localStorage.clear()
     capturedPointers.clear()
+    vi.spyOn(Element.prototype, 'setPointerCapture').mockImplementation(
+      function (this: Element, pointerId: number) {
+        capturedPointers.set(pointerId, this)
+      },
+    )
   })
 
   afterEach(() => {
@@ -241,7 +258,7 @@ describe('GridAgentSidebar', () => {
       })
     })
 
-    it('limits its width to half of the layout it docks in from the first render', () => {
+    it('limits its width to half of the layout it docks in before the ResizeObserver first reports', () => {
       storeWidth(5000)
 
       renderSidebar({ layoutWidth: 1200 })
@@ -250,72 +267,115 @@ describe('GridAgentSidebar', () => {
       expect(getSidebar()).toHaveStyle({ width: '600px' })
     })
 
-    it('resizes while its left edge is dragged, until pointer capture ends', () => {
+    it('resizes while its left edge is dragged, until pointer capture ends', async () => {
+      const user = userEvent.setup()
       renderSidebar()
 
-      pressHandle(1000)
-      movePointer(900)
+      await pressHandle(user, 1000)
+      await movePointer(user, 900)
 
       expect(getSidebar()).toHaveStyle({ width: '500px' })
 
-      releasePointer()
-      movePointer(800)
+      await releasePointer(user)
+      await movePointer(user, 800)
 
       expect(getStoredWidth()).toBe(500)
       expect(getSidebar()).toHaveStyle({ width: '500px' })
     })
 
-    it('prevents the default action of a primary press, which the grid would treat as a click outside it', () => {
+    it('ends the drag when the browser cancels the pointer, which sends no pointerup', async () => {
+      const user = userEvent.setup()
       renderSidebar()
+      await pressHandle(user, 1000)
+      await movePointer(user, 900)
 
-      expect(pressHandle(1000)).toBe(false)
+      // user-event cannot cancel a pointer
+      fireEvent.pointerCancel(getResizeHandle(), {
+        pointerId: MOUSE_POINTER_ID,
+      })
+      endPointerCapture()
+      await movePointer(user, 800)
+
+      expect(getStoredWidth()).toBe(500)
+      expect(getSidebar()).toHaveStyle({ width: '500px' })
     })
 
-    it('ignores a press with a button other than the primary one', () => {
+    it('prevents the default action of a primary press, which the grid would treat as a click outside it', async () => {
+      const user = userEvent.setup()
       renderSidebar()
+      const pointerDowns = recordHandleEvents('pointerdown')
 
-      expect(pressHandle(1000, 2)).toBe(true)
-      movePointer(900)
+      await pressHandle(user, 1000)
 
+      expect(pointerDowns).toHaveLength(1)
+      expect(pointerDowns[0].defaultPrevented).toBe(true)
+    })
+
+    it('ignores a press with a button other than the primary one', async () => {
+      const user = userEvent.setup()
+      renderSidebar()
+      const pointerDowns = recordHandleEvents('pointerdown')
+
+      await pressHandle(user, 1000, 'MouseRight')
+      await movePointer(user, 900)
+      await releasePointer(user, 'MouseRight')
+
+      expect(pointerDowns[0].defaultPrevented).toBe(false)
       expect(capturedPointers.size).toBe(0)
       expect(getSidebar()).toHaveStyle({
         width: `${GRID_AGENT_SIDEBAR_DEFAULT_WIDTH}px`,
       })
     })
 
-    it('resizes with the arrow keys instead of scrolling', () => {
+    it('resizes with the arrow keys instead of scrolling', async () => {
+      const user = userEvent.setup()
       renderSidebar()
+      await user.tab()
+      expect(getResizeHandle()).toHaveFocus()
+      const keyDowns = recordHandleEvents('keydown')
       const widened =
         GRID_AGENT_SIDEBAR_DEFAULT_WIDTH +
         GRID_AGENT_SIDEBAR_KEYBOARD_RESIZE_STEP
 
-      expect(fireEvent.keyDown(getResizeHandle(), { key: 'ArrowLeft' })).toBe(
-        false,
-      )
+      await user.keyboard('{ArrowLeft}')
 
       expect(getResizeHandle()).toHaveAttribute(
         'aria-valuenow',
         String(widened),
       )
       expect(getStoredWidth()).toBe(widened)
+      expect(keyDowns[0].defaultPrevented).toBe(true)
 
-      expect(fireEvent.keyDown(getResizeHandle(), { key: 'ArrowRight' })).toBe(
-        false,
-      )
+      await user.keyboard('{ArrowRight}')
 
       expect(getStoredWidth()).toBe(GRID_AGENT_SIDEBAR_DEFAULT_WIDTH)
     })
 
-    it('ignores keys other than the left and right arrows', () => {
+    it.each([
+      { description: 'a key other than the arrows', keys: '{a}' },
+      {
+        description: "Alt+ArrowLeft, the browser's Back",
+        keys: '{Alt>}{ArrowLeft}{/Alt}',
+      },
+      {
+        description: 'Control+ArrowLeft',
+        keys: '{Control>}{ArrowLeft}{/Control}',
+      },
+      { description: 'Meta+ArrowLeft', keys: '{Meta>}{ArrowLeft}{/Meta}' },
+    ])('ignores $description', async ({ keys }) => {
+      const user = userEvent.setup()
       renderSidebar()
+      await user.tab()
+      const keyDowns = recordHandleEvents('keydown')
 
-      expect(fireEvent.keyDown(getResizeHandle(), { key: 'a' })).toBe(true)
+      await user.keyboard(keys)
 
       expect(getResizeHandle()).toHaveAttribute(
         'aria-valuenow',
         String(GRID_AGENT_SIDEBAR_DEFAULT_WIDTH),
       )
       expect(getStoredWidth()).toBeNull()
+      expect(keyDowns.some(event => event.defaultPrevented)).toBe(false)
     })
   })
 })

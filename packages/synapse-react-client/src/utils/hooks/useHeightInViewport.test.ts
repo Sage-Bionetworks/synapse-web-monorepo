@@ -72,7 +72,7 @@ describe('useHeightInViewport', () => {
     expect(result.current).toBeUndefined()
   })
 
-  it('measures the element as soon as it has one', () => {
+  it('measures the element before the ResizeObserver first reports', () => {
     const { element } = createElementAt(-200, 600)
 
     const { result } = renderHook(() => useHeightInViewport(element))

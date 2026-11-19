@@ -33,7 +33,7 @@ describe('useElementWidth', () => {
     expect(result.current).toBe(0)
   })
 
-  it('measures the element as soon as it has one', () => {
+  it('measures the element before the ResizeObserver first reports', () => {
     const { element } = createElementWithWidth(1200)
 
     const { result } = renderHook(() => useElementWidth(element))

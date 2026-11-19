@@ -1,10 +1,11 @@
+import { COL_RESIZING_BODY_CLASS } from '@/components/DataGrid/hooks/useColumnResizeHandles'
 import { GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY } from '@/utils/SynapseConstants'
 import { useLocalStorageValue } from '@react-hookz/web'
 import { useEffect, useRef, useState } from 'react'
 
 export const GRID_AGENT_SIDEBAR_DEFAULT_WIDTH = 400
 export const GRID_AGENT_SIDEBAR_MIN_WIDTH = 360
-/** The largest fraction of the docking layout's width that the sidebar may take */
+/** The fraction of the docking layout's width that the sidebar may take, unless the minimum is larger */
 const GRID_AGENT_SIDEBAR_MAX_WIDTH_FRACTION = 0.5
 
 // localStorage can hold anything. Only widths the sidebar could have saved count; anything else,
@@ -18,7 +19,10 @@ const storedWidthOptions = {
   },
 }
 
-/** A `layoutWidth` of 0 means the layout has not been measured, so there is no maximum. */
+/**
+ * The larger of the minimum width and half of `layoutWidth`. A `layoutWidth` of 0 means the layout
+ * has not been measured, so there is no maximum.
+ */
 function getMaxSidebarWidth(layoutWidth: number) {
   return layoutWidth
     ? Math.max(
@@ -46,9 +50,10 @@ type Drag = {
 /**
  * Resizing for the GridAgentSidebar, whose resize handle is its left edge. A drag or a keyboard
  * step resizes the sidebar between a minimum width and half of `layoutWidth`, the width of the
- * layout it docks in (0 while unmeasured, which sets no maximum). The chosen width persists in
- * localStorage. A stored width that the current layout clamps is kept until the user resizes the
- * sidebar, so it comes back once the layout is wide enough again.
+ * layout it docks in, or the minimum if that is larger. A `layoutWidth` of 0 means the layout is
+ * unmeasured, which sets no maximum. The chosen width persists in localStorage. A stored width that
+ * the current layout clamps is kept until the user resizes the sidebar, so it comes back once the
+ * layout is wide enough again.
  */
 export function useGridAgentSidebarResize(layoutWidth: number) {
   const { value: storedWidth, set: setStoredWidth } =
@@ -77,13 +82,10 @@ export function useGridAgentSidebarResize(layoutWidth: number) {
     if (!isDragging) {
       return
     }
-    // Keep the resize cursor and suppress text selection while the pointer is over other content
-    const { cursor, userSelect } = document.body.style
-    document.body.style.cursor = 'col-resize'
-    document.body.style.userSelect = 'none'
+    // Keeps the resize cursor, and no text selection, while the pointer is over other content
+    document.body.classList.add(COL_RESIZING_BODY_CLASS)
     return () => {
-      document.body.style.cursor = cursor
-      document.body.style.userSelect = userSelect
+      document.body.classList.remove(COL_RESIZING_BODY_CLASS)
     }
   }, [isDragging])
 
@@ -125,21 +127,29 @@ export function useGridAgentSidebarResize(layoutWidth: number) {
     if (current?.pointerId !== pointerId) {
       return
     }
-    // Ended before saving, so a width that cannot be saved does not leave the drag running
+    // Ended first, because saving throws when localStorage is full
     updateDrag(null)
     saveChangedWidth(current.startWidth, current.width)
   }
 
-  /** Resizes the sidebar by `delta` pixels, positive to widen it, and saves the new width */
+  /**
+   * Resizes the sidebar by `delta` pixels, positive to widen it, and saves the new width. Does
+   * nothing during a drag, whose width is the one on screen.
+   */
   function resizeBy(delta: number) {
+    if (dragRef.current) {
+      return
+    }
     saveChangedWidth(width, clampSidebarWidth(width + delta, layoutWidth))
   }
+
+  const maxWidth = getMaxSidebarWidth(layoutWidth)
 
   return {
     width,
     minWidth: GRID_AGENT_SIDEBAR_MIN_WIDTH,
     /** `undefined` until the layout has been measured */
-    maxWidth: layoutWidth ? getMaxSidebarWidth(layoutWidth) : undefined,
+    maxWidth: Number.isFinite(maxWidth) ? maxWidth : undefined,
     isDragging,
     startDrag,
     dragTo,

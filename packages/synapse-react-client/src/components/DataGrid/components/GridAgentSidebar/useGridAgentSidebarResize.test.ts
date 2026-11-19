@@ -1,5 +1,7 @@
+import { COL_RESIZING_BODY_CLASS } from '@/components/DataGrid/hooks/useColumnResizeHandles'
 import { GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY } from '@/utils/SynapseConstants'
 import { act, renderHook } from '@testing-library/react'
+import { getStoredWidth, storeWidth } from './gridAgentSidebarWidth.test-utils'
 import {
   clampSidebarWidth,
   GRID_AGENT_SIDEBAR_DEFAULT_WIDTH,
@@ -9,15 +11,6 @@ import {
 
 const POINTER_ID = 1
 const OTHER_POINTER_ID = 2
-
-function getStoredWidth() {
-  const stored = localStorage.getItem(GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY)
-  return stored === null ? null : (JSON.parse(stored) as number)
-}
-
-function storeWidth(width: number) {
-  localStorage.setItem(GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY, String(width))
-}
 
 function renderResize(layoutWidth = 0) {
   return renderHook(
@@ -122,6 +115,28 @@ describe('useGridAgentSidebarResize', () => {
       expect(result.current.width).toBe(600)
     })
 
+    it('starts from the width on screen when the layout clamps the stored width', () => {
+      storeWidth(800)
+      const { result } = renderResize(1200)
+
+      act(() => result.current.startDrag(POINTER_ID, 1000))
+      act(() => result.current.dragTo(POINTER_ID, 1016))
+      act(() => result.current.endDrag(POINTER_ID))
+
+      expect(getStoredWidth()).toBe(584)
+    })
+
+    it('does nothing to move or end a drag that is not running', () => {
+      const { result } = renderResize()
+
+      act(() => result.current.dragTo(POINTER_ID, 0))
+      act(() => result.current.endDrag(POINTER_ID))
+
+      expect(result.current.isDragging).toBe(false)
+      expect(result.current.width).toBe(GRID_AGENT_SIDEBAR_DEFAULT_WIDTH)
+      expect(getStoredWidth()).toBeNull()
+    })
+
     it('does not shrink below the minimum width', () => {
       const { result } = renderResize()
 
@@ -176,18 +191,16 @@ describe('useGridAgentSidebarResize', () => {
       expect(result.current.isDragging).toBe(false)
     })
 
-    it('shows the resize cursor and blocks text selection on the page until the drag ends', () => {
+    it('marks the page as resizing, as column resizing does, until the drag ends', () => {
       const { result } = renderResize()
 
       act(() => result.current.startDrag(POINTER_ID, 1000))
 
-      expect(document.body.style.cursor).toBe('col-resize')
-      expect(document.body.style.userSelect).toBe('none')
+      expect(document.body).toHaveClass(COL_RESIZING_BODY_CLASS)
 
       act(() => result.current.endDrag(POINTER_ID))
 
-      expect(document.body.style.cursor).toBe('')
-      expect(document.body.style.userSelect).toBe('')
+      expect(document.body).not.toHaveClass(COL_RESIZING_BODY_CLASS)
     })
   })
 
@@ -213,6 +226,31 @@ describe('useGridAgentSidebarResize', () => {
 
       expect(result.current.width).toBe(GRID_AGENT_SIDEBAR_MIN_WIDTH)
       expect(getStoredWidth()).toBe(GRID_AGENT_SIDEBAR_MIN_WIDTH)
+    })
+
+    it('starts from the width on screen when the layout clamps the stored width', () => {
+      storeWidth(800)
+      const { result } = renderResize(1200)
+
+      act(() => result.current.resizeBy(-16))
+
+      expect(result.current.width).toBe(584)
+      expect(getStoredWidth()).toBe(584)
+    })
+
+    it('does nothing during a drag, whose width is the one on screen', () => {
+      const { result } = renderResize()
+      act(() => result.current.startDrag(POINTER_ID, 1000))
+      act(() => result.current.dragTo(POINTER_ID, 900))
+
+      act(() => result.current.resizeBy(16))
+
+      expect(result.current.width).toBe(500)
+      expect(getStoredWidth()).toBeNull()
+
+      act(() => result.current.endDrag(POINTER_ID))
+
+      expect(getStoredWidth()).toBe(500)
     })
 
     it('keeps a stored width the layout clamps when widened at the maximum', () => {
