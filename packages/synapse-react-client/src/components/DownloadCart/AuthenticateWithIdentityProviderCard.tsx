@@ -1,4 +1,4 @@
-import { getIdentityProviderDisplayName } from '@/utils/functions/IdentityProviderNameUtils'
+import { getIdentityProviderAlternativesText } from '@/utils/functions/IdentityProviderNameUtils'
 import { IdentityProviderName } from '@sage-bionetworks/synapse-client'
 import { AccessRequirementActionCard } from './AccessRequirementActionCard'
 
@@ -15,10 +15,7 @@ export function getAuthenticateWithIdentityProviderCardTitle(
   if (identityProviders.length === 0) {
     return 'Requires Sign-in with an Accepted Identity Provider'
   }
-  const providerNames = identityProviders
-    .map(getIdentityProviderDisplayName)
-    .join(' or ')
-  return `Requires Sign-in with ${providerNames}`
+  return `Requires Sign-in with ${getIdentityProviderAlternativesText(identityProviders)}`
 }
 
 export function AuthenticateWithIdentityProviderCard(

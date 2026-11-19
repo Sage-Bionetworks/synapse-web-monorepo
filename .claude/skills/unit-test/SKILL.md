@@ -1,6 +1,6 @@
 ---
 name: unit-test
-description: Write unit tests for one or more files following this codebase's conventions (Vitest, Testing Library, inline mocks). Use this skill whenever the user asks to write, add, or generate tests — including "write tests for X", "add test coverage", "test this component", or "how do I test this".
+description: Write unit tests for one or more files following this codebase's conventions (Vitest, Testing Library, MSW). Use this skill whenever the user asks to write, add, or generate tests — including "write tests for X", "add test coverage", "test this component", or "how do I test this".
 argument-hint: '[file to test]'
 ---
 
@@ -18,7 +18,9 @@ Read the file(s) under test thoroughly before writing anything. Understanding th
 - Use `@testing-library/user-event` to simulate interactions. Avoid `fireEvent` — `userEvent` more closely models real browser behavior and catches bugs that `fireEvent` misses.
 - When testing hooks, use `renderHook` from `@testing-library/react`.
 
-## Mocking modules
+## Mocking
+
+Mock the network, not the code that calls it: for anything that fetches from Synapse, run the real code and hooks inside `createWrapper()` and register MSW handlers (see `packages/synapse-react-client/CLAUDE.md`, "Testing approach"). Use `vi.mock` for modules that aren't data fetching.
 
 `vi.mock` calls are hoisted to the top of the file by Vitest, so declare them before any mock variable assignments to avoid initialization order issues. Use `vi.mocked` to get proper TypeScript types on the mock.
 
@@ -35,7 +37,7 @@ If mocking is getting very complicated, consider pausing and suggesting a refact
 
 ## Keep tests self-contained — avoid the "Mystery Guest" anti-pattern
 
-Define all test data and mock return values **inline in the test file**. When a test relies on data imported from an external fixture file, the reader has to navigate away to understand what the test is actually doing — this makes tests harder to debug and easier to misread.
+Define the data each test asserts on **inline in the test file**, for example in a `server.use(...)` override that returns the response the test depends on. When a test relies on data imported from an external fixture file, the reader has to navigate away to understand what the test is actually doing — this makes tests harder to debug and easier to misread.
 
 Each test should tell its whole story in one place.
 
@@ -43,11 +45,17 @@ Each test should tell its whole story in one place.
 
 ```typescript
 it('renders the study title', async () => {
-  mockGetEntity.mockResolvedValue({
-    id: 'syn123',
-    name: 'My Study',
-    concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-  })
+  server.use(
+    http.get(
+      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}/repo/v1/entity/syn123`,
+      () =>
+        HttpResponse.json({
+          id: 'syn123',
+          name: 'My Study',
+          concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+        }),
+    ),
+  )
   // ...
 })
 ```
@@ -58,9 +66,9 @@ it('renders the study title', async () => {
 import { mockFileEntity } from '../../mocks/entity/mockFileEntity'
 
 it('renders the study title', async () => {
-  mockGetEntity.mockResolvedValue(mockFileEntity)
+  server.use(http.get(entityUrl, () => HttpResponse.json(mockFileEntity)))
   // reader now has to open mockFileEntity.ts to understand the test
 })
 ```
 
-Exception: if a shared mock already exists in the codebase and is a close fit for what you need, reuse it rather than duplicating it.
+Default MSW handlers live in shared `src/mocks/msw/handlers/` so tests and stories reuse them. Reuse an existing shared mock or handler when it fits instead of duplicating it.

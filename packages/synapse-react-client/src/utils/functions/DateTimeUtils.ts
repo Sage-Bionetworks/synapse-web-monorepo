@@ -1,3 +1,10 @@
+import dayjs from 'dayjs'
+
+/** Today's calendar date in the user's local time zone, as `YYYY-MM-DD`. */
+export function localToday(): string {
+  return dayjs().format('YYYY-MM-DD')
+}
+
 /**
  * Returns true iff the given string is a valid ISO timestamp.
  *
