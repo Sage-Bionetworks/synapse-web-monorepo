@@ -422,6 +422,19 @@ describe('FAIR text length bounds', () => {
       validateFairSection(form, { summary: 'abcdefghijk' }).fieldErrors,
     ).toEqual({ summary: 'Must be at most 10 characters' })
   })
+
+  test('accept values within the bounds, including the bounds themselves', () => {
+    expect(
+      validateFairSection(form, {
+        summary: 'abcde',
+        title: 'ab',
+        phone: '+1 234',
+      }),
+    ).toEqual({ isValid: true, fieldErrors: {} })
+    expect(validateFairSection(form, { summary: 'abcdefghij' }).isValid).toBe(
+      true,
+    )
+  })
 })
 
 describe('FAIR default values', () => {
@@ -432,6 +445,7 @@ describe('FAIR default values', () => {
       { name: 'opt_in', type: 'boolean', defaultValue: true },
       { name: 'blank', type: 'string', defaultValue: '' },
       { name: 'nulled', type: 'string', defaultValue: null },
+      { name: 'heading', type: 'label', label: 'Heading', defaultValue: 'x' },
     ],
   })
 
@@ -443,6 +457,10 @@ describe('FAIR default values', () => {
   test('treat an empty-string or null default as no default', () => {
     expect(form.schema.properties!.blank).not.toHaveProperty('default')
     expect(form.schema.properties!.nulled).not.toHaveProperty('default')
+  })
+
+  test('ignore a default on a label, which holds no value', () => {
+    expect(form.schema.properties!.heading).not.toHaveProperty('default')
   })
 })
 

@@ -234,12 +234,9 @@ export function fairSectionToRjsf(
     }
 
     const { defaultValue } = field
-    // FAIR sends `''` for "no default"; `false` and `0` are real defaults.
-    if (
-      defaultValue !== undefined &&
-      defaultValue !== null &&
-      defaultValue !== ''
-    ) {
+    // FAIR sends `''` for "no default"; `false` and `0` are real defaults. A label holds no
+    // value, so a default on one would only fail its `null` type.
+    if (field.type !== 'label' && !isBlankAnswer(defaultValue)) {
       properties[name].default = defaultValue
     }
   }
