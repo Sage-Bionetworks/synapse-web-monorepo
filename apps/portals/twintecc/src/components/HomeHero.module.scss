@@ -1,0 +1,93 @@
+@use 'sass:map';
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+
+// Child rules are nested under .hero so they outrank MUI Typography/Link and global portal element styles
+.hero {
+  position: relative;
+  overflow: hidden;
+  background-color: #0f0b3d;
+  color: #fff;
+  min-height: 600px;
+  padding: 35px 16px 60px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('../assets/hero-face-illustration.svg') no-repeat right
+      bottom / auto 100%;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    padding: 35px 36px 60px;
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  .content {
+    position: relative;
+    max-width: 790px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .betaBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 12px;
+    border-radius: 3px;
+    background-color: #5d0586;
+    color: #fff;
+    font-size: 14px;
+  }
+
+  .title {
+    margin: 24px 0 0;
+    font-family: 'DM Serif Display', serif;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.15;
+    color: #fff;
+
+    @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+      font-size: 38px;
+    }
+  }
+
+  .summary {
+    margin-top: 24px;
+    font-size: 18px;
+    line-height: 1.4;
+    color: #c3c2ce;
+  }
+
+  .performerTeams {
+    margin: 32px 0 12px;
+    font-size: 18px;
+    color: #fff;
+  }
+
+  .action {
+    font-size: 14px;
+    text-transform: none;
+  }
+
+  .help {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  .email,
+  .email:hover {
+    font-weight: 700;
+    color: #e981ff;
+    text-decoration: none;
+  }
+}

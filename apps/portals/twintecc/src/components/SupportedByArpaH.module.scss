@@ -1,0 +1,58 @@
+@use 'sass:map';
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+
+// This is the last home page section; carry its background through the framework's footer-pushing
+// .main min-height/padding so no white band separates it from the footer
+:global(.main):has(.section) {
+  padding-bottom: 0;
+  background-color: #17144c;
+}
+
+// Child rules are nested under .section so they outrank MUI Typography/Link and global portal element styles
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 32px;
+  padding: 50px 16px;
+  background-color: #17144c;
+  color: #fff;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    flex-direction: row;
+    align-items: center;
+    gap: 52px;
+    padding: 70px 72px;
+  }
+
+  .logo {
+    flex-shrink: 0;
+    width: 240px;
+    height: auto;
+
+    @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+      width: 310px;
+    }
+  }
+
+  .title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .description {
+    margin-top: 16px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #fff;
+  }
+
+  .link,
+  .link:hover {
+    font-weight: 700;
+    color: #fff;
+    text-decoration: underline;
+  }
+}
