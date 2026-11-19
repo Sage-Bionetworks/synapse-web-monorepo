@@ -383,6 +383,69 @@ describe('FAIR date minimum', () => {
   })
 })
 
+describe('FAIR text length bounds', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      {
+        name: 'summary',
+        type: 'markdown',
+        validation: { minimum: 5, maximum: 10 },
+      },
+      { name: 'title', type: 'string', validation: { minimum: '2' } },
+      { name: 'phone', type: 'phone', validation: { maximum: 6 } },
+    ],
+  })
+
+  test('accept bounds sent as numbers or numeric strings', () => {
+    expect(form.schema.properties!.summary).toMatchObject({
+      minLength: 5,
+      maxLength: 10,
+    })
+    expect(form.schema.properties!.title).toMatchObject({ minLength: 2 })
+    expect(form.schema.properties!.phone).toMatchObject({ maxLength: 6 })
+  })
+
+  test('flag values shorter or longer than the bounds with the shared validator’s messages', () => {
+    expect(
+      validateFairSection(form, {
+        summary: 'abc',
+        title: 'a',
+        phone: '+1 2345',
+      }).fieldErrors,
+    ).toEqual({
+      summary: 'Must be at least 5 characters',
+      title: 'Must be at least 2 characters',
+      phone: 'Must be at most 6 characters',
+    })
+    expect(
+      validateFairSection(form, { summary: 'abcdefghijk' }).fieldErrors,
+    ).toEqual({ summary: 'Must be at most 10 characters' })
+  })
+})
+
+describe('FAIR default values', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      { name: 'opt_out', type: 'boolean', defaultValue: false },
+      { name: 'opt_in', type: 'boolean', defaultValue: true },
+      { name: 'blank', type: 'string', defaultValue: '' },
+      { name: 'nulled', type: 'string', defaultValue: null },
+    ],
+  })
+
+  test('keep a `false` default', () => {
+    expect(form.schema.properties!.opt_out).toMatchObject({ default: false })
+    expect(form.schema.properties!.opt_in).toMatchObject({ default: true })
+  })
+
+  test('treat an empty-string or null default as no default', () => {
+    expect(form.schema.properties!.blank).not.toHaveProperty('default')
+    expect(form.schema.properties!.nulled).not.toHaveProperty('default')
+  })
+})
+
 describe('parseFairFormSections', () => {
   const sectionFields: FairField[] = [{ name: 'q1', type: 'string' }]
   const expected: FairFormSection[] = [

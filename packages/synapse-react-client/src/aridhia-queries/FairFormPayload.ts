@@ -12,14 +12,18 @@ export type FairField = {
   name?: string
   type?: string
   label?: string
-  defaultValue?: string
+  /** Typed per field: e.g. a boolean on `boolean` fields. `''` and `null` mean no default. */
+  defaultValue?: string | number | boolean | null
   default_options?: string
   placeholder?: string
   options?: Array<{ text?: string; value?: string; description?: string }>
   validation?: {
-    /** A length bound on text-like fields. On `date` fields, a date (e.g. `today`). */
-    minimum?: string
-    maximum?: string
+    /**
+     * A length bound on text-like fields, sent as a number or a numeric string. On `date`
+     * fields, `minimum` is a date (e.g. `today`).
+     */
+    minimum?: string | number
+    maximum?: string | number
     required?: boolean
     /** On `string` fields: `email`, `uri` or `uuid` become the JSON-schema `format`; others are ignored. */
     format?: string

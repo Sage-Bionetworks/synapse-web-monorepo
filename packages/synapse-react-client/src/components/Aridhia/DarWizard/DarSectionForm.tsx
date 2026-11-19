@@ -21,6 +21,20 @@ const FIELD_ID_PREFIX = 'root_'
 export const SCHEMA_ERROR_MESSAGE =
   "This form couldn't be checked. Contact support."
 
+/** `formData` with each unanswered field's schema default, as RJSF fills them in on mount. */
+function withSchemaDefaults(
+  schema: RJSFSchema,
+  formData: Record<string, unknown>,
+): Record<string, unknown> {
+  const defaults = Object.entries(schema.properties ?? {}).flatMap(
+    ([name, property]) =>
+      typeof property === 'object' && property.default !== undefined
+        ? [[name, property.default] as const]
+        : [],
+  )
+  return { ...Object.fromEntries(defaults), ...formData }
+}
+
 /**
  * Renders one `fairSectionToRjsf` schema/uiSchema pair via `JsonSchemaForm`, with the shared
  * `JsonSchemaForm` customizations needed for the Aridhia DAR flow.
@@ -31,21 +45,25 @@ export const SCHEMA_ERROR_MESSAGE =
  */
 export function DarSectionForm(props: DarFormSectionStepProps) {
   const { schema, uiSchema, formData, onChange } = props
-  const { fieldErrors, schemaError } = validateFairSection(
-    { schema, uiSchema },
-    formData,
-  )
+  const section = { schema, uiSchema }
+  const { fieldErrors, schemaError } = validateFairSection(section, formData)
   useEffect(() => {
     if (schemaError) {
       console.error(`DAR form section schema failed to compile: ${schemaError}`)
     }
   }, [schemaError])
-  // Flag a field once the user leaves it rather than while they're still typing. Values that
-  // arrive already invalid (e.g. from a restored draft) are flagged right away.
+  // Flag a field once the user leaves it rather than while they're still typing. Values the
+  // user didn't type (restored from a draft, or the form's own defaults) are flagged right away.
   // TODO(PORTALS-4456, RJSF 7): replace this blur tracking and `extraErrors` with RJSF's
   // `liveValidate="onBlur"` plus `liveErrors="field"`.
   const [visitedFields, setVisitedFields] = useState<ReadonlySet<string>>(
-    () => new Set(Object.keys(fieldErrors)),
+    () =>
+      new Set(
+        Object.keys(
+          validateFairSection(section, withSchemaDefaults(schema, formData))
+            .fieldErrors,
+        ),
+      ),
   )
   const extraErrors = Object.fromEntries(
     Object.entries(fieldErrors)

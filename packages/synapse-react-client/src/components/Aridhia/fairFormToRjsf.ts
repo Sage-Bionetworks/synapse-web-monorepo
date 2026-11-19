@@ -67,14 +67,26 @@ export function parseFairFormSections(
   return []
 }
 
+/** FAIR sends numeric bounds as numbers or numeric strings; anything else is no bound. */
+function toFiniteNumber(value: unknown): number | undefined {
+  let parsed = Number.NaN
+  if (typeof value === 'number') {
+    parsed = value
+  } else if (typeof value === 'string' && value.trim() !== '') {
+    parsed = Number(value)
+  }
+  return Number.isFinite(parsed) ? parsed : undefined
+}
+
 /**
- * A FAIR text length limit (sent as a string) as a JSON-schema `minLength`/`maxLength`, which
- * must be a non-negative integer. Anything else is no limit, so the schema still compiles.
+ * A FAIR text length limit as a JSON-schema `minLength`/`maxLength`, which must be a
+ * non-negative integer. Anything else is no limit, so the schema still compiles.
  */
-function lengthBound(value: string | undefined): number | undefined {
-  const bound =
-    value == null || value.trim() === '' ? Number.NaN : Number(value)
-  return Number.isInteger(bound) && bound >= 0 ? bound : undefined
+function lengthBound(value: unknown): number | undefined {
+  const bound = toFiniteNumber(value)
+  return bound !== undefined && Number.isInteger(bound) && bound >= 0
+    ? bound
+    : undefined
 }
 
 /**
@@ -221,8 +233,14 @@ export function fairSectionToRjsf(
       properties[name].title = field.label
     }
 
-    if (field.defaultValue) {
-      properties[name].default = field.defaultValue
+    const { defaultValue } = field
+    // FAIR sends `''` for "no default"; `false` and `0` are real defaults.
+    if (
+      defaultValue !== undefined &&
+      defaultValue !== null &&
+      defaultValue !== ''
+    ) {
+      properties[name].default = defaultValue
     }
   }
 
