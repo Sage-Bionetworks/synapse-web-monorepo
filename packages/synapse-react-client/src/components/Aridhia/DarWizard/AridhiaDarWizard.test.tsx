@@ -530,6 +530,10 @@ describe('AridhiaDarWizard', () => {
     ]) {
       expect(screen.getByText(label)).toBeInTheDocument()
     }
+    // A required list's `default_options` is pre-selected.
+    expect(
+      screen.getByRole('combobox', { name: /^what hub do you need/i }),
+    ).toHaveValue('West Europe')
 
     // The 6 boolean fields (VM + area-of-interest) must render as real checkboxes, not the
     // Yes/No select used elsewhere in the app (e.g. the annotations editor).
@@ -833,7 +837,7 @@ describe('AridhiaDarWizard', () => {
     )
   })
 
-  it('leaves an optional list without a default unanswered, and pre-selects a list’s default_options', async () => {
+  it('leaves an optional list without a default unanswered, and does not submit it', async () => {
     const user = userEvent.setup()
     server.use(
       ...wizardHandlers(
@@ -841,12 +845,6 @@ describe('AridhiaDarWizard', () => {
           project: [
             ...MOCK_ARIDHIA_PROJECT_FIELDS,
             { ...STUDY_PHASE_FIELD, validation: { required: false } },
-            {
-              ...STUDY_PHASE_FIELD,
-              name: 'cohort',
-              label: 'Cohort',
-              default_options: '2',
-            },
           ],
         }),
       ),
@@ -860,8 +858,51 @@ describe('AridhiaDarWizard', () => {
     expect(screen.getByRole('combobox', { name: /^study phase/i })).toHaveValue(
       '',
     )
+    await clickNext(user)
+    await fillAboutStep(user)
+    await clickNext(user)
+    await acceptTermsAndSubmit(user)
+
+    await waitFor(() => expect(capturedRequestBodies).toHaveLength(1))
+    expect(capturedRequestBodies[0].fields).not.toHaveProperty('study_phase')
+  })
+
+  it("pre-selects and submits a list's default_options, whether the list is required or optional", async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(
+        getAridhiaWorkflowHandler({
+          project: [
+            ...MOCK_ARIDHIA_PROJECT_FIELDS,
+            {
+              ...STUDY_PHASE_FIELD,
+              name: 'cohort',
+              label: 'Cohort',
+              validation: { required: true },
+              default_options: '2',
+            },
+            {
+              ...STUDY_PHASE_FIELD,
+              name: 'arm',
+              label: 'Arm',
+              validation: { required: false },
+              default_options: '1',
+            },
+          ],
+        }),
+      ),
+      submittedOkHandler(),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
     expect(screen.getByRole('combobox', { name: /^cohort/i })).toHaveValue(
       'Phase 2',
+    )
+    expect(screen.getByRole('combobox', { name: /^arm/i })).toHaveValue(
+      'Phase 1',
     )
     await clickNext(user)
     await fillAboutStep(user)
@@ -869,9 +910,10 @@ describe('AridhiaDarWizard', () => {
     await acceptTermsAndSubmit(user)
 
     await waitFor(() => expect(capturedRequestBodies).toHaveLength(1))
-    const { fields } = capturedRequestBodies[0]
-    expect(fields).not.toHaveProperty('study_phase')
-    expect(fields).toMatchObject({ cohort: '2' })
+    expect(capturedRequestBodies[0].fields).toMatchObject({
+      cohort: '2',
+      arm: '1',
+    })
   })
 
   it('blocks leaving the Project step until a required list without a default is answered', async () => {
