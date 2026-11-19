@@ -56,6 +56,17 @@ const PROJECT_END_DATE_FIELD = {
   validation: { required: false },
 }
 
+const STUDY_PHASE_FIELD = {
+  name: 'study_phase',
+  type: 'list',
+  label: 'Study phase',
+  validation: { required: true },
+  options: [
+    { text: 'Phase 1', value: '1' },
+    { text: 'Phase 2', value: '2' },
+  ],
+}
+
 /**
  * Mirrors the real gateway's overlap between the new-workspace form and the main workflow's
  * `project` section (see `REAL_WORKSPACE_REQUEST_FORM`): both ask for `project_name`.
@@ -820,6 +831,68 @@ describe('AridhiaDarWizard', () => {
     expect(capturedRequestBodies[0].fields.project_end_date).toBe(
       '2027-03-05T00:00:00.000Z',
     )
+  })
+
+  it('leaves an optional list without a default unanswered, and pre-selects a list’s default_options', async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(
+        getAridhiaWorkflowHandler({
+          project: [
+            ...MOCK_ARIDHIA_PROJECT_FIELDS,
+            { ...STUDY_PHASE_FIELD, validation: { required: false } },
+            {
+              ...STUDY_PHASE_FIELD,
+              name: 'cohort',
+              label: 'Cohort',
+              default_options: '2',
+            },
+          ],
+        }),
+      ),
+      submittedOkHandler(),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    expect(screen.getByRole('combobox', { name: /^study phase/i })).toHaveValue(
+      '',
+    )
+    expect(screen.getByRole('combobox', { name: /^cohort/i })).toHaveValue(
+      'Phase 2',
+    )
+    await clickNext(user)
+    await fillAboutStep(user)
+    await clickNext(user)
+    await acceptTermsAndSubmit(user)
+
+    await waitFor(() => expect(capturedRequestBodies).toHaveLength(1))
+    const { fields } = capturedRequestBodies[0]
+    expect(fields).not.toHaveProperty('study_phase')
+    expect(fields).toMatchObject({ cohort: '2' })
+  })
+
+  it('blocks leaving the Project step until a required list without a default is answered', async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(
+        getAridhiaWorkflowHandler({
+          project: [...MOCK_ARIDHIA_PROJECT_FIELDS, STUDY_PHASE_FIELD],
+        }),
+      ),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    await user.click(screen.getByRole('combobox', { name: /^study phase/i }))
+    await user.click(await screen.findByRole('option', { name: 'Phase 1' }))
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
   })
 
   it('retries a failed submission with the identical request code', async () => {

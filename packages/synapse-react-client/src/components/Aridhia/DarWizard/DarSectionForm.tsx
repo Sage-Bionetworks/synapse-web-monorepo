@@ -64,6 +64,10 @@ export function DarSectionForm(props: DarFormSectionStepProps) {
         fields={{ fairLabel: FairLabelField }}
         widgets={{ DateWidget, PhoneWidget }}
         formContext={{ booleanWidget: 'checkbox' }}
+        // A `list` field is a `oneOf` of option consts. By default RJSF would pre-fill an
+        // unanswered list with its first option, which the user never chose. Only FAIR's own
+        // `default_options` should pre-select one.
+        experimental_defaultFormStateBehavior={{ constAsDefaults: 'skipOneOf' }}
         onChange={({ formData: next }) => onChange(next ?? {})}
         onBlur={id => {
           const name = id.startsWith(FIELD_ID_PREFIX)
