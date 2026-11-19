@@ -1,4 +1,8 @@
 import { RJSFSchema, UiSchema } from '@rjsf/utils'
+import {
+  ALLOWED_VALUES_MESSAGE,
+  jsonSchemaFormValidator,
+} from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 import dayjs from 'dayjs'
 import { FairField, FairFormPayload } from '@/aridhia-queries/FairFormPayload'
 
@@ -62,9 +66,25 @@ export function parseFairFormSections(
   return []
 }
 
-/** FAIR sends `minimum`/`maximum` as strings; `undefined` in, `undefined` out. */
-function num(value: string | undefined): number | undefined {
-  return value == null ? undefined : Number(value)
+/**
+ * A FAIR text length limit (sent as a string) as a JSON-schema `minLength`/`maxLength`, which
+ * must be a non-negative integer. Anything else is no limit, so the schema still compiles.
+ */
+function lengthBound(value: string | undefined): number | undefined {
+  const bound =
+    value == null || value.trim() === '' ? Number.NaN : Number(value)
+  return Number.isInteger(bound) && bound >= 0 ? bound : undefined
+}
+
+/**
+ * The FAIR `string` field formats that are also JSON-schema `format`s, checked by the shared
+ * `jsonSchemaFormValidator`. Any other FAIR format is not validated.
+ */
+const FAIR_FORMATS = new Set(['email', 'uri', 'uuid'])
+
+/** A blank answer counts as unanswered. */
+function isBlankAnswer(value: unknown): boolean {
+  return value === undefined || value === null || value === ''
 }
 
 /** Translates one FAIR form section into an RJSF schema/uiSchema pair. */
@@ -83,7 +103,12 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
     }
     const v = field.validation ?? {}
 
-    if (!field.type || !RENDERABLE_TYPES.has(field.type)) {
+    if (
+      !field.type ||
+      !RENDERABLE_TYPES.has(field.type) ||
+      // A JSON-schema `oneOf` needs at least one option, or the section schema won't compile
+      (field.type === 'list' && !field.options?.length)
+    ) {
       unsupported.push(field)
       continue
     }
@@ -96,8 +121,11 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
       case 'string': {
         properties[name] = {
           type: 'string',
-          maxLength: num(v.maximum),
-          minLength: num(v.minimum),
+          maxLength: lengthBound(v.maximum),
+          minLength: lengthBound(v.minimum),
+          ...(v.format && FAIR_FORMATS.has(v.format)
+            ? { format: v.format }
+            : {}),
         }
         uiSchema[name] = { 'ui:placeholder': field.placeholder }
         break
@@ -106,8 +134,8 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
       case 'markdown': {
         properties[name] = {
           type: 'string',
-          maxLength: num(v.maximum),
-          minLength: num(v.minimum),
+          maxLength: lengthBound(v.maximum),
+          minLength: lengthBound(v.minimum),
         }
         uiSchema[name] = {
           'ui:widget': 'textarea',
@@ -129,7 +157,7 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
       case 'list': {
         properties[name] = {
           type: 'string',
-          oneOf: (field.options ?? []).map(option => ({
+          oneOf: field.options!.map(option => ({
             const: option.value,
             title: option.text,
             ...(option.description ? { description: option.description } : {}),
@@ -145,7 +173,7 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
         break
       }
       case 'phone': {
-        properties[name] = { type: 'string', maxLength: num(v.maximum) }
+        properties[name] = { type: 'string', maxLength: lengthBound(v.maximum) }
         uiSchema[name] = { 'ui:widget': 'PhoneWidget' }
         break
       }
@@ -174,6 +202,51 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
     uiSchema,
     unsupported,
   }
+}
+
+export type FairSectionValidation = {
+  /** Every required field is answered, and every answer passes the section schema's rules. */
+  isValid: boolean
+  /**
+   * The shared validator's message for each answered field breaking one of the schema's rules,
+   * keyed by field name. Unanswered required fields are not listed: they only block `isValid`.
+   */
+  fieldErrors: Record<string, string>
+  /**
+   * Set when the section schema itself couldn't be compiled, so no answer could be checked.
+   * `isValid` is then false.
+   */
+  schemaError?: string
+}
+
+/**
+ * Validates answers against a `fairSectionToRjsf` schema with the shared
+ * `jsonSchemaFormValidator`, so the messages match every other JSON-schema form. Blank answers
+ * count as unanswered: they fail `required`, and optional fields may stay empty.
+ */
+export function validateFairSection(
+  schema: RJSFSchema,
+  values: Record<string, unknown>,
+): FairSectionValidation {
+  const answers = Object.fromEntries(
+    Object.entries(values).filter(([, value]) => !isBlankAnswer(value)),
+  )
+  const { errors } = jsonSchemaFormValidator.validateFormData(answers, schema)
+  // RJSF reports a schema ajv can't compile as a lone error with only a `stack`
+  const schemaError = errors.find(error => !error.name)?.stack
+  const fieldErrors: Record<string, string> = {}
+  for (const { name, property, message } of errors) {
+    // A top-level field's error `property` is `.<field name>`
+    const field = property?.replace(/^\./, '').split('.')[0]
+    if (name === 'required' || !field || !message || field in fieldErrors) {
+      continue
+    }
+    // A `list` field is a `oneOf` of option consts: a value that isn't an option (e.g. from a
+    // draft saved before the options changed) breaks every `const` and the `oneOf`.
+    fieldErrors[field] =
+      name === 'const' || name === 'oneOf' ? ALLOWED_VALUES_MESSAGE : message
+  }
+  return { isValid: errors.length === 0, fieldErrors, schemaError }
 }
 
 export type AnsweredField = { label: string; value: string }
@@ -214,7 +287,7 @@ export function summarizeFormAnswers(
   const propertyNames = Object.keys(schema.properties ?? {})
   return propertyNames.flatMap(name => {
     const value = values[name]
-    if (value === undefined || value === null || value === '') {
+    if (isBlankAnswer(value)) {
       return []
     }
     const propertySchema = (schema.properties as Record<string, RJSFSchema>)[

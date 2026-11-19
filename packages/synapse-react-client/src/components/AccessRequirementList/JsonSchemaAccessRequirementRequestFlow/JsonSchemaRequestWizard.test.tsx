@@ -35,6 +35,7 @@ import JsonSchemaRequestWizard, {
   REQUESTER_INFORMATION_STEP_LABEL,
   JsonSchemaRequestWizardProps,
 } from './JsonSchemaRequestWizard'
+import { REQUIRED_MESSAGE } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 
 // The upload completes with whichever file handle the test sets, or fails. While `holdUploads` is set, it completes
 // only when the test calls `completeHeldUpload`.
@@ -602,7 +603,7 @@ describe('JsonSchemaRequestWizard', () => {
       await advanceToFileQuestion(user)
 
       await user.click(screen.getByRole('button', { name: 'Submit' }))
-      await screen.findAllByText(/required property/i)
+      await screen.findAllByText(REQUIRED_MESSAGE)
       expect(submissionRequests).toHaveLength(0)
 
       await upload(user, UPLOADED_FILE_HANDLE_ID)
