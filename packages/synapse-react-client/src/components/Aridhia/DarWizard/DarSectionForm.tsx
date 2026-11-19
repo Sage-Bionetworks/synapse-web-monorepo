@@ -31,7 +31,10 @@ export const SCHEMA_ERROR_MESSAGE =
  */
 export function DarSectionForm(props: DarFormSectionStepProps) {
   const { schema, uiSchema, formData, onChange } = props
-  const { fieldErrors, schemaError } = validateFairSection(schema, formData)
+  const { fieldErrors, schemaError } = validateFairSection(
+    { schema, uiSchema },
+    formData,
+  )
   useEffect(() => {
     if (schemaError) {
       console.error(`DAR form section schema failed to compile: ${schemaError}`)

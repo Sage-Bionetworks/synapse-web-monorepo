@@ -67,6 +67,13 @@ const STUDY_PHASE_FIELD = {
   ],
 }
 
+const PROJECT_START_DATE_FIELD = {
+  name: 'project_start_date',
+  type: 'date',
+  label: 'Project start date',
+  validation: { required: true, minimum: 'today' },
+}
+
 /**
  * Mirrors the real gateway's overlap between the new-workspace form and the main workflow's
  * `project` section (see `REAL_WORKSPACE_REQUEST_FORM`): both ask for `project_name`.
@@ -305,6 +312,7 @@ describe('AridhiaDarWizard', () => {
   afterEach(() => {
     capturedRequestBodies = []
     sessionStorage.clear()
+    vi.useRealTimers()
   })
 
   it('submits an existing-workspace request with the expected payload', async () => {
@@ -934,6 +942,38 @@ describe('AridhiaDarWizard', () => {
 
     await user.click(screen.getByRole('combobox', { name: /^study phase/i }))
     await user.click(await screen.findByRole('option', { name: 'Phase 1' }))
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
+  })
+
+  it('blocks leaving the Project step while a date is earlier than its minimum of today', async () => {
+    // The user's local date, fixed so `today` doesn't move mid-test.
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date(2027, 0, 15, 12))
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(
+        getAridhiaWorkflowHandler({
+          project: [...MOCK_ARIDHIA_PROJECT_FIELDS, PROJECT_START_DATE_FIELD],
+        }),
+      ),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+
+    const startDate = screen.getByLabelText(/^project start date/i)
+    await user.click(startDate)
+    await user.paste('01/14/2027')
+    await user.tab()
+    expect(screen.getByText('Must be today or later')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    await user.clear(startDate)
+    await user.click(startDate)
+    await user.paste('01/15/2027')
+    expect(screen.queryByText('Must be today or later')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
   })
 
