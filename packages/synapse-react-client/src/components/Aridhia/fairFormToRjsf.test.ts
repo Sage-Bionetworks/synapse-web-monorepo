@@ -443,15 +443,17 @@ describe('FAIR default values', () => {
     fields: [
       { name: 'opt_out', type: 'boolean', defaultValue: false },
       { name: 'opt_in', type: 'boolean', defaultValue: true },
+      { name: 'count', type: 'number', defaultValue: 0 },
       { name: 'blank', type: 'string', defaultValue: '' },
       { name: 'nulled', type: 'string', defaultValue: null },
       { name: 'heading', type: 'label', label: 'Heading', defaultValue: 'x' },
     ],
   })
 
-  test('keep a `false` default', () => {
+  test('keep falsy defaults (`false`, `0`) with their own types', () => {
     expect(form.schema.properties!.opt_out).toMatchObject({ default: false })
     expect(form.schema.properties!.opt_in).toMatchObject({ default: true })
+    expect(form.schema.properties!.count).toMatchObject({ default: 0 })
   })
 
   test('treat an empty-string or null default as no default', () => {
@@ -461,6 +463,90 @@ describe('FAIR default values', () => {
 
   test('ignore a default on a label, which holds no value', () => {
     expect(form.schema.properties!.heading).not.toHaveProperty('default')
+  })
+})
+
+describe('FAIR number fields', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      {
+        name: 'number_type',
+        type: 'number',
+        label: 'Number',
+        validation: { minimum: 1, maximum: 10, required: true },
+        defaultValue: 10,
+      },
+      // FAIR may also send bounds and defaults as numeric strings.
+      {
+        name: 'ratio',
+        type: 'number',
+        validation: { minimum: '0', maximum: '0.5' },
+        defaultValue: '0.25',
+      },
+      { name: 'unbounded', type: 'number' },
+    ],
+  })
+
+  test('map to a JSON-schema number with value bounds, not length bounds', () => {
+    expect(form.unsupported).toEqual([])
+    expect(form.schema.properties!.number_type).toEqual({
+      type: 'number',
+      title: 'Number',
+      minimum: 1,
+      maximum: 10,
+      default: 10,
+    })
+    expect(form.schema.properties!.ratio).toMatchObject({
+      type: 'number',
+      minimum: 0,
+      maximum: 0.5,
+      default: 0.25,
+    })
+    expect(form.schema.properties!.number_type).not.toHaveProperty('minLength')
+    expect(form.schema.required).toEqual(['number_type'])
+  })
+
+  test('flag values outside the bounds with the shared validator’s messages', () => {
+    expect(
+      validateFairSection(form, { number_type: 0, ratio: 0.75 }).fieldErrors,
+    ).toEqual({
+      number_type: 'Must be 1 or more',
+      ratio: 'Must be 0.5 or less',
+    })
+    expect(validateFairSection(form, { number_type: 11 }).fieldErrors).toEqual({
+      number_type: 'Must be 10 or less',
+    })
+  })
+
+  test('accept in-range values, including decimals and bounds themselves', () => {
+    expect(validateFairSection(form, { number_type: 1, ratio: 0 })).toEqual({
+      isValid: true,
+      fieldErrors: {},
+    })
+    expect(
+      validateFairSection(form, { number_type: 9.5, ratio: 0.5 }).isValid,
+    ).toBe(true)
+  })
+
+  test('accept any number when there are no bounds', () => {
+    expect(
+      validateFairSection(form, { number_type: 1, unbounded: -5000.5 }).isValid,
+    ).toBe(true)
+  })
+
+  test('count a blank required number as unanswered, without a field message', () => {
+    expect(validateFairSection(form, {})).toEqual({
+      isValid: false,
+      fieldErrors: {},
+    })
+  })
+
+  test('flag a non-numeric value', () => {
+    expect(validateFairSection(form, { number_type: '9' })).toEqual({
+      isValid: false,
+      fieldErrors: { number_type: 'must be number' },
+    })
   })
 })
 

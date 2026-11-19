@@ -951,6 +951,91 @@ describe('AridhiaDarWizard', () => {
     expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
   })
 
+  it('blocks leaving the Project step while a number is out of range, with an inline message', async () => {
+    const user = userEvent.setup()
+    server.use(...getAridhiaDarWizardHandlers())
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+
+    const teamSize = getRjsfTextField('team size')
+    expect(teamSize).toHaveAttribute('type', 'number')
+    // Decimals are allowed, and the browser's spinner stays within the bounds.
+    expect(teamSize).toHaveAttribute('step', 'any')
+    expect(teamSize).toHaveAttribute('min', '1')
+    expect(teamSize).toHaveAttribute('max', '10')
+    // The browser accepts only numeric input.
+    await user.type(teamSize, 'abc')
+    expect(teamSize).toHaveValue(null)
+
+    await user.type(teamSize, '0')
+    await user.tab()
+    expect(screen.getByText('Must be 1 or more')).toBeInTheDocument()
+    expect(teamSize).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    await user.clear(teamSize)
+    await user.type(teamSize, '11')
+    expect(screen.getByText('Must be 10 or less')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    await user.clear(teamSize)
+    // A trailing zero still reads as a number.
+    await user.type(teamSize, '2.50')
+    expect(
+      screen.queryByText(/^Must be \d+ or (more|less)$/),
+    ).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
+  })
+
+  it('submits a number answer as a JSON number, keeps it in the draft, and shows it on the review step', async () => {
+    const user = userEvent.setup()
+    server.use(...getAridhiaDarWizardHandlers(), submittedOkHandler())
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    await fillRjsfTextField(user, 'team size', '9')
+    const draft = JSON.parse(sessionStorage.getItem(DRAFT_KEY)!) as DarDraft
+    expect(draft.values.team_size).toBe(9)
+    await clickNext(user)
+    await fillAboutStep(user)
+    await clickNext(user)
+
+    await waitFor(() =>
+      expect(screen.getByRole('row', { name: 'Team size 9' })).toBeVisible(),
+    )
+    await acceptTermsAndSubmit(user)
+
+    await waitFor(() => expect(capturedRequestBodies).toHaveLength(1))
+    expect(capturedRequestBodies[0].fields.team_size).toBe(9)
+  })
+
+  it('restores a number answer from the draft as a number, flagging it if out of range', async () => {
+    const user = userEvent.setup()
+    server.use(...getAridhiaDarWizardHandlers())
+    const { unmount } = renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    await fillRjsfTextField(user, 'team size', '0')
+    unmount()
+
+    renderWizard()
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled(),
+    )
+    await clickNext(user)
+    await waitFor(() => expect(getRjsfTextField('team size')).toHaveValue(0))
+    // A restored value the user didn't just type is flagged without a blur.
+    expect(screen.getByText('Must be 1 or more')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+  })
+
   it('blocks leaving the Project step while a date is earlier than its minimum of today', async () => {
     fixLocalDate(2027, 0, 15)
     const user = userEvent.setup()

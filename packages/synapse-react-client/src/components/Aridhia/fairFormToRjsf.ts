@@ -28,6 +28,7 @@ const RENDERABLE_TYPES = new Set([
   'markdown',
   'boolean',
   'date',
+  'number',
   'list',
   'phone',
   'label',
@@ -199,6 +200,16 @@ export function fairSectionToRjsf(
         }
         break
       }
+      case 'number': {
+        // FAIR has no integer flag, so decimals are allowed.
+        properties[name] = {
+          type: 'number',
+          minimum: toFiniteNumber(v.minimum),
+          maximum: toFiniteNumber(v.maximum),
+        }
+        uiSchema[name] = { 'ui:placeholder': field.placeholder }
+        break
+      }
       case 'list': {
         properties[name] = {
           type: 'string',
@@ -235,9 +246,12 @@ export function fairSectionToRjsf(
 
     const { defaultValue } = field
     // FAIR sends `''` for "no default"; `false` and `0` are real defaults. A label holds no
-    // value, so a default on one would only fail its `null` type.
-    if (field.type !== 'label' && !isBlankAnswer(defaultValue)) {
-      properties[name].default = defaultValue
+    // value, so a default on one would only fail its `null` type. A number default may come
+    // as a numeric string; one that isn't a number is no default.
+    const typedDefault =
+      field.type === 'number' ? toFiniteNumber(defaultValue) : defaultValue
+    if (field.type !== 'label' && !isBlankAnswer(typedDefault)) {
+      properties[name].default = typedDefault
     }
   }
 

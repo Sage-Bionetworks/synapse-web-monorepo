@@ -81,6 +81,12 @@ export const MOCK_ARIDHIA_PROJECT_FIELDS: FairField[] = [
     label: 'Project name',
     validation: { required: true },
   },
+  {
+    name: 'team_size',
+    type: 'number',
+    label: 'Team size',
+    validation: { required: false, minimum: 1, maximum: 10 },
+  },
 ]
 
 export const MOCK_ARIDHIA_WORKSPACE_FORM_FIELDS: FairField[] = [
