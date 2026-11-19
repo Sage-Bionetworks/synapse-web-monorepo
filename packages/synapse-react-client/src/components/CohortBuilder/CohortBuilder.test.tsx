@@ -782,6 +782,10 @@ describe('CohortBuilder', () => {
         suppressionThreshold: ELITE_MOCK_PROFILE.suppressionThreshold,
         quasiIdentifierColumnNames: ['individualId'],
         countSuppressionStrategy: 'EXCLUDE_ROW',
+        approvedVirtualTableIds: [
+          profile.participantsVirtualTableId,
+          profile.dataVirtualTableId,
+        ],
         facetPostProcessingConfig: ELITE_MOCK_PROFILE.facetPostProcessingConfig,
       }
       const previewRequests = sentRequests.slice(requestsBeforePreview)
