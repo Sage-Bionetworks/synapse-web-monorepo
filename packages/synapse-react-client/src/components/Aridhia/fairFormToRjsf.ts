@@ -86,16 +86,20 @@ const FAIR_FORMATS = new Set(['email', 'uri', 'uuid'])
 /**
  * A `date` field's `validation.minimum` as a `YYYY-MM-DD` calendar date: `today` becomes the
  * given `today`, and an ISO 8601 date/date-time becomes its calendar date. Other values
- * (RDCA-DAP also understands e.g. `tomorrow`) are ignored.
+ * (RDCA-DAP also understands e.g. `tomorrow`), and dates that don't exist, are ignored.
  */
-function minDate(minimum: unknown, today: string): string | undefined {
+function earliestDate(minimum: unknown, today: string): string | undefined {
   if (typeof minimum !== 'string') {
     return undefined
   }
   if (minimum.toLowerCase() === 'today') {
     return today
   }
-  return /^\d{4}-\d{2}-\d{2}/.test(minimum) ? minimum.slice(0, 10) : undefined
+  const date = minimum.slice(0, 10)
+  return /^\d{4}-\d{2}-\d{2}$/.test(date) &&
+    dayjs(date).format('YYYY-MM-DD') === date
+    ? date
+    : undefined
 }
 
 /** A blank answer counts as unanswered. */
@@ -174,7 +178,7 @@ export function fairSectionToRjsf(
         // only, so a simple date picker (DateWidget) is ideal.
         properties[name] = { type: 'string', format: 'date-time' }
         uiSchema[name] = { 'ui:widget': 'DateWidget' }
-        const earliest = minDate(v.minimum, today)
+        const earliest = earliestDate(v.minimum, today)
         if (earliest) {
           // `DateWidget` values are UTC midnight of the picked calendar date, so ajv-formats'
           // `formatMinimum` against UTC midnight of the earliest date compares calendar dates.

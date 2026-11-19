@@ -304,10 +304,11 @@ describe('FAIR date minimum', () => {
           validation: { minimum: '2027-03-05T10:00:00Z' },
         },
         { name: 'other', type: 'date', validation: { minimum: 'tomorrow' } },
+        { name: 'bogus', type: 'date', validation: { minimum: '2027-02-30' } },
       ],
     })
 
-  test('restricts the date picker and the schema for `today` and ISO dates only', () => {
+  test('restricts the date picker and the schema for `today` and real ISO dates only', () => {
     const form = dateForm()
     expect(form.uiSchema.start).toEqual({
       'ui:widget': 'DateWidget',
@@ -325,6 +326,8 @@ describe('FAIR date minimum', () => {
     })
     expect(form.uiSchema.other).toEqual({ 'ui:widget': 'DateWidget' })
     expect(form.schema.properties!.other).not.toHaveProperty('formatMinimum')
+    expect(form.uiSchema.bogus).toEqual({ 'ui:widget': 'DateWidget' })
+    expect(form.schema.properties!.bogus).not.toHaveProperty('formatMinimum')
   })
 
   test('resolves a `today` minimum to the given date', () => {

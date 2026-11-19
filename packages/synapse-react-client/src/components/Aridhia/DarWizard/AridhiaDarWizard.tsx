@@ -1,4 +1,4 @@
-import { localToday } from '@/utils/functions/DateTimeUtils'
+import { useLocalToday } from '@/utils/hooks/useLocalToday'
 import {
   PropsWithChildren,
   ReactNode,
@@ -59,7 +59,7 @@ const SUPPORT_PORTAL_URL =
 function useFairSection(data: FairFormPayload | null | undefined, key: string) {
   // A date field's `today` minimum is part of the schema, so rebuild it once the user's local
   // date changes.
-  const today = localToday()
+  const today = useLocalToday()
   return useMemo(() => {
     const section = parseFairFormSections(data).find(s => s.key === key)
     return section ? fairSectionToRjsf(section, today) : undefined

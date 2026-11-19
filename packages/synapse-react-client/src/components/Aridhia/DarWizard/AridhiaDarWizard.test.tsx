@@ -308,6 +308,12 @@ function clickNext(user: UserEvent) {
   return user.click(screen.getByRole('button', { name: 'Next' }))
 }
 
+/** Fixes the user's local date (at noon), so a `today` date minimum doesn't move mid-test. */
+function fixLocalDate(year: number, monthIndex: number, day: number) {
+  vi.useFakeTimers({ toFake: ['Date'] })
+  vi.setSystemTime(new Date(year, monthIndex, day, 12))
+}
+
 describe('AridhiaDarWizard', () => {
   afterEach(() => {
     capturedRequestBodies = []
@@ -946,9 +952,7 @@ describe('AridhiaDarWizard', () => {
   })
 
   it('blocks leaving the Project step while a date is earlier than its minimum of today', async () => {
-    // The user's local date, fixed so `today` doesn't move mid-test.
-    vi.useFakeTimers({ toFake: ['Date'] })
-    vi.setSystemTime(new Date(2027, 0, 15, 12))
+    fixLocalDate(2027, 0, 15)
     const user = userEvent.setup()
     server.use(
       ...wizardHandlers(
