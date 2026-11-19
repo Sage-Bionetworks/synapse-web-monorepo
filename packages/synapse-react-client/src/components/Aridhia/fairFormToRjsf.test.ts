@@ -485,6 +485,7 @@ describe('FAIR number fields', () => {
         defaultValue: '0.25',
       },
       { name: 'unbounded', type: 'number' },
+      { name: 'bad_default', type: 'number', defaultValue: 'ten' },
     ],
   })
 
@@ -536,13 +537,19 @@ describe('FAIR number fields', () => {
   })
 
   test('count a blank required number as unanswered, without a field message', () => {
-    expect(validateFairSection(form, {})).toEqual({
-      isValid: false,
-      fieldErrors: {},
-    })
+    for (const blank of [undefined, null, '']) {
+      expect(validateFairSection(form, { number_type: blank })).toEqual({
+        isValid: false,
+        fieldErrors: {},
+      })
+    }
   })
 
-  test('flag a non-numeric value', () => {
+  test('drop a default that is not a number', () => {
+    expect(form.schema.properties!.bad_default).not.toHaveProperty('default')
+  })
+
+  test('flag a numeric string, which is not a JSON number', () => {
     expect(validateFairSection(form, { number_type: '9' })).toEqual({
       isValid: false,
       fieldErrors: { number_type: 'must be number' },
