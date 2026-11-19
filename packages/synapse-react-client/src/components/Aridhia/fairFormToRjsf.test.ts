@@ -1,5 +1,6 @@
 import { ALLOWED_VALUES_MESSAGE } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import allFieldTypesWorkflow from '@/mocks/aridhia/cpathBasicAllAccessRequestV2Workflow.json'
 import {
   fairSectionToRjsf,
   FairField,
@@ -554,6 +555,29 @@ describe('FAIR number fields', () => {
       isValid: false,
       fieldErrors: { number_type: 'must be number' },
     })
+  })
+})
+
+describe('the live omop_als1001 request form (cpath_basic_all_access_request_v2)', () => {
+  test('renders every field it contains, which covers every RDCA-DAP field type', () => {
+    const sections = parseFairFormSections(allFieldTypesWorkflow)
+    expect(sections.map(s => s.key)).toEqual(['about', 'project'])
+    expect(new Set(sections.flatMap(s => s.fields.map(f => f.type)))).toEqual(
+      new Set([
+        'string',
+        'text',
+        'markdown',
+        'phone',
+        'date',
+        'label',
+        'boolean',
+        'number',
+        'list',
+      ]),
+    )
+    for (const section of sections) {
+      expect(fairSectionToRjsf(section).unsupported).toEqual([])
+    }
   })
 })
 

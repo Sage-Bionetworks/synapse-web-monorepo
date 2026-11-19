@@ -3,11 +3,13 @@ import userEvent from '@testing-library/user-event'
 import type { UserEvent } from '@testing-library/user-event'
 import { HttpHandler, HttpResponse } from 'msw'
 import { RequestPost } from '@sage-bionetworks/aridhia-client/generated/models'
+import allFieldTypesWorkflow from '@/mocks/aridhia/cpathBasicAllAccessRequestV2Workflow.json'
 import {
   getAridhiaAuthenticateHandler,
   getAridhiaDatasetSettingsHandler,
   getAridhiaDarWizardHandlers,
   getAridhiaSubmitRequestHandler,
+  getAridhiaWorkflowBodyHandler,
   getAridhiaWorkflowHandler,
   getAridhiaWorkspaceRequestFormHandler,
   MOCK_ARIDHIA_ABOUT_FIELDS,
@@ -1064,6 +1066,84 @@ describe('AridhiaDarWizard', () => {
     await user.paste('01/15/2027')
     expect(screen.queryByText('Must be today or later')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
+  })
+
+  it('completes and submits the live omop_als1001 form, which uses every RDCA-DAP field type', async () => {
+    // The user's local date, fixed so the form's `today` date minimum doesn't move mid-test.
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date(2027, 0, 15, 12))
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(getAridhiaWorkflowBodyHandler(allFieldTypesWorkflow)),
+      submittedOkHandler(),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+
+    await waitFor(() =>
+      expect(getRjsfTextField('string - single line')).toBeInTheDocument(),
+    )
+    expect(
+      screen.queryByText(/field types the portal cannot render/i),
+    ).not.toBeInTheDocument()
+    // Defaults of every type are applied, including the number default as a number.
+    expect(getRjsfTextField('number = numeric input')).toHaveValue(10)
+    expect(
+      screen.getByRole('checkbox', { name: /^Boolean - toggle switch/ }),
+    ).toBeChecked()
+    // The markdown field's own default is shorter than its minimum length, and is flagged as
+    // soon as the step opens.
+    expect(
+      screen.getByText('Must be at least 200 characters'),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByLabelText(/^date - renders a date input/i))
+    await user.paste('01/16/2027')
+    await fillRjsfTextField(
+      user,
+      'text - multiline',
+      'At least twenty characters',
+    )
+    // Every required field is answered, but the markdown default is still too short.
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    const markdown = getRjsfTextField('markdown - multiline')
+    await user.clear(markdown)
+    await user.click(markdown)
+    await user.paste('m'.repeat(200))
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
+    await clickNext(user)
+
+    await waitFor(() =>
+      expect(getRjsfTextField('request name')).toBeInTheDocument(),
+    )
+    await fillRjsfTextField(user, 'request name', 'All field types')
+    await fillRjsfTextField(user, 'position', 'Tester')
+    await fillRjsfTextField(user, 'phone number', '2025550123')
+    await fillRjsfTextField(user, 'address', 'Somewhere, USA')
+    await clickNext(user)
+
+    await acceptTermsAndSubmit(user)
+
+    await waitFor(() => expect(capturedRequestBodies).toHaveLength(1))
+    const body = capturedRequestBodies[0]
+    expect(body.name).toBe('All field types')
+    expect(body.fields).toMatchObject({
+      position: 'Tester',
+      address: 'Somewhere, USA',
+      date_type: '2027-01-16T00:00:00.000Z',
+      markdown_type: 'm'.repeat(200),
+      phone_type: '+44 131 111 2222',
+      string_type: 'default value',
+      text_type: 'At least twenty characters',
+      boolean_type: true,
+      number_type: 10,
+      phone_number: '+1 202 555 0123',
+    })
+    // The optional list was left unanswered, so it is not pre-filled with its first option.
+    expect(body.fields).not.toHaveProperty('list_type')
   })
 
   it('retries a failed submission with the identical request code', async () => {
