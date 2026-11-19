@@ -61,6 +61,37 @@ describe('getInlineScriptHashes', () => {
     ].join('\n')
     expect(getInlineScriptHashes(html)).toEqual([])
   })
+
+  it('ends a script at any end tag the HTML parser accepts', () => {
+    for (const endTag of ['</script >', '</SCRIPT>', '</script\t\n bar>']) {
+      expect(getInlineScriptHashes(`<script>${MDN_SCRIPT}${endTag}`)).toEqual([
+        MDN_SCRIPT_HASH,
+      ])
+    }
+  })
+
+  it('finds scripts only where the HTML parser does', () => {
+    const html = [
+      // Not a script element
+      '<scripts>x</scripts>',
+      // "<!--" inside a script is script text, not a comment hiding the next script
+      "<script>const marker = '<!--'</script>",
+      `<script data-src="x">${MDN_SCRIPT}</script>`,
+      // An unterminated comment runs to the end of the document
+      '<!-- <script>hidden()</script>',
+    ].join('')
+    expect(getInlineScriptHashes(html)).toEqual([
+      getInlineScriptHashes("<script>const marker = '<!--'</script>")[0],
+      MDN_SCRIPT_HASH,
+    ])
+  })
+
+  it('scans unterminated comments and tags in linear time', () => {
+    // Regular expressions with lazy quantifiers take quadratic time on these inputs, minutes at this size
+    for (const html of ['<!--'.repeat(100_000), '<script'.repeat(100_000)]) {
+      expect(getInlineScriptHashes(html)).toEqual([])
+    }
+  })
 })
 
 describe('addContentSecurityPolicyToHtml', () => {
@@ -89,12 +120,21 @@ describe('addContentSecurityPolicyToHtml', () => {
     expect(() =>
       addContentSecurityPolicyToHtml('<p>no head</p>', SELF),
     ).toThrow(/no <head>/)
-    expect(() =>
-      addContentSecurityPolicyToHtml(
-        `<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'"></head>`,
-        SELF,
-      ),
-    ).toThrow(/already has/)
+    for (const meta of [
+      `<meta http-equiv="Content-Security-Policy" content="default-src 'none'">`,
+      `<META name=x HTTP-EQUIV=content-security-policy content="default-src 'none'">`,
+    ]) {
+      expect(() =>
+        addContentSecurityPolicyToHtml(`<head>${meta}</head>`, SELF),
+      ).toThrow(/already has/)
+    }
+  })
+
+  it('ignores other meta elements and unterminated tags, in linear time', () => {
+    const html = `<head><meta name="description" content="Content-Security-Policy">${'<meta '.repeat(100_000)}`
+    expect(addContentSecurityPolicyToHtml(html, SELF)).toMatch(
+      /^<head><meta http-equiv="Content-Security-Policy"/,
+    )
   })
 })
 

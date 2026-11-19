@@ -7,15 +7,95 @@ import {
   serializeContentSecurityPolicy,
 } from './contentSecurityPolicy.js'
 
-// Comments are matched first so a commented-out <script> is consumed as part of the comment and never hashed
-const COMMENT_OR_SCRIPT =
-  /<!--[\s\S]*?-->|<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi
 const SRC_ATTRIBUTE = /(?:^|\s)src\s*=/i
 const TYPE_ATTRIBUTE = /(?:^|\s)type\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i
 // The policy must precede every element it governs. It goes after <meta charset> so the charset declaration stays
 // within the first 1024 bytes, where browsers look for it.
 const HEAD_START = /<head\b[^>]*>(?:\s*<meta\s+charset\s*=[^>]*>)?/i
-const CSP_META = /<meta\s[^>]*http-equiv\s*=\s*["']?content-security-policy/i
+const CSP_HTTP_EQUIV = /http-equiv\s*=\s*["']?content-security-policy/i
+
+// The document is scanned with indexOf instead of document-wide regular expressions, which take quadratic time on
+// unterminated comments or tags.
+
+/**
+ * Returns the index of the next `tag` (e.g. `<script` or `</script`) at or after `from` whose name ends there, as the
+ * HTML tokenizer reads it: followed by whitespace, `/`, or `>`, so `<scripts` doesn't match. `lowerHtml` is the
+ * lower-cased document.
+ */
+function indexOfTag(lowerHtml: string, tag: string, from: number): number {
+  for (
+    let index = lowerHtml.indexOf(tag, from);
+    index !== -1;
+    index = lowerHtml.indexOf(tag, index + 1)
+  ) {
+    if (/[\s/>]/.test(lowerHtml.charAt(index + tag.length))) {
+      return index
+    }
+  }
+  return -1
+}
+
+type InlineScript = { attributes: string; text: string }
+
+/** Returns every `<script>` element outside HTML comments, in document order. */
+function findScripts(html: string): InlineScript[] {
+  const lowerHtml = html.toLowerCase()
+  const scripts: InlineScript[] = []
+  // The next comment and script, searched from the end of the last one found, so no text is scanned twice
+  let comment = lowerHtml.indexOf('<!--')
+  let script = indexOfTag(lowerHtml, '<script', 0)
+  let position: number
+  while (script !== -1) {
+    if (comment !== -1 && comment < script) {
+      // A <script> inside a comment is commented out. An unterminated comment runs to the end of the document.
+      const commentEnd = lowerHtml.indexOf('-->', comment + '<!--'.length)
+      if (commentEnd === -1) {
+        break
+      }
+      position = commentEnd + '-->'.length
+    } else {
+      const startTagEnd = lowerHtml.indexOf('>', script)
+      const endTag =
+        startTagEnd === -1
+          ? -1
+          : indexOfTag(lowerHtml, '</script', startTagEnd + 1)
+      if (endTag === -1) {
+        break
+      }
+      scripts.push({
+        attributes: html.slice(script + '<script'.length, startTagEnd),
+        text: html.slice(startTagEnd + 1, endTag),
+      })
+      const endTagEnd = lowerHtml.indexOf('>', endTag)
+      position = endTagEnd === -1 ? html.length : endTagEnd + 1
+    }
+    if (comment !== -1 && comment < position) {
+      comment = lowerHtml.indexOf('<!--', position)
+    }
+    if (script < position) {
+      script = indexOfTag(lowerHtml, '<script', position)
+    }
+  }
+  return scripts
+}
+
+function hasContentSecurityPolicyMeta(html: string): boolean {
+  const lowerHtml = html.toLowerCase()
+  for (
+    let meta = indexOfTag(lowerHtml, '<meta', 0);
+    meta !== -1;
+    meta = indexOfTag(lowerHtml, '<meta', meta + 1)
+  ) {
+    const metaEnd = lowerHtml.indexOf('>', meta)
+    if (metaEnd === -1) {
+      return false
+    }
+    if (CSP_HTTP_EQUIV.test(lowerHtml.slice(meta, metaEnd))) {
+      return true
+    }
+  }
+  return false
+}
 
 function isDataBlock(scriptAttributes: string): boolean {
   const match = TYPE_ATTRIBUTE.exec(scriptAttributes)
@@ -29,20 +109,14 @@ function isDataBlock(scriptAttributes: string): boolean {
  */
 export function getInlineScriptHashes(html: string): string[] {
   const hashes = new Set<string>()
-  for (const [element, attributes, content] of html.matchAll(
-    COMMENT_OR_SCRIPT,
-  )) {
-    if (
-      element.startsWith('<!--') ||
-      SRC_ATTRIBUTE.test(attributes) ||
-      isDataBlock(attributes)
-    ) {
+  for (const { attributes, text } of findScripts(html)) {
+    if (SRC_ATTRIBUTE.test(attributes) || isDataBlock(attributes)) {
       continue
     }
     // Browsers hash the script text after the HTML parser normalizes newlines
-    const text = content.replaceAll(/\r\n?/g, '\n')
+    const normalized = text.replaceAll(/\r\n?/g, '\n')
     hashes.add(
-      `'sha256-${createHash('sha256').update(text, 'utf8').digest('base64')}'`,
+      `'sha256-${createHash('sha256').update(normalized, 'utf8').digest('base64')}'`,
     )
   }
   return [...hashes]
@@ -58,7 +132,7 @@ export function addContentSecurityPolicyToHtml(
   html: string,
   allowedSources: AllowedSource[],
 ): string {
-  if (CSP_META.test(html)) {
+  if (hasContentSecurityPolicyMeta(html)) {
     throw new Error('The document already has a Content-Security-Policy')
   }
   const headStart = HEAD_START.exec(html)
