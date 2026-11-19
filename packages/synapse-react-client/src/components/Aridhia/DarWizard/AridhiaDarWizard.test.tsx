@@ -1068,10 +1068,8 @@ describe('AridhiaDarWizard', () => {
     expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
   })
 
-  it('completes and submits the live omop_als1001 form, which uses every RDCA-DAP field type', async () => {
-    // The user's local date, fixed so the form's `today` date minimum doesn't move mid-test.
-    vi.useFakeTimers({ toFake: ['Date'] })
-    vi.setSystemTime(new Date(2027, 0, 15, 12))
+  it('completes and submits the live omop_als1001 form, which uses every field type the portal renders', async () => {
+    fixLocalDate(2027, 0, 15)
     const user = userEvent.setup()
     server.use(
       ...wizardHandlers(getAridhiaWorkflowBodyHandler(allFieldTypesWorkflow)),
@@ -1125,6 +1123,11 @@ describe('AridhiaDarWizard', () => {
     await fillRjsfTextField(user, 'address', 'Somewhere, USA')
     await clickNext(user)
 
+    await waitFor(() =>
+      expect(
+        screen.getByRole('row', { name: 'Number = numeric input 10' }),
+      ).toBeVisible(),
+    )
     await acceptTermsAndSubmit(user)
 
     await waitFor(() => expect(capturedRequestBodies).toHaveLength(1))

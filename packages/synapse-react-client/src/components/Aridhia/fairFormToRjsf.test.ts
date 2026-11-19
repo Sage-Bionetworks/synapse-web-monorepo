@@ -559,7 +559,8 @@ describe('FAIR number fields', () => {
 })
 
 describe('the live omop_als1001 request form (cpath_basic_all_access_request_v2)', () => {
-  test('renders every field it contains, which covers every RDCA-DAP field type', () => {
+  // RDCA-DAP's one other field type, `auth`, is deliberately unsupported.
+  test('maps every field it contains, of every field type the portal renders, with none unsupported', () => {
     const sections = parseFairFormSections(allFieldTypesWorkflow)
     expect(sections.map(s => s.key)).toEqual(['about', 'project'])
     expect(new Set(sections.flatMap(s => s.fields.map(f => f.type)))).toEqual(
