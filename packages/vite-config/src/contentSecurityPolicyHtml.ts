@@ -93,25 +93,22 @@ export async function addContentSecurityPolicyToHtmlFiles(
   directory: string,
   allowedSources: AllowedSource[],
 ): Promise<void> {
-  const files = await findHtmlFiles(directory)
-  await Promise.all(
-    files.map(async file => {
-      const html = await readFile(file, 'utf8')
-      try {
-        await writeFile(
-          file,
-          addContentSecurityPolicyToHtml(html, allowedSources),
-        )
-      } catch (error) {
-        throw new Error(
-          `Could not add the Content-Security-Policy to ${file}`,
-          {
-            cause: error,
-          },
-        )
-      }
-    }),
-  )
+  // One page at a time: a portal can prerender thousands of pages, and opening them all at once can exceed the
+  // open-file limit and hold every page in memory
+  for (const file of await findHtmlFiles(directory)) {
+    // oxlint-disable-next-line no-await-in-loop
+    const html = await readFile(file, 'utf8')
+    let withPolicy: string
+    try {
+      withPolicy = addContentSecurityPolicyToHtml(html, allowedSources)
+    } catch (error) {
+      throw new Error(`Could not add the Content-Security-Policy to ${file}`, {
+        cause: error,
+      })
+    }
+    // oxlint-disable-next-line no-await-in-loop
+    await writeFile(file, withPolicy)
+  }
 }
 
 /**

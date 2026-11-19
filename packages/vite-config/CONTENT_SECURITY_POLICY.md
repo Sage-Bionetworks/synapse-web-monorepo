@@ -16,14 +16,21 @@ Directives with no allowed source are `'none'`. `default-src 'none'` blocks ever
 
 Exceptions that a stricter policy cannot remove yet:
 
-| Source                                   | Applies to | Why                                                                                                                                                                                                        |
-| ---------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `script-src 'unsafe-eval'`               | Portals    | `@rjsf/validator-ajv8` compiles JSON schemas into functions at runtime (table Export dialog, data access request forms, `DynamicForm`). Removing it requires an RJSF validator that doesn't generate code. |
-| `style-src 'unsafe-inline'`              | All apps   | MUI/Emotion insert `<style>` elements, and React renders `style` attributes. A static site can't issue per-request nonces.                                                                                 |
-| `img-src https:`, `media-src https:`     | Portals    | Wiki markdown can show images and video from any HTTPS host. This content is display-only; `script-src` is unaffected.                                                                                     |
-| `connect-src https://*.s3.amazonaws.com` | Portals    | Presigned URLs for files in external S3 storage locations, named per bucket.                                                                                                                               |
+| Source                                   | Applies to              | Why                                                                                                                                                                                                        |
+| ---------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `script-src 'unsafe-eval'`               | Portals                 | `@rjsf/validator-ajv8` compiles JSON schemas into functions at runtime (table Export dialog, data access request forms, `DynamicForm`). Removing it requires an RJSF validator that doesn't generate code. |
+| `style-src 'unsafe-inline'`              | All apps                | MUI/Emotion insert `<style>` elements, and React renders `style` attributes. A static site can't issue per-request nonces.                                                                                 |
+| `img-src https:`, `media-src https:`     | Portals                 | Wiki markdown can show images and video from any HTTPS host. This content is display-only; `script-src` is unaffected.                                                                                     |
+| `connect-src https://*.s3.amazonaws.com` | Portals                 | Presigned URLs for files in external S3 storage locations, named per bucket.                                                                                                                               |
+| `connect-src https://s3.amazonaws.com`   | Portals, SageAccountWeb | Path-style presigned URLs for Synapse-managed buckets: uploads (profile pictures, attestation documents), and the portals' map data. Data only; S3 is in no `script-src`.                                  |
 
-Inline scripts are allowed only by SHA-256 hash, and each page carries its own hashes. The enforced policies contain no `'unsafe-inline'` scripts, `s3.amazonaws.com` script hosts, or development hosts.
+Images from S3 in the account apps are limited to the `static.synapse.org` bucket by a path-scoped source.
+
+Inline scripts are allowed only by SHA-256 hash, and each page carries its own hashes. The enforced policies contain no `'unsafe-inline'` scripts, no development hosts, and no S3 host in `script-src`, `frame-src`, or `img-src` beyond that one bucket.
+
+### Known limitation: script hosts that serve chosen code
+
+`script-src` trusts hosts, and some allowed hosts serve code chosen by URL: Google Tag Manager loads whatever container the `id` parameter names, and some other allowed script hosts may serve JSONP. If an attacker can inject HTML into a portal page (for example, an `<iframe srcdoc>` that inherits the page's policy), they can load their own GTM container, and on the portals `'unsafe-eval'` lets its Custom JavaScript run. The policy still blocks injected inline scripts, event handlers, and scripts from any other host, which a portal without a policy did not. Closing this requires `'strict-dynamic'` (trust only scripts that hashed scripts load) or removing `'unsafe-eval'` ([SWC-8151](https://sagebionetworks.jira.com/browse/SWC-8151)).
 
 ## How it is delivered
 
@@ -62,7 +69,7 @@ The headers are:
 - `Content-Security-Policy-Report-Only` with every source that any app sharing the response headers policy allows. Violations of an app's enforced `<meta>` policy are reported to SWC's `CSPReportServlet` at `https://www.synapse.org/Portal/csp-report`, which logs them to CloudWatch ([SWC-8036](https://sagebionetworks.jira.com/browse/SWC-8036)).
   - Blocked requests to a source that only another app on the same policy allows (for example, `maps.googleapis.com` from a portal other than challenges) are enforced but not reported.
   - The header can't carry per-page hashes, so it allows inline scripts. The `<meta>` policy still enforces the hashes, so blocked inline scripts are not reported.
-  - The value must stay within CloudFront's 1,783-character limit for a header value; a test fails when it doesn't.
+  - The value must stay within CloudFront's 1,783-character limit for a header value; a test fails when it doesn't. To fit, its sources omit the `https://` scheme, which on these HTTPS pages still matches only HTTPS (and WSS) URLs.
 - `Reporting-Endpoints`, `Strict-Transport-Security`, `X-Content-Type-Options`, `X-Frame-Options`, and `Referrer-Policy`.
 
 Regenerate the headers whenever an allowlist changes, and update the CloudFront policies.

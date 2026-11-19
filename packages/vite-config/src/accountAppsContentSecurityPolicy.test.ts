@@ -1,12 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import {
   ACCOUNT_APPS,
-  type SynapseEndpoints,
   getAccountAppAllowedSources,
   getAccountAppSecurityHeaders,
   getSynapseEndpointsFromEnv,
 } from './accountAppsContentSecurityPolicy.js'
-import { serializeContentSecurityPolicy } from './contentSecurityPolicy.js'
+import {
+  type SynapseEndpoints,
+  serializeContentSecurityPolicy,
+} from './contentSecurityPolicy.js'
 import {
   CLOUDFRONT_MAX_HEADER_VALUE_LENGTH,
   parseContentSecurityPolicy as parse,
@@ -141,7 +143,14 @@ describe('getAccountAppSecurityHeaders', () => {
         ],
       )
       for (const app of ACCOUNT_APPS) {
-        for (const [directive, sources] of getPolicy(app, endpoints)) {
+        const enforced = parse(
+          serializeContentSecurityPolicy(
+            getAccountAppAllowedSources(app, endpoints),
+            [],
+            { omitHttpsScheme: true },
+          ),
+        )
+        for (const [directive, sources] of enforced) {
           expect(reportOnly.get(directive)).toEqual(
             expect.arrayContaining(sources.filter(s => s !== "'none'")),
           )

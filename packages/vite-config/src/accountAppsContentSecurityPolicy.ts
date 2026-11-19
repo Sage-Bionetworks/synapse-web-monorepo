@@ -12,58 +12,13 @@ import {
   GOOGLE_ANALYTICS_SOURCES,
   SAGE,
   STYLE_AND_FONT_SOURCES,
+  type SynapseEndpoints,
   getSecurityHeaders,
+  getSynapseSources,
 } from './contentSecurityPolicy.js'
 
 export const ACCOUNT_APPS = ['SageAccountWeb', 'synapse-oauth-signin'] as const
 export type AccountApp = (typeof ACCOUNT_APPS)[number]
-
-/** The Synapse stack an app build talks to, as configured in the app's `.env.<mode>` file. */
-export type SynapseEndpoints = {
-  /** `VITE_SYNAPSE_REPO_ENDPOINT` */
-  repo: string
-  /** `VITE_SYNAPSE_PORTAL_ENDPOINT` */
-  portal: string
-}
-
-// Host of the presigned URLs that each stack's repo returns for Synapse-managed files. Stacks not listed (e.g. a
-// local repo) get no file download host.
-const FILE_DOWNLOAD_ORIGIN_BY_REPO_ORIGIN: Record<string, string> = {
-  'https://repo-prod.prod.sagebase.org': 'https://data.prod.sagebase.org',
-  'https://repo-staging.prod.sagebase.org': 'https://data.prod.sagebase.org',
-  'https://repo-dev.dev.sagebase.org': 'https://data.dev.sagebase.org',
-}
-
-function getSynapseSources(endpoints: SynapseEndpoints): AllowedSource[] {
-  const repo = new URL(endpoints.repo).origin
-  const fileDownloads = FILE_DOWNLOAD_ORIGIN_BY_REPO_ORIGIN[repo]
-  return [
-    {
-      source: repo,
-      directives: ['connect-src'],
-      purpose: 'Synapse REST API (repo, auth, file services)',
-      owner: SAGE,
-    },
-    {
-      source: new URL(endpoints.portal).origin,
-      directives: ['connect-src'],
-      purpose:
-        'Synapse web client servlets: session cookie, feature flags, profile picture downloads',
-      owner: SAGE,
-    },
-    ...(fileDownloads
-      ? [
-          {
-            source: fileDownloads,
-            directives: ['connect-src', 'img-src'],
-            purpose:
-              'Presigned URLs for Synapse-managed files: profile pictures and sign-in app logos',
-            owner: SAGE,
-          } satisfies AllowedSource,
-        ]
-      : []),
-  ]
-}
 
 const SHARED_ACCOUNT_APP_SOURCES: AllowedSource[] = [
   {
@@ -94,7 +49,8 @@ const SHARED_ACCOUNT_APP_SOURCES: AllowedSource[] = [
     owner: SAGE,
   },
   {
-    source: 'https://s3.amazonaws.com',
+    // A path-scoped source: images from this one bucket, not from any S3 bucket
+    source: 'https://s3.amazonaws.com/static.synapse.org/',
     directives: ['img-src'],
     purpose:
       'Background images, spinner and illustrations in the static.synapse.org bucket',

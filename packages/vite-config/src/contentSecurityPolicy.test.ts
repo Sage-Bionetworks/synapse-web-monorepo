@@ -51,10 +51,34 @@ describe('serializeContentSecurityPolicy', () => {
     expect(policy.get('img-src')).toEqual(['https:', 'http://b.example'])
     expect(policy.get('connect-src')).toEqual(['https://a.example'])
   })
+
+  it('can omit the https:// scheme without dropping other schemes or paths', () => {
+    const policy = parse(
+      serializeContentSecurityPolicy(
+        [
+          allowed('https://a.example/path/', 'connect-src'),
+          allowed('https://*.b.example', 'connect-src'),
+          allowed('http://c.example', 'connect-src'),
+          allowed("'self'", 'connect-src'),
+        ],
+        [],
+        { omitHttpsScheme: true },
+      ),
+    )
+    expect(policy.get('connect-src')).toEqual([
+      'a.example/path/',
+      '*.b.example',
+      'http://c.example',
+      "'self'",
+    ])
+  })
 })
 
 describe('getSecurityHeaders', () => {
-  const headers = getSecurityHeaders([allowed("'self'", 'script-src')])
+  const headers = getSecurityHeaders([
+    allowed("'self'", 'script-src'),
+    allowed('https://a.example', 'connect-src'),
+  ])
 
   it('reports violations to the endpoint declared in Reporting-Endpoints', () => {
     // Browsers silently send no reports when the report-to name has no matching endpoint
@@ -72,11 +96,16 @@ describe('getSecurityHeaders', () => {
   })
 
   it('enforces only frame-ancestors, and reports the given policy with inline scripts allowed', () => {
+    expect([...parse(headers['Content-Security-Policy']).keys()]).toEqual([
+      'frame-ancestors',
+      'report-to',
+      'report-uri',
+    ])
     expect(
       parse(headers['Content-Security-Policy']).get('frame-ancestors'),
     ).toEqual(["'none'"])
-    expect(
-      parse(headers['Content-Security-Policy-Report-Only']).get('script-src'),
-    ).toEqual(["'self'", "'unsafe-inline'"])
+    const reportOnly = parse(headers['Content-Security-Policy-Report-Only'])
+    expect(reportOnly.get('script-src')).toEqual(["'self'", "'unsafe-inline'"])
+    expect(reportOnly.get('connect-src')).toEqual(['a.example'])
   })
 })

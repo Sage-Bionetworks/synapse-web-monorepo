@@ -5,9 +5,11 @@
 import {
   type AllowedSource,
   GOOGLE_ANALYTICS_SOURCES,
+  PRODUCTION_SYNAPSE_ENDPOINTS,
   SAGE,
   STYLE_AND_FONT_SOURCES,
   getSecurityHeaders,
+  getSynapseSources,
 } from './contentSecurityPolicy.js'
 
 /** Sources every portal needs. */
@@ -56,25 +58,7 @@ export const SHARED_ALLOWED_SOURCES: AllowedSource[] = [
       'Wiki markdown may show images, video, and audio from any HTTPS host. Display-only content; script-src is not affected',
     owner: 'Wiki authors',
   },
-  {
-    source: 'https://repo-prod.prod.sagebase.org',
-    directives: ['connect-src'],
-    purpose: 'Synapse REST API (repo, auth, file services)',
-    owner: SAGE,
-  },
-  {
-    source: 'https://www.synapse.org',
-    directives: ['connect-src'],
-    purpose:
-      'Synapse web client servlets: session cookie, feature flags, file handle association downloads',
-    owner: SAGE,
-  },
-  {
-    source: 'https://data.prod.sagebase.org',
-    directives: ['connect-src'],
-    purpose: 'Presigned URLs for Synapse-managed file storage (CloudFront)',
-    owner: SAGE,
-  },
+  ...getSynapseSources(PRODUCTION_SYNAPSE_ENDPOINTS),
   {
     source: 'https://s3.amazonaws.com',
     directives: ['connect-src'],
@@ -161,6 +145,13 @@ function newsFeed(origin: string): AllowedSource {
   }
 }
 
+const shortLinks: AllowedSource = {
+  source: 'https://api.short.io',
+  directives: ['connect-src'],
+  purpose: 'Short links for the Share this page button (useCreateShortUrl)',
+  owner: 'Short.io (Sage account)',
+}
+
 /** Sources needed by one portal, keyed by the portal's `VITE_PORTAL_KEY`. */
 export const PORTAL_ALLOWED_SOURCES: Record<string, AllowedSource[]> = {
   adknowledgeportal: [
@@ -173,10 +164,28 @@ export const PORTAL_ALLOWED_SOURCES: Record<string, AllowedSource[]> = {
       owner: 'Mailchimp (Sage account)',
     },
   ],
-  ampals: [newsFeed('https://salsportalnews.wpenginepowered.com')],
+  ampals: [
+    newsFeed('https://salsportalnews.wpenginepowered.com'),
+    // The gateways are the portal's VITE_ARIDHIA_GATEWAY_URL and VITE_ARIDHIA_DEV_GATEWAY_URL
+    {
+      source: 'https://gateway.westeurope.dap.c-path.org',
+      directives: ['connect-src'],
+      purpose:
+        'RDCA-DAP (Aridhia) gateway: token exchange, data access status and requests',
+      owner: 'Critical Path Institute (Aridhia)',
+    },
+    {
+      source: 'https://gateway.westus2.c-path-dev.aridhia.io',
+      directives: ['connect-src'],
+      purpose:
+        'RDCA-DAP (Aridhia) development gateway, used on staging.ampals.synapse.org',
+      owner: 'Critical Path Institute (Aridhia)',
+    },
+  ],
   cancercomplexity: [
     newsFeed('https://news.cancercomplexity.synapse.org'),
     ...jiraServiceDeskWidget,
+    shortLinks,
   ],
   challenges: [
     {
@@ -191,6 +200,7 @@ export const PORTAL_ALLOWED_SOURCES: Record<string, AllowedSource[]> = {
   namhub: [newsFeed('https://nhdcc.wpenginepowered.com')],
   nf: [
     newsFeed('https://news.nf.synapse.org'),
+    shortLinks,
     {
       source: 'https://raw.githubusercontent.com',
       directives: ['connect-src'],

@@ -1,3 +1,6 @@
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import path from 'node:path'
 import type { Config } from '@react-router/dev/config'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fetchResourceIds } from '../sitemap/queryTableForSitemap'
@@ -108,5 +111,32 @@ describe('createReactRouterConfig', () => {
 
     await expect(paths({ getStaticPaths })).resolves.toEqual(['/'])
     await expect(paths({ getStaticPaths })).resolves.toEqual(['/'])
+  })
+
+  it("adds the portal's Content Security Policy to the prerendered pages after the build", async () => {
+    const buildDirectory = await mkdtemp(path.join(tmpdir(), 'ssg-csp-'))
+    try {
+      await mkdir(path.join(buildDirectory, 'client/Explore'), {
+        recursive: true,
+      })
+      const page = path.join(buildDirectory, 'client/Explore/index.html')
+      await writeFile(page, '<html><head></head><body></body></html>')
+      const { buildEnd } = createReactRouterConfig({
+        sitemapConfig: { detailPages: [] },
+        metadataConfigs: [],
+      })
+
+      await buildEnd!({
+        reactRouterConfig: { buildDirectory },
+        viteConfig: { env: { VITE_PORTAL_KEY: 'challenges' } },
+      } as unknown as Parameters<NonNullable<Config['buildEnd']>>[0])
+
+      // The challenges portal's own source shows the policy is the one for VITE_PORTAL_KEY
+      expect(await readFile(page, 'utf8')).toMatch(
+        /<meta http-equiv="Content-Security-Policy" content="[^"]*script-src [^;"]*https:\/\/maps\.googleapis\.com/,
+      )
+    } finally {
+      await rm(buildDirectory, { recursive: true, force: true })
+    }
   })
 })

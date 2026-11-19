@@ -15,9 +15,11 @@ import {
 
 const portalKeys = [undefined, ...Object.keys(PORTAL_ALLOWED_SOURCES)]
 
-function getPortalPolicy(portalKey?: string) {
+function getPortalPolicy(portalKey?: string, omitHttpsScheme = false) {
   return parse(
-    serializeContentSecurityPolicy(getPortalAllowedSources(portalKey)),
+    serializeContentSecurityPolicy(getPortalAllowedSources(portalKey), [], {
+      omitHttpsScheme,
+    }),
   )
 }
 
@@ -58,7 +60,7 @@ describe('getPortalSecurityHeaders', () => {
     const reportOnly = parse(
       getPortalSecurityHeaders()['Content-Security-Policy-Report-Only'],
     )
-    const enforcedPolicies = portalKeys.map(getPortalPolicy)
+    const enforcedPolicies = portalKeys.map(key => getPortalPolicy(key, true))
     for (const directive of CSP_DIRECTIVES) {
       const allowedByAnyPortal = new Set(
         enforcedPolicies.flatMap(policy => policy.get(directive)!),

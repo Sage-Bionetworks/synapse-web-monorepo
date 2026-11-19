@@ -1,6 +1,13 @@
-import { describe, expect, it } from 'vitest'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import path from 'node:path'
+import { build } from 'vite'
+import { createHtmlPlugin } from 'vite-plugin-html'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
   addContentSecurityPolicyToHtml,
+  addContentSecurityPolicyToHtmlFiles,
+  contentSecurityPolicyPlugin,
   getInlineScriptHashes,
 } from './contentSecurityPolicyHtml.js'
 import type { AllowedSource } from './contentSecurityPolicy.js'
@@ -13,6 +20,14 @@ const SELF: AllowedSource[] = [
     owner: 'test',
   },
 ]
+
+let directory: string
+beforeEach(async () => {
+  directory = await mkdtemp(path.join(tmpdir(), 'csp-test-'))
+})
+afterEach(async () => {
+  await rm(directory, { recursive: true, force: true })
+})
 
 // Example from https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/script-src
 const MDN_SCRIPT = "alert('Hello, world.');"
@@ -80,5 +95,94 @@ describe('addContentSecurityPolicyToHtml', () => {
         SELF,
       ),
     ).toThrow(/already has/)
+  })
+})
+
+describe('addContentSecurityPolicyToHtmlFiles', () => {
+  it('adds the policy to every HTML file in the directory tree and leaves other files alone', async () => {
+    await mkdir(path.join(directory, 'Explore/Studies'), { recursive: true })
+    const page = `<html><head><script>${MDN_SCRIPT}</script></head></html>`
+    await writeFile(path.join(directory, 'Explore/Studies/index.html'), page)
+    await writeFile(path.join(directory, '__spa-fallback.html'), page)
+    await writeFile(path.join(directory, 'robots.txt'), '<head>')
+
+    await addContentSecurityPolicyToHtmlFiles(directory, SELF)
+
+    const pages = await Promise.all(
+      ['Explore/Studies/index.html', '__spa-fallback.html'].map(file =>
+        readFile(path.join(directory, file), 'utf8'),
+      ),
+    )
+    for (const html of pages) {
+      expect(getPolicy(html)?.split('; ')).toContain(
+        `script-src 'self' ${MDN_SCRIPT_HASH}`,
+      )
+    }
+    expect(await readFile(path.join(directory, 'robots.txt'), 'utf8')).toBe(
+      '<head>',
+    )
+  })
+
+  it('names the page it could not protect', async () => {
+    await writeFile(path.join(directory, 'broken.html'), '<p>no head</p>')
+    await expect(
+      addContentSecurityPolicyToHtmlFiles(directory, SELF),
+    ).rejects.toThrow(/broken\.html/)
+  })
+})
+
+describe('contentSecurityPolicyPlugin', () => {
+  it("hashes the inline scripts of the HTML a production build emits, with sources from the build's env", async () => {
+    await writeFile(
+      path.join(directory, 'index.html'),
+      `<!doctype html><html><head><meta charset="utf-8" />
+        <script>
+          window.config = { repo: '%VITE_TEST_ORIGIN%' }
+        </script>
+        <script type="module" src="./main.js"></script>
+      </head><body><%- body %></body></html>`,
+    )
+    await writeFile(path.join(directory, 'main.js'), 'console.log(1)')
+    await writeFile(
+      path.join(directory, '.env.production'),
+      'VITE_TEST_ORIGIN=https://repo.example',
+    )
+
+    const result = await build({
+      root: directory,
+      configFile: false,
+      logLevel: 'silent',
+      build: { write: false },
+      plugins: [
+        // Minifies the HTML in generateBundle, so the hashes must be taken after it
+        createHtmlPlugin({ minify: true, inject: { data: { body: '<p>' } } }),
+        contentSecurityPolicyPlugin(env => [
+          ...SELF,
+          {
+            source: env.VITE_TEST_ORIGIN!,
+            directives: ['connect-src'],
+            purpose: 'test',
+            owner: 'test',
+          },
+        ]),
+      ],
+    })
+    if (!('output' in result)) {
+      throw new Error('Expected a single build output')
+    }
+
+    const html = result.output.find(file => file.fileName === 'index.html')
+    const script = result.output.find(file => file.type === 'chunk')
+    if (html?.type !== 'asset' || script?.type !== 'chunk') {
+      throw new Error('The build emitted no HTML page or script')
+    }
+    const htmlSource = String(html.source)
+    const policy = getPolicy(htmlSource)!.split('; ')
+    expect(policy).toContain('connect-src https://repo.example')
+    const scriptSrc = policy.find(d => d.startsWith('script-src '))!
+    const finalHashes = getInlineScriptHashes(htmlSource)
+    expect(finalHashes).toHaveLength(1)
+    expect(scriptSrc).toBe(`script-src 'self' ${finalHashes[0]}`)
+    expect(script.code).not.toContain('Content-Security-Policy')
   })
 })

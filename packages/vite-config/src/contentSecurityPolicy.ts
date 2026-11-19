@@ -133,14 +133,73 @@ export const GOOGLE_ANALYTICS_SOURCES: AllowedSource[] = [
   },
 ]
 
+/** The Synapse stack an app talks to. */
+export type SynapseEndpoints = {
+  /** Repository services, e.g. an account app's `VITE_SYNAPSE_REPO_ENDPOINT` */
+  repo: string
+  /** Synapse web client, e.g. an account app's `VITE_SYNAPSE_PORTAL_ENDPOINT` */
+  portal: string
+}
+
+/** The production stack, which the portals use on every host. */
+export const PRODUCTION_SYNAPSE_ENDPOINTS: SynapseEndpoints = {
+  repo: 'https://repo-prod.prod.sagebase.org',
+  portal: 'https://www.synapse.org',
+}
+
+// Host of the presigned URLs that each stack's repo returns for Synapse-managed files. Stacks not listed (e.g. a
+// local repo) get no file download host.
+const FILE_DOWNLOAD_ORIGIN_BY_REPO_ORIGIN: Record<string, string> = {
+  'https://repo-prod.prod.sagebase.org': 'https://data.prod.sagebase.org',
+  'https://repo-staging.prod.sagebase.org': 'https://data.prod.sagebase.org',
+  'https://repo-dev.dev.sagebase.org': 'https://data.dev.sagebase.org',
+}
+
+/** The Synapse REST API, web client servlets, and file download host of a stack. */
+export function getSynapseSources(
+  endpoints: SynapseEndpoints,
+): AllowedSource[] {
+  const repo = new URL(endpoints.repo).origin
+  const fileDownloads = FILE_DOWNLOAD_ORIGIN_BY_REPO_ORIGIN[repo]
+  return [
+    {
+      source: repo,
+      directives: ['connect-src'],
+      purpose: 'Synapse REST API (repo, auth, file services)',
+      owner: SAGE,
+    },
+    {
+      source: new URL(endpoints.portal).origin,
+      directives: ['connect-src'],
+      purpose:
+        'Synapse web client servlets: session cookie, feature flags, file handle downloads',
+      owner: SAGE,
+    },
+    ...(fileDownloads
+      ? [
+          {
+            source: fileDownloads,
+            directives: ['connect-src', 'img-src'],
+            purpose:
+              'Presigned URLs for Synapse-managed files (CloudFront): images, avatars, logos, downloads',
+            owner: SAGE,
+          } satisfies AllowedSource,
+        ]
+      : []),
+  ]
+}
+
 /**
  * Serializes a policy from its allowed sources.
  *
  * @param extraScriptSources additional `script-src` sources, such as hashes of a page's inline scripts
+ * @param options.omitHttpsScheme writes `https://` sources without the scheme. On an HTTPS page, a source without a
+ * scheme still matches only HTTPS URLs (and WSS for connections), so this only shortens the policy.
  */
 export function serializeContentSecurityPolicy(
   sources: AllowedSource[],
   extraScriptSources: string[] = [],
+  options: { omitHttpsScheme?: boolean } = {},
 ): string {
   return CSP_DIRECTIVES.map(directive => {
     const values = sources
@@ -151,9 +210,11 @@ export function serializeContentSecurityPolicy(
     }
     // An HTTPS origin adds nothing to a directive that already allows every HTTPS URL
     const allowsAllHttps = values.includes('https:')
-    const unique = [...new Set(values)].filter(
-      value => !(allowsAllHttps && value.startsWith('https://')),
-    )
+    const unique = [...new Set(values)]
+      .filter(value => !(allowsAllHttps && value.startsWith('https://')))
+      .map(value =>
+        options.omitHttpsScheme ? value.replace(/^https:\/\//, '') : value,
+      )
     return `${directive} ${unique.length > 0 ? unique.join(' ') : "'none'"}`
   }).join('; ')
 }
@@ -169,15 +230,21 @@ export const CSP_REPORTING_ENDPOINT_NAME = 'csp-endpoint'
  *
  * @param reportOnlySources sources of the report-only policy. A violation of the enforced `<meta>` policy is reported
  * unless these sources allow it. The policy cannot list per-page inline script hashes, so it allows inline scripts;
- * the `<meta>` policy still enforces the hashes.
+ * the `<meta>` policy still enforces the hashes. Its sources are written without the `https://` scheme to fit
+ * CloudFront's limit on a header value.
  */
 export function getSecurityHeaders(
   reportOnlySources: AllowedSource[],
 ): Record<string, string> {
   const reporting = `report-to ${CSP_REPORTING_ENDPOINT_NAME}; report-uri ${CSP_REPORT_URL}`
+  const reportOnlyPolicy = serializeContentSecurityPolicy(
+    reportOnlySources,
+    ["'unsafe-inline'"],
+    { omitHttpsScheme: true },
+  )
   return {
     'Content-Security-Policy': `frame-ancestors 'none'; ${reporting}`,
-    'Content-Security-Policy-Report-Only': `${serializeContentSecurityPolicy(reportOnlySources, ["'unsafe-inline'"])}; ${reporting}`,
+    'Content-Security-Policy-Report-Only': `${reportOnlyPolicy}; ${reporting}`,
     'Reporting-Endpoints': `${CSP_REPORTING_ENDPOINT_NAME}="${CSP_REPORT_URL}"`,
     'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
     'X-Content-Type-Options': 'nosniff',
