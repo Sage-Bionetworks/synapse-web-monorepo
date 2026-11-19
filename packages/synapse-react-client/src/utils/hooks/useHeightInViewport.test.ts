@@ -1,28 +1,11 @@
+import {
+  reportResized,
+  stubResizeObserver,
+} from '@/testutils/FakeResizeObserver'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { getHeightInViewport, useHeightInViewport } from './useHeightInViewport'
 
 const VIEWPORT_HEIGHT = 800
-
-let reportResize: ResizeObserverCallback | undefined
-
-// jsdom has no layout, so its ResizeObserver never reports. The test reports in its place.
-class FakeResizeObserver implements Pick<
-  ResizeObserver,
-  'observe' | 'unobserve' | 'disconnect'
-> {
-  constructor(callback: ResizeObserverCallback) {
-    reportResize = callback
-  }
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
-function reportResized(target: Element) {
-  act(() => {
-    reportResize?.([{ target } as ResizeObserverEntry], {} as ResizeObserver)
-  })
-}
 
 /** An element at `top` to `bottom` in the viewport, which `moveTo` moves as a layout change would */
 function createElementAt(top: number, bottom: number) {
@@ -67,9 +50,7 @@ describe('getHeightInViewport', () => {
 
 describe('useHeightInViewport', () => {
   beforeAll(() => {
-    // @react-hookz/web creates its one shared ResizeObserver on first use, so the fake must be in
-    // place before the first render in this file
-    vi.stubGlobal('ResizeObserver', FakeResizeObserver)
+    stubResizeObserver()
   })
 
   afterAll(() => {
@@ -91,7 +72,7 @@ describe('useHeightInViewport', () => {
     expect(result.current).toBeUndefined()
   })
 
-  it('measures the element as soon as it has one', () => {
+  it('measures the element before the ResizeObserver first reports', () => {
     const { element } = createElementAt(-200, 600)
 
     const { result } = renderHook(() => useHeightInViewport(element))

@@ -1,0 +1,11 @@
+// While a column or the grid's sidebar is resized, the resize cursor everywhere (including over the
+// grid's cells, which set their own cursor) and no text selection
+body.col-resizing {
+  cursor: col-resize;
+  user-select: none;
+
+  .dsg-container,
+  .dsg-container * {
+    cursor: col-resize;
+  }
+}
