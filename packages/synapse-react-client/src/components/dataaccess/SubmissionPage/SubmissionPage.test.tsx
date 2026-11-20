@@ -522,10 +522,10 @@ describe('Submission Page tests', () => {
       expect(
         screen.getByText('Submitted By').nextElementSibling,
       ).toHaveTextContent(`First Last (@${MOCK_USER_NAME})`)
-      const secondRequester = (
+      const secondRequesterName = (
         await screen.findByText(`John Doe (@${MOCK_USER_NAME_2})`)
-      ).closest('.DataRequester')!
-      expect(secondRequester).toHaveTextContent(/— Gain$/)
+      ).parentElement!
+      expect(secondRequesterName.nextElementSibling).toHaveTextContent('Gain')
     })
   })
 

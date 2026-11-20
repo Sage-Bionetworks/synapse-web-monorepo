@@ -423,12 +423,16 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             <SubmissionDetail
               label={`Data Requesters (${submission.accessorChanges.length})`}
             >
-              {submission.accessorChanges.map(accessorChange => (
-                <span key={accessorChange.userId} className="DataRequester">
-                  <UserBadge userId={accessorChange.userId} showFullName /> —{' '}
-                  {formatAccessorChangeType(accessorChange.type)}
-                </span>
-              ))}
+              <span className="DataRequesters">
+                {submission.accessorChanges.map(accessorChange => (
+                  <Fragment key={accessorChange.userId}>
+                    <span>
+                      <UserBadge userId={accessorChange.userId} showFullName />
+                    </span>
+                    <span>{formatAccessorChangeType(accessorChange.type)}</span>
+                  </Fragment>
+                ))}
+              </span>
             </SubmissionDetail>
             {submission.researchProjectSnapshot && (
               <>

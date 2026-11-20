@@ -19,8 +19,11 @@
       margin: 2px 0 12px;
     }
 
-    .DataRequester {
-      display: block;
+    // One row per requester: the user, then the access change.
+    .DataRequesters {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 4px 12px;
     }
 
     // UserBadge keeps a name on one line (inline nowrap, non-breaking spaces), so a long name would run out of the
@@ -79,6 +82,11 @@
 
       dd {
         margin: 0;
+      }
+
+      // The page is wide, so size the name column to the longest name rather than stretching it.
+      .DataRequesters {
+        grid-template-columns: max-content auto;
       }
     }
 
