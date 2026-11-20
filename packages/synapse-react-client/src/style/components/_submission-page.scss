@@ -11,27 +11,23 @@
   }
   .SubmissionSummary {
     margin-bottom: 15px;
-    .SubmissionSummaryGrid {
-      display: grid;
-      gap: 8px;
-      // Grid column maximum is 50% minus 5px to account for the column gap
-      grid-template-columns: minmax(auto, calc(50% - 5px)) minmax(
-          auto,
-          calc(50% - 5px)
-        );
+  }
+  .SubmissionDetails {
+    margin: 0 0 16px;
 
-      .Key {
-        grid-column: 1;
-      }
+    dd {
+      margin: 2px 0 12px;
+    }
 
-      .Value {
-        grid-column: 2;
-      }
+    .DataRequester {
+      display: block;
+    }
 
-      .DataAccessor {
-        margin-top: 5px;
-        margin-bottom: 3px;
-      }
+    // UserBadge keeps a name on one line (inline nowrap, non-breaking spaces), so a long name would run out of the
+    // sidebar. Break it at the sidebar's edge instead.
+    .UserBadge {
+      white-space: normal !important;
+      overflow-wrap: anywhere;
     }
   }
   ul {
@@ -46,43 +42,43 @@
     border: 1px solid #dfe2e6;
   }
 
-  .SubmissionPrintHeader {
+  .SubmissionPrintTitle {
     display: none;
   }
 }
 
 @media print {
   .SubmissionPage {
-    // Override MUI Grid's flex layout, whose style sheet may load after this one.
+    // Override MUI Grid's flex layout, whose style sheet may load after this one. useMediaPrintOnly positions the page
+    // absolutely, which would otherwise shrink it to its content's width.
     display: block !important;
+    width: 100%;
 
+    .SubmissionSummary,
     .SubmissionContents {
       width: 100% !important;
     }
 
-    .SubmissionPrintHeader {
+    // A global print rule follows each link with its URL; user names are links here.
+    a[href]::after {
+      content: none !important;
+    }
+
+    .SubmissionPrintTitle {
       display: block;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid currentColor;
+    }
+
+    .SubmissionDetails {
+      display: grid;
+      grid-template-columns: 11rem 1fr;
+      gap: 4px 12px;
       margin-bottom: 24px;
-
-      h1 {
-        padding-bottom: 8px;
-        margin-bottom: 12px;
-        border-bottom: 2px solid currentColor;
-      }
-
-      dl {
-        display: grid;
-        grid-template-columns: 11rem 1fr;
-        gap: 4px 12px;
-        margin: 0;
-      }
 
       dd {
         margin: 0;
-      }
-
-      .PrintedDataRequester {
-        display: block;
       }
     }
 

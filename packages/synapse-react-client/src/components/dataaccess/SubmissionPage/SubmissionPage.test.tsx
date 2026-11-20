@@ -72,11 +72,6 @@ function renderComponent(props: SubmissionPageProps) {
   })
 }
 
-/** The on-screen summary, as opposed to the print header that repeats its details. */
-function summary() {
-  return within(screen.getByRole('complementary'))
-}
-
 const SUBMITTED_SUBMISSION_ID = mockSubmittedSubmission.id
 const CANCELLED_SUBMISSION_ID = mockCancelledSubmission.id
 const APPROVED_SUBMISSION_ID = mockApprovedSubmission.id
@@ -264,8 +259,8 @@ describe('Submission Page tests', () => {
       isReviewer: true,
     })
 
-    await summary().findByText('Status')
-    await summary().findByText('SUBMITTED')
+    await screen.findByText('Status')
+    await screen.findByText('SUBMITTED')
 
     await screen.findByRole('button', { name: 'Approve' })
     await screen.findByRole('button', { name: 'Reject' })
@@ -279,8 +274,8 @@ describe('Submission Page tests', () => {
     await screen.findByText('Modified By')
     await screen.findByText('Modified On')
 
-    await summary().findByText('Submitted By')
-    await summary().findByText('Submitted On')
+    await screen.findByText('Submitted By')
+    await screen.findByText('Submitted On')
 
     await screen.findByText(
       'Data Requesters (' +
@@ -288,19 +283,21 @@ describe('Submission Page tests', () => {
         ')',
     )
 
-    // This username appears three times, in 'submittedBy', 'modifiedBy', and as an accessor
-    expect(await screen.findAllByText('@' + MOCK_USER_NAME)).toHaveLength(3)
+    // Named in full three times: as the submitter, the modifier, and a data requester
+    expect(
+      await screen.findAllByText(`First Last (@${MOCK_USER_NAME})`),
+    ).toHaveLength(3)
 
-    // This username only appears as an accessor
-    await screen.findByText('@' + MOCK_USER_NAME_2)
+    // Only a data requester
+    await screen.findByText(`John Doe (@${MOCK_USER_NAME_2})`)
 
-    await summary().findByText('Institution')
-    await summary().findByText(
+    await screen.findByText('Institution')
+    await screen.findByText(
       mockSubmittedSubmission.researchProjectSnapshot.institution,
     )
 
-    await summary().findByText('Project Lead')
-    await summary().findByText(
+    await screen.findByText('Project Lead')
+    await screen.findByText(
       mockSubmittedSubmission.researchProjectSnapshot.projectLead,
     )
 
@@ -432,9 +429,9 @@ describe('Submission Page tests', () => {
       isReviewer: true,
     })
 
-    // User 1 now appears as the submitter, modifier, an accessor, and the Reviewer
+    // User 1 now also appears as the Reviewer
     await waitFor(() =>
-      expect(screen.getAllByText('@' + MOCK_USER_NAME)).toHaveLength(4),
+      expect(screen.getAllByText('@' + MOCK_USER_NAME)).toHaveLength(1),
     )
 
     // User 3 should not appear - they are not a reviewer
@@ -496,37 +493,38 @@ describe('Submission Page tests', () => {
         isReviewer: true,
       })
 
-      await summary().findByText('SUBMITTED')
+      await screen.findByText('SUBMITTED')
       expect(
         screen.getByRole('button', { name: 'Download PDF' }),
       ).toBeDisabled()
     })
 
-    it('opens the printout with the submission details, naming the submitter and each requester in full with their username', async () => {
+    it('opens the PDF with the submission details, naming the submitter and each requester in full with their username', async () => {
       renderComponent({
         submissionId: SUBMITTED_SUBMISSION_ID,
         isReviewer: false,
       })
 
-      const printHeader = within(
-        (
-          await screen.findByRole('heading', { name: 'Data Access Request' })
-        ).closest('header')!,
-      )
-      await printHeader.findByText(
+      expect(
+        await screen.findByRole('heading', { name: 'Data Access Request' }),
+      ).toBeInTheDocument()
+      await screen.findByText(
         `${mockManagedACTAccessRequirement.name} (${mockSubmittedSubmission.accessRequirementId})`,
       )
-      printHeader.getByText(SUBMITTED_SUBMISSION_ID)
-      printHeader.getByText(
+      expect(
+        screen.getByText('Submission ID').nextElementSibling,
+      ).toHaveTextContent(SUBMITTED_SUBMISSION_ID)
+      expect(
+        screen.getByText('Submitted On').nextElementSibling,
+      ).toHaveTextContent(
         formatDate(dayjs(mockSubmittedSubmission.submittedOn)),
       )
-      // Submitter, and the first requester
       expect(
-        await printHeader.findAllByText(`First Last (@${MOCK_USER_NAME})`),
-      ).toHaveLength(2)
+        screen.getByText('Submitted By').nextElementSibling,
+      ).toHaveTextContent(`First Last (@${MOCK_USER_NAME})`)
       const secondRequester = (
-        await printHeader.findByText(`John Doe (@${MOCK_USER_NAME_2})`)
-      ).closest('.PrintedDataRequester')!
+        await screen.findByText(`John Doe (@${MOCK_USER_NAME_2})`)
+      ).closest('.DataRequester')!
       expect(secondRequester).toHaveTextContent(/— Gain$/)
     })
   })
@@ -538,8 +536,8 @@ describe('Submission Page tests', () => {
         isReviewer: false,
       })
 
-      await summary().findByText('Status')
-      await summary().findByText('SUBMITTED')
+      await screen.findByText('Status')
+      await screen.findByText('SUBMITTED')
 
       const cancelRequestButton = await screen.findByRole('button', {
         name: 'Cancel Request',
@@ -569,8 +567,8 @@ describe('Submission Page tests', () => {
         isReviewer: false,
       })
 
-      await summary().findByText('Status')
-      await summary().findByText('APPROVED')
+      await screen.findByText('Status')
+      await screen.findByText('APPROVED')
 
       const updateRequestButton = await screen.findByRole('button', {
         name: 'Update Request',
@@ -602,8 +600,8 @@ describe('Submission Page tests', () => {
         isReviewer: false,
       })
 
-      await summary().findByText('Status')
-      await summary().findByText('Expired')
+      await screen.findByText('Status')
+      await screen.findByText('Expired')
 
       const updateRequestButton = await screen.findByRole('button', {
         name: 'Update Request',
@@ -628,8 +626,8 @@ describe('Submission Page tests', () => {
         isReviewer: false,
       })
 
-      await summary().findByText('Status')
-      await summary().findByText('CANCELLED')
+      await screen.findByText('Status')
+      await screen.findByText('CANCELLED')
 
       const modifyRequestButton = await screen.findByRole('button', {
         name: 'Modify Request',
@@ -656,8 +654,8 @@ describe('Submission Page tests', () => {
         isReviewer: false,
       })
 
-      await summary().findByText('Status')
-      await summary().findByText('REJECTED')
+      await screen.findByText('Status')
+      await screen.findByText('REJECTED')
 
       const modifyRequestButton = await screen.findByRole('button', {
         name: 'Modify Request',
@@ -707,7 +705,7 @@ describe('Submission Page tests', () => {
         isReviewer: false,
       })
 
-      await summary().findByText('SUBMITTED')
+      await screen.findByText('SUBMITTED')
       expect(screen.queryByTestId('DiscussionThread')).not.toBeInTheDocument()
       expect(mockDiscussionThread).not.toHaveBeenCalled()
     })
@@ -863,7 +861,7 @@ describe('Submission Page tests', () => {
         isReviewer: true,
       })
 
-      await summary().findByText(
+      await screen.findByText(
         mockSchemaDataAndFirstClassSubmission.researchProjectSnapshot
           .institution,
       )
