@@ -21,7 +21,7 @@ export type SimpleFieldType =
 
 export const FIELD_TYPE_OPTIONS: { value: SimpleFieldType; label: string }[] = [
   { value: 'text', label: 'Text' },
-  { value: 'longText', label: 'Long answer' },
+  { value: 'longText', label: 'Long text' },
   { value: 'number', label: 'Number' },
   { value: 'boolean', label: 'Yes / No' },
   { value: 'mustCheck', label: 'Checkbox (must be checked)' },

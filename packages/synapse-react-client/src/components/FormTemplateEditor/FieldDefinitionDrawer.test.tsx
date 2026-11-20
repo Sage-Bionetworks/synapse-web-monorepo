@@ -131,7 +131,7 @@ describe('FieldDefinitionDrawer', () => {
     },
   )
 
-  it('shows a string whose uiDefinition asks for a textarea as Long answer', () => {
+  it('shows a string whose uiDefinition asks for a textarea as Long text', () => {
     render(
       <FieldDefinitionDrawer
         {...baseProps({ uiDefinition: { 'ui:widget': LONG_TEXT_WIDGET } })}
@@ -139,7 +139,7 @@ describe('FieldDefinitionDrawer', () => {
     )
     expect(
       screen.getByRole('combobox', { name: 'Field type' }),
-    ).toHaveTextContent('Long answer')
+    ).toHaveTextContent('Long text')
   })
 
   it('shows a boolean that must be true as a must-be-checked checkbox that is always required', () => {

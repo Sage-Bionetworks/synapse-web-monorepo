@@ -387,7 +387,7 @@ describe('changeFieldType', () => {
     ['a bound', [step('s1', ['/age'])]],
     ['an unbound', [step('s1')]],
   ])(
-    'sets the long-answer widget on %s property, and switching back removes only that',
+    'sets the long-text widget on %s property, and switching back removes only that',
     (_label, steps) => {
       const state = draft(steps, null, {
         '/age': { uiDefinition: { 'ui:options': { rows: 3 } } },
@@ -407,7 +407,7 @@ describe('changeFieldType', () => {
     },
   )
 
-  it('keeps a string’s other constraints when it switches between Text and Long answer', () => {
+  it('keeps a string’s other constraints when it switches between Text and Long text', () => {
     const constrained = updateProperty(draft(), 'institution', {
       maxLength: 2000,
       pattern: '\\S',

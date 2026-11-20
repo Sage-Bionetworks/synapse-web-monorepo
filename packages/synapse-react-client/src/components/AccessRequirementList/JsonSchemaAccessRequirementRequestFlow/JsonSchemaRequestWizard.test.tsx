@@ -275,7 +275,7 @@ describe('JsonSchemaRequestWizard', () => {
     expect(screen.queryByRole('radio')).not.toBeInTheDocument()
   })
 
-  it("renders a long-answer question, set by the slot's uiDefinition, as a multi-line box", async () => {
+  it("renders a long-text question, set by the slot's uiDefinition, as a multi-line box", async () => {
     mockRequestServices(
       genomicsAccessRequirement,
       createRequest(genomicsAccessRequirement),

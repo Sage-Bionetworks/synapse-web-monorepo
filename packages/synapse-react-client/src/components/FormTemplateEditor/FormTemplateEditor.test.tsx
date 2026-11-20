@@ -590,7 +590,7 @@ describe('FormTemplateEditor', () => {
     expect(preview).toHaveAttribute('rows', '5')
   })
 
-  describe('Long answer', () => {
+  describe('Long text', () => {
     async function chooseFieldType(user: UserEvent, label: string) {
       await user.click(screen.getByRole('combobox', { name: 'Field type' }))
       await user.click(await screen.findByRole('option', { name: label }))
@@ -604,10 +604,10 @@ describe('FormTemplateEditor', () => {
       renderEditor(onSaved)
 
       await createField(user)
-      await chooseFieldType(user, 'Long answer')
+      await chooseFieldType(user, 'Long text')
       expect(
         screen.getByRole('combobox', { name: 'Field type' }),
-      ).toHaveTextContent('Long answer')
+      ).toHaveTextContent('Long text')
       await user.click(
         screen.getByRole('button', { name: 'Close field editor' }),
       )
@@ -637,7 +637,7 @@ describe('FormTemplateEditor', () => {
       )
     })
 
-    it('reopens as Long answer, and switching away removes only ui:widget', async () => {
+    it('reopens as Long text, and switching away removes only ui:widget', async () => {
       const user = userEvent.setup()
       const templates = getFormTemplateService()
       server.use(...getFormTemplateHandlers(REPO_ENDPOINT, templates))
@@ -651,11 +651,11 @@ describe('FormTemplateEditor', () => {
       const libraryRow = screen.getByRole('button', {
         name: 'Edit Intended Data Use Statement',
       })
-      expect(libraryRow).toHaveTextContent('Long answer')
+      expect(libraryRow).toHaveTextContent('Long text')
       await user.click(libraryRow)
       expect(
         screen.getByRole('combobox', { name: 'Field type' }),
-      ).toHaveTextContent('Long answer')
+      ).toHaveTextContent('Long text')
 
       await chooseFieldType(user, 'Text')
       await user.click(

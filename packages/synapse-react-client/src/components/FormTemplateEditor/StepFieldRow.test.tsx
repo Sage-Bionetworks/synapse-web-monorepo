@@ -44,11 +44,11 @@ function renderRow(
 }
 
 describe('StepFieldRow', () => {
-  it('shows a text property whose slot asks for a textarea as Long answer', () => {
+  it('shows a text property whose slot asks for a textarea as Long text', () => {
     renderRow({
       settings: { uiDefinition: { 'ui:widget': LONG_TEXT_WIDGET } },
     })
-    expect(screen.getByText(/Long answer/)).toBeInTheDocument()
+    expect(screen.getByText(/Long text/)).toBeInTheDocument()
   })
 
   it('names the row by the resolved property title and shows its type', () => {

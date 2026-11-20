@@ -30,7 +30,7 @@ type Story = StoryObj<typeof FieldDefinitionDrawer>
 
 export const TextField: Story = {}
 
-export const LongAnswerField: Story = {
+export const LongTextField: Story = {
   args: {
     propertyKey: 'summaryOfUse',
     property: { type: 'string', title: 'Summary of use' },

@@ -121,7 +121,7 @@ describe('choiceOptionProblems', () => {
 describe('fieldTypeLabel', () => {
   it('labels every simple field type', () => {
     expect(fieldTypeLabel('text')).toBe('Text')
-    expect(fieldTypeLabel('longText')).toBe('Long answer')
+    expect(fieldTypeLabel('longText')).toBe('Long text')
     expect(fieldTypeLabel('number')).toBe('Number')
     expect(fieldTypeLabel('boolean')).toBe('Yes / No')
     expect(fieldTypeLabel('mustCheck')).toBe('Checkbox (must be checked)')
