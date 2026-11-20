@@ -7,33 +7,31 @@ import AccessIcon, {
 import HasAccessV2 from 'synapse-react-client/components/HasAccess/HasAccessV2'
 import AridhiaAccessStatus from 'synapse-react-client/components/Aridhia/AridhiaAccessStatus'
 import { getColumnIndex } from 'synapse-react-client/utils/functions/index'
-
-type SourceValue = 'Synapse' | 'GEO' | 'Critical Path Institute' | null
+import { getDatasetAccessRoute } from './datasetSource'
 
 const ID_COLUMN_NAME = 'id'
 const SOURCE_COLUMN_NAME = 'source'
 const DATASET_CODE_COLUMN_NAME = 'dataset_code'
 
 function AccessBySource(props: {
-  source: SourceValue
+  source: string | null
   id: string
   datasetCode: string
 }) {
   const { source, id, datasetCode } = props
   const { fairPortalUrl } = useAridhiaEndpoints()
 
-  switch (source) {
-    case 'GEO':
+  switch (getDatasetAccessRoute(source)) {
+    case 'open':
       return <AccessIcon restrictionUiType={RestrictionUiType.Accessible} />
-    case 'Critical Path Institute':
+    case 'cpath':
       return (
         <AridhiaAccessStatus
           fairPortalUrl={fairPortalUrl}
           datasetCode={datasetCode}
         />
       )
-    case 'Synapse':
-    default:
+    case 'synapse':
       return <HasAccessV2 entityId={id} showButtonText={false} />
   }
 }
@@ -66,7 +64,7 @@ function AmpAlsAccessColumnCell<TValue = unknown>(
   }
 
   const id = row.original.values[idColumnIndex]!
-  const sourceValue = row.original.values[sourceColumnIndex] as SourceValue
+  const sourceValue = row.original.values[sourceColumnIndex]
   const datasetCode = row.original.values[datasetCodeColumnIndex]!
 
   return (
