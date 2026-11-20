@@ -3,6 +3,7 @@ import { RJSFSchema } from '@rjsf/utils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { LONG_TEXT_WIDGET } from './schemaFieldUtils'
 import { StepFieldRow } from './StepFieldRow'
 import { FieldSettings } from './utils'
 
@@ -43,6 +44,13 @@ function renderRow(
 }
 
 describe('StepFieldRow', () => {
+  it('shows a text property whose slot asks for a textarea as Long answer', () => {
+    renderRow({
+      settings: { uiDefinition: { 'ui:widget': LONG_TEXT_WIDGET } },
+    })
+    expect(screen.getByText(/Long answer/)).toBeInTheDocument()
+  })
+
   it('names the row by the resolved property title and shows its type', () => {
     renderRow()
     const row = screen.getByRole('group', { name: 'Institution' })
