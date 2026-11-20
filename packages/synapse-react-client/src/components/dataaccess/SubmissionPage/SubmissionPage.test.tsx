@@ -5,7 +5,6 @@ import { mockClinicalSchema } from '@/mocks/accessRequirement/mockJsonSchemas'
 import { MOCK_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
 import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
 import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
-import { SubmissionWithFormTemplateRef } from '@/synapse-queries/dataaccess/useGeneratedSubmissionForm'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
 import { JSONSchema7 } from 'json-schema'
 import { OTHER_RESPONSES_TITLE } from './SubmissionSchemaAnswers'
@@ -47,6 +46,7 @@ import {
   AccessControlList,
   FileHandleAssociateType,
   FileHandleAssociation,
+  Submission,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
 import {
@@ -642,7 +642,7 @@ describe('Submission Page tests', () => {
   describe('Schema-driven submissions', () => {
     const repoEndpoint = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
-    let servedSubmission: SubmissionWithFormTemplateRef | undefined
+    let servedSubmission: Submission | undefined
 
     beforeEach(() => {
       servedSubmission = undefined
@@ -660,7 +660,7 @@ describe('Submission Page tests', () => {
       )
     })
 
-    function serveSubmission(submission: SubmissionWithFormTemplateRef) {
+    function serveSubmission(submission: Submission) {
       servedSubmission = submission
     }
 
@@ -870,7 +870,7 @@ describe('Submission Page tests', () => {
       serveSubmission({
         ...mockSchemaDataSubmission,
         formTemplateRef: { templateId: 'missing', templateVersionNumber: 1 },
-      } satisfies SubmissionWithFormTemplateRef)
+      } satisfies Submission)
       renderComponent({
         submissionId: mockSchemaDataSubmission.id,
         isReviewer: true,
@@ -894,7 +894,7 @@ describe('Submission Page tests', () => {
         ...mockSchemaDataSubmission,
         attachments: [String(MOCK_FILE_HANDLE_ID), '555'],
         formTemplateRef: { templateId: 'missing', templateVersionNumber: 1 },
-      } satisfies SubmissionWithFormTemplateRef)
+      } satisfies Submission)
       renderComponent({
         submissionId: mockSchemaDataSubmission.id,
         isReviewer: true,

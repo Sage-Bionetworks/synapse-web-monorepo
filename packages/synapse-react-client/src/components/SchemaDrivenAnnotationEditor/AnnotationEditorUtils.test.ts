@@ -1,4 +1,8 @@
-import { RJSFValidationError } from '@rjsf/utils'
+import { RJSFSchema, RJSFValidationError } from '@rjsf/utils'
+import {
+  ALLOWED_VALUES_MESSAGE,
+  jsonSchemaFormValidator,
+} from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 import {
   dropNullishArrayValues,
   dropNullValues,
@@ -79,46 +83,92 @@ describe('AnnotationEditorUtils tests', () => {
         {
           name: 'type',
           property: '.study[0]',
-          message: 'should be string',
+          message: 'must be string',
           params: { type: 'string' },
-          stack: '.study[0] should be string',
+          stack: '.study[0] must be string',
         },
         {
           name: 'const',
           property: '.study[0]',
-          message: 'should be equal to constant',
+          message: 'must be equal to constant',
           params: { allowedValue: 'VMC' },
-          stack: '.study[0] should be equal to constant',
+          stack: '.study[0] must be equal to constant',
         },
         {
           name: 'const',
           property: '.study[0]',
-          message: 'should be equal to constant',
+          message: 'must be equal to constant',
           params: { allowedValue: 'WGBS Pilot' },
-          stack: '.study[0] should be equal to constant',
-        },
-        {
-          name: 'const',
-          property: '.study[0]',
-          message: 'should be equal to constant',
-          params: { allowedValue: 'Yale-ASD' },
-          stack: '.study[0] should be equal to constant',
+          stack: '.study[0] must be equal to constant',
         },
         {
           name: 'anyOf',
           property: '.study[0]',
-          message: 'should match some schema in anyOf',
+          message: 'must match a schema in anyOf',
           params: {},
-          stack: '.study[0] should match some schema in anyOf',
+          stack: '.study[0] must match a schema in anyOf',
         },
       ]
-      const expected = expect.arrayContaining([
+
+      expect(transformErrors(errors)).toEqual([
         expect.objectContaining({
-          message: 'should be equal to one of the allowed values',
+          property: '.study[0]',
+          message: ALLOWED_VALUES_MESSAGE,
         }),
       ])
+    })
 
-      expect(transformErrors(errors)).toEqual(expected)
+    it('simplifies the errors the shared validator gives a value outside an anyOf enum', () => {
+      const schema: RJSFSchema = {
+        type: 'object',
+        properties: {
+          study: {
+            type: 'array',
+            items: {
+              type: 'string',
+              anyOf: [{ const: 'VMC' }, { const: 'Yale-ASD' }],
+            },
+          },
+        },
+      }
+      const { errors } = jsonSchemaFormValidator.validateFormData(
+        { study: ['VMC', 'Unknown'] },
+        schema,
+        undefined,
+        transformErrors,
+      )
+
+      expect(errors).toEqual([
+        expect.objectContaining({
+          property: '.study.1',
+          message: ALLOWED_VALUES_MESSAGE,
+        }),
+      ])
+    })
+
+    it('leaves anyOf errors alone when the property also breaks another rule', () => {
+      const schema: RJSFSchema = {
+        type: 'object',
+        properties: {
+          study: {
+            type: 'string',
+            maxLength: 2,
+            anyOf: [{ const: 'VMC' }, { const: 'Yale-ASD' }],
+          },
+        },
+      }
+      const { errors } = jsonSchemaFormValidator.validateFormData(
+        { study: 'Unknown' },
+        schema,
+        undefined,
+        transformErrors,
+      )
+
+      expect(
+        errors
+          .map(error => error.name ?? '')
+          .toSorted((a, b) => a.localeCompare(b)),
+      ).toEqual(['anyOf', 'const', 'const', 'maxLength'])
     })
   })
 

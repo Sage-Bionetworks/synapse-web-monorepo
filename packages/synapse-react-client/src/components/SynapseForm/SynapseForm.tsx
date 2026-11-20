@@ -1,7 +1,7 @@
 import Blocker from '@/components/utils/Blocker'
 import Form from '@rjsf/core'
 import { ErrorListProps, RJSFValidationError, UiSchema } from '@rjsf/utils'
-import validator from '@rjsf/validator-ajv8'
+import { jsonSchemaFormValidator } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 import { Engine, EngineResult } from 'json-rules-engine'
 import cloneDeep from 'lodash-es/cloneDeep'
 import find from 'lodash-es/find'
@@ -943,7 +943,7 @@ export default class SynapseForm extends Component<
                   } `}
                 >
                   <Form
-                    validator={validator}
+                    validator={jsonSchemaFormValidator}
                     noHtml5Validate
                     className={
                       this.state.doShowHelp

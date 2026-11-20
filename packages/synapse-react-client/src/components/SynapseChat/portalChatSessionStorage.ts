@@ -1,9 +1,11 @@
 /**
- * Persists, across an OAuth login round-trip, the intent to reopen the portal chat dialog.
+ * Persists, across an OAuth login round-trip, the intent to reopen the portal chat dialog and send
+ * the message the user was sending.
  *
- * When an anonymous user opens the chat and is redirected to log in, the full-page navigation
- * discards the dialog's open state. Storing the intent before the redirect lets the app reopen the
- * dialog when the user returns authenticated.
+ * When an anonymous user sends a message to an agent that isn't open to anonymous chat, they are
+ * redirected to log in, and the full-page navigation discards the dialog's open state. Storing the
+ * intent before the redirect lets the app reopen the dialog when the user returns authenticated, and
+ * send the message as its initial message.
  *
  * localStorage (not sessionStorage) is used because the login flow returns to the portal origin in a
  * way that may not preserve the original tab's session (e.g. a fresh tab), and localStorage is shared

@@ -32,6 +32,10 @@ import TextFieldWithWordLimit, {
 import { AlertProps } from '../DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
 import PrincipalInvestigatorFields from '../PrincipalInvestigatorFields'
+import {
+  RequestCreationRejectedAlert,
+  useRequestCreationRejection,
+} from '../../RequestCreationRejectedAlert'
 
 const INTENDED_DATA_USE_MIN_WORD_COUNT = 50
 const INTENDED_DATA_USE_MAX_WORD_COUNT = 750 // SWC-7526
@@ -151,11 +155,8 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
       },
     })
 
-  const {
-    mutateAsync: updateDataAccessRequest,
-    isPending: updateDarIsPending,
-  } = useUpdateDataAccessRequest({
-    onError: e => {
+  const { requestCreationRejection, onUpdateRequestError } =
+    useRequestCreationRejection(e => {
       console.log(
         'RequestDataAccessStep1: Error updating data access request: ',
         e,
@@ -164,8 +165,12 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
         key: 'error',
         message: getErrorMessage(e.reason),
       })
-    },
-  })
+    })
+
+  const {
+    mutateAsync: updateDataAccessRequest,
+    isPending: updateDarIsPending,
+  } = useUpdateDataAccessRequest({ onError: onUpdateRequestError })
 
   const isLoading =
     isLoadingInitialData ||
@@ -185,6 +190,10 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
 
   const handleSubmit = async (e: FormEvent<HTMLElement>) => {
     e.preventDefault()
+    // Enter in a field also submits the form, so this is guarded as well as the Save button
+    if (requestCreationRejection) {
+      return
+    }
     if (!showConfirmationScreen) {
       setShowConfirmationScreen(true)
       return
@@ -250,10 +259,18 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
       )}
       {!showConfirmationScreen && (
         <DialogContent>
-          {alert && (
-            <Alert severity={alert.key} sx={{ mb: 2 }}>
-              {alert.message}
-            </Alert>
+          {requestCreationRejection ? (
+            <RequestCreationRejectedAlert
+              error={requestCreationRejection}
+              identityProviders={managedACTAccessRequirement.identityProviders}
+              sx={{ mb: 2 }}
+            />
+          ) : (
+            alert && (
+              <Alert severity={alert.key} sx={{ mb: 2 }}>
+                {alert.message}
+              </Alert>
+            )
           )}
           <ManagedACTAccessRequirementFormWikiWrapper
             accessRequirement={managedACTAccessRequirement}
@@ -377,7 +394,9 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
         <Button
           variant="contained"
           type="submit"
-          disabled={isLoading || !formIsValid}
+          disabled={
+            isLoading || !formIsValid || Boolean(requestCreationRejection)
+          }
           onClick={e => {
             void handleSubmit(e)
           }}

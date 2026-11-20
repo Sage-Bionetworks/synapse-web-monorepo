@@ -23,7 +23,7 @@ If the file can't be found at that path:
    - Update this skill file with the correct path, or
    - Fetch the documentation directly from GitHub: https://github.com/Sage-Bionetworks/SynapseWebClient/blob/develop/devdocs/ReactIntegration.md
 
-Do NOT answer from general knowledge — the ReactIntegration.md doc is required.
+Answer from ReactIntegration.md rather than general knowledge: the integration patterns are specific to SWC and change with it.
 
 ## What the documentation covers
 

@@ -1,10 +1,22 @@
+import { RJSFSchema } from '@rjsf/utils'
 import { FormTemplateField } from '@sage-bionetworks/synapse-client'
+import { SYNAPSE_FILE_HANDLE_ID_FORMAT } from '@/utils/jsonschema/schemaData'
 import {
   createEditableStep,
+  DEFAULT_FIELD_SETTINGS,
+  FieldSettingsByPath,
+  getFormTemplateAttachments,
   moveItem,
   toEditableSteps,
   toFormTemplateSteps,
 } from './utils'
+
+const fileFieldSchema: RJSFSchema = {
+  type: 'object',
+  properties: {
+    a: { type: 'string', format: SYNAPSE_FILE_HANDLE_ID_FORMAT },
+  },
+}
 
 describe('utils', () => {
   describe('step identity (uiKey)', () => {
@@ -15,7 +27,9 @@ describe('utils', () => {
     })
 
     it('assigns each loaded step a distinct uiKey', () => {
-      const [a, b] = toEditableSteps([
+      const {
+        steps: [a, b],
+      } = toEditableSteps([
         { title: 'A', fields: [] },
         { title: 'B', fields: [] },
       ])
@@ -35,11 +49,79 @@ describe('utils', () => {
       expect(reordered.find(s => s.uiKey === second.uiKey)).toBe(second)
     })
 
-    it('strips uiKey before handing steps back to a caller', () => {
-      const editable = toEditableSteps([{ title: 'A', fields: [] }])
-      const plain = toFormTemplateSteps(editable)
-      expect(plain).toEqual([{ title: 'A', fields: [] }])
+    it('round-trips loaded steps, splitting each slot into its path and settings', () => {
+      const steps = [
+        {
+          title: 'A',
+          fields: [
+            {
+              schemaPath: '/a',
+              uiDefinition: { 'ui:widget': 'textarea' },
+              isPublic: true,
+              templateFileHandleId: '123',
+            },
+          ],
+        },
+        { title: 'B', description: 'b', fields: [] },
+      ]
+      const editable = toEditableSteps(steps)
+
+      expect(editable.steps.map(s => s.fieldPaths)).toEqual([['/a'], []])
+      expect(editable.fieldSettings).toEqual({
+        '/a': {
+          uiDefinition: { 'ui:widget': 'textarea' },
+          isPublic: true,
+          templateFileHandleId: '123',
+        },
+      })
+      const plain = toFormTemplateSteps(
+        editable.steps,
+        editable.fieldSettings,
+        fileFieldSchema,
+      )
+      expect(plain).toEqual(steps)
       expect(plain[0]).not.toHaveProperty('uiKey')
+    })
+
+    it('gives a bound path without settings the default slot settings', () => {
+      const step = { ...createEditableStep(), fieldPaths: ['/a'] }
+
+      expect(
+        toFormTemplateSteps([step], {}, fileFieldSchema)[0].fields,
+      ).toEqual([{ schemaPath: '/a', ...DEFAULT_FIELD_SETTINGS }])
+    })
+
+    // Regression: only a file field's row shows its template document, so a document left in the
+    // settings of a property that is no longer a file field was saved, and listed as one of the
+    // template's attachments, where the author could neither see nor clear it.
+    it('leaves out the template document of a bound property that is not a file field', () => {
+      const step = { ...createEditableStep(), fieldPaths: ['/a', '/missing'] }
+      const withDocument = {
+        uiDefinition: {},
+        isPublic: true,
+        templateFileHandleId: '123',
+      }
+      const fieldSettings: FieldSettingsByPath = {
+        '/a': withDocument,
+        '/missing': withDocument,
+      }
+      const integerFieldSchema: RJSFSchema = {
+        type: 'object',
+        properties: { a: { type: 'integer' } },
+      }
+
+      const steps = toFormTemplateSteps(
+        [step],
+        fieldSettings,
+        integerFieldSchema,
+      )
+
+      expect(steps[0].fields).toStrictEqual([
+        { schemaPath: '/a', uiDefinition: {}, isPublic: true },
+        { schemaPath: '/missing', uiDefinition: {}, isPublic: true },
+      ])
+      expect(getFormTemplateAttachments(steps)).toEqual([])
+      expect(fieldSettings['/a']).toEqual(withDocument)
     })
   })
 

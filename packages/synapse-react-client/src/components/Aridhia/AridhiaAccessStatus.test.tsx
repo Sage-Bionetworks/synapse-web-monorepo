@@ -8,6 +8,7 @@ import {
   getAridhiaDatasetSettingsHandler,
   getAridhiaDictionariesHandler,
   getAridhiaRequestsHandler,
+  getAridhiaRequestWorkspaceHandler,
   getAridhiaSubmitRequestHandler,
   getAridhiaWorkflowHandler,
   getAridhiaWorkspaceLocationsHandler,
@@ -17,7 +18,9 @@ import {
   MOCK_ARIDHIA_FAIR_PORTAL_URL,
   MOCK_ARIDHIA_GATEWAY,
   MOCK_ARIDHIA_NOT_AUTHORIZED_ERROR,
+  MOCK_ARIDHIA_REQUEST_WORKSPACE_NOT_PROVISIONED,
   mockAridhiaRequestListItem,
+  mockAridhiaRequestWorkspace,
 } from '@/mocks/msw/handlers/aridhiaHandlers'
 import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
 import { server } from '@/mocks/msw/server'
@@ -25,12 +28,13 @@ import {
   fillRjsfTextField,
   getRjsfTextField,
 } from '@/testutils/RjsfFormTestUtils'
-import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { createWrapperAndQueryClient } from '@/testutils/TestingLibraryUtils'
 import { AridhiaContextProvider } from '@/utils/context/AridhiaContext'
 import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { HttpResponse } from 'msw'
 import AridhiaAccessStatus from './AridhiaAccessStatus'
+import { DAR_DATA_ACCESS_TEXT } from './AridhiaDarStatusPopover'
 import {
   getAridhiaFairPortalDatasetUrl,
   getAridhiaFairPortalRequestUrl,
@@ -44,6 +48,10 @@ const HAS_ACCESS_ICON_NAME = 'You have access to this item on RDCA-DAP.'
 const DENIED_ACCESS_ICON_NAME =
   'Your access request has been denied by RDCA-DAP.'
 const POPOVER_LIST_NAME = 'Your data access requests'
+const {
+  transferPending: TRANSFER_PENDING_NOTE,
+  openWorkspace: OPEN_WORKSPACE,
+} = DAR_DATA_ACCESS_TEXT
 
 /** The request's name, which the popover shows, deliberately differs from its code. */
 function mockRequest(
@@ -61,6 +69,17 @@ function mockRequest(
   })
 }
 
+/** An approved request whose data RDCA-DAP has transferred to its workspace. */
+function mockTransferredRequest(name: string, updatedAt: string) {
+  return mockAridhiaRequestListItem({
+    code: `ampals-${MOCK_ARIDHIA_DATASET_CODE}-${name}`,
+    name,
+    status: 'approved',
+    updatedAt,
+    transferredAt: updatedAt,
+  })
+}
+
 function getPopoverListItems() {
   return within(
     screen.getByRole('list', { name: POPOVER_LIST_NAME }),
@@ -75,10 +94,24 @@ async function openStatusPopover(user: UserEvent, iconName: string) {
   await screen.findByRole('list', { name: POPOVER_LIST_NAME })
 }
 
+/** The request titles, each linking to its request record on the FAIR portal. */
 function getPopoverRequestNames() {
   return within(screen.getByRole('list', { name: POPOVER_LIST_NAME }))
     .getAllByRole('link')
+    .filter(link => link.textContent !== OPEN_WORKSPACE)
     .map(link => link.textContent)
+}
+
+function expectCatalogLink() {
+  expect(
+    screen.getByRole('link', { name: 'View dataset in the RDCA-DAP catalog' }),
+  ).toHaveAttribute(
+    'href',
+    getAridhiaFairPortalDatasetUrl(
+      MOCK_ARIDHIA_FAIR_PORTAL_URL,
+      MOCK_ARIDHIA_DATASET_CODE,
+    ),
+  )
 }
 
 function darFormFeatureFlagOverride(enabled: boolean) {
@@ -89,8 +122,8 @@ function darFormFeatureFlagOverride(enabled: boolean) {
 }
 
 function renderStatus(fairPortalUrl?: string) {
-  const Wrapper = createWrapper()
-  return render(
+  const { wrapperFn: Wrapper, queryClient } = createWrapperAndQueryClient()
+  const result = render(
     <MemoryRouter>
       <Wrapper>
         <AridhiaContextProvider
@@ -105,6 +138,7 @@ function renderStatus(fairPortalUrl?: string) {
       </Wrapper>
     </MemoryRouter>,
   )
+  return { ...result, queryClient }
 }
 
 function wizardHandlers() {
@@ -247,7 +281,7 @@ describe('AridhiaAccessStatus', () => {
     )
   })
 
-  it('offers a new request, but no dataset link, when the only request is pending and the feature flag is enabled', async () => {
+  it('offers a new request and the catalog link, but no data access, when the only request is pending and the feature flag is enabled', async () => {
     const user = userEvent.setup()
     server.use(
       darFormFeatureFlagOverride(true),
@@ -261,40 +295,187 @@ describe('AridhiaAccessStatus', () => {
     await openStatusPopover(user, PENDING_ACCESS_ICON_NAME)
 
     expect(getPopoverRequestNames()).toEqual(['Biomarker tables'])
+    const [item] = getPopoverListItems()
+    expect(item).not.toHaveTextContent(TRANSFER_PENDING_NOTE)
+    expect(
+      screen.queryByRole('link', { name: OPEN_WORKSPACE }),
+    ).not.toBeInTheDocument()
+    expectCatalogLink()
     expect(
       screen.getByRole('button', { name: 'Submit a new request' }),
     ).toBeInTheDocument()
-    expect(
-      screen.queryByRole('link', { name: 'Open dataset on RDCA-DAP' }),
-    ).not.toBeInTheDocument()
   })
 
-  it('opens the status popover with a dataset link and a new-request action when the only request is approved and the feature flag is enabled', async () => {
+  it('notes a pending transfer, without fetching a workspace, when the only request is approved but its data has not been transferred', async () => {
     const user = userEvent.setup()
+    const workspaceRequestCodes: string[] = []
     server.use(
       darFormFeatureFlagOverride(true),
       getAridhiaAuthenticateHandler(),
       getAridhiaRequestsHandler([
         mockRequest('Demographics', 'approved', '2024-01-01T00:00:00Z'),
       ]),
+      getAridhiaRequestWorkspaceHandler(
+        {},
+        { onRequest: code => workspaceRequestCodes.push(code) },
+      ),
+    )
+    const { queryClient } = renderStatus(MOCK_ARIDHIA_FAIR_PORTAL_URL)
+
+    await openStatusPopover(user, HAS_ACCESS_ICON_NAME)
+    await waitFor(() => expect(queryClient.isFetching()).toBe(0))
+
+    const [item] = getPopoverListItems()
+    expect(item).toHaveTextContent(TRANSFER_PENDING_NOTE)
+    expect(
+      within(item).getByRole('link', { name: 'Demographics' }),
+    ).toHaveAttribute(
+      'href',
+      getAridhiaFairPortalRequestUrl(
+        MOCK_ARIDHIA_FAIR_PORTAL_URL,
+        `ampals-${MOCK_ARIDHIA_DATASET_CODE}-Demographics`,
+      ),
+    )
+    expect(
+      screen.queryByRole('link', { name: OPEN_WORKSPACE }),
+    ).not.toBeInTheDocument()
+    expectCatalogLink()
+    expect(
+      screen.getByRole('button', { name: 'Submit a new request' }),
+    ).toBeInTheDocument()
+    expect(workspaceRequestCodes).toEqual([])
+  })
+
+  it("fetches a transferred request's workspace only once the status popover opens", async () => {
+    const user = userEvent.setup()
+    const request = mockTransferredRequest('clinical', '2024-01-01T00:00:00Z')
+    const workspaceRequestCodes: string[] = []
+    server.use(
+      darFormFeatureFlagOverride(true),
+      getAridhiaAuthenticateHandler(),
+      getAridhiaRequestsHandler([request]),
+      getAridhiaRequestWorkspaceHandler(
+        { [request.code!]: mockAridhiaRequestWorkspace('clinical-team') },
+        { onRequest: code => workspaceRequestCodes.push(code) },
+      ),
+    )
+    const { queryClient } = renderStatus(MOCK_ARIDHIA_FAIR_PORTAL_URL)
+
+    await screen.findByRole('img', { name: HAS_ACCESS_ICON_NAME })
+    await waitFor(() => expect(queryClient.isFetching()).toBe(0))
+    expect(workspaceRequestCodes).toEqual([])
+
+    await openStatusPopover(user, HAS_ACCESS_ICON_NAME)
+
+    expect(
+      await screen.findByRole('link', { name: OPEN_WORKSPACE }),
+    ).toBeInTheDocument()
+    expect(workspaceRequestCodes).toEqual([request.code])
+  })
+
+  it('links each transferred request to its own workspace when two approved requests delivered to different workspaces', async () => {
+    const user = userEvent.setup()
+    const clinical = mockTransferredRequest('clinical', '2024-06-01T00:00:00Z')
+    const genomics = mockTransferredRequest('genomics', '2024-01-01T00:00:00Z')
+    server.use(
+      darFormFeatureFlagOverride(true),
+      getAridhiaAuthenticateHandler(),
+      getAridhiaRequestsHandler([clinical, genomics]),
+      getAridhiaRequestWorkspaceHandler({
+        [clinical.code!]: mockAridhiaRequestWorkspace('clinical-team'),
+        [genomics.code!]: mockAridhiaRequestWorkspace('genomics-team'),
+      }),
     )
     renderStatus(MOCK_ARIDHIA_FAIR_PORTAL_URL)
 
     await openStatusPopover(user, HAS_ACCESS_ICON_NAME)
 
-    expect(
-      screen.getByRole('link', { name: 'Open dataset on RDCA-DAP' }),
-    ).toHaveAttribute(
-      'href',
-      getAridhiaFairPortalDatasetUrl(
-        MOCK_ARIDHIA_FAIR_PORTAL_URL,
-        MOCK_ARIDHIA_DATASET_CODE,
-      ),
-    )
-    expect(
-      screen.getByRole('button', { name: 'Submit a new request' }),
-    ).toBeInTheDocument()
+    const [clinicalItem, genomicsItem] = getPopoverListItems()
+    for (const [item, name, workspaceName] of [
+      [clinicalItem, 'clinical', 'clinical-team'],
+      [genomicsItem, 'genomics', 'genomics-team'],
+    ] as const) {
+      const workspaceLink = await within(item).findByRole('link', {
+        name: OPEN_WORKSPACE,
+      })
+      expect(workspaceLink).toHaveAttribute(
+        'href',
+        mockAridhiaRequestWorkspace(workspaceName).workspace_inbox_url,
+      )
+      expect(workspaceLink).toHaveAttribute('target', '_blank')
+      // Screen readers announce which request the workspace link belongs to.
+      expect(workspaceLink).toHaveAccessibleDescription(name)
+      expect(item).toHaveTextContent(
+        DAR_DATA_ACCESS_TEXT.transferredTo(workspaceName),
+      )
+    }
   })
+
+  const NOT_PROVISIONED = (code: string) => ({
+    [code]: MOCK_ARIDHIA_REQUEST_WORKSPACE_NOT_PROVISIONED,
+  })
+  it.each([
+    {
+      shape: 'checking',
+      note: DAR_DATA_ACCESS_TEXT.checkingWorkspace,
+      workspaces: NOT_PROVISIONED,
+      handlerOptions: (code: string) => ({ unresolvedRequestCodes: [code] }),
+    },
+    {
+      shape: 'being prepared (no inbox URL)',
+      note: DAR_DATA_ACCESS_TEXT.workspacePreparing,
+      workspaces: NOT_PROVISIONED,
+      handlerOptions: () => ({}),
+    },
+    {
+      shape: 'being prepared (404)',
+      note: DAR_DATA_ACCESS_TEXT.workspacePreparing,
+      workspaces: () => ({}),
+      handlerOptions: () => ({}),
+    },
+    {
+      shape: 'unavailable',
+      note: DAR_DATA_ACCESS_TEXT.workspaceError,
+      workspaces: NOT_PROVISIONED,
+      handlerOptions: (code: string) => ({ failingRequestCodes: [code] }),
+    },
+  ])(
+    'notes the workspace is $shape, keeping the request record linked, while a transferred request’s workspace link is unknown',
+    async ({ note, workspaces, handlerOptions }) => {
+      const user = userEvent.setup()
+      const request = mockTransferredRequest(
+        'medication',
+        '2024-01-01T00:00:00Z',
+      )
+      server.use(
+        darFormFeatureFlagOverride(true),
+        getAridhiaAuthenticateHandler(),
+        getAridhiaRequestsHandler([request]),
+        getAridhiaRequestWorkspaceHandler(
+          workspaces(request.code!),
+          handlerOptions(request.code!),
+        ),
+      )
+      renderStatus(MOCK_ARIDHIA_FAIR_PORTAL_URL)
+
+      await openStatusPopover(user, HAS_ACCESS_ICON_NAME)
+
+      const [item] = getPopoverListItems()
+      await within(item).findByText(note)
+      expect(
+        within(item).queryByRole('link', { name: OPEN_WORKSPACE }),
+      ).not.toBeInTheDocument()
+      expect(
+        within(item).getByRole('link', { name: 'medication' }),
+      ).toHaveAttribute(
+        'href',
+        getAridhiaFairPortalRequestUrl(
+          MOCK_ARIDHIA_FAIR_PORTAL_URL,
+          request.code!,
+        ),
+      )
+    },
+  )
 
   it('lists every request for the dataset in the status popover, newest first, without a new-request action when the feature flag is disabled', async () => {
     const user = userEvent.setup()
@@ -322,7 +503,7 @@ describe('AridhiaAccessStatus', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('shows access, a dataset link, and a new-request action when an older request is approved and a newer one was denied', async () => {
+  it('shows access, the catalog link, and a new-request action when an older request is approved and a newer one was denied', async () => {
     const user = userEvent.setup()
     server.use(
       darFormFeatureFlagOverride(true),
@@ -340,15 +521,13 @@ describe('AridhiaAccessStatus', () => {
       'denied-table-c',
       'approved-tables-a-b',
     ])
+    const [deniedItem, approvedItem] = getPopoverListItems()
+    expect(deniedItem).not.toHaveTextContent(TRANSFER_PENDING_NOTE)
     expect(
-      screen.getByRole('link', { name: 'Open dataset on RDCA-DAP' }),
-    ).toHaveAttribute(
-      'href',
-      getAridhiaFairPortalDatasetUrl(
-        MOCK_ARIDHIA_FAIR_PORTAL_URL,
-        MOCK_ARIDHIA_DATASET_CODE,
-      ),
-    )
+      screen.queryByRole('link', { name: OPEN_WORKSPACE }),
+    ).not.toBeInTheDocument()
+    expect(approvedItem).toHaveTextContent(TRANSFER_PENDING_NOTE)
+    expectCatalogLink()
     expect(
       screen.getByRole('button', { name: 'Submit a new request' }),
     ).toBeInTheDocument()

@@ -58,16 +58,14 @@ export default function BaseInputTemplate<
   } = props
   const hideLabel = true
   const inputProps = getInputProps<T, S, F>(schema, type, options)
-  // Now we need to pull out the step, min, max into an inner `inputProps` for material-ui
-  const { step, min, max, ...rest } = inputProps
-  const otherProps = {
-    inputProps: {
-      step,
-      min,
-      max,
-      ...(schema.examples ? { list: examplesId<T>(id) } : undefined),
-    },
-    ...rest,
+  // The step, min and max belong on the inner <input>. They go in `slotProps.htmlInput`, since
+  // MUI ignores `inputProps` whenever `slotProps.htmlInput` is set.
+  const { step, min, max, ...otherProps } = inputProps
+  const htmlInputProps = {
+    step,
+    min,
+    max,
+    ...(schema.examples ? { list: examplesId<T>(id) } : undefined),
   }
   const _onChange = ({ target: { value } }: ChangeEvent<HTMLInputElement>) =>
     onChange(value === '' ? options.emptyValue : value)
@@ -113,6 +111,7 @@ export default function BaseInputTemplate<
         aria-describedby={ariaDescribedByIds<T>(id, !!schema.examples)}
         slotProps={{
           htmlInput: {
+            ...htmlInputProps,
             'aria-label': id,
           },
 

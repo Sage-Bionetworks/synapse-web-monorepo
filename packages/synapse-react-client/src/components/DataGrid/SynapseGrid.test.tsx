@@ -1,20 +1,38 @@
+import {
+  CLOSE_GRID_AGENT_SIDEBAR_LABEL,
+  GRID_AGENT_SIDEBAR_TITLE,
+  OPEN_GRID_AGENT_SIDEBAR_LABEL,
+} from '@/components/DataGrid/components/GridAgentSidebar/GridAgentSidebar'
 import createTestModel from '@/components/DataGrid/utils/createTestModel'
+import { mockAgentSession } from '@/mocks/chat/mockChat'
+import { getChatbotHandlers } from '@/mocks/msw/handlers/chatHandlers'
+import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
 import { getCurrentUserCertifiedValidatedHandler } from '@/mocks/msw/handlers/userProfileHandlers'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { AGENT_SESSION } from '@/utils/APIConstants'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
+import { GRID_AGENT_SIDEBAR_OPEN_LOCALSTORAGE_KEY } from '@/utils/SynapseConstants'
 import {
   CreateReplicaResponse,
   GridSession,
   ListGridReplicasResponse,
 } from '@sage-bionetworks/synapse-client'
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { s } from 'json-joy/lib/json-crdt'
 import { http, HttpResponse } from 'msw'
 import { createRef, ReactNode } from 'react'
+import { HIDE_VALIDATION_ERRORS_LABEL } from './components/ValidationAlert'
+import {
+  SHOW_VALIDATION_ERRORS_LABEL,
+  VALIDATION_ERROR_SUMMARY_LABEL,
+} from './components/ValidationErrorSummary'
+import { GridModel } from './DataGridTypes'
 import SynapseGrid, { SynapseGridHandle, SynapseGridProps } from './SynapseGrid'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 
@@ -24,13 +42,19 @@ vi.mock('./useDataGridWebsocket', () => ({ useDataGridWebSocket: vi.fn() }))
 const mockUseDataGridWebSocket = vi.mocked(useDataGridWebSocket)
 
 const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+const portalOrigin = getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)
 
 const SESSION_ID = 'test-grid-session'
+const OTHER_SESSION_ID = 'other-test-grid-session'
 const REPLICA_ID = 7
 const HEADER_TEXT = 'Working Copy'
 const CONTENT_CLASS_NAME = 'test-grid-content'
 const GRID_ERROR = 'The grid connection failed'
 const HEADER_ERROR = 'The page title failed'
+const INVALID_CELL_MESSAGE = '#/c0: cannot be empty'
+const MESSAGE = 'Which fields are missing?'
+const RESPONSE = /This is the only response this agent is told/
+const DRAFT = 'And which are optional'
 
 const mockGridSession: GridSession = {
   sessionId: SESSION_ID,
@@ -41,8 +65,11 @@ const mockGridSession: GridSession = {
 
 function registerGridSessionHandlers() {
   server.use(
-    http.get(`${repoOrigin}/repo/v1/grid/session/:sessionId`, () =>
-      HttpResponse.json(mockGridSession, { status: 200 }),
+    http.get(`${repoOrigin}/repo/v1/grid/session/:sessionId`, ({ params }) =>
+      HttpResponse.json(
+        { ...mockGridSession, sessionId: String(params.sessionId) },
+        { status: 200 },
+      ),
     ),
     http.post(`${repoOrigin}/repo/v1/grid/session/:sessionId/replica`, () =>
       HttpResponse.json(
@@ -66,6 +93,36 @@ function registerGridSessionHandlers() {
   )
 }
 
+/** Registers the chat handlers, counting how many agent sessions are created */
+function registerChatHandlers() {
+  const agentSessionCreation = { count: 0 }
+  server.use(
+    http.post(`${repoOrigin}${AGENT_SESSION}`, () => {
+      agentSessionCreation.count++
+      return HttpResponse.json(mockAgentSession, { status: 201 })
+    }),
+    ...getChatbotHandlers(repoOrigin),
+  )
+  return agentSessionCreation
+}
+
+function getSidebar() {
+  return screen.getByRole('complementary', { name: GRID_AGENT_SIDEBAR_TITLE })
+}
+
+/** The sidebar appears once the feature flags have loaded */
+function findSidebar() {
+  return screen.findByRole('complementary', { name: GRID_AGENT_SIDEBAR_TITLE })
+}
+
+function querySidebar() {
+  return screen.queryByRole('complementary', { name: GRID_AGENT_SIDEBAR_TITLE })
+}
+
+function queryOpenSidebarButton() {
+  return screen.queryByRole('button', { name: OPEN_GRID_AGENT_SIDEBAR_LABEL })
+}
+
 /** Renders SynapseGrid in a fresh context and loads the mocked session, resolving once the grid has loaded */
 async function renderGridWithSession(props: SynapseGridProps = {}) {
   const user = userEvent.setup()
@@ -81,7 +138,7 @@ async function renderGridWithSession(props: SynapseGridProps = {}) {
   // The toolbar renders with the loaded grid
   await screen.findByRole('link', { name: 'Help and Instructions' })
 
-  return { user, ...result }
+  return { user, ref, ...result }
 }
 
 /** Mocks a websocket that is connected to a grid with a real model */
@@ -102,6 +159,27 @@ function mockConnectedWebSocket(
     errorEstablishingWebsocketConnection: null,
     websocketError: null,
     ...overrides,
+  })
+}
+
+/** Mocks a connected websocket holding `model` as it is now */
+function mockConnectedWebSocketWithModel(model: GridModel) {
+  mockConnectedWebSocket({ model, modelSnapshot: model.api.getSnapshot() })
+}
+
+/** Writes a validation result for the first row, which is valid if there are no messages */
+function setFirstRowValidation(
+  model: GridModel,
+  allValidationMessages: string[],
+) {
+  // Written after the row data, so the row's validation is up to date rather than pending
+  model.api.obj(['rows', '0']).set({
+    metadata: s.obj({
+      rowValidation: s.con({
+        isValid: allValidationMessages.length === 0,
+        allValidationMessages,
+      }),
+    }),
   })
 }
 
@@ -161,6 +239,103 @@ describe('SynapseGrid', () => {
     expect(requirement.closest(`.${CONTENT_CLASS_NAME}`)).not.toBeNull()
   })
 
+  it('hides the validation errors banner behind a summary in the toolbar, and shows it again collapsed', async () => {
+    const model = createTestModel(2, 2, REPLICA_ID)
+    setFirstRowValidation(model, [INVALID_CELL_MESSAGE])
+    mockConnectedWebSocketWithModel(model)
+    const { user } = await renderGridWithSession()
+
+    expect(screen.getByText('Validation errors')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Expand' }))
+    await user.click(
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
+    )
+
+    expect(screen.queryByText('Validation errors')).not.toBeInTheDocument()
+    const summary = screen.getByRole('group', {
+      name: VALIDATION_ERROR_SUMMARY_LABEL,
+    })
+    expect(within(summary).getByText('1')).toBeInTheDocument()
+    const showLink = within(summary).getByRole('button', {
+      name: SHOW_VALIDATION_ERRORS_LABEL,
+    })
+    expect(showLink).toHaveFocus()
+
+    await user.click(showLink)
+
+    expect(screen.getByText('Validation errors')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Expand' })).toBeInTheDocument()
+    expect(
+      screen.queryByRole('group', { name: VALIDATION_ERROR_SUMMARY_LABEL }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
+    ).toHaveFocus()
+  })
+
+  it('keeps the banner hidden when another session loads', async () => {
+    const model = createTestModel(2, 2, REPLICA_ID)
+    setFirstRowValidation(model, [INVALID_CELL_MESSAGE])
+    mockConnectedWebSocketWithModel(model)
+    const { user, ref, rerender } = await renderGridWithSession()
+    await user.click(
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
+    )
+
+    // Connecting to another session clears the model until that session's grid loads
+    const connect = vi.fn()
+    mockConnectedWebSocket({
+      connect,
+      model: null,
+      modelSnapshot: null,
+      hasCompletedInitialSync: false,
+      hasCompletedInitialLoad: false,
+    })
+    act(() => {
+      ref.current!.loadExistingSession(OTHER_SESSION_ID)
+    })
+    await waitFor(() =>
+      expect(connect).toHaveBeenCalledWith(REPLICA_ID, OTHER_SESSION_ID),
+    )
+
+    mockConnectedWebSocketWithModel(createTestModel(2, 2, REPLICA_ID))
+    rerender(<SynapseGrid ref={ref} />)
+
+    expect(
+      screen.getByRole('group', { name: VALIDATION_ERROR_SUMMARY_LABEL }),
+    ).toBeInTheDocument()
+    expect(screen.queryByText('No validation errors')).not.toBeInTheDocument()
+  })
+
+  it('leaves focus in place when validation results switch the banner between no errors and errors', async () => {
+    const model = createTestModel(2, 2, REPLICA_ID)
+    mockConnectedWebSocketWithModel(model)
+    const { ref, rerender } = await renderGridWithSession()
+
+    expect(screen.getByText('No validation errors')).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: HIDE_VALIDATION_ERRORS_LABEL }),
+    ).not.toHaveFocus()
+
+    const helpLink = screen.getByRole('link', { name: 'Help and Instructions' })
+    act(() => helpLink.focus())
+
+    // Each result remounts the Hide link in the banner's other form, with no click on Hide or Show
+    function receiveFirstRowValidation(allValidationMessages: string[]) {
+      setFirstRowValidation(model, allValidationMessages)
+      mockConnectedWebSocketWithModel(model)
+      rerender(<SynapseGrid ref={ref} />)
+    }
+
+    receiveFirstRowValidation([INVALID_CELL_MESSAGE])
+    expect(screen.getByText('Validation errors')).toBeInTheDocument()
+    expect(helpLink).toHaveFocus()
+
+    receiveFirstRowValidation([])
+    expect(screen.getByText('No validation errors')).toBeInTheDocument()
+    expect(helpLink).toHaveFocus()
+  })
+
   describe('errors', () => {
     beforeEach(() => {
       // React logs the errors that error boundaries catch
@@ -195,6 +370,126 @@ describe('SynapseGrid', () => {
       expect(
         screen.getByRole('link', { name: 'Help and Instructions' }),
       ).toBeVisible()
+    })
+  })
+
+  describe('with the AI Assistant sidebar feature flag on', () => {
+    beforeAll(() => {
+      window.HTMLElement.prototype.scrollIntoView = vi.fn()
+    })
+
+    beforeEach(() => {
+      localStorage.clear()
+      server.use(
+        getFeatureFlagsOverride({
+          portalOrigin,
+          overrides: { [FeatureFlagEnum.GRID_AGENT_SIDEBAR]: true },
+        }),
+      )
+    })
+
+    it('is open by default instead of the Open Curie button, without creating an agent session', async () => {
+      const agentSessionCreation = registerChatHandlers()
+      await renderGridWithSession()
+
+      const sidebar = await findSidebar()
+
+      expect(within(sidebar).getByRole('textbox')).toBeEnabled()
+      expect(queryOpenSidebarButton()).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Open Curie' }),
+      ).not.toBeInTheDocument()
+      expect(agentSessionCreation.count).toBe(0)
+    })
+
+    it('starts closed, with the open button, when the user closed it before', async () => {
+      localStorage.setItem(GRID_AGENT_SIDEBAR_OPEN_LOCALSTORAGE_KEY, 'false')
+      registerChatHandlers()
+      await renderGridWithSession()
+
+      expect(
+        await screen.findByRole('button', {
+          name: OPEN_GRID_AGENT_SIDEBAR_LABEL,
+        }),
+      ).toBeInTheDocument()
+      expect(querySidebar()).not.toBeInTheDocument()
+    })
+
+    it('closes from its close button and reopens from the open button', async () => {
+      registerChatHandlers()
+      const { user } = await renderGridWithSession()
+      await findSidebar()
+
+      await user.click(
+        screen.getByRole('button', { name: CLOSE_GRID_AGENT_SIDEBAR_LABEL }),
+      )
+
+      expect(querySidebar()).not.toBeInTheDocument()
+
+      await user.click(
+        screen.getByRole('button', { name: OPEN_GRID_AGENT_SIDEBAR_LABEL }),
+      )
+
+      expect(getSidebar()).toBeInTheDocument()
+      expect(queryOpenSidebarButton()).not.toBeInTheDocument()
+    })
+
+    it('keeps the conversation and an unsent draft when closed and reopened', async () => {
+      const agentSessionCreation = registerChatHandlers()
+      const { user } = await renderGridWithSession()
+      const sidebar = await findSidebar()
+
+      await user.type(within(sidebar).getByRole('textbox'), MESSAGE)
+      await user.click(
+        within(sidebar).getByRole('button', { name: 'Send message' }),
+      )
+      expect(await within(sidebar).findByText(RESPONSE)).toBeInTheDocument()
+      // The composer is enabled again once the response has finished
+      await waitFor(() =>
+        expect(within(sidebar).getByRole('textbox')).toBeEnabled(),
+      )
+      await user.type(within(sidebar).getByRole('textbox'), DRAFT)
+
+      await user.click(
+        screen.getByRole('button', { name: CLOSE_GRID_AGENT_SIDEBAR_LABEL }),
+      )
+      await user.click(
+        screen.getByRole('button', { name: OPEN_GRID_AGENT_SIDEBAR_LABEL }),
+      )
+
+      expect(within(getSidebar()).getByText(MESSAGE)).toBeInTheDocument()
+      expect(within(getSidebar()).getByText(RESPONSE)).toBeInTheDocument()
+      expect(within(getSidebar()).getByRole('textbox')).toHaveValue(DRAFT)
+      expect(agentSessionCreation.count).toBe(1)
+    })
+
+    // jsdom renders no grid cells to edit. A modal would block the page and hide it from assistive
+    // technology, so check that the sidebar is not one and the grid's toolbar stays reachable.
+    it('does not block the grid while open', async () => {
+      registerChatHandlers()
+      await renderGridWithSession()
+      await findSidebar()
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      expect(
+        screen.getByRole('link', { name: 'Help and Instructions' }),
+      ).toBeVisible()
+    })
+  })
+
+  describe('with the AI Assistant sidebar feature flag off', () => {
+    it('opens the chat in a dialog from the Open Curie button, with no sidebar', async () => {
+      const agentSessionCreation = registerChatHandlers()
+      const { user } = await renderGridWithSession()
+
+      await user.click(screen.getByRole('button', { name: 'Open Curie' }))
+
+      expect(
+        await screen.findByPlaceholderText('Message Curie'),
+      ).toBeInTheDocument()
+      expect(querySidebar()).not.toBeInTheDocument()
+      expect(queryOpenSidebarButton()).not.toBeInTheDocument()
+      expect(agentSessionCreation.count).toBe(0)
     })
   })
 })

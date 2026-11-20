@@ -18,11 +18,14 @@ import {
 } from '@/utils/jsonschema/submissionContext'
 import { FieldLibraryRow } from './FieldLibraryRow'
 import fieldLibraryStyles from './FieldLibrary.module.scss'
+import { FieldSettingsByPath, fieldSettingsFor } from './utils'
 
 export type FieldLibraryProps = {
   jsonSchema: RJSFSchema
   /** Set of JSON pointers (e.g. `/institution`) currently bound to a step. */
   usedPaths: Set<string>
+  /** Each property's slot settings by `schemaPath`, whether or not a step binds it. */
+  fieldSettings: FieldSettingsByPath
   selectedPropertyKey: string | null
   onSelectField: (propertyKey: string) => void
   onCreateField: () => void
@@ -37,6 +40,7 @@ export type FieldLibraryProps = {
 export function FieldLibrary({
   jsonSchema,
   usedPaths,
+  fieldSettings,
   selectedPropertyKey,
   onSelectField,
   onCreateField,
@@ -79,6 +83,12 @@ export function FieldLibrary({
             <FieldLibraryRow
               propertyKey={p.propertyKey}
               property={p.subSchema}
+              uiDefinition={
+                fieldSettingsFor(
+                  fieldSettings,
+                  propertyKeyToPointer(p.propertyKey),
+                ).uiDefinition
+              }
               isRequired={p.isRequired}
               context={p.context}
               isUsedInSteps={usedPaths.has(propertyKeyToPointer(p.propertyKey))}

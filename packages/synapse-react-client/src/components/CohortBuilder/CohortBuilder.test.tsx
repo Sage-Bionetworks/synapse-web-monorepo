@@ -684,6 +684,47 @@ describe('CohortBuilder', () => {
     }
   })
 
+  it('approves only the participant VirtualTable in the preview when there is no Files/Datasets VirtualTable', async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...getCohortBuilderHandlers({
+        profile: ELITE_MOCK_PROFILE,
+        access: 'FULL',
+        isSourceAdministrator: true,
+      }),
+    )
+    render(
+      <CohortBuilder
+        participantsTableId={participantsTableId}
+        participantsSourceTableId={ELITE_MOCK_PROFILE.participantsSourceTableId}
+      />,
+      { wrapper: createWrapper() },
+    )
+    await screen.findByText(`${allParticipantsCount} participants`)
+
+    await user.click(
+      await screen.findByRole('button', { name: AGGREGATE_DATA_PREVIEW_TITLE }),
+    )
+    await user.type(
+      screen.getByRole('spinbutton', { name: /^Suppression threshold/ }),
+      String(ELITE_MOCK_PROFILE.suppressionThreshold),
+    )
+    const requestsBeforePreview = sentRequests.length
+    await user.click(
+      screen.getByRole('button', { name: APPLY_PREVIEW_BUTTON_TEXT }),
+    )
+
+    await screen.findByText(COHORT_BUILDER_PREVIEW_NOTICE)
+    await waitFor(() =>
+      expect(sentRequests.length).toBeGreaterThan(requestsBeforePreview),
+    )
+    for (const request of sentRequests.slice(requestsBeforePreview)) {
+      expect(request.aggregateDataPreview?.approvedVirtualTableIds).toEqual([
+        participantsTableId,
+      ])
+    }
+  })
+
   // Each test builds a cohort with the Query Builder, then each result waits on chained async query jobs (participants,
   // then files). When the whole suite is running, a single wait can exceed Testing Library's default and a whole test
   // can exceed the suite's per-test timeout.
@@ -782,6 +823,10 @@ describe('CohortBuilder', () => {
         suppressionThreshold: ELITE_MOCK_PROFILE.suppressionThreshold,
         quasiIdentifierColumnNames: ['individualId'],
         countSuppressionStrategy: 'EXCLUDE_ROW',
+        approvedVirtualTableIds: [
+          profile.participantsVirtualTableId,
+          profile.dataVirtualTableId,
+        ],
         facetPostProcessingConfig: ELITE_MOCK_PROFILE.facetPostProcessingConfig,
       }
       const previewRequests = sentRequests.slice(requestsBeforePreview)

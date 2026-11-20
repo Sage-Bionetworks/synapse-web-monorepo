@@ -1,0 +1,190 @@
+{
+  "code": "cpath_basic_all_access_request_v2",
+  "created_at": "2026-08-13T12:18:50.404Z",
+  "updated_at": "2026-11-09T17:13:56.724Z",
+  "controls_requests": "fair",
+  "engine": "flowable",
+  "workflow": {
+    "id": "596eb9f4-b11e-11f1-bb9e-32e757dfd456",
+    "key": "cpath_basic_all_access_request_v2",
+    "version": 2,
+    "name": "CPATH Basic All Access Request v2",
+    "description": null
+  },
+  "enabled": true,
+  "sections": {
+    "about": {
+      "label": "About",
+      "fields": [
+        {
+          "name": "code",
+          "type": "string",
+          "label": "ID",
+          "validation": {
+            "maximum": 256,
+            "identifier": true
+          },
+          "placeholder": "Enter a unique ID or leave blank and we will allocate one for you",
+          "defaultValue": ""
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "label": "Request name",
+          "validation": {
+            "maximum": 250,
+            "required": true
+          },
+          "placeholder": "Name this request",
+          "defaultValue": ""
+        },
+        {
+          "name": "position",
+          "type": "string",
+          "label": "Position",
+          "validation": {
+            "maximum": 256,
+            "required": true
+          },
+          "placeholder": "Add your position in the project",
+          "defaultValue": ""
+        },
+        {
+          "name": "phone_number",
+          "type": "phone",
+          "label": "Phone number",
+          "country": "us",
+          "validation": {
+            "maximum": 64,
+            "required": true
+          },
+          "placeholder": "",
+          "defaultValue": "",
+          "preferredCountries": ["us", "gb"]
+        },
+        {
+          "name": "address",
+          "type": "text",
+          "label": "Address - ",
+          "validation": {
+            "maximum": 4096,
+            "required": true
+          },
+          "placeholder": "Enter your address",
+          "defaultValue": ""
+        }
+      ]
+    },
+    "project": {
+      "label": "Project",
+      "fields": [
+        {
+          "name": "date_type",
+          "type": "date",
+          "label": "Date - Renders a date input",
+          "validation": {
+            "minimum": "today",
+            "required": true
+          },
+          "placeholder": "Add date",
+          "defaultValue": ""
+        },
+        {
+          "name": "label_type",
+          "type": "label",
+          "label": "Rendered markdown to guide users, supports basic formatting and links"
+        },
+        {
+          "name": "markdown_type",
+          "type": "markdown",
+          "label": "Markdown - Multiline text entry with support for formatting and links",
+          "validation": {
+            "maximum": 4096,
+            "minimum": 200,
+            "required": true
+          },
+          "defaultValue": "**bold** *italics*"
+        },
+        {
+          "name": "phone_type",
+          "type": "phone",
+          "label": "Phone - renders telephone data entry",
+          "country": "us",
+          "validation": {
+            "required": true
+          },
+          "defaultValue": "+44 131 111 2222",
+          "preferredCountries": ["us", "gb"]
+        },
+        {
+          "name": "string_type",
+          "type": "string",
+          "label": "String - Single line text entry",
+          "validation": {
+            "maximum": 256,
+            "minimum": 2,
+            "required": true
+          },
+          "defaultValue": "default value"
+        },
+        {
+          "name": "text_type",
+          "type": "text",
+          "label": "Text - multiline text entry",
+          "validation": {
+            "maximum": 4096,
+            "minimum": 20,
+            "required": true
+          },
+          "placeholder": "Placeholder text"
+        },
+        {
+          "name": "boolean_type",
+          "type": "boolean",
+          "label": "Boolean - toggle switch",
+          "validation": {
+            "required": true
+          },
+          "defaultValue": true
+        },
+        {
+          "name": "number_type",
+          "type": "number",
+          "label": "Number = numeric input",
+          "validation": {
+            "maximum": 10,
+            "minimum": 1,
+            "required": true
+          },
+          "defaultValue": 10
+        },
+        {
+          "name": "list_type",
+          "type": "list",
+          "label": "List - dropdown selection",
+          "options": [
+            {
+              "text": "Option 1",
+              "value": "1",
+              "description": "description 1"
+            },
+            {
+              "text": "Option 2",
+              "value": "2",
+              "description": "description 2"
+            },
+            {
+              "text": "Option 3",
+              "value": "3",
+              "description": "description 3"
+            }
+          ],
+          "validation": {
+            "required": false
+          },
+          "placeholder": "List placeholder"
+        }
+      ]
+    }
+  }
+}

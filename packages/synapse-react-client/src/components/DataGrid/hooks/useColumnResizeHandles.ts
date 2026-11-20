@@ -1,6 +1,14 @@
 import { useEffect, useRef } from 'react'
 import { Column } from '@sage-bionetworks/react-datasheet-grid'
 import { useResizeObserver } from '@react-hookz/web'
+import '../../../style/components/_col-resizing.scss'
+
+/**
+ * The class on `document.body` while a column or the grid's sidebar is being resized. Its styles,
+ * loaded with this module, show the resize cursor everywhere, including over the grid, and turn off
+ * text selection.
+ */
+export const COL_RESIZING_BODY_CLASS = 'col-resizing'
 
 // Extended HTMLDivElement with custom properties for resize handles
 interface ResizeHandleElement extends HTMLDivElement {
@@ -177,7 +185,7 @@ class ColumnResizeManager {
     }
 
     handle.classList.add('is-resizing')
-    document.body.classList.add('col-resizing')
+    document.body.classList.add(COL_RESIZING_BODY_CLASS)
   }
 
   /**
@@ -205,7 +213,7 @@ class ColumnResizeManager {
     )
 
     handle.classList.remove('is-resizing')
-    document.body.classList.remove('col-resizing')
+    document.body.classList.remove(COL_RESIZING_BODY_CLASS)
     this.activeResize = null
 
     // Only update state when drag is complete
@@ -302,7 +310,7 @@ class ColumnResizeManager {
    */
   cleanup(): void {
     // Ensure cursor class is removed
-    document.body.classList.remove('col-resizing')
+    document.body.classList.remove(COL_RESIZING_BODY_CLASS)
 
     // Reset active resize state
     if (this.activeResize) {
