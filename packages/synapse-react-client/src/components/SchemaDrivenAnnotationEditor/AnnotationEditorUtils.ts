@@ -1,3 +1,4 @@
+import { ALLOWED_VALUES_MESSAGE } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 import { AdditionalPropertiesSchemaField } from '@/components/SchemaDrivenAnnotationEditor/field/AdditionalPropertiesSchemaField'
 import { collectTopLevelProperties } from '@/utils/jsonschema/collectTopLevelProperties'
 import {
@@ -124,6 +125,13 @@ export function getFriendlyPropertyName(error: RJSFValidationError): string {
   }
 }
 
+/** The error names (ajv keywords) a value missing every option of an anyOf enum produces. */
+const ANY_OF_ENUM_ERROR_NAMES: Record<string, true> = {
+  type: true,
+  const: true,
+  anyOf: true,
+}
+
 export function transformErrors(
   errors: RJSFValidationError[],
 ): RJSFValidationError[] {
@@ -138,28 +146,19 @@ export function transformErrors(
     const errorGroup = grouped[property]
 
     // First, see if it is an anyOf error
-    const hasAnyOfError = errorGroup.some(
-      e => e.message === 'should match some schema in anyOf',
-    )
+    const hasAnyOfError = errorGroup.some(e => e.name === 'anyOf')
 
-    // We determine if it's an anyOf *enum* error if all error messages in the property match one of these three messages:
+    // It's an anyOf *enum* error if every error on the property comes from the anyOf or one of
+    // its `type`/`const` options
     const isEnumError =
       hasAnyOfError &&
-      errorGroup.every(error => {
-        if (error.message === 'should be string') {
-          return true
-        } else if (error.message === 'should be equal to constant') {
-          return true
-        } else if (error.message === 'should match some schema in anyOf') {
-          return true
-        } else {
-          return false
-        }
-      })
+      errorGroup.every(
+        error => ANY_OF_ENUM_ERROR_NAMES[error.name ?? ''] === true,
+      )
 
     // If it's an anyOf enum error, we just modify the first message and drop the rest
     if (isEnumError && errorGroup.length > 0) {
-      errorGroup[0].message = 'should be equal to one of the allowed values'
+      errorGroup[0].message = ALLOWED_VALUES_MESSAGE
       grouped[property] = [errorGroup[0]]
     }
   })

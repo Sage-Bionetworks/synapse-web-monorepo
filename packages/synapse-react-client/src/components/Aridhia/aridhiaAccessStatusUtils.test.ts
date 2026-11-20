@@ -3,9 +3,14 @@ import { RestrictionUiType } from '../HasAccess/AccessIcon'
 import {
   getRestrictionUiTypeFromAridhiaRequests,
   findRequestsForDataset,
+  getRequestDataAccess,
+  needsWorkspace,
+  RequestDataAccess,
   RequestStatus,
+  RequestWorkspaceQueryState,
 } from './aridhiaAccessStatusUtils'
 import { RequestListItem } from '@sage-bionetworks/aridhia-client/generated/models'
+import { AridhiaError } from '@/aridhia-queries'
 
 const EXPECTED_BY_STATUS: Record<RequestStatus, RestrictionUiType> = {
   approved: RestrictionUiType.AccessibleOnRDCADAP,
@@ -159,6 +164,146 @@ describe('aridhiaAccessStatusUtils', () => {
           datasetCode,
         ),
       ).toEqual([])
+    })
+  })
+
+  describe('getRequestDataAccess', () => {
+    const INBOX_URL = 'https://team.test/#/workspaces/team/folders/inbox'
+    const WORKSPACE_QUERIES: Record<
+      string,
+      {
+        query: RequestWorkspaceQueryState
+        /** The result once the request is approved and transferred. */
+        expected: RequestDataAccess
+      }
+    > = {
+      loading: {
+        query: { isPending: true, error: null },
+        expected: { kind: 'checkingWorkspace' },
+      },
+      '404': {
+        query: {
+          isPending: false,
+          error: new AridhiaError('unknown', 'Request not found', {
+            httpStatus: 404,
+          }),
+        },
+        expected: { kind: 'workspacePreparing' },
+      },
+      'other error': {
+        query: {
+          isPending: false,
+          error: new AridhiaError('unknown', 'Internal server error', {
+            httpStatus: 500,
+          }),
+        },
+        expected: { kind: 'workspaceError' },
+      },
+      'null inbox': {
+        query: {
+          isPending: false,
+          error: null,
+          data: { workspace_name: 'team', workspace_status: 'requested' },
+        },
+        expected: { kind: 'workspacePreparing' },
+      },
+      'inbox and name': {
+        query: {
+          isPending: false,
+          error: null,
+          data: { workspace_name: 'team', workspace_inbox_url: INBOX_URL },
+        },
+        expected: {
+          kind: 'workspaceAvailable',
+          inboxUrl: INBOX_URL,
+          workspaceName: 'team',
+        },
+      },
+      'inbox without name': {
+        query: {
+          isPending: false,
+          error: null,
+          data: { workspace_inbox_url: INBOX_URL },
+        },
+        expected: { kind: 'workspaceAvailable', inboxUrl: INBOX_URL },
+      },
+      'workspace_url set but inbox null': {
+        query: {
+          isPending: false,
+          error: null,
+          data: {
+            workspace_name: 'team',
+            workspace_url: 'https://team.test/#/workspaces/team',
+          },
+        },
+        expected: { kind: 'workspacePreparing' },
+      },
+      'inbox cached, refetch failed': {
+        query: {
+          isPending: false,
+          error: new AridhiaError('unknown', 'Internal server error', {
+            httpStatus: 500,
+          }),
+          data: { workspace_name: 'team', workspace_inbox_url: INBOX_URL },
+        },
+        expected: {
+          kind: 'workspaceAvailable',
+          inboxUrl: INBOX_URL,
+          workspaceName: 'team',
+        },
+      },
+    }
+
+    /** Only an approved, transferred request's result depends on its workspace query. */
+    function expectedAccess(
+      status: RequestStatus,
+      transferred: boolean,
+      whenTransferred: RequestDataAccess,
+    ): RequestDataAccess {
+      if (status !== 'approved') {
+        return { kind: 'none' }
+      }
+      return transferred ? whenTransferred : { kind: 'transferPending' }
+    }
+
+    const cases = PRECEDENCE.flatMap(status =>
+      [true, false].flatMap(transferred =>
+        Object.entries(WORKSPACE_QUERIES).map(
+          ([workspace, { query, expected }]) => ({
+            status,
+            transferred,
+            workspace,
+            query,
+            expected: expectedAccess(status, transferred, expected),
+          }),
+        ),
+      ),
+    )
+
+    test.each(cases)(
+      '$status, transferred: $transferred, workspace: $workspace',
+      ({ status, transferred, query, expected }) => {
+        const item: RequestListItem = {
+          code: 'request-1',
+          status,
+          transfer: transferred
+            ? { transferred_at: '2024-01-01T00:00:00Z' }
+            : undefined,
+        }
+        expect(needsWorkspace(item)).toBe(status === 'approved' && transferred)
+        expect(getRequestDataAccess(item, query)).toEqual(expected)
+      },
+    )
+
+    test('reports a workspace error for a transferred request without a code, which has no workspace to fetch', () => {
+      const item: RequestListItem = {
+        status: 'approved',
+        transfer: { transferred_at: '2024-01-01T00:00:00Z' },
+      }
+      expect(needsWorkspace(item)).toBe(false)
+      expect(
+        getRequestDataAccess(item, { isPending: true, error: null }),
+      ).toEqual({ kind: 'workspaceError' })
     })
   })
 })

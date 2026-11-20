@@ -8,6 +8,9 @@ import {
   MOCK_RESEARCH_PROJECT,
 } from '@/mocks/dataaccess/MockResearchProject'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { getIdentityProviderDisplayName } from '@/utils/functions/IdentityProviderNameUtils'
+import { IdentityProviderName } from '@sage-bionetworks/synapse-client'
+import { Request } from '@sage-bionetworks/synapse-types'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
@@ -652,6 +655,63 @@ describe('ResearchProjectForm', { timeout: 30_000 }, () => {
       ).toBeTruthy()
 
       consoleErrorSpy.mockRestore()
+    })
+
+    it('blocks Save & Continue and explains how to sign in when the request cannot be created', async () => {
+      const identityProviderRejection =
+        'A data access request for this access requirement can only be created after signing in through one of the identity providers it accepts.'
+      // The request the user has not created yet, which saving the PI fields creates. The legacy Request type requires
+      // the server-assigned id that such a request lacks.
+      const { id: _id, ...unsavedRequest } = MOCK_DATA_ACCESS_REQUEST
+      mockGetDataAccessRequestForUpdate.mockResolvedValueOnce(
+        unsavedRequest as unknown as Request,
+      )
+      mockUpdateDataAccessRequest.mockRejectedValueOnce(
+        new SynapseClientError(
+          403,
+          identityProviderRejection,
+          expect.getState().currentTestName!,
+        ),
+      )
+
+      const { user, projectLeadInput, institutionInput } = await setUp({
+        ...defaultProps,
+        managedACTAccessRequirement: {
+          ...eDucAr,
+          identityProviders: [IdentityProviderName.NIH_RESEARCHER_AUTH_SERVICE],
+        },
+      })
+      await waitFor(() =>
+        expect(mockGetDataAccessRequestForUpdate).toHaveBeenCalled(),
+      )
+      await user.type(projectLeadInput, 'Jane Doe')
+      await user.type(institutionInput, 'My Institution')
+      await user.type(
+        screen.getByLabelText(
+          'Institutional Email of your Project Lead or PI',
+          { exact: false },
+        ),
+        'pi@example.edu',
+      )
+      act(() => {
+        mockedUserSearchBox.mock.lastCall![0].onChange!('9999', {} as never)
+      })
+      await waitFor(() =>
+        expect(
+          screen.getByRole('button', { name: 'Save and Continue' }),
+        ).not.toBeDisabled(),
+      )
+      await clickSaveAndContinue(user)
+
+      const alert = await screen.findByRole('alert')
+      expect(alert).toHaveTextContent(
+        `${identityProviderRejection} To request access, sign out, then sign in with ${getIdentityProviderDisplayName(IdentityProviderName.NIH_RESEARCHER_AUTH_SERVICE)}.`,
+      )
+      expect(
+        screen.getByRole('button', { name: 'Save and Continue' }),
+      ).toBeDisabled()
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeEnabled()
+      expect(mockOnSave).not.toHaveBeenCalled()
     })
 
     it('prefills the project lead from the selected PI profile when the field is empty', async () => {

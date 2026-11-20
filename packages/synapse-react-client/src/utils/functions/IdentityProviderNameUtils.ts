@@ -16,3 +16,10 @@ export function getIdentityProviderDisplayName(
 ): string {
   return IDENTITY_PROVIDER_DISPLAY_NAMES[identityProvider]
 }
+
+/** The display names of the given identity providers as a list of alternatives, e.g. "Google or ORCiD". */
+export function getIdentityProviderAlternativesText(
+  identityProviders: IdentityProviderName[],
+): string {
+  return identityProviders.map(getIdentityProviderDisplayName).join(' or ')
+}

@@ -2,7 +2,6 @@ import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockA
 import { mockClinicalTemplate } from '@/mocks/accessRequirement/mockFormTemplates'
 import { mockJsonSchemaAR2 } from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
-import type { SubmissionWithFormTemplateRef } from '@/synapse-queries/dataaccess/useGeneratedSubmissionForm'
 import { DataAccessRequestType } from '@sage-bionetworks/synapse-client'
 import {
   MOCK_FILE_HANDLE_ID,
@@ -266,7 +265,7 @@ export const mockSchemaDataSubmission = {
   etag: 'b1e3c0a5-7c1d-4a51-9d0c-2c6f0b5e7a10',
   subjectId: 'syn12156790',
   subjectType: RestrictableObjectType.ENTITY,
-} satisfies SubmissionWithFormTemplateRef
+} satisfies Submission
 
 /** A renewal against a JsonSchemaAccessRequirement that also carries first-class fields. */
 export const mockSchemaDataAndFirstClassSubmission = {
@@ -280,7 +279,7 @@ export const mockSchemaDataAndFirstClassSubmission = {
     [SUBMISSION_CONTEXT_PROPERTY]: DataAccessRequestType.RENEWAL,
     irbApprovalNumber: 'IRB-2026-0042',
   },
-} satisfies SubmissionWithFormTemplateRef
+} satisfies Submission
 
 export const mockSubmissions: Submission[] = [
   mockApprovedSubmission,

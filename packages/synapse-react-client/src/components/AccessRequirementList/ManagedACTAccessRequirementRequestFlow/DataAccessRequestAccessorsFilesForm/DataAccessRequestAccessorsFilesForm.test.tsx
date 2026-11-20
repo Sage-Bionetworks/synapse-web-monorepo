@@ -12,6 +12,8 @@ import { MOCK_RESEARCH_PROJECT_ID } from '@/mocks/dataaccess/MockResearchProject
 import { mockSubmittedSubmission } from '@/mocks/dataaccess/MockSubmission'
 import { MOCK_FILE_ENTITY_ID } from '@/mocks/entity/mockFileEntity'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { getIdentityProviderDisplayName } from '@/utils/functions/IdentityProviderNameUtils'
+import { IdentityProviderName } from '@sage-bionetworks/synapse-client'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
@@ -353,6 +355,62 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
     within(alert).getByText(errorMessage)
 
     consoleErrorSpy.mockRestore()
+  })
+
+  it('blocks Submit and explains how to sign in when the request cannot be created', async () => {
+    const identityProviderRejection =
+      'A data access request for this access requirement can only be created after signing in through one of the identity providers it accepts.'
+    // The request the user has not created yet, which the first save creates. The legacy Request type requires the
+    // server-assigned id that such a request lacks.
+    const { id: _id, ...unsavedRequest } = MOCK_DATA_ACCESS_REQUEST
+    mockGetDataRequestForUpdate.mockResolvedValue({
+      ...unsavedRequest,
+      accessorChanges: [],
+    } as unknown as Request)
+    mockUpdateDataAccessRequest.mockRejectedValueOnce(
+      new SynapseClientError(
+        403,
+        identityProviderRejection,
+        expect.getState().currentTestName!,
+      ),
+    )
+
+    renderComponent({
+      ...defaultProps,
+      managedACTAccessRequirement: {
+        ...mockManagedACTAccessRequirement,
+        identityProviders: [IdentityProviderName.NIH_RESEARCHER_AUTH_SERVICE],
+      },
+    })
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent(
+      `${identityProviderRejection} To request access, sign out, then sign in with ${getIdentityProviderDisplayName(IdentityProviderName.NIH_RESEARCHER_AUTH_SERVICE)}.`,
+    )
+    expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeEnabled()
+    expect(mockCreateSubmission).not.toHaveBeenCalled()
+  })
+
+  it('shows the error and does not submit when saving the request fails on Submit', async () => {
+    const errorMessage = 'Some error happened when saving the request'
+    mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
+    mockUpdateDataAccessRequest.mockRejectedValueOnce(
+      new SynapseClientError(
+        500,
+        errorMessage,
+        expect.getState().currentTestName!,
+      ),
+    )
+    const { user } = renderComponent(defaultProps)
+
+    await user.click(await screen.findByRole('button', { name: 'Submit' }))
+
+    const alert = await screen.findByRole('alert')
+    within(alert).getByText(errorMessage)
+    expect(mockCreateSubmission).not.toHaveBeenCalled()
+    // A failure other than a rejected creation may be transient, so the user can retry
+    expect(screen.getByRole('button', { name: 'Submit' })).toBeEnabled()
   })
 
   it('should show DUC template and field if required', async () => {

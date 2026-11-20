@@ -17,6 +17,8 @@ import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { getIdentityProviderDisplayName } from '@/utils/functions/IdentityProviderNameUtils'
+import { IdentityProviderName } from '@sage-bionetworks/synapse-client'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
@@ -33,6 +35,7 @@ import JsonSchemaRequestWizard, {
   REQUESTER_INFORMATION_STEP_LABEL,
   JsonSchemaRequestWizardProps,
 } from './JsonSchemaRequestWizard'
+import { REQUIRED_MESSAGE } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 
 // The upload completes with whichever file handle the test sets, or fails. While `holdUploads` is set, it completes
 // only when the test calls `completeHeldUpload`.
@@ -263,6 +266,21 @@ describe('JsonSchemaRequestWizard', () => {
     expect(screen.queryByRole('radio')).not.toBeInTheDocument()
   })
 
+  it("renders a long-answer question, set by the slot's uiDefinition, as a multi-line box", async () => {
+    mockRequestServices(
+      genomicsAccessRequirement,
+      createRequest(genomicsAccessRequirement),
+    )
+    const user = userEvent.setup()
+    renderWizard(genomicsAccessRequirement)
+    await advanceToStep(user)
+
+    // The genomics template's intendedDataUse slot sets `ui:widget: textarea` with 5 rows.
+    const answer = await screen.findByRole('textbox')
+    expect(answer.tagName).toBe('TEXTAREA')
+    expect(answer).toHaveAttribute('rows', '5')
+  })
+
   it('does not advance past a step with a missing required answer', async () => {
     const { savedRequests } = mockRequestServices(
       genomicsAccessRequirement,
@@ -332,6 +350,40 @@ describe('JsonSchemaRequestWizard', () => {
     expect(await screen.findByRole('textbox')).toHaveValue(
       'Studying the genome',
     )
+  })
+
+  it('blocks the wizard and explains how to sign in when the request cannot be created', async () => {
+    const identityProviderRejection =
+      'A data access request for this access requirement can only be created after signing in through one of the identity providers it accepts.'
+    const rasAccessRequirement: JsonSchemaAccessRequirement = {
+      ...genomicsAccessRequirement,
+      identityProviders: [IdentityProviderName.NIH_RESEARCHER_AUTH_SERVICE],
+    }
+    const { savedRequests } = mockRequestServices(
+      rasAccessRequirement,
+      // The request the user has not created yet
+      createRequest(rasAccessRequirement, { id: undefined }),
+    )
+    server.use(
+      http.post(`${REPO_ENDPOINT}/repo/v1/dataAccessRequest`, () =>
+        HttpResponse.json(
+          { reason: identityProviderRejection },
+          { status: 403 },
+        ),
+      ),
+    )
+    const user = userEvent.setup()
+    const props = renderWizard(rasAccessRequirement)
+    await advanceToStep(user)
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent(
+      `${identityProviderRejection} To request access, sign out, then sign in with ${getIdentityProviderDisplayName(IdentityProviderName.NIH_RESEARCHER_AUTH_SERVICE)}.`,
+    )
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeEnabled()
+    expect(savedRequests).toHaveLength(0)
+    expect(props.onSubmissionCreated).not.toHaveBeenCalled()
   })
 
   it('restores answers saved to the request', async () => {
@@ -566,7 +618,7 @@ describe('JsonSchemaRequestWizard', () => {
       await advanceToFileQuestion(user)
 
       await user.click(screen.getByRole('button', { name: 'Submit' }))
-      await screen.findAllByText(/required property/i)
+      await screen.findAllByText(REQUIRED_MESSAGE)
       expect(submissionRequests).toHaveLength(0)
 
       await upload(user, UPLOADED_FILE_HANDLE_ID)

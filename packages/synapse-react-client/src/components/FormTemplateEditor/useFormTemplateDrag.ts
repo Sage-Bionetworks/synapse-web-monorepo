@@ -35,7 +35,7 @@ function projectSlotMove(
   slotId: string,
 ): { stepKey: string; index: number } | null {
   const groups: Record<string, string[]> = Object.fromEntries(
-    steps.map(step => [slotGroupId(step), step.fields.map(slotSortableId)]),
+    steps.map(step => [slotGroupId(step), step.fieldPaths.map(slotSortableId)]),
   )
   const moved = move(groups, event)
   if (moved === groups) return null
@@ -85,12 +85,12 @@ export function useFormTemplateDrag({
       }
 
       if (source.type === SLOT_SORTABLE_TYPE) {
-        const field = steps
-          .flatMap(step => step.fields)
-          .find(f => slotSortableId(f) === sourceId)
+        const schemaPath = steps
+          .flatMap(step => step.fieldPaths)
+          .find(p => slotSortableId(p) === sourceId)
         const destination = projectSlotMove(steps, event, sourceId)
-        if (field && destination) {
-          moveSlot(field.schemaPath, destination.stepKey, destination.index)
+        if (schemaPath && destination) {
+          moveSlot(schemaPath, destination.stepKey, destination.index)
         }
       }
     },
