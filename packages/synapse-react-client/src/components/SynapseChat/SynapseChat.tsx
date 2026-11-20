@@ -29,6 +29,11 @@ import { ChatInputArea } from './components/ChatInputArea/ChatInputArea'
 import SynapseChatMessage from './SynapseChatMessage'
 import SmartToyTwoTone from '@mui/icons-material/SmartToyTwoTone'
 import { UserCard } from '../UserCard/UserCard'
+import {
+  ChatScrollBlock,
+  scrollMessageIntoListView,
+  scrollMessageIntoPageView,
+} from './utils/scrollChatMessage'
 import { useApplicationSessionContext } from '@/utils/AppUtils'
 import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
 
@@ -84,6 +89,13 @@ export type SynapseChatProps = {
   variant?: 'default' | 'curie'
   hideTitle?: boolean
   textboxPositionOffset?: string // when embedded in a form, the textbox (form) stuck to the bottom may need to be offset due to container padding (dialog content for example!)
+  /**
+   * What scrolls to bring a new message into view. `messageList` scrolls only the chat's message
+   * list, so the page around a chat with a bounded height, such as one docked in a sidebar, stays
+   * still. `page` scrolls every scrolling ancestor, for a chat that grows with its conversation.
+   * @default 'page'
+   */
+  scrollContainer?: 'page' | 'messageList'
   /* optional session context for the agent session */
   sessionContext?: GridAgentSessionContext
   /* The current session, if state is lifted out of this component */
@@ -144,6 +156,7 @@ export function SynapseChat({
   agentAvatar,
   hideTitle = false,
   textboxPositionOffset = '0px',
+  scrollContainer = 'page',
   sessionContext,
   externalSession,
   setExternalSession,
@@ -200,6 +213,18 @@ export function SynapseChat({
   const curieAccessLevelSuffix =
     variant === 'curie' ? CURIE_ACCESS_LEVEL_SUFFIX[agentAccessLevel] : ''
   const disclaimerText = baseDisclaimerText + curieAccessLevelSuffix
+
+  const messageListRef = useRef<HTMLDivElement>(null)
+  const scrollToMessageElement = useCallback(
+    (element: HTMLElement, block: ChatScrollBlock) => {
+      if (scrollContainer === 'messageList' && messageListRef.current) {
+        scrollMessageIntoListView(element, messageListRef.current, block)
+      } else {
+        scrollMessageIntoPageView(element, block)
+      }
+    },
+    [scrollContainer],
+  )
 
   // Only interactions added after this component instance mounted should play the entry
   // animation. Callers may lift state so history survives a `Dialog` closing, but the
@@ -422,8 +447,12 @@ export function SynapseChat({
       {isCreatingAgentSession && <SkeletonParagraph numRows={10} />}
       {!isCreatingAgentSession && (
         <Box
+          ref={messageListRef}
           sx={{
             flexGrow: 1,
+            // Without this, the list can't shrink below its content, so a tall conversation
+            // overflows the chat and slides under the sticky composer instead of scrolling here
+            minHeight: 0,
             overflowY: 'auto',
             mb: variant === 'curie' ? 0 : 2,
           }}
@@ -481,6 +510,7 @@ export function SynapseChat({
                   showLoadingIcon={variant !== 'curie'}
                   onSendChat={sendChat}
                   scrollIntoView={isLast}
+                  scrollToElement={scrollToMessageElement}
                   animateEntry={!presentAtMount.has(interaction.id)}
                   isAwaitingResponse={isAwaitingResponse}
                   pendingAttachments={

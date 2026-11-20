@@ -85,6 +85,31 @@ describe('GridAgentChat', () => {
     expect(sessionCreation.count).toBe(1)
   })
 
+  it('scrolls only the chat, not the page, to a message sent in the sidebar and its response', async () => {
+    const scrollIntoViewMock = vi.fn()
+    const scrollToMock = vi.fn()
+    window.HTMLElement.prototype.scrollIntoView = scrollIntoViewMock
+    window.HTMLElement.prototype.scrollTo = scrollToMock
+    const { releaseSession } = registerChatHandlers()
+    releaseSession()
+    const user = userEvent.setup()
+    render(
+      <GridAgentChat
+        {...defaultProps}
+        variant="sidebar"
+        onOpen={() => {}}
+        onClose={() => {}}
+      />,
+      { wrapper: createWrapper() },
+    )
+
+    await sendMessage(user)
+    expect(await screen.findByText(RESPONSE)).toBeInTheDocument()
+
+    await waitFor(() => expect(scrollToMock).toHaveBeenCalledTimes(2))
+    expect(scrollIntoViewMock).not.toHaveBeenCalled()
+  })
+
   // SynapseGrid re-renders on every grid model change, so the chat often re-renders before the
   // agent session request resolves.
   it('creates one agent session when re-rendered while the session is being created', async () => {

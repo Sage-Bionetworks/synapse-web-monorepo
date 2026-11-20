@@ -85,6 +85,36 @@ describe('SynapseChatInteraction tests', () => {
     })
   })
 
+  it('scrolls with scrollToElement instead of the browser, to the message then the response', async () => {
+    const scrollToElement = vi.fn()
+    const { rerender } = renderComponent({
+      scrollIntoView: true,
+      scrollToElement,
+      chatResponseText: '',
+    })
+
+    expect(scrollToElement).toHaveBeenCalledExactlyOnceWith(
+      expect.any(HTMLElement),
+      'start',
+    )
+
+    rerender(
+      <SynapseChatInteraction
+        {...defaultProps}
+        scrollIntoView
+        scrollToElement={scrollToElement}
+        chatResponseText="here is the full answer"
+      />,
+    )
+
+    await waitFor(() => expect(scrollToElement).toHaveBeenCalledTimes(2))
+    expect(scrollToElement).toHaveBeenLastCalledWith(
+      expect.any(HTMLElement),
+      'end',
+    )
+    expect(scrollIntoViewMock).not.toHaveBeenCalled()
+  })
+
   it('does not scroll again on response arrival when scrollIntoView is false', async () => {
     const { rerender } = renderComponent({
       scrollIntoView: false,
