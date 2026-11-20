@@ -3,7 +3,7 @@ import {
   DataAccessRequestType,
   FormTemplate,
 } from '@sage-bionetworks/synapse-client'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
@@ -53,6 +53,20 @@ const schema: RJSFSchema = {
       then: {
         properties: { summaryOfUse: { type: 'string', title: 'Summary' } },
         required: ['summaryOfUse'],
+      },
+    },
+    {
+      if: {
+        properties: {
+          [SUBMISSION_CONTEXT_PROPERTY]: {
+            const: DataAccessRequestType.REQUEST,
+          },
+        },
+      },
+      then: {
+        properties: {
+          accessReason: { type: 'string', title: 'Reason for access' },
+        },
       },
     },
   ],
@@ -160,11 +174,12 @@ describe('FormTemplatePreview', () => {
     const user = userEvent.setup()
     renderPreview({ template: renewalOnlyTemplate, jsonSchema: schema })
     expect(
-      screen.getByText(
-        'Add at least one step with a bound field to preview the form.',
-      ),
+      screen.getByText('No step has a field that applies to a Request.'),
     ).toBeInTheDocument()
     expect(getValidateCheckbox()).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Step 1: Renewal details',
+    )
     await user.click(screen.getByRole('button', { name: 'Renewal' }))
     expect(getFieldLabel('Summary')).toBeInTheDocument()
   })
@@ -207,14 +222,128 @@ describe('FormTemplatePreview', () => {
     expect(screen.getByRole('textbox')).toHaveValue('Sage Bionetworks')
   })
 
-  it('excludes a step whose only field is gated to the other request type', () => {
-    // "summaryOfUse" is gated to RENEWAL by the schema's allOf; a REQUEST-only preview omits the
-    // "Renewal details" step entirely (generateDataAccessSchema drops steps with no fields).
+  it('excludes a step whose only field is gated to the other request type, and names it in a notice', () => {
+    // "summaryOfUse" is gated to RENEWAL by the schema's allOf, so the Request view omits the step
     renderPreview({ template: renewalGatedTemplate, jsonSchema: schema })
-    expect(screen.queryByText('Renewal details')).not.toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: 'Renewal details' }),
     ).not.toBeInTheDocument()
+    const notice = screen.getByRole('status')
+    expect(notice).toHaveTextContent('1 step hidden in the Request view')
+    expect(within(notice).getByRole('listitem')).toHaveTextContent(
+      'Step 2: Renewal details',
+    )
+    expect(notice).toHaveTextContent('Its fields are all Renewal only.')
+    // Outside the preview frame, which shows what a requester sees
+    expect(
+      screen.getByText('Live Preview').nextElementSibling,
+    ).not.toContainElement(notice)
+  })
+
+  it('keeps naming the hidden step while a later step is shown', async () => {
+    const user = userEvent.setup()
+    renderPreview({
+      template: template([
+        {
+          title: 'Basics',
+          fields: [{ schemaPath: '/institution', uiDefinition: {} }],
+        },
+        {
+          title: 'Renewal details',
+          fields: [{ schemaPath: '/summaryOfUse', uiDefinition: {} }],
+        },
+        {
+          title: 'Additional info',
+          fields: [{ schemaPath: '/signingOfficial', uiDefinition: {} }],
+        },
+      ]),
+      jsonSchema: schema,
+    })
+    await user.click(screen.getByRole('button', { name: 'Additional info' }))
+    expect(getFieldLabel('Signing Official')).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Step 2: Renewal details',
+    )
+  })
+
+  it('names a Request-only step in the Renewal view, offering to show the Request', async () => {
+    const user = userEvent.setup()
+    renderPreview({
+      template: template([
+        {
+          title: 'Basics',
+          fields: [{ schemaPath: '/institution', uiDefinition: {} }],
+        },
+        {
+          title: 'First request',
+          fields: [{ schemaPath: '/accessReason', uiDefinition: {} }],
+        },
+      ]),
+      jsonSchema: schema,
+    })
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Renewal' }))
+    const notice = screen.getByRole('status')
+    expect(notice).toHaveTextContent('1 step hidden in the Renewal view')
+    expect(notice).toHaveTextContent('Step 2: First request')
+    expect(notice).toHaveTextContent('Its fields are all Request only.')
+    await user.click(
+      within(notice).getByRole('button', { name: 'Show Request' }),
+    )
+    expect(screen.getByRole('button', { name: 'Request' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  })
+
+  it('switches to the other request type from the hidden-steps notice, which no longer applies there', async () => {
+    const user = userEvent.setup()
+    renderPreview({ template: renewalGatedTemplate, jsonSchema: schema })
+    await user.click(screen.getByRole('button', { name: 'Show Renewal' }))
+    expect(screen.getByRole('button', { name: 'Renewal' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(
+      screen.getByRole('button', { name: 'Renewal details' }),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  })
+
+  it('shows no hidden-steps notice when every step applies to the request type', () => {
+    renderPreview({
+      template: twoAlwaysVisibleStepsTemplate,
+      jsonSchema: schema,
+    })
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  })
+
+  it('lists every hidden step by its position in the template, and an untitled one by position alone', () => {
+    renderPreview({
+      template: template([
+        {
+          title: 'Renewal details',
+          fields: [{ schemaPath: '/summaryOfUse', uiDefinition: {} }],
+        },
+        {
+          title: 'Basics',
+          fields: [{ schemaPath: '/institution', uiDefinition: {} }],
+        },
+        {
+          title: '',
+          fields: [{ schemaPath: '/summaryOfUse', uiDefinition: {} }],
+        },
+      ]),
+      jsonSchema: schema,
+    })
+    const notice = screen.getByRole('status')
+    expect(notice).toHaveTextContent('2 steps hidden in the Request view')
+    expect(
+      within(notice)
+        .getAllByRole('listitem')
+        .map(item => item.textContent),
+    ).toEqual(['Step 1: Renewal details', 'Step 3'])
+    expect(notice).toHaveTextContent('Their fields are all Renewal only.')
   })
 
   it('regenerates the visible steps when the Request/Renewal toggle changes', async () => {

@@ -47,7 +47,8 @@ type ConditionalBranch = {
   required: Set<string>
 }
 
-function contextForRequestType(
+/** The context of a property that only a `requestType` submission asks for. */
+export function contextForRequestType(
   requestType: DataAccessRequestType,
 ): SchemaPropertyContext {
   return requestType === DataAccessRequestType.REQUEST
@@ -171,6 +172,20 @@ export function contextAppliesForRequestType(
 ): boolean {
   if (context === 'ALWAYS') return true
   return context === contextForRequestType(requestType)
+}
+
+/**
+ * The context a step's fields all share, given the contexts of the fields that resolve, when that
+ * context limits the step to one request type. The other request type's form leaves such a step
+ * out. Undefined when the fields are mixed, all `ALWAYS`, or none resolve.
+ */
+export function requestTypeOnlyContext(
+  resolvedFieldContexts: SchemaPropertyContext[],
+): Exclude<SchemaPropertyContext, 'ALWAYS'> | undefined {
+  const contexts = new Set(resolvedFieldContexts)
+  if (contexts.size !== 1) return undefined
+  const [context] = contexts
+  return context === 'ALWAYS' ? undefined : context
 }
 
 /** Human label for display, e.g. a field library row or step slot badge. */

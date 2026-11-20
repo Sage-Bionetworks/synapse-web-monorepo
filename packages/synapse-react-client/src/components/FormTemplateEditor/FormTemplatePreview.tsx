@@ -2,15 +2,25 @@ import { FileHandleWidgetContext } from '@/components/JsonSchemaForm/CustomFormC
 import SchemaStepForm, {
   SchemaStepFormHandle,
 } from '@/components/JsonSchemaForm/SchemaStepForm'
-import { generateDataAccessSchema } from '@/utils/jsonschema/generateDataAccessSchema'
+import {
+  generateDataAccessSchema,
+  HiddenFormStep,
+} from '@/utils/jsonschema/generateDataAccessSchema'
 import { getStepTitle, SchemaData } from '@/utils/jsonschema/schemaData'
+import {
+  contextForRequestType,
+  submissionContextLabel,
+} from '@/utils/jsonschema/submissionContext'
 import {
   DataAccessRequestType,
   FormTemplate,
 } from '@sage-bionetworks/synapse-client'
 import TuneIcon from '@mui/icons-material/Tune'
 import {
+  Alert,
+  AlertTitle,
   Box,
+  Button,
   Checkbox,
   FormControlLabel,
   Paper,
@@ -23,11 +33,23 @@ import {
   Typography,
 } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
+import pluralize from 'pluralize'
 import { ReactNode, useId, useMemo, useRef, useState } from 'react'
 import styles from './FormTemplatePreview.module.scss'
 import { getTemplateFileSource } from './utils'
 
 export const VALIDATE_PREVIEW_RESPONSES_LABEL = 'Validate preview responses'
+
+const REQUEST_TYPE_LABELS: Record<DataAccessRequestType, string> = {
+  [DataAccessRequestType.REQUEST]: 'Request',
+  [DataAccessRequestType.RENEWAL]: 'Renewal',
+}
+
+function otherRequestType(requestType: DataAccessRequestType) {
+  return requestType === DataAccessRequestType.REQUEST
+    ? DataAccessRequestType.RENEWAL
+    : DataAccessRequestType.REQUEST
+}
 
 type FormTemplatePreviewProps = {
   template: FormTemplate
@@ -60,7 +82,7 @@ export function FormTemplatePreview({
   // later move to a step that was blocked
   const pendingStepRef = useRef<number | null>(null)
 
-  const { steps } = useMemo(
+  const { steps, hiddenSteps } = useMemo(
     () => generateDataAccessSchema(template, jsonSchema, requestType),
     [template, jsonSchema, requestType],
   )
@@ -84,16 +106,30 @@ export function FormTemplatePreview({
     />
   )
 
+  // Outside the preview frame: it explains the preview to ACT, and a requester never sees it
+  const hiddenStepsNotice = hiddenSteps.length > 0 && (
+    <HiddenStepsNotice
+      hiddenSteps={hiddenSteps}
+      requestType={requestType}
+      onShowOtherRequestType={() =>
+        setRequestType(otherRequestType(requestType))
+      }
+    />
+  )
+
   if (steps.length === 0) {
     // The controls stay available: when every field belongs to the other request type, this view has no
     // steps, and the Request/Renewal toggle is the only way to reach them
     return (
       <Stack gap={2}>
         {controls}
+        {hiddenStepsNotice}
         <LivePreview>
           <Box sx={{ py: 4, textAlign: 'center' }}>
             <Typography variant="body2" color="text.secondary">
-              Add at least one step with a bound field to preview the form.
+              {hiddenSteps.length > 0
+                ? `No step has a field that applies to a ${REQUEST_TYPE_LABELS[requestType]}.`
+                : 'Add at least one step with a bound field to preview the form.'}
             </Typography>
           </Box>
         </LivePreview>
@@ -119,6 +155,7 @@ export function FormTemplatePreview({
   return (
     <Stack gap={2}>
       {controls}
+      {hiddenStepsNotice}
       <LivePreview>
         {steps.length > 1 && (
           <Stepper activeStep={safeIndex} nonLinear sx={{ mb: 2 }}>
@@ -170,6 +207,54 @@ function LivePreview({ children }: { children: ReactNode }) {
   )
 }
 
+type HiddenStepsNoticeProps = {
+  hiddenSteps: HiddenFormStep[]
+  requestType: DataAccessRequestType
+  onShowOtherRequestType: () => void
+}
+
+function HiddenStepsNotice({
+  hiddenSteps,
+  requestType,
+  onShowOtherRequestType,
+}: HiddenStepsNoticeProps) {
+  const other = otherRequestType(requestType)
+  const otherContextLabel = submissionContextLabel(contextForRequestType(other))
+  return (
+    <Alert
+      // Shown for as long as the template hides a step, so it must not interrupt like an alert
+      role="status"
+      severity="info"
+      action={
+        <Button
+          color="inherit"
+          size="small"
+          onClick={onShowOtherRequestType}
+          sx={{ whiteSpace: 'nowrap' }}
+        >
+          Show {REQUEST_TYPE_LABELS[other]}
+        </Button>
+      }
+    >
+      <AlertTitle>
+        {pluralize('step', hiddenSteps.length, true)} hidden in the{' '}
+        {REQUEST_TYPE_LABELS[requestType]} view
+      </AlertTitle>
+      <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
+        {hiddenSteps.map(step => (
+          <li key={step.position}>
+            {step.title
+              ? `Step ${step.position}: ${step.title}`
+              : `Step ${step.position}`}
+          </li>
+        ))}
+      </Box>
+      {hiddenSteps.length === 1 ? 'Its' : 'Their'} fields are all{' '}
+      {otherContextLabel}.
+    </Alert>
+  )
+}
+
 type PreviewControlsProps = {
   requestType: DataAccessRequestType
   onRequestTypeChange: (requestType: DataAccessRequestType) => void
@@ -203,10 +288,10 @@ function PreviewControls({
             }}
           >
             <ToggleButton value={DataAccessRequestType.REQUEST}>
-              Request
+              {REQUEST_TYPE_LABELS[DataAccessRequestType.REQUEST]}
             </ToggleButton>
             <ToggleButton value={DataAccessRequestType.RENEWAL}>
-              Renewal
+              {REQUEST_TYPE_LABELS[DataAccessRequestType.RENEWAL]}
             </ToggleButton>
           </ToggleButtonGroup>
         </PreviewControl>
