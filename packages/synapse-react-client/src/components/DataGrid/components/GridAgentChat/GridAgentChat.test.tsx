@@ -7,10 +7,17 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
-import { GridAgentChat, GridAgentChatProps } from './GridAgentChat'
+import {
+  DIALOG_SUGGESTED_PROMPTS,
+  GridAgentChat,
+  GridAgentChatProps,
+  SIDEBAR_INPUT_PLACEHOLDER,
+  SIDEBAR_SUGGESTED_PROMPTS,
+  SIDEBAR_WELCOME_DESCRIPTION,
+} from './GridAgentChat'
 
 const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
@@ -115,5 +122,59 @@ describe('GridAgentChat', () => {
     expect(await screen.findByText(MESSAGE)).toBeInTheDocument()
     expect(screen.getByText(RESPONSE)).toBeInTheDocument()
     expect(sessionCreation.count).toBe(1)
+  })
+
+  it('shows the welcome, the sidebar prompts and placeholder, and the sidebar icons in the sidebar', () => {
+    render(
+      <GridAgentChat
+        {...defaultProps}
+        variant="sidebar"
+        onOpen={() => {}}
+        onClose={() => {}}
+      />,
+      { wrapper: createWrapper() },
+    )
+
+    expect(screen.getByText(SIDEBAR_WELCOME_DESCRIPTION)).toBeInTheDocument()
+    SIDEBAR_SUGGESTED_PROMPTS.forEach(prompt => {
+      expect(screen.getByRole('button', { name: prompt })).toBeInTheDocument()
+    })
+    DIALOG_SUGGESTED_PROMPTS.forEach(prompt => {
+      expect(
+        screen.queryByRole('button', { name: prompt }),
+      ).not.toBeInTheDocument()
+    })
+    expect(
+      screen.getByPlaceholderText(SIDEBAR_INPUT_PLACEHOLDER),
+    ).toBeInTheDocument()
+    expect(
+      within(screen.getByRole('button', { name: 'Send message' })).getByTestId(
+        'SendOutlinedIcon',
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('shows the dialog prompts and the standard placeholder and icons, without a welcome, in the dialog', () => {
+    renderChat()
+
+    expect(
+      screen.queryByText(SIDEBAR_WELCOME_DESCRIPTION),
+    ).not.toBeInTheDocument()
+    DIALOG_SUGGESTED_PROMPTS.forEach(prompt => {
+      expect(screen.getByRole('button', { name: prompt })).toBeInTheDocument()
+    })
+    SIDEBAR_SUGGESTED_PROMPTS.forEach(prompt => {
+      expect(
+        screen.queryByRole('button', { name: prompt }),
+      ).not.toBeInTheDocument()
+    })
+    expect(
+      screen.queryByPlaceholderText(SIDEBAR_INPUT_PLACEHOLDER),
+    ).not.toBeInTheDocument()
+    expect(
+      within(screen.getByRole('button', { name: 'Send message' })).getByTestId(
+        'ArrowUpwardIcon',
+      ),
+    ).toBeInTheDocument()
   })
 })

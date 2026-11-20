@@ -1,27 +1,35 @@
 import Add from '@mui/icons-material/Add'
 import ArrowUpward from '@mui/icons-material/ArrowUpward'
+import FileUploadOutlined from '@mui/icons-material/FileUploadOutlined'
+import SendOutlined from '@mui/icons-material/SendOutlined'
 import { Box, IconButton, TextareaAutosize, Tooltip } from '@mui/material'
 import {
   Dispatch,
   FormEventHandler,
   KeyboardEventHandler,
+  ReactNode,
+  Ref,
   SetStateAction,
+  useImperativeHandle,
   useMemo,
   useState,
 } from 'react'
-import {
-  AddFilesDialog,
-  ALLOWED_FILE_TYPES_LABEL,
-} from '../AddFilesDialog/AddFilesDialog'
+import { ALLOWED_FILE_TYPES_LABEL } from '../../utils/attachmentLabels'
+import { AddFilesDialog } from '../AddFilesDialog/AddFilesDialog'
 import {
   AttachmentStripItem,
   ChatAttachmentStrip,
 } from '../ChatAttachmentStrip/ChatAttachmentStrip'
 import styles from './ChatInputArea.module.scss'
-import { ChatAttachment } from '../../utils/types'
+import { ChatAppearance, ChatAttachment } from '../../utils/types'
 
 /** Max number of visible rows the textarea grows to before it scrolls internally. */
 export const MAX_CHAT_INPUT_ROWS = 6
+
+export type ChatInputAreaHandle = {
+  /** Opens the Add files dialog, attaching uploaded files to the next message. */
+  openAddFilesDialog: () => void
+}
 
 export type ChatInputAreaProps = {
   value: string
@@ -35,6 +43,17 @@ export type ChatInputAreaProps = {
   disabled?: boolean
   /** @default false */
   allowAttachments?: boolean
+  /** @default 'default' */
+  appearance?: ChatAppearance
+  ref?: Ref<ChatInputAreaHandle>
+}
+
+const ACTION_ICONS: Record<
+  ChatAppearance,
+  { attach: ReactNode; send: ReactNode }
+> = {
+  default: { attach: <Add />, send: <ArrowUpward /> },
+  sidebar: { attach: <FileUploadOutlined />, send: <SendOutlined /> },
 }
 
 const actionButtonSx = {
@@ -61,9 +80,17 @@ export function ChatInputArea({
   placeholder,
   disabled = false,
   allowAttachments = false,
+  appearance = 'default',
+  ref,
 }: ChatInputAreaProps) {
   const [isAddFilesDialogOpen, setIsAddFilesDialogOpen] = useState(false)
   const [isUploadingAttachments, setIsUploadingAttachments] = useState(false)
+
+  useImperativeHandle(
+    ref,
+    () => ({ openAddFilesDialog: () => setIsAddFilesDialogOpen(true) }),
+    [],
+  )
 
   const isSendDisabled = disabled || !value.trim() || isUploadingAttachments
 
@@ -137,7 +164,7 @@ export function ChatInputArea({
                 onClick={() => setIsAddFilesDialogOpen(true)}
                 sx={actionButtonSx}
               >
-                <Add />
+                {ACTION_ICONS[appearance].attach}
               </IconButton>
             </Tooltip>
           )}
@@ -147,7 +174,7 @@ export function ChatInputArea({
             disabled={isSendDisabled}
             sx={actionButtonSx}
           >
-            <ArrowUpward />
+            {ACTION_ICONS[appearance].send}
           </IconButton>
         </div>
       </Box>
