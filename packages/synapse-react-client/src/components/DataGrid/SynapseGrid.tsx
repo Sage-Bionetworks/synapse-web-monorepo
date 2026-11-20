@@ -68,10 +68,6 @@ import { StartGridSession, StartGridSessionHandle } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { applyModelChange, ModelChange } from './utils/applyModelChange'
 import { removeNoOpOperations } from './utils/DataGridUtils'
-import {
-  createChangeInfoCache,
-  enrichRowsWithChangeInfo,
-} from './utils/enrichRowsWithChangeInfo'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 import CurieAvatarHead from '@/assets/mui_components/CurieAvatarHead'
 
@@ -271,29 +267,18 @@ function SynapseGridInner({
     [columnNames, modelSnapshot?.columnOrder],
   )
 
-  // Every model change, including a selection move, produces a new snapshot. The caches keep the row objects of rows the
+  // Every model change, including a selection move, produces a new snapshot. The cache keeps the row objects of rows the
   // change did not touch, so a change rebuilds only the rows it wrote to.
   const gridRowCache = useConstant(createGridRowCache)
-  const changeInfoCache = useConstant(createChangeInfoCache)
 
-  // Transform the model view rows and columns to DataSheetGrid format
+  // Transform the model view rows and columns to DataSheetGrid format, with per-cell change attribution for CSS
+  // indicators and tooltips
   const rowValues = useMemo(
     () =>
-      modelSnapshot ? modelRowsToGrid(model, modelSnapshot, gridRowCache) : [],
-    [model, modelSnapshot, gridRowCache],
-  )
-
-  // Enrich rows with per-cell change attribution for CSS indicators and tooltips
-  const enrichedRowValues = useMemo(
-    () =>
-      enrichRowsWithChangeInfo(
-        rowValues,
-        model,
-        modelSnapshot,
-        replicaUserMap,
-        changeInfoCache,
-      ),
-    [rowValues, model, modelSnapshot, replicaUserMap, changeInfoCache],
+      modelSnapshot
+        ? modelRowsToGrid(model, modelSnapshot, replicaUserMap, gridRowCache)
+        : [],
+    [model, modelSnapshot, replicaUserMap, gridRowCache],
   )
 
   const commit = useCallback(() => {
@@ -649,7 +634,7 @@ function SynapseGridInner({
                 <Grid size={12}>
                   <DataGrid
                     gridRef={gridRef}
-                    rowValues={enrichedRowValues}
+                    rowValues={rowValues}
                     columnNames={columnNames}
                     columnOrder={columnOrder}
                     schemaPropertiesInfo={schemaPropertiesInfo}

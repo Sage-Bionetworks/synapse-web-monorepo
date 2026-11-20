@@ -69,8 +69,14 @@ describe('isValidationUpToDateForRow', () => {
   })
 
   it('handles case where there is no data vector', () => {
-    model.api.arr(['rows']).push(s.obj({}))
+    model.api.arr(['rows']).push(
+      s.obj({
+        metadata: s.obj({
+          rowValidation: s.con({ isValid: true, allValidationMessages: [] }),
+        }),
+      }),
+    )
 
-    expect(isValidationUpToDateForRow(getRowNodes(model)[0])).toBe(false)
+    expect(isValidationUpToDateForRow(getRowNodes(model)[0])).toBe(true)
   })
 })
