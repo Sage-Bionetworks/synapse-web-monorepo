@@ -76,23 +76,6 @@ function ModelDetailsPage() {
       <DetailsPageContent
         content={[
           {
-            id: 'Model Details',
-            title: 'Model Details',
-            element: (
-              <DetailsPageContextConsumer>
-                {({ context }) =>
-                  context.rowData && context.rowSet ? (
-                    <CategorizedRowDataTable
-                      rowData={context.rowData.values}
-                      headers={context.rowSet.headers}
-                      columnCategoryTableId={modelColumnCategoriesTableId}
-                    />
-                  ) : null
-                }
-              </DetailsPageContextConsumer>
-            ),
-          },
-          {
             id: 'Acknowledgement',
             title: 'Acknowledgement',
             element: (
@@ -110,6 +93,23 @@ function ModelDetailsPage() {
                 columnName={'acceptableUse'}
                 showNoContentAvailable
               />
+            ),
+          },
+          {
+            id: 'Model Description',
+            title: 'Model Description',
+            element: (
+              <DetailsPageContextConsumer>
+                {({ context }) =>
+                  context.rowData && context.rowSet ? (
+                    <CategorizedRowDataTable
+                      rowData={context.rowData.values}
+                      headers={context.rowSet.headers}
+                      columnCategoryTableId={modelColumnCategoriesTableId}
+                    />
+                  ) : null
+                }
+              </DetailsPageContextConsumer>
             ),
           },
           {
