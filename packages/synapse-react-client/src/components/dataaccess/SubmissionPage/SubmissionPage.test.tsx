@@ -36,7 +36,10 @@ import {
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   DATA_ACCESS_SUBMISSION_BY_ID,
   THREAD_FOR_SUBMISSION,
+  USER_GROUP_HEADERS_BATCH,
 } from '@/utils/APIConstants'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import dayjs from 'dayjs'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -57,7 +60,7 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { http, HttpResponse } from 'msw'
+import { delay, http, HttpResponse } from 'msw'
 import type { MockInstance } from 'vitest'
 import { useNavigate } from 'react-router'
 import * as RejectDataAccessRequestModalModule from '../RejectDataAccessRequestModal'
@@ -466,10 +469,9 @@ describe('Submission Page tests', () => {
       async ({ isReviewer }) => {
         renderComponent({ submissionId: SUBMITTED_SUBMISSION_ID, isReviewer })
 
-        const downloadButton = screen.getByRole('button', {
+        const downloadButton = await screen.findByRole('button', {
           name: 'Download PDF',
         })
-        expect(downloadButton).toBeDisabled()
         await waitFor(() => expect(downloadButton).toBeEnabled())
 
         await userEvent.click(downloadButton)
@@ -483,23 +485,76 @@ describe('Submission Page tests', () => {
       },
     )
 
-    it('opens the printout with the submitter and each requester named in full with their username', async () => {
+    it('keeps Download PDF disabled while a user it names is loading, so the PDF shows no placeholders', async () => {
+      server.use(
+        http.get(
+          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_GROUP_HEADERS_BATCH}`,
+          () => delay('infinite'),
+        ),
+      )
+      renderComponent({
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: true,
+      })
+
+      await summary().findByText(mockManagedACTAccessRequirement.name)
+      expect(
+        screen.getByRole('button', { name: 'Download PDF' }),
+      ).toBeDisabled()
+    })
+
+    it('is not offered to a viewer who is neither a reviewer nor a requester', async () => {
+      server.use(
+        http.get(
+          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
+          () =>
+            HttpResponse.json({
+              ...mockSubmittedSubmission,
+              submittedBy: String(MOCK_USER_ID_3),
+              accessorChanges: [
+                {
+                  ...mockSubmittedSubmission.accessorChanges[0],
+                  userId: String(MOCK_USER_ID_3),
+                },
+              ],
+            }),
+        ),
+      )
       renderComponent({
         submissionId: SUBMITTED_SUBMISSION_ID,
         isReviewer: false,
       })
 
-      const printHeader = (
-        await screen.findByRole('heading', { name: 'Data Access Request' })
-      ).closest('header')!
+      await summary().findByText('SUBMITTED')
+      expect(
+        screen.queryByRole('button', { name: 'Download PDF' }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('opens the printout with the submission details, naming the submitter and each requester in full with their username', async () => {
+      renderComponent({
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: false,
+      })
+
+      const printHeader = within(
+        (
+          await screen.findByRole('heading', { name: 'Data Access Request' })
+        ).closest('header')!,
+      )
+      await printHeader.findByText(
+        `${mockManagedACTAccessRequirement.name} (${mockSubmittedSubmission.accessRequirementId})`,
+      )
+      printHeader.getByText(SUBMITTED_SUBMISSION_ID)
+      printHeader.getByText(
+        formatDate(dayjs(mockSubmittedSubmission.submittedOn)),
+      )
       // Submitter, and the first requester
       expect(
-        await within(printHeader).findAllByText(
-          `First Last (@${MOCK_USER_NAME})`,
-        ),
+        await printHeader.findAllByText(`First Last (@${MOCK_USER_NAME})`),
       ).toHaveLength(2)
       const secondRequester = (
-        await within(printHeader).findByText(`John Doe (@${MOCK_USER_NAME_2})`)
+        await printHeader.findByText(`John Doe (@${MOCK_USER_NAME_2})`)
       ).closest('.PrintedDataRequester')!
       expect(secondRequester).toHaveTextContent(/— Gain$/)
     })

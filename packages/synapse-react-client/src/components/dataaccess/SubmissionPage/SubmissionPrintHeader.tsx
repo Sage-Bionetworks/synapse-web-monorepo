@@ -56,7 +56,9 @@ export function SubmissionPrintHeader(props: SubmissionPrintHeaderProps) {
       </Typography>
       <dl>
         <PrintedField label="Access Requirement">
-          {accessRequirementName} ({submission.accessRequirementId})
+          {accessRequirementName
+            ? `${accessRequirementName} (${submission.accessRequirementId})`
+            : submission.accessRequirementId}
         </PrintedField>
         <PrintedField label="Submission ID">{submission.id}</PrintedField>
         <PrintedField label="Status">{displayedSubmissionState}</PrintedField>

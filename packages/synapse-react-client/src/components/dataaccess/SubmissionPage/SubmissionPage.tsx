@@ -38,8 +38,9 @@ import {
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { isEmpty } from 'lodash-es'
-import { Fragment, ReactNode, useMemo, useState } from 'react'
+import { Fragment, ReactNode, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { useIsFetching } from '@tanstack/react-query'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { UserBadge } from '../../UserCard/UserBadge'
@@ -216,21 +217,24 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   // Documents heading would sit directly above them.
   const showDocumentsHeading = hasDocuments || !submission?.schemaData
 
-  // Printing before these load would put placeholders in the PDF.
-  const isReadyToPrint = Boolean(
-    submission &&
-    accessRequirement &&
-    !isLoadingAccessApproval &&
-    !isLoadingSubmissionForm,
-  )
+  // A query that has not produced data yet renders as a placeholder (user names, file names, status), which would be
+  // printed.
+  const loadingQueryCount = useIsFetching({
+    predicate: query => query.state.status === 'pending',
+  })
+  const isReadyToPrint = Boolean(submission) && loadingQueryCount === 0
+  const titleBeforePrint = useRef<string | undefined>(undefined)
   function printSubmission() {
     // Browsers name the saved PDF after the document title.
-    const pageTitle = document.title
+    titleBeforePrint.current ??= document.title
     document.title = `${SUBMISSION_PRINT_TITLE} ${submissionId}`
     window.addEventListener(
       'afterprint',
       () => {
-        document.title = pageTitle
+        if (titleBeforePrint.current !== undefined) {
+          document.title = titleBeforePrint.current
+          titleBeforePrint.current = undefined
+        }
       },
       { once: true },
     )
@@ -365,16 +369,18 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             )}
           </div>
         )}
-        <div className="ButtonContainer">
-          <Button
-            variant="outlined"
-            startIcon={<DownloadIcon />}
-            disabled={!isReadyToPrint}
-            onClick={printSubmission}
-          >
-            Download PDF
-          </Button>
-        </div>
+        {(isReviewer || isRequester) && (
+          <div className="ButtonContainer">
+            <Button
+              variant="outlined"
+              startIcon={<DownloadIcon />}
+              disabled={!isReadyToPrint}
+              onClick={printSubmission}
+            >
+              Download PDF
+            </Button>
+          </div>
+        )}
         <Typography variant="dataFieldKey" gutterBottom>
           Access Requirement Name
         </Typography>
