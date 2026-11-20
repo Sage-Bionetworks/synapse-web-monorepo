@@ -19,6 +19,20 @@ export const parseQueryInput = (input: string): QueryInput => {
   return { type: 'unknown', input: trimmedInput }
 }
 
+/**
+ * Returns `previous` when it holds the same elements as `next` in the same
+ * order, so an array that is rebuilt with unchanged contents keeps its identity.
+ */
+export function reuseIfSameElements<T>(
+  previous: T[] | undefined,
+  next: T[],
+): T[] {
+  const isSame =
+    previous?.length === next.length &&
+    previous.every((element, index) => element === next[index])
+  return isSame ? previous : next
+}
+
 export function rowsAreIdentical(a: DataGridRow, b: DataGridRow): boolean {
   const isDataKey = (key: string) => !key.startsWith('__')
   const aKeys = Object.keys(a).filter(isDataKey)
