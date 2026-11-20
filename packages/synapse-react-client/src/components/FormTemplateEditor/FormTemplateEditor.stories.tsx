@@ -29,6 +29,8 @@ const meta: Meta<typeof FormTemplateEditor> = {
   component: FormTemplateEditor,
   parameters: {
     stack: 'mock',
+    // The editor blocks navigation away from unsaved changes, which needs a data router.
+    withRouter: true,
     msw: {
       handlers: {
         formTemplate: getFormTemplateHandlers(MOCK_REPO_ORIGIN),

@@ -22,7 +22,9 @@ import {
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { RJSFSchema } from '@rjsf/utils'
-import { useMemo, useState } from 'react'
+import isEqual from 'lodash-es/isEqual'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { ConfirmationDialog } from '@/components/ConfirmationDialog/ConfirmationDialog'
 import { displayToast } from '@/components/ToastMessage'
 import {
   propertyKeyToPointer,
@@ -48,6 +50,13 @@ import { fieldSettingsFor } from './utils'
 import { useFormTemplateDraft } from './useFormTemplateDraft'
 import { useFormTemplateDrag } from './useFormTemplateDrag'
 import { useSaveFormTemplate } from './useSaveFormTemplate'
+import {
+  DISCARD_CHANGES_CONFIRM_TEXT,
+  DISCARD_CHANGES_MESSAGE,
+  DISCARD_CHANGES_TITLE,
+  KEEP_EDITING_TEXT,
+  useUnsavedChangesPrompt,
+} from './useUnsavedChangesPrompt'
 
 export type FormTemplateEditorFormProps = {
   /** Existing template to edit, or undefined for creating a new one. */
@@ -103,6 +112,24 @@ export function FormTemplateEditorForm({
   const trimmedName = name.trim()
   const showNameError = nameTouched && !trimmedName
 
+  const currentContent = useMemo(
+    () => ({ name, jsonSchema, steps: formTemplateSteps }),
+    [name, jsonSchema, formTemplateSteps],
+  )
+  // What was last saved (or opened); leaving only needs confirming when the draft differs from it.
+  const [savedContent, setSavedContent] = useState(currentContent)
+  const isDirty = useMemo(
+    () => !isEqual(currentContent, savedContent),
+    [currentContent, savedContent],
+  )
+  const unsavedChangesPrompt = useUnsavedChangesPrompt(isDirty)
+  // The form stays editable while a save is in flight, so its outcome is compared with the draft
+  // as it is when the save finishes, not as it was when Save was clicked.
+  const latestContentRef = useRef(currentContent)
+  useEffect(() => {
+    latestContentRef.current = currentContent
+  }, [currentContent])
+
   const validationErrors = useMemo(
     () => validateFormTemplateFields(formTemplateSteps, jsonSchema),
     [formTemplateSteps, jsonSchema],
@@ -112,6 +139,7 @@ export function FormTemplateEditorForm({
     setNameTouched(true)
     if (!trimmedName) return
     setSaveError(null)
+    const contentToSave = currentContent
     try {
       const result = await save({
         initialTemplate,
@@ -131,7 +159,13 @@ export function FormTemplateEditorForm({
         'success',
         { title: 'Template saved' },
       )
-      onSaved?.(result.template)
+      setSavedContent(contentToSave)
+      const leaveAfterSave = () => onSaved?.(result.template)
+      if (isEqual(latestContentRef.current, contentToSave)) {
+        unsavedChangesPrompt.exitWithoutPrompt(leaveAfterSave)
+      } else {
+        leaveAfterSave()
+      }
     } catch (error) {
       const clientError = error as SynapseClientError
       if (clientError.status === 412) {
@@ -280,7 +314,11 @@ export function FormTemplateEditorForm({
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
           {onCancel && (
-            <Button variant="outlined" onClick={onCancel} disabled={isSaving}>
+            <Button
+              variant="outlined"
+              onClick={() => unsavedChangesPrompt.confirmExit(onCancel)}
+              disabled={isSaving}
+            >
               Cancel
             </Button>
           )}
@@ -326,6 +364,17 @@ export function FormTemplateEditorForm({
           onRemove={() => {
             if (editingPropertyKey) handleRemoveProperty(editingPropertyKey)
           }}
+        />
+
+        <ConfirmationDialog
+          {...unsavedChangesPrompt.dialogProps}
+          title={DISCARD_CHANGES_TITLE}
+          content={DISCARD_CHANGES_MESSAGE}
+          confirmButtonProps={{
+            children: DISCARD_CHANGES_CONFIRM_TEXT,
+            color: 'error',
+          }}
+          cancelButtonProps={{ children: KEEP_EDITING_TEXT }}
         />
       </Paper>
 
