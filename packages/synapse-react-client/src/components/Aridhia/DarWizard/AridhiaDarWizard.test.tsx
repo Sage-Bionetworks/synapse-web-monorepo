@@ -3,11 +3,13 @@ import userEvent from '@testing-library/user-event'
 import type { UserEvent } from '@testing-library/user-event'
 import { HttpHandler, HttpResponse } from 'msw'
 import { RequestPost } from '@sage-bionetworks/aridhia-client/generated/models'
+import allFieldTypesWorkflow from '@/mocks/aridhia/cpathBasicAllAccessRequestV2Workflow.json'
 import {
   getAridhiaAuthenticateHandler,
   getAridhiaDatasetSettingsHandler,
   getAridhiaDarWizardHandlers,
   getAridhiaSubmitRequestHandler,
+  getAridhiaWorkflowBodyHandler,
   getAridhiaWorkflowHandler,
   getAridhiaWorkspaceRequestFormHandler,
   MOCK_ARIDHIA_ABOUT_FIELDS,
@@ -951,6 +953,91 @@ describe('AridhiaDarWizard', () => {
     expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
   })
 
+  it('blocks leaving the Project step while a number is out of range, with an inline message', async () => {
+    const user = userEvent.setup()
+    server.use(...getAridhiaDarWizardHandlers())
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+
+    const teamSize = getRjsfTextField('team size')
+    expect(teamSize).toHaveAttribute('type', 'number')
+    // Decimals are allowed, and the browser's spinner stays within the bounds.
+    expect(teamSize).toHaveAttribute('step', 'any')
+    expect(teamSize).toHaveAttribute('min', '1')
+    expect(teamSize).toHaveAttribute('max', '10')
+    // The browser accepts only numeric input.
+    await user.type(teamSize, 'abc')
+    expect(teamSize).toHaveValue(null)
+
+    await user.type(teamSize, '0')
+    await user.tab()
+    expect(screen.getByText('Must be 1 or more')).toBeInTheDocument()
+    expect(teamSize).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    await user.clear(teamSize)
+    await user.type(teamSize, '11')
+    expect(screen.getByText('Must be 10 or less')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    await user.clear(teamSize)
+    // A trailing zero still reads as a number.
+    await user.type(teamSize, '2.50')
+    expect(
+      screen.queryByText(/^Must be \d+ or (more|less)$/),
+    ).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
+  })
+
+  it('submits a number answer as a JSON number, keeps it in the draft, and shows it on the review step', async () => {
+    const user = userEvent.setup()
+    server.use(...getAridhiaDarWizardHandlers(), submittedOkHandler())
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    await fillRjsfTextField(user, 'team size', '9')
+    const draft = JSON.parse(sessionStorage.getItem(DRAFT_KEY)!) as DarDraft
+    expect(draft.values.team_size).toBe(9)
+    await clickNext(user)
+    await fillAboutStep(user)
+    await clickNext(user)
+
+    await waitFor(() =>
+      expect(screen.getByRole('row', { name: 'Team size 9' })).toBeVisible(),
+    )
+    await acceptTermsAndSubmit(user)
+
+    await waitFor(() => expect(capturedRequestBodies).toHaveLength(1))
+    expect(capturedRequestBodies[0].fields.team_size).toBe(9)
+  })
+
+  it('restores a number answer from the draft as a number, flagging it if out of range', async () => {
+    const user = userEvent.setup()
+    server.use(...getAridhiaDarWizardHandlers())
+    const { unmount } = renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    await fillRjsfTextField(user, 'team size', '0')
+    unmount()
+
+    renderWizard()
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled(),
+    )
+    await clickNext(user)
+    await waitFor(() => expect(getRjsfTextField('team size')).toHaveValue(0))
+    // A restored value the user didn't just type is flagged without a blur.
+    expect(screen.getByText('Must be 1 or more')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+  })
+
   it('blocks leaving the Project step while a date is earlier than its minimum of today', async () => {
     fixLocalDate(2027, 0, 15)
     const user = userEvent.setup()
@@ -979,6 +1066,87 @@ describe('AridhiaDarWizard', () => {
     await user.paste('01/15/2027')
     expect(screen.queryByText('Must be today or later')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
+  })
+
+  it('completes and submits the live omop_als1001 form, which uses every field type the portal renders', async () => {
+    fixLocalDate(2027, 0, 15)
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(getAridhiaWorkflowBodyHandler(allFieldTypesWorkflow)),
+      submittedOkHandler(),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+
+    await waitFor(() =>
+      expect(getRjsfTextField('string - single line')).toBeInTheDocument(),
+    )
+    expect(
+      screen.queryByText(/field types the portal cannot render/i),
+    ).not.toBeInTheDocument()
+    // Defaults of every type are applied, including the number default as a number.
+    expect(getRjsfTextField('number = numeric input')).toHaveValue(10)
+    expect(
+      screen.getByRole('checkbox', { name: /^Boolean - toggle switch/ }),
+    ).toBeChecked()
+    // The markdown field's own default is shorter than its minimum length, and is flagged as
+    // soon as the step opens.
+    expect(
+      screen.getByText('Must be at least 200 characters'),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByLabelText(/^date - renders a date input/i))
+    await user.paste('01/16/2027')
+    await fillRjsfTextField(
+      user,
+      'text - multiline',
+      'At least twenty characters',
+    )
+    // Every required field is answered, but the markdown default is still too short.
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    const markdown = getRjsfTextField('markdown - multiline')
+    await user.clear(markdown)
+    await user.click(markdown)
+    await user.paste('m'.repeat(200))
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
+    await clickNext(user)
+
+    await waitFor(() =>
+      expect(getRjsfTextField('request name')).toBeInTheDocument(),
+    )
+    await fillRjsfTextField(user, 'request name', 'All field types')
+    await fillRjsfTextField(user, 'position', 'Tester')
+    await fillRjsfTextField(user, 'phone number', '2025550123')
+    await fillRjsfTextField(user, 'address', 'Somewhere, USA')
+    await clickNext(user)
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole('row', { name: 'Number = numeric input 10' }),
+      ).toBeVisible(),
+    )
+    await acceptTermsAndSubmit(user)
+
+    await waitFor(() => expect(capturedRequestBodies).toHaveLength(1))
+    const body = capturedRequestBodies[0]
+    expect(body.name).toBe('All field types')
+    expect(body.fields).toMatchObject({
+      position: 'Tester',
+      address: 'Somewhere, USA',
+      date_type: '2027-01-16T00:00:00.000Z',
+      markdown_type: 'm'.repeat(200),
+      phone_type: '+44 131 111 2222',
+      string_type: 'default value',
+      text_type: 'At least twenty characters',
+      boolean_type: true,
+      number_type: 10,
+      phone_number: '+1 202 555 0123',
+    })
+    // The optional list was left unanswered, so it is not pre-filled with its first option.
+    expect(body.fields).not.toHaveProperty('list_type')
   })
 
   it('retries a failed submission with the identical request code', async () => {

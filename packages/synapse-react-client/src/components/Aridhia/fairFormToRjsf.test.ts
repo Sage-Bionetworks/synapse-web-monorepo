@@ -1,5 +1,6 @@
 import { ALLOWED_VALUES_MESSAGE } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import allFieldTypesWorkflow from '@/mocks/aridhia/cpathBasicAllAccessRequestV2Workflow.json'
 import {
   fairSectionToRjsf,
   FairField,
@@ -380,6 +381,204 @@ describe('FAIR date minimum', () => {
       end: 'Enter a valid date',
       other: 'Enter a valid date',
     })
+  })
+})
+
+describe('FAIR text length bounds', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      {
+        name: 'summary',
+        type: 'markdown',
+        validation: { minimum: 5, maximum: 10 },
+      },
+      { name: 'title', type: 'string', validation: { minimum: '2' } },
+      { name: 'phone', type: 'phone', validation: { maximum: 6 } },
+    ],
+  })
+
+  test('accept bounds sent as numbers or numeric strings', () => {
+    expect(form.schema.properties!.summary).toMatchObject({
+      minLength: 5,
+      maxLength: 10,
+    })
+    expect(form.schema.properties!.title).toMatchObject({ minLength: 2 })
+    expect(form.schema.properties!.phone).toMatchObject({ maxLength: 6 })
+  })
+
+  test('flag values shorter or longer than the bounds with the shared validator’s messages', () => {
+    expect(
+      validateFairSection(form, {
+        summary: 'abc',
+        title: 'a',
+        phone: '+1 2345',
+      }).fieldErrors,
+    ).toEqual({
+      summary: 'Must be at least 5 characters',
+      title: 'Must be at least 2 characters',
+      phone: 'Must be at most 6 characters',
+    })
+    expect(
+      validateFairSection(form, { summary: 'abcdefghijk' }).fieldErrors,
+    ).toEqual({ summary: 'Must be at most 10 characters' })
+  })
+
+  test('accept values within the bounds, including the bounds themselves', () => {
+    expect(
+      validateFairSection(form, {
+        summary: 'abcde',
+        title: 'ab',
+        phone: '+1 234',
+      }),
+    ).toEqual({ isValid: true, fieldErrors: {} })
+    expect(validateFairSection(form, { summary: 'abcdefghij' }).isValid).toBe(
+      true,
+    )
+  })
+})
+
+describe('FAIR default values', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      { name: 'opt_out', type: 'boolean', defaultValue: false },
+      { name: 'opt_in', type: 'boolean', defaultValue: true },
+      { name: 'count', type: 'number', defaultValue: 0 },
+      { name: 'blank', type: 'string', defaultValue: '' },
+      { name: 'nulled', type: 'string', defaultValue: null },
+      { name: 'heading', type: 'label', label: 'Heading', defaultValue: 'x' },
+    ],
+  })
+
+  test('keep falsy defaults (`false`, `0`) with their own types', () => {
+    expect(form.schema.properties!.opt_out).toMatchObject({ default: false })
+    expect(form.schema.properties!.opt_in).toMatchObject({ default: true })
+    expect(form.schema.properties!.count).toMatchObject({ default: 0 })
+  })
+
+  test('treat an empty-string or null default as no default', () => {
+    expect(form.schema.properties!.blank).not.toHaveProperty('default')
+    expect(form.schema.properties!.nulled).not.toHaveProperty('default')
+  })
+
+  test('ignore a default on a label, which holds no value', () => {
+    expect(form.schema.properties!.heading).not.toHaveProperty('default')
+  })
+})
+
+describe('FAIR number fields', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      {
+        name: 'number_type',
+        type: 'number',
+        label: 'Number',
+        validation: { minimum: 1, maximum: 10, required: true },
+        defaultValue: 10,
+      },
+      // FAIR may also send bounds and defaults as numeric strings.
+      {
+        name: 'ratio',
+        type: 'number',
+        validation: { minimum: '0', maximum: '0.5' },
+        defaultValue: '0.25',
+      },
+      { name: 'unbounded', type: 'number' },
+      { name: 'bad_default', type: 'number', defaultValue: 'ten' },
+    ],
+  })
+
+  test('map to a JSON-schema number with value bounds, not length bounds', () => {
+    expect(form.unsupported).toEqual([])
+    expect(form.schema.properties!.number_type).toEqual({
+      type: 'number',
+      title: 'Number',
+      minimum: 1,
+      maximum: 10,
+      default: 10,
+    })
+    expect(form.schema.properties!.ratio).toMatchObject({
+      type: 'number',
+      minimum: 0,
+      maximum: 0.5,
+      default: 0.25,
+    })
+    expect(form.schema.properties!.number_type).not.toHaveProperty('minLength')
+    expect(form.schema.required).toEqual(['number_type'])
+  })
+
+  test('flag values outside the bounds with the shared validator’s messages', () => {
+    expect(
+      validateFairSection(form, { number_type: 0, ratio: 0.75 }).fieldErrors,
+    ).toEqual({
+      number_type: 'Must be 1 or more',
+      ratio: 'Must be 0.5 or less',
+    })
+    expect(validateFairSection(form, { number_type: 11 }).fieldErrors).toEqual({
+      number_type: 'Must be 10 or less',
+    })
+  })
+
+  test('accept in-range values, including decimals and bounds themselves', () => {
+    expect(validateFairSection(form, { number_type: 1, ratio: 0 })).toEqual({
+      isValid: true,
+      fieldErrors: {},
+    })
+    expect(
+      validateFairSection(form, { number_type: 9.5, ratio: 0.5 }).isValid,
+    ).toBe(true)
+  })
+
+  test('accept any number when there are no bounds', () => {
+    expect(
+      validateFairSection(form, { number_type: 1, unbounded: -5000.5 }).isValid,
+    ).toBe(true)
+  })
+
+  test('count a blank required number as unanswered, without a field message', () => {
+    for (const blank of [undefined, null, '']) {
+      expect(validateFairSection(form, { number_type: blank })).toEqual({
+        isValid: false,
+        fieldErrors: {},
+      })
+    }
+  })
+
+  test('drop a default that is not a number', () => {
+    expect(form.schema.properties!.bad_default).not.toHaveProperty('default')
+  })
+
+  test('flag a numeric string, which is not a JSON number', () => {
+    expect(validateFairSection(form, { number_type: '9' })).toEqual({
+      isValid: false,
+      fieldErrors: { number_type: 'must be number' },
+    })
+  })
+})
+
+describe('the live omop_als1001 request form (cpath_basic_all_access_request_v2)', () => {
+  // RDCA-DAP's one other field type, `auth`, is deliberately unsupported.
+  test('maps every field it contains, of every field type the portal renders, with none unsupported', () => {
+    const sections = parseFairFormSections(allFieldTypesWorkflow)
+    expect(sections.map(s => s.key)).toEqual(['about', 'project'])
+    expect(new Set(sections.flatMap(s => s.fields.map(f => f.type)))).toEqual(
+      new Set([
+        'string',
+        'text',
+        'markdown',
+        'phone',
+        'date',
+        'label',
+        'boolean',
+        'number',
+        'list',
+      ]),
+    )
+    for (const section of sections) {
+      expect(fairSectionToRjsf(section).unsupported).toEqual([])
+    }
   })
 })
 

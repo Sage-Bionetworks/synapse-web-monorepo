@@ -28,6 +28,7 @@ const RENDERABLE_TYPES = new Set([
   'markdown',
   'boolean',
   'date',
+  'number',
   'list',
   'phone',
   'label',
@@ -67,14 +68,26 @@ export function parseFairFormSections(
   return []
 }
 
+/** FAIR sends numeric bounds as numbers or numeric strings; anything else is no bound. */
+function toFiniteNumber(value: unknown): number | undefined {
+  let parsed = Number.NaN
+  if (typeof value === 'number') {
+    parsed = value
+  } else if (typeof value === 'string' && value.trim() !== '') {
+    parsed = Number(value)
+  }
+  return Number.isFinite(parsed) ? parsed : undefined
+}
+
 /**
- * A FAIR text length limit (sent as a string) as a JSON-schema `minLength`/`maxLength`, which
- * must be a non-negative integer. Anything else is no limit, so the schema still compiles.
+ * A FAIR text length limit as a JSON-schema `minLength`/`maxLength`, which must be a
+ * non-negative integer. Anything else is no limit, so the schema still compiles.
  */
-function lengthBound(value: string | undefined): number | undefined {
-  const bound =
-    value == null || value.trim() === '' ? Number.NaN : Number(value)
-  return Number.isInteger(bound) && bound >= 0 ? bound : undefined
+function lengthBound(value: unknown): number | undefined {
+  const bound = toFiniteNumber(value)
+  return bound !== undefined && Number.isInteger(bound) && bound >= 0
+    ? bound
+    : undefined
 }
 
 /**
@@ -187,6 +200,16 @@ export function fairSectionToRjsf(
         }
         break
       }
+      case 'number': {
+        // FAIR has no integer flag, so decimals are allowed.
+        properties[name] = {
+          type: 'number',
+          minimum: toFiniteNumber(v.minimum),
+          maximum: toFiniteNumber(v.maximum),
+        }
+        uiSchema[name] = { 'ui:placeholder': field.placeholder }
+        break
+      }
       case 'list': {
         properties[name] = {
           type: 'string',
@@ -221,8 +244,14 @@ export function fairSectionToRjsf(
       properties[name].title = field.label
     }
 
-    if (field.defaultValue) {
-      properties[name].default = field.defaultValue
+    const { defaultValue } = field
+    // FAIR sends `''` for "no default"; `false` and `0` are real defaults. A label holds no
+    // value, so a default on one would only fail its `null` type. A number default may come
+    // as a numeric string; one that isn't a number is no default.
+    const typedDefault =
+      field.type === 'number' ? toFiniteNumber(defaultValue) : defaultValue
+    if (field.type !== 'label' && !isBlankAnswer(typedDefault)) {
+      properties[name].default = typedDefault
     }
   }
 

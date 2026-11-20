@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { DarSectionForm, SCHEMA_ERROR_MESSAGE } from './DarSectionForm'
 
 describe('DarSectionForm', () => {
@@ -22,5 +24,54 @@ describe('DarSectionForm', () => {
     expect(consoleError).toHaveBeenCalledWith(
       expect.stringContaining('failed to compile'),
     )
+  })
+
+  describe('with a schema default that breaks its rule', () => {
+    const schema = {
+      type: 'object' as const,
+      properties: {
+        note: { type: 'string' as const, minLength: 5, default: 'ab' },
+        title: { type: 'string' as const, minLength: 2, default: 'ok' },
+      },
+    }
+    // The wizard keeps the answers, including the defaults RJSF reports on mount.
+    function ControlledForm(props: { initial: Record<string, unknown> }) {
+      const [formData, setFormData] = useState(props.initial)
+      return (
+        <DarSectionForm
+          schema={schema}
+          uiSchema={{}}
+          formData={formData}
+          onChange={setFormData}
+        />
+      )
+    }
+
+    it('flags it as soon as the form opens', async () => {
+      render(<ControlledForm initial={{}} />)
+      expect(
+        await screen.findByText('Must be at least 5 characters'),
+      ).toBeInTheDocument()
+      expect(
+        screen.queryByText('Must be at least 2 characters'),
+      ).not.toBeInTheDocument()
+    })
+
+    it('clears the flag once the user answers', async () => {
+      const user = userEvent.setup()
+      render(<ControlledForm initial={{}} />)
+      const note = await screen.findByDisplayValue('ab')
+      await user.clear(note)
+      await user.type(note, 'long enough')
+      await user.tab()
+      expect(screen.getByDisplayValue('long enough')).toBeInTheDocument()
+      expect(screen.queryByText(/^Must be at least/)).not.toBeInTheDocument()
+    })
+
+    it('does not flag it when a restored answer replaces it', () => {
+      render(<ControlledForm initial={{ note: 'long enough' }} />)
+      expect(screen.getByDisplayValue('long enough')).toBeInTheDocument()
+      expect(screen.queryByText(/^Must be at least/)).not.toBeInTheDocument()
+    })
   })
 })
