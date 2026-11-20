@@ -10,12 +10,7 @@ import headerSvg from '../config/style/header.svg?url'
 import CardGridWithLinks from 'synapse-react-client/components/CardGridWithLinks/CardGridWithLinks'
 import PortalFeaturedPartners from 'synapse-react-client/components/PortalFeaturedPartners/PortalFeaturedPartners'
 import SynapseSankeyPlot from 'synapse-react-client/components/Plot/SynapseSankeyPlot'
-import {
-  datasetsSql,
-  filesSql,
-  partnersSql,
-  sankeyPlotSql,
-} from '@/config/resources'
+import { datasetsSql, partnersSql, sankeyPlotSql } from '@/config/resources'
 import AMPALSDevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSDevelopedBySage'
 import { Query } from '@sage-bionetworks/synapse-types'
 import { generateCompressedQueryURL } from 'synapse-react-client/utils/functions/deepLinkingUtils'
@@ -53,19 +48,13 @@ export default function HomePage() {
     )
   }
 
-  // Sankey: center node / left flow -> datasets for that source.
+  // Every Sankey click target opens Datasets: the per-source flows filter by
+  // source, and the end nodes open the unfiltered list. Files are reached
+  // through their dataset, since the Explore Files tab has been retired.
   const handleSankeySourceClick = (source: string) =>
     navigateToFiltered('/Explore/Datasets', datasetsSql, 'source', source)
-  // Sankey: right flow -> files for that source. The files table records the
-  // originating group as "contributor", not "source".
-  const handleSankeyFilesClick = (source: string) =>
-    navigateToFiltered('/Explore/Files', filesSql, 'contributor', source)
-  // Sankey end nodes -> the unfiltered Explore pages.
   const handleAllDatasetsClick = () => {
     navigate('/Explore/Datasets')
-  }
-  const handleAllFilesClick = () => {
-    navigate('/Explore/Files')
   }
 
   useEffect(() => {
@@ -181,8 +170,8 @@ export default function HomePage() {
           rightValueColumn={2}
           rightLabel="All Files"
           rightUnitLabel="files"
-          onRightCategoryClick={handleSankeyFilesClick}
-          onRightEndClick={handleAllFilesClick}
+          onRightCategoryClick={handleSankeySourceClick}
+          onRightEndClick={handleAllDatasetsClick}
         />
       </SectionLayout>
       {/* <AMPALSExploreTheData sql={upsetPlotSql} /> */}

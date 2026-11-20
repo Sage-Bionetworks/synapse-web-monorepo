@@ -16,18 +16,8 @@ export const navbarConfig: NavbarConfig = {
     //     { name: 'More Resources', path: '/#More Resources' },
     //   ],
     // },
-    {
-      name: 'Explore',
-      path: '/Explore',
-      children: [
-        { name: 'Collections', path: '/Explore/Collections' },
-        { name: 'Datasets', path: '/Explore/Datasets' },
-        {
-          name: 'Files',
-          path: '/Explore/Files',
-        },
-      ],
-    },
+    { name: 'Datasets', path: '/Explore/Datasets' },
+    { name: 'Collections', path: '/Explore/Collections' },
     {
       name: 'Resources',
       path: '/Resources',
@@ -36,6 +26,14 @@ export const navbarConfig: NavbarConfig = {
         //   name: 'For Persons With Lived Experience',
         //   path: '/Resources/For Persons With Lived Experience',
         // },
+        {
+          name: 'Data Access Overview',
+          path: '/Data Access/Data Access Overview',
+        },
+        {
+          name: 'Approved Access Requests',
+          path: '/Data Access/Approved Access Requests',
+        },
         {
           name: 'Requirements for Publication',
           path: '/Resources/Requirements for Publication',
@@ -47,20 +45,6 @@ export const navbarConfig: NavbarConfig = {
         {
           name: 'Contact Us',
           path: '/ContactUs',
-        },
-      ],
-    },
-    {
-      name: 'Data Access',
-      path: '/Data Access',
-      children: [
-        {
-          name: 'Data Access Overview',
-          path: '/Data Access/Data Access Overview',
-        },
-        {
-          name: 'Approved Access Requests',
-          path: '/Data Access/Approved Access Requests',
         },
       ],
     },
