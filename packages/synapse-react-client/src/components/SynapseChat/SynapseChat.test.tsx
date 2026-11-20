@@ -909,3 +909,42 @@ describe('SynapseChat - anonymous session creation', () => {
     )
   })
 })
+
+describe('SynapseChat - scrollContainer', () => {
+  const scrollIntoViewMock = vi.fn()
+  const scrollToMock = vi.fn()
+
+  // The newest message, still waiting for its response, is scrolled into view when it mounts
+  const pendingChatState = {
+    ...defaultMockChatState,
+    interactions: [{ id: '0', userMessage: 'hi' }],
+    isAwaitingResponse: true,
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUseChatState.mockReturnValue(defaultMockChatState)
+    window.HTMLElement.prototype.scrollIntoView = scrollIntoViewMock
+    window.HTMLElement.prototype.scrollTo = scrollToMock
+  })
+
+  it('scrolls only the message list to a new message with the messageList container', () => {
+    renderComponent({
+      scrollContainer: 'messageList',
+      externalChatState: pendingChatState,
+    })
+
+    expect(scrollToMock).toHaveBeenCalledOnce()
+    expect(scrollIntoViewMock).not.toHaveBeenCalled()
+  })
+
+  it('scrolls a new message into view with the browser by default', () => {
+    renderComponent({ externalChatState: pendingChatState })
+
+    expect(scrollIntoViewMock).toHaveBeenCalledExactlyOnceWith({
+      behavior: 'smooth',
+      block: 'start',
+    })
+    expect(scrollToMock).not.toHaveBeenCalled()
+  })
+})

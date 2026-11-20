@@ -1,4 +1,6 @@
-import SynapseChatInteraction from '@/components/SynapseChat/SynapseChatInteraction'
+import SynapseChatInteraction, {
+  SynapseChatInteractionProps,
+} from '@/components/SynapseChat/SynapseChatInteraction'
 import usePollAsynchronousJob from '@/synapse-queries/asynchronous/usePollAsynchronousJob'
 import { useGetChatAgentTraceEvents } from '@/synapse-queries/chat/useChat'
 import {
@@ -54,6 +56,7 @@ type SynapseChatMessageProps = {
   chatJobId?: string
   onSendChat?: (message: string) => void
   scrollIntoView?: boolean
+  scrollToElement?: SynapseChatInteractionProps['scrollToElement']
   animateEntry?: boolean
   isAwaitingResponse?: boolean
   showLoadingIcon?: boolean
@@ -73,6 +76,7 @@ export default function SynapseChatMessage(props: SynapseChatMessageProps) {
     agentAvatar,
     userAvatar,
     scrollIntoView,
+    scrollToElement,
     animateEntry,
     isAwaitingResponse,
     showLoadingIcon,
@@ -121,6 +125,7 @@ export default function SynapseChatMessage(props: SynapseChatMessageProps) {
       chatErrorReason={chatError}
       onSendChat={onSendChat}
       scrollIntoView={scrollIntoView}
+      scrollToElement={scrollToElement}
       animateEntry={animateEntry}
       isAwaitingResponse={isAwaitingResponse}
       showLoadingIcon={showLoadingIcon}

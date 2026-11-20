@@ -376,6 +376,8 @@ describe('SynapseGrid', () => {
   describe('with the AI Assistant sidebar feature flag on', () => {
     beforeAll(() => {
       window.HTMLElement.prototype.scrollIntoView = vi.fn()
+      // jsdom has no Element.scrollTo, which the sidebar's chat uses to scroll its message list
+      window.HTMLElement.prototype.scrollTo = vi.fn()
     })
 
     beforeEach(() => {

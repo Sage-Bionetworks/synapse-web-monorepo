@@ -93,6 +93,9 @@ export const GridAgentChat = memo(function GridAgentChat({
       hideTitle={true}
       showAccessLevelMenu={false}
       defaultAgentAccessLevel={AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA}
+      // The sidebar's chat fills it, so new messages scroll within the chat and leave the page
+      // around the docked sidebar still
+      scrollContainer={variant === 'sidebar' ? 'messageList' : 'page'}
       // lift state: allow GridAgentChat to control the agent session and interactions
       externalSession={agentSession}
       setExternalSession={setAgentSession}
