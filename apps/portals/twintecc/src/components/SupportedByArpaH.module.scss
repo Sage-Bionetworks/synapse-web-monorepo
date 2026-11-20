@@ -5,7 +5,7 @@
 // .main min-height/padding so no white band separates it from the footer
 :global(.main):has(.section) {
   padding-bottom: 0;
-  background-color: #17144c;
+  background-color: var(--twintecc-section-bg);
 }
 
 // Child rules are nested under .section so they outrank MUI Typography/Link and global portal element styles
@@ -15,7 +15,7 @@
   align-items: flex-start;
   gap: 32px;
   padding: 50px 16px;
-  background-color: #17144c;
+  background-color: var(--twintecc-section-bg);
   color: #fff;
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {

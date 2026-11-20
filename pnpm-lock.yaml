@@ -1397,7 +1397,7 @@ importers:
         version: 7.3.11(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.7))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.7))(@types/react@19.2.14)(react@19.2.7))(@types/react@19.2.14)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@react-router/node':
         specifier: 'catalog:'
-        version: 7.18.2(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@5.8.3)
+        version: 7.18.2(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)
       '@sage-bionetworks/synapse-portal-framework':
         specifier: workspace:*
         version: link:../../synapse-portal-framework
@@ -1431,7 +1431,7 @@ importers:
     devDependencies:
       '@react-router/dev':
         specifier: 'catalog:'
-        version: 7.18.2(@types/node@22.19.20)(babel-plugin-macros@3.1.0)(lightningcss@1.33.0)(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(typescript@5.8.3)(vite@8.3.5(@types/node@22.19.20)(esbuild@0.28.2)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(yaml@2.9.0)
+        version: 7.18.2(@types/node@22.19.20)(babel-plugin-macros@3.1.0)(lightningcss@1.33.0)(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.3.5(@types/node@22.19.20)(esbuild@0.28.2)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(yaml@2.9.0)
       '@types/node':
         specifier: ^22.19.20
         version: 22.19.20
@@ -1448,8 +1448,8 @@ importers:
         specifier: ^2.8.1
         version: 2.9.1
       typescript:
-        specifier: 5.8.3
-        version: 5.8.3
+        specifier: 6.0.3
+        version: 6.0.3
       vite-config:
         specifier: workspace:*
         version: link:../../../packages/vite-config
@@ -1458,10 +1458,10 @@ importers:
         version: 0.28.0(rollup@4.61.1)(vite@8.3.5(@types/node@22.19.20)(esbuild@0.28.2)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))
       vite-plugin-svgr:
         specifier: ^5.2.0
-        version: 5.2.0(rollup@4.61.1)(typescript@5.8.3)(vite@8.3.5(@types/node@22.19.20)(esbuild@0.28.2)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))
+        version: 5.2.0(rollup@4.61.1)(typescript@6.0.3)(vite@8.3.5(@types/node@22.19.20)(esbuild@0.28.2)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))
       vitest:
         specifier: 'catalog:'
-        version: 5.1.0(@types/node@22.19.20)(@vitest/browser-playwright@5.1.0)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@28.1.0)(msw@2.14.6(@types/node@22.19.20)(typescript@5.8.3))(vite@8.3.5(@types/node@22.19.20)(esbuild@0.28.2)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))
+        version: 5.1.0(@types/node@22.19.20)(@vitest/browser-playwright@5.1.0)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@28.1.0)(msw@2.14.6(@types/node@22.19.20)(typescript@6.0.3))(vite@8.3.5(@types/node@22.19.20)(esbuild@0.28.2)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))
 
   apps/synapse-oauth-signin:
     dependencies:

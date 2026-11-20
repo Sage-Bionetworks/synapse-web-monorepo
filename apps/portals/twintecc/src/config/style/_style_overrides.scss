@@ -1,4 +1,13 @@
+:root {
+  --twintecc-hero-bg: #0f0b3d;
+  --twintecc-section-bg: #17144c;
+  --twintecc-footer-bg: #07061e;
+  --twintecc-beta-badge-bg: #5d0586;
+  --twintecc-accent: #e981ff;
+  --twintecc-muted-text: #c3c2ce;
+}
+
 #footer .footer-main,
 #footer .footer-bottom {
-  background-color: #07061e;
+  background-color: var(--twintecc-footer-bg);
 }
