@@ -3,12 +3,15 @@ import { createHtmlPlugin } from 'vite-plugin-html'
 import baseConfig from './baseConfig.js'
 import vitestConfig from './vitest-config.js'
 import { reactPlugins, nodePolyfillsPlugin } from './plugins.js'
+import { contentSecurityPolicyPlugin } from './contentSecurityPolicyHtml.js'
+import { getPortalAllowedSources } from './portalContentSecurityPolicy.js'
 
 /**
  * Pre-composed Vite configuration for standard (SPA) portal apps.
  *
  * Includes: base config, vitest config, React plugins, nodePolyfills,
- * and the HTML injection plugin for social meta tags + GTM.
+ * the HTML injection plugin for social meta tags + GTM, and the portal
+ * Content Security Policy.
  *
  * Individual portal vite.config.ts files can simply re-export this:
  * ```ts
@@ -80,6 +83,10 @@ const portalsViteConfig = mergeConfig(
           },
         },
       }),
+      // After createHtmlPlugin, whose minifier would otherwise rewrite the HTML after it is hashed
+      contentSecurityPolicyPlugin(env =>
+        getPortalAllowedSources(env.VITE_PORTAL_KEY),
+      ),
     ],
   }),
 )

@@ -6,11 +6,25 @@ import {
   reactPlugins,
   nodePolyfillsPlugin,
 } from 'vite-config'
+import {
+  getAccountAppAllowedSources,
+  getSynapseEndpointsFromEnv,
+} from 'vite-config/accountAppsContentSecurityPolicy'
+import { contentSecurityPolicyPlugin } from 'vite-config/contentSecurityPolicyHtml'
 
 const config = mergeConfig(
   baseConfig,
   mergeConfig(vitestConfig, {
-    plugins: [nodePolyfillsPlugin(), ...reactPlugins()],
+    plugins: [
+      nodePolyfillsPlugin(),
+      ...reactPlugins(),
+      contentSecurityPolicyPlugin(env =>
+        getAccountAppAllowedSources(
+          'SageAccountWeb',
+          getSynapseEndpointsFromEnv(env),
+        ),
+      ),
+    ],
     test: {
       projects: [
         {
