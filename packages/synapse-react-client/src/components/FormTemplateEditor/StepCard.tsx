@@ -4,6 +4,7 @@ import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import {
   Alert,
   Box,
+  Chip,
   Collapse,
   IconButton,
   MenuItem,
@@ -24,8 +25,10 @@ import { useId, useState } from 'react'
 import {
   pointerToPropertyKey,
   propertyKeyToPointer,
+  requestTypeOnlyContext,
   ResolvedSchemaProperty,
   resolveSchemaPropertyAtPointer,
+  submissionContextLabel,
 } from '@/utils/jsonschema/submissionContext'
 import dragHandleStyles from './dragHandle.module.scss'
 import dropTargetStyles from './dropTarget.module.scss'
@@ -130,6 +133,12 @@ export function StepCard({
   }
 
   const fieldCountLabel = pluralize('field', step.fieldPaths.length, true)
+  const resolvedFields = step.fieldPaths.map(schemaPath =>
+    resolveSchemaPropertyAtPointer(jsonSchema, schemaPath),
+  )
+  const stepContext = requestTypeOnlyContext(
+    resolvedFields.flatMap(field => (field ? [field.context] : [])),
+  )
 
   return (
     <Paper
@@ -168,9 +177,19 @@ export function StepCard({
           <Typography id={headingId} variant="body2" fontWeight={500} noWrap>
             Step {stepIndex + 1}: {step.title || '(untitled)'}
           </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {fieldCountLabel}
-          </Typography>
+          {/* Beside the field count, so the chip never truncates the step title */}
+          <Stack direction="row" alignItems="center" gap={1}>
+            <Typography variant="caption" color="text.secondary">
+              {fieldCountLabel}
+            </Typography>
+            {stepContext && (
+              <Chip
+                label={submissionContextLabel(stepContext)}
+                size="small"
+                variant="outlined"
+              />
+            )}
+          </Stack>
         </Box>
         <IconButton
           size="small"
@@ -243,10 +262,7 @@ export function StepCard({
               </Typography>
             ) : (
               step.fieldPaths.map((schemaPath, fieldIdx) => {
-                const resolved = resolveSchemaPropertyAtPointer(
-                  jsonSchema,
-                  schemaPath,
-                )
+                const resolved = resolvedFields[fieldIdx]
                 return (
                   <StepFieldRow
                     key={schemaPath}

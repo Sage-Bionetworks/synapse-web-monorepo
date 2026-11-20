@@ -80,7 +80,7 @@ export const MultiStepStepper: Story = {
 }
 
 /** "Renewal details" only has a resolvable field once the Renewal toggle above the stepper is
- * selected -- toggle it to see the step appear. */
+ * selected. Until then a notice names the hidden step. */
 export const RenewalGatedStep: Story = {
   args: {
     template: template([
@@ -88,6 +88,18 @@ export const RenewalGatedStep: Story = {
         title: 'Basics',
         fields: [{ schemaPath: '/institution', uiDefinition: {} }],
       },
+      {
+        title: 'Renewal details',
+        fields: [{ schemaPath: '/summaryOfUse', uiDefinition: {} }],
+      },
+    ]),
+  },
+}
+
+/** Every step is renewal-only, so the Request view has no step to show. */
+export const RenewalOnlySteps: Story = {
+  args: {
+    template: template([
       {
         title: 'Renewal details',
         fields: [{ schemaPath: '/summaryOfUse', uiDefinition: {} }],
