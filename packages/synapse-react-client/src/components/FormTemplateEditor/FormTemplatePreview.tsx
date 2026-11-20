@@ -15,12 +15,11 @@ import {
   DataAccessRequestType,
   FormTemplate,
 } from '@sage-bionetworks/synapse-client'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import TuneIcon from '@mui/icons-material/Tune'
 import {
   Alert,
-  AlertTitle,
   Box,
-  Button,
   Checkbox,
   FormControlLabel,
   Paper,
@@ -33,7 +32,6 @@ import {
   Typography,
 } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
-import pluralize from 'pluralize'
 import { ReactNode, useId, useMemo, useRef, useState } from 'react'
 import styles from './FormTemplatePreview.module.scss'
 import { getTemplateFileSource } from './utils'
@@ -108,13 +106,7 @@ export function FormTemplatePreview({
 
   // Outside the preview frame: it explains the preview to ACT, and a requester never sees it
   const hiddenStepsNotice = hiddenSteps.length > 0 && (
-    <HiddenStepsNotice
-      hiddenSteps={hiddenSteps}
-      requestType={requestType}
-      onShowOtherRequestType={() =>
-        setRequestType(otherRequestType(requestType))
-      }
-    />
+    <HiddenStepsNotice hiddenSteps={hiddenSteps} requestType={requestType} />
   )
 
   if (steps.length === 0) {
@@ -210,47 +202,33 @@ function LivePreview({ children }: { children: ReactNode }) {
 type HiddenStepsNoticeProps = {
   hiddenSteps: HiddenFormStep[]
   requestType: DataAccessRequestType
-  onShowOtherRequestType: () => void
 }
 
+/** One line, so the preview stays the focus of the panel. */
 function HiddenStepsNotice({
   hiddenSteps,
   requestType,
-  onShowOtherRequestType,
 }: HiddenStepsNoticeProps) {
-  const other = otherRequestType(requestType)
-  const otherContextLabel = submissionContextLabel(contextForRequestType(other))
+  const otherContextLabel = submissionContextLabel(
+    contextForRequestType(otherRequestType(requestType)),
+  )
+  const stepNames = hiddenSteps
+    .map(step =>
+      step.title
+        ? `Step ${step.position} “${step.title}”`
+        : `Step ${step.position}`,
+    )
+    .join(', ')
   return (
     <Alert
       // Shown for as long as the template hides a step, so it must not interrupt like an alert
       role="status"
       severity="info"
-      action={
-        <Button
-          color="inherit"
-          size="small"
-          onClick={onShowOtherRequestType}
-          sx={{ whiteSpace: 'nowrap' }}
-        >
-          Show {REQUEST_TYPE_LABELS[other]}
-        </Button>
-      }
+      icon={<InfoOutlinedIcon fontSize="inherit" />}
+      className={styles.hiddenStepsNotice}
     >
-      <AlertTitle>
-        {pluralize('step', hiddenSteps.length, true)} hidden in the{' '}
-        {REQUEST_TYPE_LABELS[requestType]} view
-      </AlertTitle>
-      <Box component="ul" sx={{ m: 0, pl: 2.5 }}>
-        {hiddenSteps.map(step => (
-          <li key={step.position}>
-            {step.title
-              ? `Step ${step.position}: ${step.title}`
-              : `Step ${step.position}`}
-          </li>
-        ))}
-      </Box>
-      {hiddenSteps.length === 1 ? 'Its' : 'Their'} fields are all{' '}
-      {otherContextLabel}.
+      Skipped in a {REQUEST_TYPE_LABELS[requestType]} ({otherContextLabel}):{' '}
+      {stepNames}
     </Alert>
   )
 }

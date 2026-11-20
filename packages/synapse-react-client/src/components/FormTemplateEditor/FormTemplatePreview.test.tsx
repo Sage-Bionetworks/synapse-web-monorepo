@@ -3,7 +3,7 @@ import {
   DataAccessRequestType,
   FormTemplate,
 } from '@sage-bionetworks/synapse-client'
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
@@ -178,7 +178,7 @@ describe('FormTemplatePreview', () => {
     ).toBeInTheDocument()
     expect(getValidateCheckbox()).toBeInTheDocument()
     expect(screen.getByRole('status')).toHaveTextContent(
-      'Step 1: Renewal details',
+      'Skipped in a Request (Renewal only): Step 1 “Renewal details”',
     )
     await user.click(screen.getByRole('button', { name: 'Renewal' }))
     expect(getFieldLabel('Summary')).toBeInTheDocument()
@@ -228,12 +228,10 @@ describe('FormTemplatePreview', () => {
     expect(
       screen.queryByRole('button', { name: 'Renewal details' }),
     ).not.toBeInTheDocument()
-    const notice = screen.getByRole('status')
-    expect(notice).toHaveTextContent('1 step hidden in the Request view')
-    expect(within(notice).getByRole('listitem')).toHaveTextContent(
-      'Step 2: Renewal details',
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Skipped in a Request (Renewal only): Step 2 “Renewal details”',
     )
-    expect(notice).toHaveTextContent('Its fields are all Renewal only.')
+    const notice = screen.getByRole('status')
     // Outside the preview frame, which shows what a requester sees
     expect(
       screen.getByText('Live Preview').nextElementSibling,
@@ -262,11 +260,11 @@ describe('FormTemplatePreview', () => {
     await user.click(screen.getByRole('button', { name: 'Additional info' }))
     expect(getFieldLabel('Signing Official')).toBeInTheDocument()
     expect(screen.getByRole('status')).toHaveTextContent(
-      'Step 2: Renewal details',
+      'Step 2 “Renewal details”',
     )
   })
 
-  it('names a Request-only step in the Renewal view, offering to show the Request', async () => {
+  it('names a Request-only step in the Renewal view', async () => {
     const user = userEvent.setup()
     renderPreview({
       template: template([
@@ -283,27 +281,16 @@ describe('FormTemplatePreview', () => {
     })
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Renewal' }))
-    const notice = screen.getByRole('status')
-    expect(notice).toHaveTextContent('1 step hidden in the Renewal view')
-    expect(notice).toHaveTextContent('Step 2: First request')
-    expect(notice).toHaveTextContent('Its fields are all Request only.')
-    await user.click(
-      within(notice).getByRole('button', { name: 'Show Request' }),
-    )
-    expect(screen.getByRole('button', { name: 'Request' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Skipped in a Renewal (Request only): Step 2 “First request”',
     )
   })
 
-  it('switches to the other request type from the hidden-steps notice, which no longer applies there', async () => {
+  it('drops the notice once the view switches to the request type the hidden step belongs to', async () => {
     const user = userEvent.setup()
     renderPreview({ template: renewalGatedTemplate, jsonSchema: schema })
-    await user.click(screen.getByRole('button', { name: 'Show Renewal' }))
-    expect(screen.getByRole('button', { name: 'Renewal' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
+    expect(screen.getByRole('status')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Renewal' }))
     expect(
       screen.getByRole('button', { name: 'Renewal details' }),
     ).toBeInTheDocument()
@@ -336,14 +323,9 @@ describe('FormTemplatePreview', () => {
       ]),
       jsonSchema: schema,
     })
-    const notice = screen.getByRole('status')
-    expect(notice).toHaveTextContent('2 steps hidden in the Request view')
-    expect(
-      within(notice)
-        .getAllByRole('listitem')
-        .map(item => item.textContent),
-    ).toEqual(['Step 1: Renewal details', 'Step 3'])
-    expect(notice).toHaveTextContent('Their fields are all Renewal only.')
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Skipped in a Request (Renewal only): Step 1 “Renewal details”, Step 3',
+    )
   })
 
   it('regenerates the visible steps when the Request/Renewal toggle changes', async () => {
