@@ -11,15 +11,15 @@ import {
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
 import { memo, useMemo, useState } from 'react'
 
-const DIALOG_SUGGESTED_PROMPTS = [
+export const DIALOG_SUGGESTED_PROMPTS = [
   'Help me fill this out',
   'Help me understand this',
   'Find missing fields',
 ]
 
-// The welcome, prompts and placeholder below are part of the sidebar redesign, which ships behind
-// the sidebar's feature flag, so the dialog keeps its original prompts
-const SIDEBAR_SUGGESTED_PROMPTS = [
+// The sidebar, shown when GRID_AGENT_SIDEBAR is on, has its own welcome, prompts, placeholder and
+// sidebar appearance; the dialog is a standard chat
+export const SIDEBAR_SUGGESTED_PROMPTS = [
   'Summarize this document',
   'Explain what each column means',
   'Fill in annotations from an uploaded document',
@@ -27,10 +27,10 @@ const SIDEBAR_SUGGESTED_PROMPTS = [
   'Interview me to fill in missing values',
 ]
 
-const SIDEBAR_INPUT_PLACEHOLDER =
+export const SIDEBAR_INPUT_PLACEHOLDER =
   'Ask a question, upload a document, or describe what to change'
 
-const WELCOME_DESCRIPTION =
+export const SIDEBAR_WELCOME_DESCRIPTION =
   'I’m here to help with your annotations. Ask me questions, ask for changes, or upload documents and I’ll fill in the details.'
 
 export type GridAgentChatProps = {
@@ -125,10 +125,11 @@ export const GridAgentChat = memo(function GridAgentChat({
           ? {
               avatar: <CurieAvatar width={88} height="auto" aria-hidden />,
               title: `Hi, I’m ${chatbotName}!`,
-              description: WELCOME_DESCRIPTION,
+              description: SIDEBAR_WELCOME_DESCRIPTION,
             }
           : undefined
       }
+      appearance={isSidebar ? 'sidebar' : 'default'}
     />
   )
 

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { ChatAttachment } from '../../utils/types'
@@ -45,6 +45,7 @@ function renderChatInputArea(
         placeholder={props.placeholder}
         disabled={props.disabled}
         allowAttachments={props.allowAttachments}
+        appearance={props.appearance}
       />
     )
   }
@@ -103,6 +104,27 @@ describe('ChatInputArea', () => {
 
     expect(screen.getByRole('button', { name: 'Send message' })).toBeDisabled()
   })
+
+  it.each([
+    ['default', 'AddIcon', 'ArrowUpwardIcon'],
+    ['sidebar', 'FileUploadOutlinedIcon', 'SendOutlinedIcon'],
+  ] as const)(
+    'uses the %s appearance icons for the attach and send buttons',
+    (appearance, attachIcon, sendIcon) => {
+      renderChatInputArea({ allowAttachments: true, appearance })
+
+      expect(
+        within(screen.getByRole('button', { name: 'Add files' })).getByTestId(
+          attachIcon,
+        ),
+      ).toBeInTheDocument()
+      expect(
+        within(
+          screen.getByRole('button', { name: 'Send message' }),
+        ).getByTestId(sendIcon),
+      ).toBeInTheDocument()
+    },
+  )
 
   it('disables the send button when disabled', () => {
     renderChatInputArea({ initialValue: 'hello', disabled: true })

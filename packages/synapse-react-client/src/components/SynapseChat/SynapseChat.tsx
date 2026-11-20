@@ -4,15 +4,7 @@ import {
   useUpdateAgentSession,
 } from '@/synapse-queries/chat/useChat'
 import { SynapseClientError, useSynapseContext } from '@/utils'
-import {
-  Alert,
-  Box,
-  Chip,
-  List,
-  ListItem,
-  Stack,
-  Typography,
-} from '@mui/material'
+import { Alert, Box, List, ListItem, Typography } from '@mui/material'
 import {
   AgentSession,
   FileHandleAssociateType,
@@ -24,7 +16,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { SkeletonParagraph } from '../Skeleton'
 import { displayToast } from '../ToastMessage'
 import AccessLevelMenu from './AccessLevelMenu'
-import { ChatAttachment } from './utils/types'
+import { ChatAppearance, ChatAttachment } from './utils/types'
 import {
   ChatInputArea,
   ChatInputAreaHandle,
@@ -33,9 +25,9 @@ import {
   ChatWelcome,
   ChatWelcomeContent,
 } from './components/ChatWelcome/ChatWelcome'
+import { SuggestedPrompts } from './components/SuggestedPrompts/SuggestedPrompts'
 import SynapseChatMessage from './SynapseChatMessage'
 import SmartToyTwoTone from '@mui/icons-material/SmartToyTwoTone'
-import ChevronRight from '@mui/icons-material/ChevronRight'
 import { UserCard } from '../UserCard/UserCard'
 import { useApplicationSessionContext } from '@/utils/AppUtils'
 import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
@@ -133,6 +125,11 @@ export type SynapseChatProps = {
   welcome?: ChatWelcomeContent
   /** Placeholder for the message input. Defaults to a prompt naming the chatbot. */
   inputPlaceholder?: string
+  /**
+   * The look of the suggested prompts and the composer's buttons.
+   * @default 'default'
+   */
+  appearance?: ChatAppearance
 }
 
 type OutgoingMessage = {
@@ -170,6 +167,7 @@ export function SynapseChat({
   onSessionCreationUnauthenticated,
   welcome,
   inputPlaceholder,
+  appearance = 'default',
 }: SynapseChatProps) {
   const { isAuthenticated } = useSynapseContext()
   const { userId } = useApplicationSessionContext()
@@ -540,43 +538,13 @@ export function SynapseChat({
       >
         {suggestedPrompts &&
           suggestedPrompts.length > 0 &&
-          interactions.length === 0 && (
-            <Stack sx={{ pt: '8px', gap: 1, alignItems: 'flex-start' }}>
-              {suggestedPrompts.map(prompt => (
-                <Chip
-                  key={prompt}
-                  label={
-                    <Stack
-                      direction="row"
-                      component="span"
-                      sx={{ alignItems: 'center', gap: '4px' }}
-                    >
-                      {prompt}
-                      <ChevronRight
-                        sx={{
-                          flexShrink: 0,
-                          fontSize: '16px',
-                          color: 'grey.700',
-                        }}
-                      />
-                    </Stack>
-                  }
-                  onClick={() => setUserChatTextfieldValue(prompt)}
-                  disabled={isCreatingAgentSession}
-                  sx={{
-                    cursor: 'pointer',
-                    maxWidth: '100%',
-                    // Long prompts wrap onto more lines rather than being cut off in a narrow chat
-                    height: 'auto',
-                    minHeight: '32px',
-                    py: '4px',
-                    '& .MuiChip-label': { whiteSpace: 'normal' },
-                    bgcolor: 'secondary.100',
-                    '&:hover': { bgcolor: 'secondary.200' },
-                  }}
-                />
-              ))}
-            </Stack>
+          isConversationEmpty && (
+            <SuggestedPrompts
+              prompts={suggestedPrompts}
+              onSelect={setUserChatTextfieldValue}
+              disabled={isCreatingAgentSession}
+              appearance={appearance}
+            />
           )}
         <Box sx={{ mt: '5px' }}>
           <ChatInputArea
@@ -592,6 +560,7 @@ export function SynapseChat({
             }
             disabled={isCreatingAgentSession || isAwaitingResponse}
             allowAttachments={allowAttachments}
+            appearance={appearance}
           />
         </Box>
       </Box>

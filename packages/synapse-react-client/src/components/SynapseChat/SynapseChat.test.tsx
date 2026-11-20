@@ -901,6 +901,32 @@ describe('SynapseChat - welcome', () => {
   })
 })
 
+describe('SynapseChat - inputPlaceholder', () => {
+  beforeAll(() => {
+    window.HTMLElement.prototype.scrollIntoView = vi.fn()
+  })
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUseChatState.mockReturnValue(defaultMockChatState)
+  })
+
+  it('shows inputPlaceholder in the message input', () => {
+    renderComponent({ chatbotName: 'Helper', inputPlaceholder: 'Ask me' })
+
+    expect(screen.getByPlaceholderText('Ask me')).toBeInTheDocument()
+    expect(
+      screen.queryByPlaceholderText('Message Helper'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('names the chatbot in the placeholder by default', () => {
+    renderComponent({ chatbotName: 'Helper' })
+
+    expect(screen.getByPlaceholderText('Message Helper')).toBeInTheDocument()
+  })
+})
+
 describe('SynapseChat - anonymous session creation', () => {
   beforeAll(() => {
     window.HTMLElement.prototype.scrollIntoView = vi.fn()
