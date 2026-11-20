@@ -40,6 +40,7 @@ Terms:
 - **Missing acknowledgement.** If none arrives within 15 seconds, the client drops the socket and reconnects.
 - **Reconnect.** `useDataGridWebSocket` creates a new `DataGridWebSocket` for each connection. For the same session and replica, it passes the old model and the result of `getPendingPatches()` to the new one. Patches left over from any dropped connection are resent in order. Resending is safe because the server ignores patches it already stored.
 - **Disconnect.** `disconnect()` sends what is queued, one patch at a time, and closes after the last acknowledgement. It must never send the whole queue at once.
+- **Sync clocks hold next sequence numbers.** The server resends every patch whose id is at or after a replica's entry in the `synchronize-clock` clock, and its own replica clocks hold each replica's next sequence number. A json-joy peer holds the last one seen, so `toHubClock` sends each peer at its time plus one. Sending a peer's time as-is gets its last patch back on every sync when that patch is a single operation, such as a row delete, so the sync never completes.
 
 Clock sync messages (`synchronize-clock`) do not need ordering and do not use the queue.
 
@@ -70,7 +71,7 @@ When you change code on these paths, test with a large grid (several thousand ro
 - `utils/`: helpers. Most are pure: `applyModelChange`, `splitPatch`, `modelRowsToGrid`, selection conversion, column factories, paste parsing.
 - `hooks/`: undo and redo, remote selections, replica users, grid schema loading, CSV export, column resize.
 - `columns/`: custom DSG column types (autocomplete, date-time, number), and `LazyCellEditor`, which defers mounting their editors.
-- `components/`: toolbar buttons, dialogs, the loading state, and the context menu.
+- `components/`: toolbar buttons, dialogs, the loading state, and the context menu. Also `SynapseGridLayout`, which places the page header, the grid content, and a docked sidebar, and `GridAgentChat`, the chat with the grid agent. With the `GRID_AGENT_SIDEBAR` feature flag on, the chat docks in `GridAgentSidebar`; with it off, it opens in a dialog from the toolbar.
 
 ## Testing
 

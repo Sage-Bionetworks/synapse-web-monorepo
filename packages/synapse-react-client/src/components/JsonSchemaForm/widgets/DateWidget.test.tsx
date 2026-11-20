@@ -7,7 +7,13 @@ function renderWidget(props: Partial<WidgetProps> = {}) {
   const onChange = vi.fn()
   render(
     <DateWidget
-      {...({ id: 'root_project_end_date', onChange, ...props } as WidgetProps)}
+      {...({
+        id: 'root_project_end_date',
+        onChange,
+        onBlur: vi.fn(),
+        options: {},
+        ...props,
+      } as WidgetProps)}
     />,
   )
   return { onChange }
@@ -42,5 +48,18 @@ describe('DateWidget', () => {
     await user.clear(input)
 
     expect(onChange).toHaveBeenLastCalledWith(null)
+  })
+
+  it('disables picking a day before the minDate option', async () => {
+    const user = userEvent.setup()
+    renderWidget({
+      value: '2027-03-10T00:00:00.000Z',
+      options: { minDate: '2027-03-05' },
+    })
+
+    await user.click(screen.getByRole('button', { name: /choose date/i }))
+
+    expect(await screen.findByRole('gridcell', { name: '4' })).toBeDisabled()
+    expect(screen.getByRole('gridcell', { name: '5' })).toBeEnabled()
   })
 })

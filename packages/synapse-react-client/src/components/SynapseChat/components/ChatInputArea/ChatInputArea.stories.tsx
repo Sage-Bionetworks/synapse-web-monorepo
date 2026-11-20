@@ -2,7 +2,7 @@ import { FILE } from '@/utils/APIConstants'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { delay, http } from 'msw'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { fn, userEvent, within, waitFor, expect } from 'storybook/test'
 import { ChatInputArea } from './ChatInputArea'
 
@@ -11,6 +11,8 @@ const meta = {
   component: ChatInputArea,
   args: {
     onValueChange: fn(),
+    attachments: [],
+    onAttachmentsChange: fn(),
     onSend: fn(),
     placeholder: 'Message SynapseChat',
   },
@@ -18,9 +20,15 @@ const meta = {
     stack: 'mock',
   },
   render: function Render(args) {
-    // ChatInputArea controls its text value externally -- a trivial useState wrapper is enough
-    // to demo it in isolation, without an agent session or chat MSW handlers.
+    // ChatInputArea controls its text value and attachments externally -- trivial useState
+    // wrappers are enough to demo it in isolation, without an agent session or chat MSW handlers.
     const [value, setValue] = useState(args.value)
+    const [attachments, setAttachments] = useState(args.attachments)
+    // ChatInputArea passes state updaters, so log the attachments they produce rather than the updater
+    const { onAttachmentsChange } = args
+    useEffect(() => {
+      onAttachmentsChange(attachments)
+    }, [onAttachmentsChange, attachments])
     return (
       <ChatInputArea
         {...args}
@@ -29,6 +37,8 @@ const meta = {
           setValue(newValue)
           args.onValueChange(newValue)
         }}
+        attachments={attachments}
+        onAttachmentsChange={setAttachments}
       />
     )
   },

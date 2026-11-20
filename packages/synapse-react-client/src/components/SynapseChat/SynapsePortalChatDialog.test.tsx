@@ -37,21 +37,14 @@ describe('SynapsePortalChatDialog', () => {
     capturedProps = undefined
   })
 
-  it('persists the reopen intent then redirects to OneSage login when anonymous session creation is unauthorized', () => {
-    render(
-      <SynapsePortalChatDialog
-        open
-        onClose={vi.fn()}
-        variant="curie"
-        initialMessage="hello"
-      />,
-    )
+  it('persists the reopen intent, with the unsent message as the initial message, then redirects to OneSage login when anonymous session creation is unauthorized', () => {
+    render(<SynapsePortalChatDialog open onClose={vi.fn()} variant="curie" />)
 
-    capturedProps?.onSessionCreationUnauthenticated?.()
+    capturedProps?.onSessionCreationUnauthenticated?.('Find datasets about ALS')
 
     expect(persistPortalChatReopenIntent).toHaveBeenCalledWith({
       variant: 'curie',
-      initialMessage: 'hello',
+      initialMessage: 'Find datasets about ALS',
     })
     expect(storeRedirectURLForOneSageLoginAndGotoURL).toHaveBeenCalledWith(
       oneSageUrl.toString(),

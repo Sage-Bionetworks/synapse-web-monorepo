@@ -1,3 +1,4 @@
+import { FormTemplateReference } from '@sage-bionetworks/synapse-client'
 import { ResearchProject } from '../ResearchProject'
 import { RestrictableObjectType } from '../RestrictionInformation'
 import { AccessorChange } from './AccessorChange'
@@ -42,6 +43,8 @@ export type Submission = {
   rejectedReason?: string
   /** Additional data provided by the submitter, validated against the JSON Schema referenced by the Access Requirement's form template. */
   schemaData?: Record<string, unknown>
+  /** The FormTemplate id and version that the Access Requirement referenced at `accessRequirementVersion`: the template `schemaData` was validated against and should be rendered with. Snapshotted when the submission is created. Absent when the Access Requirement has no form template. */
+  formTemplateRef?: FormTemplateReference
   /** Synapse employs an Optimistic Concurrency Control (OCC) scheme to handle concurrent updates. Since the E-Tag changes every time a request is updated it is used to detect when a client's current representation of a request is out-of-date. */
   etag: string
   /** The ID of the subject user interested in. This information will be used to help user navigate back to where they were to continue their work. */

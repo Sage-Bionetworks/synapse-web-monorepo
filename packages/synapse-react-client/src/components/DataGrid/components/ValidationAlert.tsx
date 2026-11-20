@@ -11,14 +11,14 @@ import {
   Typography,
 } from '@mui/material'
 import pluralize from 'pluralize'
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, Ref, useMemo, useState } from 'react'
 import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 import {
+  collectValidationErrors,
   groupErrors,
   LimitedGroup,
   limitGroups,
   RowEntry,
-  ValidationError,
 } from '../utils/groupValidationErrors'
 
 type GroupBy = 'row' | 'column' | 'message'
@@ -28,12 +28,17 @@ type GroupBy = 'row' | 'column' | 'message'
  *  can crash the tab. The badge still shows the full count. */
 export const MAX_LISTED_ERRORS = 100
 
+export const HIDE_VALIDATION_ERRORS_LABEL = 'Hide validation errors'
+
 type ValidationAlertProps = {
   rowValues: DataGridRow[]
   columnNames: string[]
   columnOrder: number[]
   onNavigateToCell: (rowIndex: number, colIndex: number) => void
   isLoading?: boolean
+  /** Called by the banner's "Hide" link, which is offered once validation has loaded */
+  onHide: () => void
+  hideLinkRef?: Ref<HTMLButtonElement>
 }
 
 type NavProps = {
@@ -96,11 +101,47 @@ const rowLinkSx = {
   '&:hover': { textDecoration: 'underline' },
 } as const
 
+const headerLinkSx = {
+  cursor: 'pointer',
+  flexShrink: 0,
+  fontWeight: 'normal',
+} as const
+
+function HideLink({
+  onHide,
+  linkRef,
+}: {
+  onHide: () => void
+  linkRef?: Ref<HTMLButtonElement>
+}) {
+  return (
+    <Link
+      component="button"
+      variant="body1"
+      ref={linkRef}
+      onClick={onHide}
+      aria-label={HIDE_VALIDATION_ERRORS_LABEL}
+      sx={headerLinkSx}
+    >
+      Hide
+    </Link>
+  )
+}
+
 const bannerBaseSx = {
   border: '1px solid',
   borderLeft: '4px solid',
   borderRadius: 1,
   mb: 1,
+} as const
+
+// One line of banner content: the loading and no-errors banners, and the errors banner's header
+const bannerRowSx = {
+  display: 'flex',
+  alignItems: 'center',
+  px: 2,
+  py: 2,
+  gap: 1,
 } as const
 
 const tabSx = { minHeight: 36, py: 0.5 } as const
@@ -286,24 +327,16 @@ export const ValidationAlert = ({
   columnOrder,
   onNavigateToCell,
   isLoading = false,
+  onHide,
+  hideLinkRef,
 }: ValidationAlertProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [groupBy, setGroupBy] = useState<GroupBy>('row')
 
-  const allErrors = useMemo((): ValidationError[] => {
-    const errors: ValidationError[] = []
-    rowValues.forEach((row, rowIndex) => {
-      const status = row.__validationStatus
-      if (status !== 'invalid' && status !== 'pending') return
-      const pending = status === 'pending'
-      row.__cellValidationResults?.forEach((messages, columnName) => {
-        messages.forEach(message =>
-          errors.push({ rowIndex, columnName, message, pending }),
-        )
-      })
-    })
-    return errors
-  }, [rowValues])
+  const allErrors = useMemo(
+    () => collectValidationErrors(rowValues),
+    [rowValues],
+  )
 
   const byColumn = useMemo(
     () =>
@@ -340,13 +373,9 @@ export const ValidationAlert = ({
       <Box
         sx={{
           ...bannerBaseSx,
+          ...bannerRowSx,
           borderColor: 'divider',
           borderLeftColor: 'divider',
-          px: 2,
-          py: 2,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
         }}
       >
         <SynapseSpinner size={14} margin="0" />
@@ -362,15 +391,15 @@ export const ValidationAlert = ({
       <Box
         sx={{
           ...bannerBaseSx,
+          ...bannerRowSx,
           borderColor: 'success.main',
           borderLeftColor: 'success.main',
-          px: 2,
-          py: 2,
         }}
       >
         <Typography variant="body1" color="success.main">
           No validation errors
         </Typography>
+        <HideLink onHide={onHide} linkRef={hideLinkRef} />
       </Box>
     )
   }
@@ -384,28 +413,21 @@ export const ValidationAlert = ({
       }}
     >
       {/* Header */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          px: 2,
-          py: 2,
-          gap: 1,
-        }}
-      >
-        <Typography variant="body1" fontWeight="bold">
-          Validation errors
-        </Typography>
+      <Box sx={bannerRowSx}>
         <Chip
           label={allErrors.length.toLocaleString()}
           color="error"
           size="small"
         />
+        <Typography variant="body1" fontWeight="bold">
+          Validation errors
+        </Typography>
+        <HideLink onHide={onHide} linkRef={hideLinkRef} />
         <Link
           component="button"
           variant="body1"
           onClick={() => setIsExpanded(p => !p)}
-          sx={{ cursor: 'pointer', flexShrink: 0, fontWeight: 'normal' }}
+          sx={headerLinkSx}
         >
           {shouldExpand ? 'Collapse' : 'Expand'}
         </Link>
