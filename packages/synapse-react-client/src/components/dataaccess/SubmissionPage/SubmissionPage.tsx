@@ -40,7 +40,6 @@ import duration from 'dayjs/plugin/duration'
 import { isEmpty } from 'lodash-es'
 import { Fragment, ReactNode, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { useIsFetching } from '@tanstack/react-query'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { UserBadge } from '../../UserCard/UserBadge'
@@ -129,7 +128,8 @@ export default function SubmissionPage(props: SubmissionPageProps) {
     useMediaPrintOnly()
   const [showRejectionDialog, setShowRejectionDialog] = useState(false)
 
-  const { data: currentUserProfile } = useGetCurrentUserProfile()
+  const { data: currentUserProfile, isLoading: isLoadingCurrentUserProfile } =
+    useGetCurrentUserProfile()
 
   const { data: submission, isLoading: isLoadingSubmission } =
     useGetDataAccessSubmission(submissionId, {
@@ -156,7 +156,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   const isSubmitter =
     submission && submission.submittedBy === currentUserProfile?.ownerId
 
-  const { data: accessRequirement } =
+  const { data: accessRequirement, isLoading: isLoadingAccessRequirement } =
     useGetAccessRequirements<ManagedACTAccessRequirement>(
       Number.parseInt(submission?.accessRequirementId!),
       { enabled: !!submission },
@@ -217,12 +217,14 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   // Documents heading would sit directly above them.
   const showDocumentsHeading = hasDocuments || !submission?.schemaData
 
-  // A query that has not produced data yet renders as a placeholder (user names, file names, status), which would be
-  // printed.
-  const loadingQueryCount = useIsFetching({
-    predicate: query => query.state.status === 'pending',
-  })
-  const isReadyToPrint = Boolean(submission) && loadingQueryCount === 0
+  // Printing before these load would put placeholders in the PDF. Best effort: user names and file names load
+  // separately and are not waited for.
+  const isReadyToPrint =
+    Boolean(submission) &&
+    !isLoadingCurrentUserProfile &&
+    !isLoadingAccessRequirement &&
+    !isLoadingAccessApproval &&
+    !isLoadingSubmissionForm
   const titleBeforePrint = useRef<string | undefined>(undefined)
   function printSubmission() {
     // Browsers name the saved PDF after the document title.

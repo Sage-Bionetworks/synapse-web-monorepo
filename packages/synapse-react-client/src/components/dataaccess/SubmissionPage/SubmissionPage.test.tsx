@@ -36,7 +36,6 @@ import {
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   DATA_ACCESS_SUBMISSION_BY_ID,
   THREAD_FOR_SUBMISSION,
-  USER_GROUP_HEADERS_BATCH,
 } from '@/utils/APIConstants'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import dayjs from 'dayjs'
@@ -485,10 +484,10 @@ describe('Submission Page tests', () => {
       },
     )
 
-    it('keeps Download PDF disabled while a user it names is loading, so the PDF shows no placeholders', async () => {
+    it('keeps Download PDF disabled while the access requirement it prints is loading', async () => {
       server.use(
         http.get(
-          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_GROUP_HEADERS_BATCH}`,
+          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
           () => delay('infinite'),
         ),
       )
@@ -497,7 +496,7 @@ describe('Submission Page tests', () => {
         isReviewer: true,
       })
 
-      await summary().findByText(mockManagedACTAccessRequirement.name)
+      await summary().findByText('SUBMITTED')
       expect(
         screen.getByRole('button', { name: 'Download PDF' }),
       ).toBeDisabled()
