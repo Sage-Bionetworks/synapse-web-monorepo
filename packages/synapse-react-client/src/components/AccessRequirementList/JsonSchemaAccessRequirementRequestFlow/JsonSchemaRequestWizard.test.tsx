@@ -9,6 +9,7 @@ import {
 import { MOCK_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
 import { FileUploadProps } from '@/components/FileUpload/FileUpload'
 import {
+  GENOMICS_TERMS_LABEL as TERMS_LABEL,
   mockClinicalSchema,
   mockGenomicsSchema,
 } from '@/mocks/accessRequirement/mockJsonSchemas'
@@ -225,7 +226,15 @@ function renderWizard(
 }
 
 async function acceptTerms(user: UserEvent) {
-  await user.click(await screen.findByRole('radio', { name: 'Yes' }))
+  await user.click(await screen.findByRole('checkbox', { name: TERMS_LABEL }))
+}
+
+/** Answers the Research Use step of the plain genomics form, reaching its Agreements step. */
+async function advanceToAgreementsStep(user: UserEvent) {
+  await advanceToStep(user)
+  await user.type(await screen.findByRole('textbox'), 'Studying the genome')
+  await user.click(screen.getByRole('button', { name: 'Next' }))
+  return screen.findByRole('checkbox', { name: TERMS_LABEL })
 }
 
 /** Answers the Research Use step of the genomics form served by getGenomicsDataSharingHandlers */
@@ -266,7 +275,7 @@ describe('JsonSchemaRequestWizard', () => {
     expect(screen.queryByRole('radio')).not.toBeInTheDocument()
   })
 
-  it("renders a long-answer question, set by the slot's uiDefinition, as a multi-line box", async () => {
+  it("renders a long-text question, set by the slot's uiDefinition, as a multi-line box", async () => {
     mockRequestServices(
       genomicsAccessRequirement,
       createRequest(genomicsAccessRequirement),
@@ -327,6 +336,34 @@ describe('JsonSchemaRequestWizard', () => {
         requestEtag: savedRequests.at(-1)?.etag,
       }),
     ])
+  })
+
+  it('asks the requester to check the terms box, and does not submit until it is checked', async () => {
+    const { submissionRequests } = mockRequestServices(
+      genomicsAccessRequirement,
+      createRequest(genomicsAccessRequirement),
+    )
+    const user = userEvent.setup()
+    const props = renderWizard(genomicsAccessRequirement)
+    const terms = await advanceToAgreementsStep(user)
+    expect(terms).not.toBeChecked()
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }))
+
+    expect(
+      await screen.findByRole('checkbox', {
+        name: TERMS_LABEL,
+        description: /You must check this box to continue/,
+      }),
+    ).toHaveAttribute('aria-invalid', 'true')
+    expect(submissionRequests).toHaveLength(0)
+
+    await acceptTerms(user)
+    await user.click(screen.getByRole('button', { name: 'Submit' }))
+    await waitFor(() =>
+      expect(props.onSubmissionCreated).toHaveBeenCalledWith(SUBMISSION_ID),
+    )
   })
 
   it('shows the server message and keeps the answers when the submission is rejected', async () => {

@@ -1,5 +1,6 @@
 import { RJSFInputLabelWrapper } from '@/components/JsonSchemaForm/templates/RJSFInputLabel'
 import { CustomFormContext } from '@/components/JsonSchemaForm/CustomFormContext'
+import { isMustCheckBoolean } from '@/components/JsonSchemaForm/mustCheckBoolean'
 import { GridLegacy as Grid, InputLabel } from '@mui/material'
 import {
   FieldTemplateProps,
@@ -37,9 +38,13 @@ export function FieldTemplate<
   // The real checkbox widget (formContext.booleanWidget === 'checkbox') renders its own label
   // via MUI's FormControlLabel; only the true/false select and the Yes/No radios need
   // FieldTemplate to force one, since RJSF hides labels for boolean schemas by default.
-  const usesRealCheckbox =
-    (registry.formContext as CustomFormContext | undefined)?.booleanWidget ===
-    'checkbox'
+  const booleanWidget = (registry.formContext as CustomFormContext | undefined)
+    ?.booleanWidget
+  const usesRealCheckbox = booleanWidget === 'checkbox'
+  // In the requester's form, a must-be-true boolean is a checkbox labelled by the field's title,
+  // so only its description is shown here.
+  const labelledByMustCheck =
+    booleanWidget === 'yesNoRadio' && isMustCheckBoolean(schema as RJSFSchema)
   const WrapIfAdditionalTemplate = getTemplate<
     'WrapIfAdditionalTemplate',
     T,
@@ -67,10 +72,12 @@ export function FieldTemplate<
           !(displayLabel || (schema.type === 'boolean' && !usesRealCheckbox))
         }
         fieldLabel={
-          <InputLabel htmlFor={id}>
-            {label}
-            {required && <span className="required">*</span>}
-          </InputLabel>
+          labelledByMustCheck ? null : (
+            <InputLabel htmlFor={id}>
+              {label}
+              {required && <span className="required">*</span>}
+            </InputLabel>
+          )
         }
         description={hasDescription ? description : undefined}
         registry={registry}

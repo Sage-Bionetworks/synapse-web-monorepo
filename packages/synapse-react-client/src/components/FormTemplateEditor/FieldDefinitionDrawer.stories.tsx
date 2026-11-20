@@ -30,7 +30,7 @@ type Story = StoryObj<typeof FieldDefinitionDrawer>
 
 export const TextField: Story = {}
 
-export const LongAnswerField: Story = {
+export const LongTextField: Story = {
   args: {
     propertyKey: 'summaryOfUse',
     property: { type: 'string', title: 'Summary of use' },
@@ -46,6 +46,19 @@ export const ChoiceField: Story = {
       title: 'Preferred contact method',
       enum: ['Email', 'Phone', 'Mail'],
     },
+  },
+}
+
+/** A box the requester must check: a required boolean that must be `true`. */
+export const MustCheckField: Story = {
+  args: {
+    propertyKey: 'agreeToTerms',
+    property: {
+      type: 'boolean',
+      const: true,
+      title: 'I agree to the terms and conditions',
+    },
+    isRequired: true,
   },
 }
 
