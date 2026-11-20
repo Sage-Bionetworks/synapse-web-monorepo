@@ -16,7 +16,7 @@ import { useGetUserAccessApproval } from '@/synapse-queries/dataaccess/useAccess
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { useMediaPrintOnly } from '@/utils/hooks/useMediaPrintOnly'
 import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
-import DownloadIcon from '@mui/icons-material/Download'
+import DownloadIcon from '@mui/icons-material/DownloadTwoTone'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import {
   Accordion,
