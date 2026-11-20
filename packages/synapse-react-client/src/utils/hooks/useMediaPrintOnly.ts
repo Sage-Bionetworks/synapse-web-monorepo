@@ -1,13 +1,9 @@
 import { useEffect } from 'react'
 
 /**
- * Adds a temporary style sheet to the document so that, while an element with the `visibleOnPrintClassName` is
- * mounted, printing shows only those elements.
+ * Adds a temporary style sheet to the document that hides all elements except those with the `visibleOnPrintClassName`.
  *
  * Also provides a `hiddenOnPrintClassName` that can be used to hide elements within the `visibleOnPrintClassName` elements.
- *
- * Other elements take no space in the printed layout, and the ancestors of the printable elements flow, so long content
- * paginates.
  *
  * The style sheet is removed when the component unmounts.
  */
@@ -18,25 +14,29 @@ export function useMediaPrintOnly() {
   useEffect(() => {
     const temporaryPrintStyle = document.createElement('style')
     temporaryPrintStyle.innerHTML = `@media print {
-    body:has(.${visibleOnPrintClassName}) *:not(:has(.${visibleOnPrintClassName}), .${visibleOnPrintClassName}, .${visibleOnPrintClassName} *) {
-        display: none !important;
+    * {
+        visibility: hidden;
     }
 
-    body *:has(.${visibleOnPrintClassName}) {
-        position: static !important;
-        overflow: visible !important;
-        height: auto !important;
-        max-height: none !important;
-        transform: none !important;
+    .${visibleOnPrintClassName} {
+        visibility: visible;
+        position: absolute;
+        top: 0;
+        left: 0;
     }
 
-    /* A viewport-height minimum is a whole page in print, so any content above it would push a blank page. */
-    body *:has(.${visibleOnPrintClassName}), .${visibleOnPrintClassName} {
-        min-height: 0 !important;
+    .${visibleOnPrintClassName} * {
+        visibility: visible;
     }
-
+    
     .${visibleOnPrintClassName} .${hiddenOnPrintClassName} {
-        display: none !important;
+        display: none;
+        visibility: hidden;
+    }
+    
+    .${visibleOnPrintClassName} .${hiddenOnPrintClassName} * {
+        display: none;
+        visibility: hidden;
     }
 }`
 
