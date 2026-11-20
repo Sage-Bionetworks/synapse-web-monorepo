@@ -17,6 +17,7 @@ export type FairField = {
   placeholder?: string
   options?: Array<{ text?: string; value?: string; description?: string }>
   validation?: {
+    /** A length bound on text-like fields. On `date` fields, a date (e.g. `today`). */
     minimum?: string
     maximum?: string
     required?: boolean

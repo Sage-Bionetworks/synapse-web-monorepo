@@ -1,5 +1,5 @@
 import { ALLOWED_VALUES_MESSAGE } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
-import { describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import {
   fairSectionToRjsf,
   FairField,
@@ -128,7 +128,8 @@ describe('FAIR string formats', () => {
       { name: 'plain', type: 'string' },
     ],
   }
-  const { schema } = fairSectionToRjsf(formattedSection)
+  const form = fairSectionToRjsf(formattedSection)
+  const { schema } = form
 
   test('email, uri and uuid string fields carry their JSON-schema format', () => {
     expect(schema.properties!.email).toMatchObject({ format: 'email' })
@@ -143,7 +144,7 @@ describe('FAIR string formats', () => {
 
   test('flags malformed values with the shared validator’s messages', () => {
     expect(
-      validateFairSection(schema, {
+      validateFairSection(form, {
         email: 'jane@',
         website: 'not a url',
         orcid_uuid: '1234',
@@ -162,7 +163,7 @@ describe('FAIR string formats', () => {
 
   test('accepts well-formed values', () => {
     expect(
-      validateFairSection(schema, {
+      validateFairSection(form, {
         email: 'jane@example.edu',
         website: 'https://example.org/lab',
         orcid_uuid: '123e4567-e89b-12d3-a456-426614174000',
@@ -172,7 +173,7 @@ describe('FAIR string formats', () => {
 
   test('does not flag blank values (undefined, null, or empty string)', () => {
     expect(
-      validateFairSection(schema, {
+      validateFairSection(form, {
         email: '',
         website: null,
         orcid_uuid: undefined,
@@ -182,7 +183,7 @@ describe('FAIR string formats', () => {
 })
 
 describe('validateFairSection', () => {
-  const { schema } = fairSectionToRjsf({
+  const form = fairSectionToRjsf({
     key: 'about',
     fields: [
       { name: 'name', type: 'string', validation: { required: true } },
@@ -203,16 +204,16 @@ describe('validateFairSection', () => {
   })
 
   test('counts a blank required answer as unanswered, without a field message', () => {
-    expect(validateFairSection(schema, { name: '' })).toEqual({
+    expect(validateFairSection(form, { name: '' })).toEqual({
       isValid: false,
       fieldErrors: {},
     })
-    expect(validateFairSection(schema, { name: 'Jane' }).isValid).toBe(true)
+    expect(validateFairSection(form, { name: 'Jane' }).isValid).toBe(true)
   })
 
   test('flags a text answer outside FAIR’s length limits', () => {
     expect(
-      validateFairSection(schema, { name: 'Jane', summary: 'Too short' }),
+      validateFairSection(form, { name: 'Jane', summary: 'Too short' }),
     ).toEqual({
       isValid: false,
       fieldErrors: { summary: 'Must be at least 20 characters' },
@@ -220,12 +221,12 @@ describe('validateFairSection', () => {
   })
 
   test('flags a list answer that is not one of its options', () => {
-    expect(validateFairSection(schema, { name: 'Jane', phase: '3' })).toEqual({
+    expect(validateFairSection(form, { name: 'Jane', phase: '3' })).toEqual({
       isValid: false,
       fieldErrors: { phase: ALLOWED_VALUES_MESSAGE },
     })
     expect(
-      validateFairSection(schema, { name: 'Jane', phase: '2' }).isValid,
+      validateFairSection(form, { name: 'Jane', phase: '2' }).isValid,
     ).toBe(true)
   })
 
@@ -233,8 +234,11 @@ describe('validateFairSection', () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {})
     const result = validateFairSection(
       {
-        type: 'object',
-        properties: { name: { type: 'string', minLength: -1 } },
+        schema: {
+          type: 'object',
+          properties: { name: { type: 'string', minLength: -1 } },
+        },
+        uiSchema: {},
       },
       { name: 'Jane' },
     )
@@ -256,7 +260,7 @@ describe('fairSectionToRjsf keeps the schema compilable', () => {
   })
 
   test('drops length limits that are not non-negative integers', () => {
-    const { schema } = fairSectionToRjsf({
+    const rjsf = fairSectionToRjsf({
       key: 'about',
       fields: [
         {
@@ -268,14 +272,114 @@ describe('fairSectionToRjsf keeps the schema compilable', () => {
         { name: 'phone', type: 'phone', validation: { maximum: '' } },
       ],
     })
-    expect(schema.properties).toEqual({
+    expect(rjsf.schema.properties).toEqual({
       name: { type: 'string' },
       bio: { type: 'string' },
       phone: { type: 'string' },
     })
     expect(
-      validateFairSection(schema, { name: 'Jane' }).schemaError,
+      validateFairSection(rjsf, { name: 'Jane' }).schemaError,
     ).toBeUndefined()
+  })
+})
+
+describe('FAIR date minimum', () => {
+  // The user's local date, fixed so `today` doesn't move mid-test.
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date(2027, 0, 15, 12))
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  const dateForm = () =>
+    fairSectionToRjsf({
+      key: 'project',
+      fields: [
+        { name: 'start', type: 'date', validation: { minimum: 'today' } },
+        {
+          name: 'end',
+          type: 'date',
+          validation: { minimum: '2027-03-05T10:00:00Z' },
+        },
+        { name: 'other', type: 'date', validation: { minimum: 'tomorrow' } },
+        { name: 'bogus', type: 'date', validation: { minimum: '2027-02-30' } },
+      ],
+    })
+
+  test('restricts the date picker and the schema for `today` and real ISO dates only', () => {
+    const form = dateForm()
+    expect(form.uiSchema.start).toEqual({
+      'ui:widget': 'DateWidget',
+      'ui:options': { minDate: '2027-01-15' },
+    })
+    expect(form.schema.properties!.start).toMatchObject({
+      formatMinimum: '2027-01-15T00:00:00.000Z',
+    })
+    expect(form.uiSchema.end).toEqual({
+      'ui:widget': 'DateWidget',
+      'ui:options': { minDate: '2027-03-05' },
+    })
+    expect(form.schema.properties!.end).toMatchObject({
+      formatMinimum: '2027-03-05T00:00:00.000Z',
+    })
+    expect(form.uiSchema.other).toEqual({ 'ui:widget': 'DateWidget' })
+    expect(form.schema.properties!.other).not.toHaveProperty('formatMinimum')
+    expect(form.uiSchema.bogus).toEqual({ 'ui:widget': 'DateWidget' })
+    expect(form.schema.properties!.bogus).not.toHaveProperty('formatMinimum')
+  })
+
+  test('resolves a `today` minimum to the given date', () => {
+    const later = fairSectionToRjsf(
+      {
+        key: 'project',
+        fields: [
+          { name: 'start', type: 'date', validation: { minimum: 'TODAY' } },
+        ],
+      },
+      '2030-01-02',
+    )
+    expect(later.uiSchema.start).toMatchObject({
+      'ui:options': { minDate: '2030-01-02' },
+    })
+    expect(later.schema.properties!.start).toMatchObject({
+      formatMinimum: '2030-01-02T00:00:00.000Z',
+    })
+  })
+
+  test('flags a date before the minimum', () => {
+    expect(
+      validateFairSection(dateForm(), {
+        start: '2027-01-14T00:00:00.000Z',
+        end: '2027-03-04T00:00:00.000Z',
+        other: '2000-01-01T00:00:00.000Z',
+      }).fieldErrors,
+    ).toEqual({
+      start: 'Must be today or later',
+      end: 'Must be Mar 5, 2027 or later',
+    })
+  })
+
+  test('accepts the minimum date itself', () => {
+    expect(
+      validateFairSection(dateForm(), {
+        start: '2027-01-15T00:00:00.000Z',
+        end: '2027-03-05T00:00:00.000Z',
+      }),
+    ).toEqual({ isValid: true, fieldErrors: {} })
+  })
+
+  test('flags a date the picker could not parse, with or without a minimum', () => {
+    expect(
+      validateFairSection(dateForm(), {
+        end: 'Invalid DateT00:00:00.000Z',
+        other: 'Invalid DateT00:00:00.000Z',
+      }).fieldErrors,
+    ).toEqual({
+      end: 'Enter a valid date',
+      other: 'Enter a valid date',
+    })
   })
 })
 

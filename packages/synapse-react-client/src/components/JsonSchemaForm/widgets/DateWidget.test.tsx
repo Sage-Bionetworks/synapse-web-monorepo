@@ -62,23 +62,4 @@ describe('DateWidget', () => {
     expect(await screen.findByRole('gridcell', { name: '4' })).toBeDisabled()
     expect(screen.getByRole('gridcell', { name: '5' })).toBeEnabled()
   })
-
-  it('disables picking a day before today with minDate "today"', async () => {
-    vi.useFakeTimers({ toFake: ['Date'] })
-    vi.setSystemTime(new Date(2027, 2, 5, 12))
-    try {
-      const user = userEvent.setup()
-      renderWidget({
-        value: '2027-03-10T00:00:00.000Z',
-        options: { minDate: 'today' },
-      })
-
-      await user.click(screen.getByRole('button', { name: /choose date/i }))
-
-      expect(await screen.findByRole('gridcell', { name: '4' })).toBeDisabled()
-      expect(screen.getByRole('gridcell', { name: '5' })).toBeEnabled()
-    } finally {
-      vi.useRealTimers()
-    }
-  })
 })

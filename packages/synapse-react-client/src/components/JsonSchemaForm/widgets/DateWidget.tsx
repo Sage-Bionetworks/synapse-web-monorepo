@@ -3,7 +3,6 @@ import dayjs, { Dayjs } from 'dayjs'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { localToday } from '@/utils/functions/DateTimeUtils'
 
 /**
  * Date-only picker widget for schema fields with `format: 'date-time'` where the form UI
@@ -11,9 +10,8 @@ import { localToday } from '@/utils/functions/DateTimeUtils'
  * prompts for a time of day, but its stored value is a full ISO 8601 UTC-midnight string,
  * matching `format: 'date-time'`.
  *
- * `ui:options.minDate` (`'today'`, meaning the user's local date, or a `YYYY-MM-DD` calendar
- * date) disables earlier days in the picker. It does not stop an earlier date from being typed;
- * the form must validate that itself.
+ * `ui:options.minDate` (a `YYYY-MM-DD` calendar date) disables earlier days in the picker. It
+ * does not stop an earlier date from being typed; the form must validate that itself.
  */
 export const DateWidget: Widget = ({
   id,
@@ -28,9 +26,7 @@ export const DateWidget: Widget = ({
   // could shift it onto the adjacent day.
   const dateOnly = typeof value === 'string' ? value.slice(0, 10) : undefined
   const minDate =
-    typeof options.minDate === 'string'
-      ? dayjs(options.minDate === 'today' ? localToday() : options.minDate)
-      : undefined
+    typeof options.minDate === 'string' ? dayjs(options.minDate) : undefined
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker

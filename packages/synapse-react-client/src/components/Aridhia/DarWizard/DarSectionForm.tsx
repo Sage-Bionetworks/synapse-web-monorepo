@@ -31,7 +31,10 @@ export const SCHEMA_ERROR_MESSAGE =
  */
 export function DarSectionForm(props: DarFormSectionStepProps) {
   const { schema, uiSchema, formData, onChange } = props
-  const { fieldErrors, schemaError } = validateFairSection(schema, formData)
+  const { fieldErrors, schemaError } = validateFairSection(
+    { schema, uiSchema },
+    formData,
+  )
   useEffect(() => {
     if (schemaError) {
       console.error(`DAR form section schema failed to compile: ${schemaError}`)
@@ -64,6 +67,10 @@ export function DarSectionForm(props: DarFormSectionStepProps) {
         fields={{ fairLabel: FairLabelField }}
         widgets={{ DateWidget, PhoneWidget }}
         formContext={{ booleanWidget: 'checkbox' }}
+        // A `list` field is a `oneOf` of option consts. By default RJSF would pre-fill an
+        // unanswered list with its first option, which the user never chose. Only a default FAIR
+        // declares (`default_options` or `defaultValue`) should pre-select one.
+        experimental_defaultFormStateBehavior={{ constAsDefaults: 'skipOneOf' }}
         onChange={({ formData: next }) => onChange(next ?? {})}
         onBlur={id => {
           const name = id.startsWith(FIELD_ID_PREFIX)

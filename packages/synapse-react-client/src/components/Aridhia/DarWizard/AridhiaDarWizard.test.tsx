@@ -56,6 +56,24 @@ const PROJECT_END_DATE_FIELD = {
   validation: { required: false },
 }
 
+const STUDY_PHASE_FIELD = {
+  name: 'study_phase',
+  type: 'list',
+  label: 'Study phase',
+  validation: { required: true },
+  options: [
+    { text: 'Phase 1', value: '1' },
+    { text: 'Phase 2', value: '2' },
+  ],
+}
+
+const PROJECT_START_DATE_FIELD = {
+  name: 'project_start_date',
+  type: 'date',
+  label: 'Project start date',
+  validation: { required: true, minimum: 'today' },
+}
+
 /**
  * Mirrors the real gateway's overlap between the new-workspace form and the main workflow's
  * `project` section (see `REAL_WORKSPACE_REQUEST_FORM`): both ask for `project_name`.
@@ -290,10 +308,17 @@ function clickNext(user: UserEvent) {
   return user.click(screen.getByRole('button', { name: 'Next' }))
 }
 
+/** Fixes the user's local date (at noon), so a `today` date minimum doesn't move mid-test. */
+function fixLocalDate(year: number, monthIndex: number, day: number) {
+  vi.useFakeTimers({ toFake: ['Date'] })
+  vi.setSystemTime(new Date(year, monthIndex, day, 12))
+}
+
 describe('AridhiaDarWizard', () => {
   afterEach(() => {
     capturedRequestBodies = []
     sessionStorage.clear()
+    vi.useRealTimers()
   })
 
   it('submits an existing-workspace request with the expected payload', async () => {
@@ -519,6 +544,10 @@ describe('AridhiaDarWizard', () => {
     ]) {
       expect(screen.getByText(label)).toBeInTheDocument()
     }
+    // A required list's `default_options` is pre-selected.
+    expect(
+      screen.getByRole('combobox', { name: /^what hub do you need/i }),
+    ).toHaveValue('West Europe')
 
     // The 6 boolean fields (VM + area-of-interest) must render as real checkboxes, not the
     // Yes/No select used elsewhere in the app (e.g. the annotations editor).
@@ -820,6 +849,136 @@ describe('AridhiaDarWizard', () => {
     expect(capturedRequestBodies[0].fields.project_end_date).toBe(
       '2027-03-05T00:00:00.000Z',
     )
+  })
+
+  it('leaves an optional list without a default unanswered, and does not submit it', async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(
+        getAridhiaWorkflowHandler({
+          project: [
+            ...MOCK_ARIDHIA_PROJECT_FIELDS,
+            { ...STUDY_PHASE_FIELD, validation: { required: false } },
+          ],
+        }),
+      ),
+      submittedOkHandler(),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    expect(screen.getByRole('combobox', { name: /^study phase/i })).toHaveValue(
+      '',
+    )
+    await clickNext(user)
+    await fillAboutStep(user)
+    await clickNext(user)
+    await acceptTermsAndSubmit(user)
+
+    await waitFor(() => expect(capturedRequestBodies).toHaveLength(1))
+    expect(capturedRequestBodies[0].fields).not.toHaveProperty('study_phase')
+  })
+
+  it("pre-selects and submits a list's default_options, whether the list is required or optional", async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(
+        getAridhiaWorkflowHandler({
+          project: [
+            ...MOCK_ARIDHIA_PROJECT_FIELDS,
+            {
+              ...STUDY_PHASE_FIELD,
+              name: 'cohort',
+              label: 'Cohort',
+              validation: { required: true },
+              default_options: '2',
+            },
+            {
+              ...STUDY_PHASE_FIELD,
+              name: 'arm',
+              label: 'Arm',
+              validation: { required: false },
+              default_options: '1',
+            },
+          ],
+        }),
+      ),
+      submittedOkHandler(),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    expect(screen.getByRole('combobox', { name: /^cohort/i })).toHaveValue(
+      'Phase 2',
+    )
+    expect(screen.getByRole('combobox', { name: /^arm/i })).toHaveValue(
+      'Phase 1',
+    )
+    await clickNext(user)
+    await fillAboutStep(user)
+    await clickNext(user)
+    await acceptTermsAndSubmit(user)
+
+    await waitFor(() => expect(capturedRequestBodies).toHaveLength(1))
+    expect(capturedRequestBodies[0].fields).toMatchObject({
+      cohort: '2',
+      arm: '1',
+    })
+  })
+
+  it('blocks leaving the Project step until a required list without a default is answered', async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(
+        getAridhiaWorkflowHandler({
+          project: [...MOCK_ARIDHIA_PROJECT_FIELDS, STUDY_PHASE_FIELD],
+        }),
+      ),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    await user.click(screen.getByRole('combobox', { name: /^study phase/i }))
+    await user.click(await screen.findByRole('option', { name: 'Phase 1' }))
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
+  })
+
+  it('blocks leaving the Project step while a date is earlier than its minimum of today', async () => {
+    fixLocalDate(2027, 0, 15)
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(
+        getAridhiaWorkflowHandler({
+          project: [...MOCK_ARIDHIA_PROJECT_FIELDS, PROJECT_START_DATE_FIELD],
+        }),
+      ),
+    )
+    renderWizard()
+
+    await selectTwoDictionariesAndExistingWorkspace(user)
+    await clickNext(user)
+    await fillProjectStep(user)
+
+    const startDate = screen.getByLabelText(/^project start date/i)
+    await user.click(startDate)
+    await user.paste('01/14/2027')
+    await user.tab()
+    expect(screen.getByText('Must be today or later')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
+
+    await user.clear(startDate)
+    await user.click(startDate)
+    await user.paste('01/15/2027')
+    expect(screen.queryByText('Must be today or later')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
   })
 
   it('retries a failed submission with the identical request code', async () => {
