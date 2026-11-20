@@ -1,9 +1,33 @@
 // import { usePortalContext } from '@/components/PortalContext'
 import styles from './NamhubHeader.module.scss'
-import { Link, Stack } from '@mui/material'
-import { ReactComponent as HeaderImage } from './assets/namhub-header-background.svg'
+import { Link, Stack, SxProps } from '@mui/material'
+import HeaderSearchBox from '../HeaderSearchBox'
 import { RssFeedCards } from 'synapse-react-client'
 import { SectionLayout } from '../SectionLayout'
+
+const searchExampleTerms = [
+  'LLFS',
+  'whole genome sequencing',
+  'RNAseq',
+  'APOE cognitive aging',
+  'proteomics aging',
+  'epigenetics',
+  'open access',
+  'longevity intervention',
+]
+
+// HeaderSearchBox only accepts sx; its first child is the card that holds the field and chips.
+const searchBoxSx: SxProps = {
+  '& > :first-child': {
+    background: 'rgba(226, 239, 249, 0.6)',
+    border: '1px solid #b9cfe4',
+    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+  },
+  '& .MuiButton-root, & .MuiButton-root:hover': {
+    backgroundColor: '#fff',
+    borderColor: '#e4e4e4',
+  },
+}
 
 function NamhubHomePageHeader() {
   const title = (
@@ -29,13 +53,18 @@ function NamhubHomePageHeader() {
   )
 
   return (
-    <Stack className={styles.headerContainer}>
+    <>
       <div className={styles.topSectionContainer}>
         <Stack className={styles.headerTextContainer}>
           <div className={styles.headerText}>{title}</div>
           <div className={styles.descriptionText}>{description}</div>
         </Stack>
-        <HeaderImage className={styles.headerImage} />
+        <HeaderSearchBox
+          searchPlaceholder="Search for data and resources"
+          searchExampleTerms={searchExampleTerms}
+          path="/Search"
+          sx={searchBoxSx}
+        />
       </div>
       <div className={styles.eventSection}>
         <SectionLayout title="Events" centerTitle>
@@ -48,7 +77,7 @@ function NamhubHomePageHeader() {
           />
         </SectionLayout>
       </div>
-    </Stack>
+    </>
   )
 }
 
