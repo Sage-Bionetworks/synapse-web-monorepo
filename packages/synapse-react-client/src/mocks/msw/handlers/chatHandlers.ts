@@ -25,12 +25,15 @@ import {
 import { http, HttpResponse } from 'msw'
 import { dispatchEntry, generateAsyncJobHandlers } from './asyncJobHandlers'
 
-function buildMockChatResponse(request: AgentChatRequest): AgentChatResponse {
+function buildMockChatResponse(
+  request: AgentChatRequest,
+  baseResponse: AgentChatResponse,
+): AgentChatResponse {
   if (!request.attachments || request.attachments.length === 0) {
-    return mockAgentChatResponse
+    return baseResponse
   }
   return {
-    ...mockAgentChatResponse,
+    ...baseResponse,
     attachmentStatuses: request.attachments.map((attachment, index) =>
       index === 0
         ? {
@@ -48,8 +51,13 @@ function buildMockChatResponse(request: AgentChatRequest): AgentChatResponse {
 }
 
 let traceCallCount = 0
+/**
+ * @param backendOrigin the backend origin to use for the handlers
+ * @param chatResponse the agent's reply to every chat message
+ */
 export const getChatbotHandlers = (
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+  chatResponse: AgentChatResponse = mockAgentChatResponse,
 ) => [
   http.post(`${backendOrigin}${AGENT_SESSION}`, () => {
     return HttpResponse.json(mockAgentSession, { status: 201 })
@@ -72,7 +80,7 @@ export const getChatbotHandlers = (
   ...generateAsyncJobHandlers(
     dispatchEntry(
       'org.sagebionetworks.repo.model.agent.AgentChatRequest',
-      buildMockChatResponse,
+      request => buildMockChatResponse(request, chatResponse),
     ),
     {
       asyncTypeServicePaths: {
