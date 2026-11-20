@@ -23,3 +23,42 @@ $entry-translate-y: 10px;
     animation: none;
   }
 }
+
+$scroll-shadow-cover-width: 40px;
+$scroll-shadow-width: 16px;
+$scroll-shadow-color: rgb(0 0 0 / 25%);
+
+// Overlay scrollbars are invisible until the user scrolls, so a shadow marks each edge of a
+// horizontal scroller that hides more content. The covers scroll with the content and hide a
+// shadow once its edge is reached.
+@mixin horizontal-scroll-shadows {
+  background:
+    linear-gradient(to right, var(--synapse-white) 30%, transparent) left
+      center / $scroll-shadow-cover-width 100%,
+    linear-gradient(to left, var(--synapse-white) 30%, transparent) right
+      center / $scroll-shadow-cover-width 100%,
+    radial-gradient(farthest-side at 0 50%, $scroll-shadow-color, transparent)
+      left center / $scroll-shadow-width 100%,
+    radial-gradient(
+        farthest-side at 100% 50%,
+        $scroll-shadow-color,
+        transparent
+      )
+      right center / $scroll-shadow-width 100%;
+  background-repeat: no-repeat;
+  background-attachment: local, local, scroll, scroll;
+}
+
+// Content wider than the chat scrolls sideways inside the response
+.response :global(.markdown) {
+  @include horizontal-scroll-shadows;
+
+  // A wide table scrolls on its own, so the text around it stays in view
+  table {
+    @include horizontal-scroll-shadows;
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
