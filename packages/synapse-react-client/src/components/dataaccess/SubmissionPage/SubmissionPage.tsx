@@ -14,12 +14,15 @@ import { getAttachmentsNotInSchemaData } from '@/utils/jsonschema/schemaData'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user'
 import { useGetUserAccessApproval } from '@/synapse-queries/dataaccess/useAccessApprovals'
 import { formatDate } from '@/utils/functions/DateFormatter'
+import { useMediaPrintOnly } from '@/utils/hooks/useMediaPrintOnly'
 import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
+import DownloadIcon from '@mui/icons-material/Download'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   Button,
   Grid,
   Skeleton,
@@ -34,7 +37,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-import { isEmpty, toLower, upperFirst } from 'lodash-es'
+import { isEmpty } from 'lodash-es'
 import { Fragment, ReactNode, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
@@ -43,6 +46,11 @@ import { UserBadge } from '../../UserCard/UserBadge'
 import UserOrTeamBadge from '../../UserOrTeamBadge/UserOrTeamBadge'
 import { DataAccessSubmissionFileHandleLink } from './DataAccessSubmissionFileHandleLink'
 import { SubmissionSchemaAnswers } from './SubmissionSchemaAnswers'
+import {
+  formatAccessorChangeType,
+  SUBMISSION_PRINT_TITLE,
+  SubmissionPrintHeader,
+} from './SubmissionPrintHeader'
 import RejectDataAccessRequestModal from '../RejectDataAccessRequestModal'
 import { DiscussionThread } from '@/components/Forum'
 
@@ -116,6 +124,8 @@ function isRequesterOnSubmission(userId: string, submission: Submission) {
  */
 export default function SubmissionPage(props: SubmissionPageProps) {
   const { submissionId, isReviewer } = props
+  const { visibleOnPrintClassName, hiddenOnPrintClassName } =
+    useMediaPrintOnly()
   const [showRejectionDialog, setShowRejectionDialog] = useState(false)
 
   const { data: currentUserProfile } = useGetCurrentUserProfile()
@@ -147,7 +157,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
 
   const { data: accessRequirement } =
     useGetAccessRequirements<ManagedACTAccessRequirement>(
-      parseInt(submission?.accessRequirementId!),
+      Number.parseInt(submission?.accessRequirementId!),
       { enabled: !!submission },
     )
 
@@ -206,8 +216,33 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   // Documents heading would sit directly above them.
   const showDocumentsHeading = hasDocuments || !submission?.schemaData
 
+  // Printing before these load would put placeholders in the PDF.
+  const isReadyToPrint = Boolean(
+    submission &&
+    accessRequirement &&
+    !isLoadingAccessApproval &&
+    !isLoadingSubmissionForm,
+  )
+  function printSubmission() {
+    // Browsers name the saved PDF after the document title.
+    const pageTitle = document.title
+    document.title = `${SUBMISSION_PRINT_TITLE} ${submissionId}`
+    window.addEventListener(
+      'afterprint',
+      () => {
+        document.title = pageTitle
+      },
+      { once: true },
+    )
+    window.print()
+  }
+
   return (
-    <Grid container={true} spacing={4} className="SubmissionPage">
+    <Grid
+      container={true}
+      spacing={4}
+      className={`SubmissionPage ${visibleOnPrintClassName}`}
+    >
       {showUpdateRequestDialog && accessRequirement && (
         <AccessRequirementList
           renderAsModal={true}
@@ -242,8 +277,16 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           onClose={() => setShowRejectionDialog(false)}
         />
       )}
+      {submission && (
+        <SubmissionPrintHeader
+          submission={submission}
+          accessRequirementName={accessRequirement?.name}
+          displayedSubmissionState={displayedSubmissionState}
+        />
+      )}
       <Grid
-        className="SubmissionSummary"
+        component="aside"
+        className={`SubmissionSummary ${hiddenOnPrintClassName}`}
         size={{
           xs: 12,
           sm: 4,
@@ -322,6 +365,16 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             )}
           </div>
         )}
+        <div className="ButtonContainer">
+          <Button
+            variant="outlined"
+            startIcon={<DownloadIcon />}
+            disabled={!isReadyToPrint}
+            onClick={printSubmission}
+          >
+            Download PDF
+          </Button>
+        </div>
         <Typography variant="dataFieldKey" gutterBottom>
           Access Requirement Name
         </Typography>
@@ -443,14 +496,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
                   </span>
                 </Typography>
                 <Typography className="Value DataAccessor" variant="smallText1">
-                  {upperFirst(
-                    toLower(
-                      accessorChange.type.substring(
-                        0,
-                        accessorChange.type.indexOf('_'),
-                      ),
-                    ),
-                  )}
+                  {formatAccessorChangeType(accessorChange.type)}
                 </Typography>
               </Fragment>
             ))
@@ -484,6 +530,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
         </div>
       </Grid>
       <Grid
+        className="SubmissionContents"
         size={{
           xs: 12,
           sm: 8,
@@ -493,9 +540,11 @@ export default function SubmissionPage(props: SubmissionPageProps) {
         <Stack sx={{ gap: 2 }}>
           <SynapseErrorBoundary>
             {submission ? (
-              <AccessRequirementWiki
-                accessRequirementId={submission.accessRequirementId}
-              />
+              <Box className={hiddenOnPrintClassName}>
+                <AccessRequirementWiki
+                  accessRequirementId={submission.accessRequirementId}
+                />
+              </Box>
             ) : (
               <></>
             )}
@@ -516,7 +565,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             </section>
           )}
           <section>
-            <Typography variant="headline1">
+            <Typography variant="headline1" className={hiddenOnPrintClassName}>
               Contents of the Access Request
               <hr />
             </Typography>
@@ -592,11 +641,13 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             </Stack>
           </section>
           {thread?.id && (
-            <DiscussionThread
-              threadId={thread.id}
-              limit={25}
-              emptyBodyContent={THREAD_BODY}
-            />
+            <Box className={hiddenOnPrintClassName}>
+              <DiscussionThread
+                threadId={thread.id}
+                limit={25}
+                emptyBodyContent={THREAD_BODY}
+              />
+            </Box>
           )}
         </Stack>
       </Grid>

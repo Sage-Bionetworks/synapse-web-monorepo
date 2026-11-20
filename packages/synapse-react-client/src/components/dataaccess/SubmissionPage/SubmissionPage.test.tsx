@@ -58,6 +58,7 @@ import {
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
+import type { MockInstance } from 'vitest'
 import { useNavigate } from 'react-router'
 import * as RejectDataAccessRequestModalModule from '../RejectDataAccessRequestModal'
 import { CancelDataAccessRequestConfirmationModal } from './CancelDataAccessRequestConfirmationModal'
@@ -67,6 +68,11 @@ function renderComponent(props: SubmissionPageProps) {
   render(<SubmissionPage {...props} />, {
     wrapper: createWrapper(),
   })
+}
+
+/** The on-screen summary, as opposed to the print header that repeats its details. */
+function summary() {
+  return within(screen.getByRole('complementary'))
 }
 
 const SUBMITTED_SUBMISSION_ID = mockSubmittedSubmission.id
@@ -256,8 +262,8 @@ describe('Submission Page tests', () => {
       isReviewer: true,
     })
 
-    await screen.findByText('Status')
-    await screen.findByText('SUBMITTED')
+    await summary().findByText('Status')
+    await summary().findByText('SUBMITTED')
 
     await screen.findByRole('button', { name: 'Approve' })
     await screen.findByRole('button', { name: 'Reject' })
@@ -271,8 +277,8 @@ describe('Submission Page tests', () => {
     await screen.findByText('Modified By')
     await screen.findByText('Modified On')
 
-    await screen.findByText('Submitted By')
-    await screen.findByText('Submitted On')
+    await summary().findByText('Submitted By')
+    await summary().findByText('Submitted On')
 
     await screen.findByText(
       'Data Requesters (' +
@@ -286,13 +292,13 @@ describe('Submission Page tests', () => {
     // This username only appears as an accessor
     await screen.findByText('@' + MOCK_USER_NAME_2)
 
-    await screen.findByText('Institution')
-    await screen.findByText(
+    await summary().findByText('Institution')
+    await summary().findByText(
       mockSubmittedSubmission.researchProjectSnapshot.institution,
     )
 
-    await screen.findByText('Project Lead')
-    await screen.findByText(
+    await summary().findByText('Project Lead')
+    await summary().findByText(
       mockSubmittedSubmission.researchProjectSnapshot.projectLead,
     )
 
@@ -436,6 +442,69 @@ describe('Submission Page tests', () => {
     expect(screen.queryByText(mockActTeam.name)).not.toBeInTheDocument()
   })
 
+  describe('Download PDF', () => {
+    const pageTitle = 'Synapse'
+    let titleWhilePrinting: string | undefined
+    let printSpy: MockInstance<Window['print']>
+
+    beforeEach(() => {
+      document.title = pageTitle
+      titleWhilePrinting = undefined
+      printSpy = vi.spyOn(window, 'print').mockImplementation(() => {
+        titleWhilePrinting = document.title
+      })
+    })
+    afterEach(() => {
+      printSpy.mockRestore()
+    })
+
+    it.each([
+      { viewer: 'reviewer', isReviewer: true },
+      { viewer: 'requester', isReviewer: false },
+    ])(
+      'prints the loaded submission for a $viewer, titled so the PDF is named for it',
+      async ({ isReviewer }) => {
+        renderComponent({ submissionId: SUBMITTED_SUBMISSION_ID, isReviewer })
+
+        const downloadButton = screen.getByRole('button', {
+          name: 'Download PDF',
+        })
+        expect(downloadButton).toBeDisabled()
+        await waitFor(() => expect(downloadButton).toBeEnabled())
+
+        await userEvent.click(downloadButton)
+        expect(printSpy).toHaveBeenCalledOnce()
+        expect(titleWhilePrinting).toBe(
+          `Data Access Request ${SUBMITTED_SUBMISSION_ID}`,
+        )
+
+        window.dispatchEvent(new Event('afterprint'))
+        expect(document.title).toBe(pageTitle)
+      },
+    )
+
+    it('opens the printout with the submitter and each requester named in full with their username', async () => {
+      renderComponent({
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: false,
+      })
+
+      const printHeader = (
+        await screen.findByRole('heading', { name: 'Data Access Request' })
+      ).closest('header')!
+      // Submitter, and the first requester
+      expect(
+        await within(printHeader).findAllByText(
+          `First Last (@${MOCK_USER_NAME})`,
+        ),
+      ).toHaveLength(2)
+      const secondRequester = (
+        await within(printHeader).findByText(`John Doe (@${MOCK_USER_NAME_2})`)
+      ).closest('.PrintedDataRequester')!
+      expect(secondRequester).toHaveTextContent(/— Gain$/)
+    })
+  })
+
   describe('Viewing page as an accessor', () => {
     it('supports canceling a SUBMITTED request', async () => {
       renderComponent({
@@ -443,8 +512,8 @@ describe('Submission Page tests', () => {
         isReviewer: false,
       })
 
-      await screen.findByText('Status')
-      await screen.findByText('SUBMITTED')
+      await summary().findByText('Status')
+      await summary().findByText('SUBMITTED')
 
       const cancelRequestButton = await screen.findByRole('button', {
         name: 'Cancel Request',
@@ -474,8 +543,8 @@ describe('Submission Page tests', () => {
         isReviewer: false,
       })
 
-      await screen.findByText('Status')
-      await screen.findByText('APPROVED')
+      await summary().findByText('Status')
+      await summary().findByText('APPROVED')
 
       const updateRequestButton = await screen.findByRole('button', {
         name: 'Update Request',
@@ -507,8 +576,8 @@ describe('Submission Page tests', () => {
         isReviewer: false,
       })
 
-      await screen.findByText('Status')
-      await screen.findByText('Expired')
+      await summary().findByText('Status')
+      await summary().findByText('Expired')
 
       const updateRequestButton = await screen.findByRole('button', {
         name: 'Update Request',
@@ -533,8 +602,8 @@ describe('Submission Page tests', () => {
         isReviewer: false,
       })
 
-      await screen.findByText('Status')
-      await screen.findByText('CANCELLED')
+      await summary().findByText('Status')
+      await summary().findByText('CANCELLED')
 
       const modifyRequestButton = await screen.findByRole('button', {
         name: 'Modify Request',
@@ -561,8 +630,8 @@ describe('Submission Page tests', () => {
         isReviewer: false,
       })
 
-      await screen.findByText('Status')
-      await screen.findByText('REJECTED')
+      await summary().findByText('Status')
+      await summary().findByText('REJECTED')
 
       const modifyRequestButton = await screen.findByRole('button', {
         name: 'Modify Request',
@@ -612,7 +681,7 @@ describe('Submission Page tests', () => {
         isReviewer: false,
       })
 
-      await screen.findByText('SUBMITTED')
+      await summary().findByText('SUBMITTED')
       expect(screen.queryByTestId('DiscussionThread')).not.toBeInTheDocument()
       expect(mockDiscussionThread).not.toHaveBeenCalled()
     })
@@ -768,7 +837,7 @@ describe('Submission Page tests', () => {
         isReviewer: true,
       })
 
-      await screen.findByText(
+      await summary().findByText(
         mockSchemaDataAndFirstClassSubmission.researchProjectSnapshot
           .institution,
       )

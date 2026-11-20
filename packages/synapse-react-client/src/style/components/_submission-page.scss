@@ -45,4 +45,53 @@
     background: var(--synapse-gray-100);
     border: 1px solid #dfe2e6;
   }
+
+  .SubmissionPrintHeader {
+    display: none;
+  }
+}
+
+@media print {
+  .SubmissionPage {
+    // Override MUI Grid's flex layout, whose style sheet may load after this one.
+    display: block !important;
+
+    .SubmissionContents {
+      width: 100% !important;
+    }
+
+    .SubmissionPrintHeader {
+      display: block;
+      margin-bottom: 24px;
+
+      h1 {
+        padding-bottom: 8px;
+        margin-bottom: 12px;
+        border-bottom: 2px solid #395979;
+      }
+
+      dl {
+        display: grid;
+        grid-template-columns: 11rem 1fr;
+        gap: 4px 12px;
+        margin: 0;
+      }
+
+      dd {
+        margin: 0;
+      }
+
+      .PrintedDataRequester {
+        display: block;
+      }
+    }
+
+    // Keep step headings and answer labels with what follows. Answers may split across pages: one moved whole to the
+    // next page leaves the rest of this page blank.
+    .SubmissionAnswerGroupHeading,
+    .SubmissionAnswer dt {
+      break-inside: avoid;
+      break-after: avoid;
+    }
+  }
 }
