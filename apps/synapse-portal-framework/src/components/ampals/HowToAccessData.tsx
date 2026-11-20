@@ -1,29 +1,48 @@
-import React from 'react'
-import { Stack, Box, Typography } from '@mui/material'
+import { Box, Button, Link, Stack, Typography } from '@mui/material'
+import { ReactNode } from 'react'
+import { Link as RouterLink } from 'react-router'
 import { ReactComponent as HowToAccessDataLogo } from '../../portal-assets/howToAccessDataLogo.svg'
 import { ReactComponent as GeneExpressionOmnibusLogo } from '../../portal-assets/geneExpressionOmnibus.svg'
 import { ReactComponent as RdcaDapLogo } from '../../portal-assets/RDCADAP.svg'
 import SynapseFullLogo from 'synapse-react-client/assets/icons/SynapseFullLogo'
 
-const HowToAccessData = (): React.ReactNode => {
-  const accessDataSteps = [
-    {
-      title: 'Select data',
-      description:
-        'Search, browse, or filter data on the ALS Knowledge Portal, then add it to your Download List.',
-    },
-    {
-      title: 'Request access',
-      description:
-        'Through this website, or an external repository. We’ll point you to the right spot.',
-    },
-    {
-      title: 'Analyze or download the data',
-      description:
-        'After being approved for access, follow the links in your email to use the data.',
-    },
-  ]
+export type HowToAccessDataProps = {
+  /** Portal route for the full "How to Access Data" instructions page */
+  moreInfoPath: string
+}
 
+type AccessSource = {
+  title: string
+  description: string
+  logo: ReactNode
+  href: string
+}
+
+const ACCESS_SOURCES: AccessSource[] = [
+  {
+    title: 'Open access',
+    description:
+      'Datasets in the Gene Expression Omnibus (GEO) are public. No request is needed.',
+    logo: <GeneExpressionOmnibusLogo />,
+    href: 'https://www.ncbi.nlm.nih.gov/geo/',
+  },
+  {
+    title: 'Controlled access',
+    description:
+      'Datasets hosted in Synapse need a Synapse account and an approved data access request.',
+    logo: <SynapseFullLogo color={'#2E4761'} />,
+    href: 'https://www.synapse.org/Home:x',
+  },
+  {
+    title: 'External application',
+    description:
+      'Critical Path Institute datasets are requested through RDCA-DAP, which has its own process.',
+    logo: <RdcaDapLogo />,
+    href: 'https://c-path.org/programs/rdca-dap/',
+  },
+]
+
+const HowToAccessData = ({ moreInfoPath }: HowToAccessDataProps): ReactNode => {
   return (
     <Box
       sx={{
@@ -36,25 +55,27 @@ const HowToAccessData = (): React.ReactNode => {
         },
       }}
     >
-      {/* Left */}
       <Stack sx={{ alignItems: { xs: 'center', lg: 'initial' }, gap: '20px' }}>
         <Typography variant="headline1" sx={{ lineHeight: 'normal' }}>
           How to Access Data
         </Typography>
-        {/* Todo */}
-        {/* <Button
+        <Button
           variant="contained"
-          component={Link}
+          component={RouterLink}
+          to={moreInfoPath}
           sx={{ width: { xs: '100%', sm: 'fit-content' }, padding: '6px 24px' }}
         >
           More about accessing data
-        </Button> */}
+        </Button>
         <Box sx={{ marginTop: 'auto' }}>
           <HowToAccessDataLogo />
         </Box>
       </Stack>
-      {/* Right */}
       <Stack sx={{ gap: { xs: '40px', lg: '24px' } }}>
+        <Typography sx={{ lineHeight: '22.4px' }}>
+          The ALS Knowledge Portal brings together data from multiple
+          repositories. How you get access depends on where a dataset is hosted.
+        </Typography>
         <Box
           sx={{
             display: 'flex',
@@ -62,104 +83,34 @@ const HowToAccessData = (): React.ReactNode => {
             flexDirection: { xs: 'column', md: 'row' },
           }}
         >
-          {accessDataSteps.map((step, index) => (
-            <Stack key={step.title} sx={{ gap: { xs: '10px', lg: 0 } }}>
+          {ACCESS_SOURCES.map(source => (
+            <Stack key={source.title} sx={{ gap: '10px', flex: 1 }}>
               <Box
-                sx={theme => ({
-                  [theme.breakpoints.down('md')]: {
-                    display: 'flex',
-                    alignItems: 'center',
-                    margin: 0,
-                    gap: '8px',
-                  },
-                })}
+                component="a"
+                href={source.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={source.title}
+                sx={{ height: '48px', display: 'flex', alignItems: 'center' }}
               >
-                <Box
-                  sx={{
-                    padding: '13.5px 18px 13.5px 16.5px',
-                    borderRadius: '22.125px',
-                    background: 'rgba(20, 126, 248, 0.15)',
-                    width: '44px',
-                    height: '44px',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginBottom: { xs: 0, md: '20px' },
-                  }}
-                >
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      fontSize: '24px',
-                    }}
-                  >
-                    {index + 1}
-                  </Typography>
-                </Box>
-                <Typography variant="headline3" sx={{ lineHeight: 'normal' }}>
-                  {step.title}
-                </Typography>
+                {source.logo}
               </Box>
+              <Typography variant="headline3" sx={{ lineHeight: 'normal' }}>
+                {source.title}
+              </Typography>
               <Typography sx={{ lineHeight: '22.4px' }}>
-                {step.description}
+                {source.description}
               </Typography>
             </Stack>
           ))}
         </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            gap: '24px',
-            flexDirection: { xs: 'column', md: 'row' },
-            alignItems: 'center',
-            padding: '20px',
-            backgroundColor: '#F4F7FA',
-          }}
-        >
-          <Stack sx={{ gap: '10px' }}>
-            <Typography>
-              The ALS Knowledge Portal provides access to data from multiple
-              repositories. Repositories have different procedures for
-              requesting access to data, and you may need to make multiple
-              requests to access data from them.
-            </Typography>
-            {/* Todo */}
-            {/* <Link>
+        <Box sx={{ padding: '20px', backgroundColor: '#F4F7FA' }}>
+          <Typography>
+            You may need to make separate requests to each repository.{' '}
+            <Link component={RouterLink} to={moreInfoPath}>
               Learn more about accessing data from the ALS Knowledge Portal
-            </Link> */}
-          </Stack>
-          <Box
-            sx={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              minWidth: { xs: 'initial', lg: '414px' },
-              gap: '16px',
-              justifyContent: { xs: 'center', lg: 'initial' },
-              alignItems: 'center',
-            }}
-          >
-            <a
-              href="https://www.ncbi.nlm.nih.gov/geo/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <GeneExpressionOmnibusLogo />
-            </a>
-            <a
-              href="https://c-path.org/programs/rdca-dap/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <RdcaDapLogo />
-            </a>
-            <a
-              href="https://www.synapse.org/Home:x"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <SynapseFullLogo color={'#2E4761'} />
-            </a>
-          </Box>
+            </Link>
+          </Typography>
         </Box>
       </Stack>
     </Box>

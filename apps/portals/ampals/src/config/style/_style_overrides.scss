@@ -29,3 +29,30 @@
 #footer {
   background: linear-gradient(263.11deg, #8bb4ce 2.14%, #3e7293 50.63%);
 }
+
+// Fit the full ALS KP nav and Sign In on laptop widths before the shared
+// navbar collapses to MENU, while keeping enough space between items that each
+// one reads as a separate target.
+@media screen and (min-width: 1281px) {
+  .nav.top-nav .nav-link-container {
+    .nav-button {
+      padding: 0 12px;
+      min-width: 0;
+    }
+    .nav-button-signin {
+      margin-left: 12px;
+    }
+  }
+}
+
+@media screen and (min-width: 1366px) {
+  .nav.top-nav .nav-link-container .nav-button {
+    padding: 0 18px;
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  .nav.top-nav .nav-link-container .nav-button {
+    padding: 0 20px;
+  }
+}

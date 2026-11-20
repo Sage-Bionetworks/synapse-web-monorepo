@@ -28,9 +28,9 @@ const routes: RouteObject[] = [
           import('@/pages/Explore/layout').then(convertModuleToRouteObject),
         children: [
           {
+            // Keeps bookmarks to the retired Files tab working (PORTALS-4583).
             path: 'Files',
-            lazy: () =>
-              import('@/pages/Explore/files').then(convertModuleToRouteObject),
+            element: <Navigate to="/Explore/Datasets" replace />,
           },
           {
             path: 'Collections',
@@ -52,6 +52,11 @@ const routes: RouteObject[] = [
         path: 'Explore/Datasets/DetailsPage',
         lazy: () =>
           import('@/pages/DatasetDetailsPage').then(convertModuleToRouteObject),
+      },
+      {
+        path: 'How to Access Data',
+        lazy: () =>
+          import('@/pages/HowToAccessData').then(convertModuleToRouteObject),
       },
       {
         path: 'Data Access',
