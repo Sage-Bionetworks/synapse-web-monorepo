@@ -93,6 +93,35 @@ describe('createReactRouterConfig', () => {
     expect(additionalPreload).toHaveBeenCalledOnce()
   })
 
+  it('starts every detail page query and the preloads without waiting on one another', async () => {
+    const finishQueries: (() => void)[] = []
+    mockFetchResourceIds.mockImplementation(
+      detailPage =>
+        new Promise(resolve => {
+          finishQueries.push(() =>
+            resolve({ config: detailPage, ids: ['id1'], success: true }),
+          )
+        }),
+    )
+    const paths = getPrerenderPaths(
+      createReactRouterConfig({
+        sitemapConfig: { detailPages: [studiesPage, toolsPage] },
+        metadataConfigs: [studiesMetadata],
+      }),
+    )
+
+    const result = paths({ getStaticPaths: () => [] })
+
+    expect(mockFetchResourceIds).toHaveBeenCalledTimes(2)
+    expect(mockPreloadDetailPageMetadata).toHaveBeenCalledOnce()
+
+    finishQueries.reverse().forEach(finish => finish())
+    await expect(result).resolves.toEqual([
+      '/Explore/Studies/id1',
+      '/Explore/Tools/id1',
+    ])
+  })
+
   it('excludes legacy DetailsPage paths on every call', async () => {
     const paths = getPrerenderPaths(
       createReactRouterConfig({
@@ -108,5 +137,26 @@ describe('createReactRouterConfig', () => {
 
     await expect(paths({ getStaticPaths })).resolves.toEqual(['/'])
     await expect(paths({ getStaticPaths })).resolves.toEqual(['/'])
+  })
+
+  it('excludes static child paths that still contain a parent route param', async () => {
+    const paths = getPrerenderPaths(
+      createReactRouterConfig({
+        sitemapConfig: { detailPages: [] },
+        metadataConfigs: [],
+      }),
+    )
+    const getStaticPaths = () => [
+      '/',
+      '/Explore/Studies',
+      '/Explore/Studies/:studyId/Details',
+      '/Explore/Tools/:resourceId/Data/Studies',
+      '/Docs/*',
+    ]
+
+    await expect(paths({ getStaticPaths })).resolves.toEqual([
+      '/',
+      '/Explore/Studies',
+    ])
   })
 })

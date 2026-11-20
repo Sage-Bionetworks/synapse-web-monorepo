@@ -1,3 +1,4 @@
+import type { PostRepoV1EntityIdTableQueryAsyncStartRequest } from '@sage-bionetworks/synapse-client'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   type DetailPageMetadataConfig,
@@ -96,5 +97,48 @@ describe('fetchDetailPageMetadata', () => {
 
     expect(metadata).toEqual({ title: 'Title 1', description: 'Description 1' })
     expect(mockQueryAsyncStart).not.toHaveBeenCalled()
+  })
+})
+
+describe('preloadDetailPageMetadata', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockQueryAsyncStart.mockResolvedValue({ token: 'job-token' })
+  })
+
+  function queryResponse(headers: string[], rows: string[][]) {
+    return {
+      responseBody: {
+        maxRowsPerPage: 100,
+        queryResult: {
+          queryResults: {
+            headers: headers.map(name => ({ name })),
+            rows: rows.map(values => ({ values })),
+          },
+        },
+      },
+    }
+  }
+
+  function querySql(callIndex: number): string | undefined {
+    const [request] = mockQueryAsyncStart.mock.calls[callIndex] as [
+      PostRepoV1EntityIdTableQueryAsyncStartRequest,
+    ]
+    return request.queryBundleRequest.query?.sql
+  }
+
+  it('queries only the param, title, and description columns', async () => {
+    mockWaitForAsyncResult.mockResolvedValue(
+      queryResponse(
+        ['id', 'title', 'description'],
+        [['syn1', 'Title 1', 'Description 1']],
+      ),
+    )
+
+    const count = await preloadDetailPageMetadata(configForTable('syn400'))
+
+    expect(count).toBe(1)
+    expect(mockQueryAsyncStart).toHaveBeenCalledOnce()
+    expect(querySql(0)).toBe('SELECT "id", "title", "description" FROM syn400')
   })
 })
