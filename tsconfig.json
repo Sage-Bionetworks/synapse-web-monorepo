@@ -20,6 +20,7 @@
     { "path": "./apps/portals/genie" },
     { "path": "./apps/portals/nf" },
     { "path": "./apps/portals/stopadportal" },
+    { "path": "./apps/portals/twintecc" },
     { "path": "./apps/portals-e2e" },
     { "path": "./apps/SageAccountWeb" },
     { "path": "./apps/synapse-oauth-signin" },

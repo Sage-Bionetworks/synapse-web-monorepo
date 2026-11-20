@@ -20,7 +20,15 @@ export type ChatInteraction = {
 }
 
 export type ChatState = {
-  sendChat: (message: string, attachments?: FileHandleAssociation[]) => void
+  /**
+   * Sends a message in the agent session. `sessionId` overrides the session's ID, for a message sent
+   * as soon as its session is created, before that session reaches this hook.
+   */
+  sendChat: (
+    message: string,
+    attachments?: FileHandleAssociation[],
+    sessionId?: string,
+  ) => void
   interactions: ChatInteraction[]
   isAwaitingResponse: boolean
 }
@@ -80,14 +88,18 @@ export function useChatState(
     )
 
   const sendChat = useCallback(
-    (message: string, attachments?: FileHandleAssociation[]) => {
-      if (!agentSession?.sessionId) {
+    (
+      message: string,
+      attachments?: FileHandleAssociation[],
+      sessionId: string | undefined = agentSession?.sessionId,
+    ) => {
+      if (!sessionId) {
         throw new Error('No agent session available to send chat message.')
       }
       sendChatMessageToAgent({
         concreteType: 'org.sagebionetworks.repo.model.agent.AgentChatRequest',
         chatText: message,
-        sessionId: agentSession.sessionId,
+        sessionId,
         enableTrace: true,
         ...(attachments && attachments.length > 0 ? { attachments } : {}),
       })

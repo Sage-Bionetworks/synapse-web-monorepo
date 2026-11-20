@@ -13,12 +13,11 @@ import {
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { RJSFSchema } from '@rjsf/utils'
+import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import { useState } from 'react'
 import { SchemaPropertyContext } from '@/utils/jsonschema/submissionContext'
 import { ChoiceOptionsEditor } from './ChoiceOptionsEditor'
 import {
-  applyFieldType,
   choiceOptions,
   detectFieldType,
   FIELD_TYPE_OPTIONS,
@@ -41,6 +40,8 @@ export type FieldDefinitionDrawerProps = {
   /** All property keys currently defined in the schema, including this one. */
   existingKeys: Set<string>
   property: RJSFSchema | null
+  /** The property's slot `uiDefinition`, whether or not a step binds it. */
+  uiDefinition: UiSchema | null | undefined
   isRequired: boolean
   /**
    * Which submission context this property applies to (per the schema's
@@ -55,7 +56,7 @@ export type FieldDefinitionDrawerProps = {
   onClose: () => void
   onUpdate: (patch: Partial<RJSFSchema>) => void
   onRenameKey: (newKey: string) => void
-  onReplace: (next: RJSFSchema) => void
+  onChangeType: (type: SimpleFieldType) => void
   onChangeRequired: (isRequired: boolean) => void
   onChangeContext: (context: SchemaPropertyContext) => void
   onRemove: () => void
@@ -70,18 +71,19 @@ export function FieldDefinitionDrawer({
   propertyKey,
   existingKeys,
   property,
+  uiDefinition,
   isRequired,
   context,
   isUsedInSteps,
   onClose,
   onUpdate,
   onRenameKey,
-  onReplace,
+  onChangeType,
   onChangeRequired,
   onChangeContext,
   onRemove,
 }: FieldDefinitionDrawerProps) {
-  const type = property ? detectFieldType(property) : null
+  const type = property ? detectFieldType(property, uiDefinition) : null
   const isAdvanced = property !== null && type === null
 
   // The draft exists only while the key is being edited, and is tagged with the key it was started
@@ -106,11 +108,6 @@ export function FieldDefinitionDrawer({
       onRenameKey(displayedKey)
     }
     setKeyDraft(null)
-  }
-
-  const handleChangeType = (next: SimpleFieldType) => {
-    if (!property) return
-    onReplace(applyFieldType(property, next))
   }
 
   return (
@@ -215,7 +212,7 @@ export function FieldDefinitionDrawer({
                   label="Field type"
                   value={type}
                   onChange={e =>
-                    handleChangeType(e.target.value as SimpleFieldType)
+                    onChangeType(e.target.value as SimpleFieldType)
                   }
                   size="small"
                   sx={{ flexGrow: 1 }}

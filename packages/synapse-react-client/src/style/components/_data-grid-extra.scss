@@ -247,17 +247,6 @@ $remote-selection-colors:
   }
 }
 
-// Global cursor during resize
-body.col-resizing {
-  cursor: col-resize;
-  user-select: none;
-
-  .dsg-container,
-  .dsg-container * {
-    cursor: col-resize;
-  }
-}
-
 // ── Cell change indicators ─────────────────────────────────────────────────
 // A small triangle badge in the upper-right corner of any cell changed since
 // the client joined the session.  Color encodes attribution category.
