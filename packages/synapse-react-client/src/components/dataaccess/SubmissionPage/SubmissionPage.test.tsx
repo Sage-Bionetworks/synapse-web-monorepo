@@ -502,34 +502,6 @@ describe('Submission Page tests', () => {
       ).toBeDisabled()
     })
 
-    it('is not offered to a viewer who is neither a reviewer nor a requester', async () => {
-      server.use(
-        http.get(
-          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
-          () =>
-            HttpResponse.json({
-              ...mockSubmittedSubmission,
-              submittedBy: String(MOCK_USER_ID_3),
-              accessorChanges: [
-                {
-                  ...mockSubmittedSubmission.accessorChanges[0],
-                  userId: String(MOCK_USER_ID_3),
-                },
-              ],
-            }),
-        ),
-      )
-      renderComponent({
-        submissionId: SUBMITTED_SUBMISSION_ID,
-        isReviewer: false,
-      })
-
-      await summary().findByText('SUBMITTED')
-      expect(
-        screen.queryByRole('button', { name: 'Download PDF' }),
-      ).not.toBeInTheDocument()
-    })
-
     it('opens the printout with the submission details, naming the submitter and each requester in full with their username', async () => {
       renderComponent({
         submissionId: SUBMITTED_SUBMISSION_ID,

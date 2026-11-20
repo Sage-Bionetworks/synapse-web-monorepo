@@ -371,18 +371,16 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             )}
           </div>
         )}
-        {(isReviewer || isRequester) && (
-          <div className="ButtonContainer">
-            <Button
-              variant="outlined"
-              startIcon={<DownloadIcon />}
-              disabled={!isReadyToPrint}
-              onClick={printSubmission}
-            >
-              Download PDF
-            </Button>
-          </div>
-        )}
+        <div className="ButtonContainer">
+          <Button
+            variant="outlined"
+            startIcon={<DownloadIcon />}
+            disabled={!isReadyToPrint}
+            onClick={printSubmission}
+          >
+            Download PDF
+          </Button>
+        </div>
         <Typography variant="dataFieldKey" gutterBottom>
           Access Requirement Name
         </Typography>
