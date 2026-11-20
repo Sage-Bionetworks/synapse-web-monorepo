@@ -35926,6 +35926,11 @@
             "description": "Selects how a query that returns rows from an aggregate-only source treats a participant-count cell whose value is non-zero but below the suppression threshold (k). A count of exactly zero is never suppressed under either strategy. The ACT chooses the strategy per source based on what a given case requires.",
             "enum": ["EXCLUDE_ROW", "MASK_BELOW_THRESHOLD"]
           },
+          "approvedVirtualTableIds": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "The IDs of the VirtualTables the ACT approves for aggregate-only reads of this source, for example 'syn123'. Each ID must identify a VirtualTable and must not include a version. A caller with aggregate-only access may query only a VirtualTable on this list, referenced without a version; any other object, including a MaterializedView or the source itself, is refused. Optional: when omitted or empty, no aggregate-only read of this source is allowed. Approving an ID does not lock the content of the VirtualTable, so before approving one the ACT must confirm that only trusted staff hold UPDATE or CHANGE_PERMISSIONS on the VirtualTable and on every object its defining SQL reads."
+          },
           "facetPostProcessingConfig": {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.FacetPostProcessingConfig",
             "description": "Configuration describing how facet counts are post-processed for an aggregate-only query."
