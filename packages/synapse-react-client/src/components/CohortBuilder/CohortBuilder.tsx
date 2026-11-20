@@ -51,7 +51,8 @@ export type CohortBuilderProps = {
   participantsTableId: string
   /**
    * The AGGREGATE_DATA source table that the participant VirtualTable derives from. When set, users with the
-   * Administrator permission on it can preview the results that users with aggregate-only access see.
+   * Administrator permission on it can preview the results that users with aggregate-only access see. The preview
+   * approves the participant and Files/Datasets VirtualTables for aggregate-only reads.
    */
   participantsSourceTableId?: string
   /**
@@ -103,6 +104,13 @@ export function CohortBuilder(props: CohortBuilderProps) {
     }),
     [participantsTableId],
   )
+  const approvedVirtualTableIds = useMemo(
+    () =>
+      filesTableId
+        ? [participantsTableId, filesTableId]
+        : [participantsTableId],
+    [participantsTableId, filesTableId],
+  )
 
   if (!isAuthenticated) {
     return (
@@ -136,6 +144,7 @@ export function CohortBuilder(props: CohortBuilderProps) {
           {participantsSourceTableId && (
             <AggregateDataPreviewControls
               sourceTableId={participantsSourceTableId}
+              approvedVirtualTableIds={approvedVirtualTableIds}
             />
           )}
           {/* A cohort restored from the URL fills the Query Builder and the files panel's query, so neither starts from the initial query. */}

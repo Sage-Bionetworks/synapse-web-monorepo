@@ -1,7 +1,10 @@
 import { FairField } from '@/aridhia-queries/FairFormPayload'
 import { DAR_MESSAGE_VOCABULARY_CODE } from '@/aridhia-queries/useGetAridhiaVocabularyTerm'
-import { RequestListItem } from '@sage-bionetworks/aridhia-client/generated/models'
-import { http, HttpHandler, HttpResponse, JsonBodyType } from 'msw'
+import {
+  RequestListItem,
+  RequestWorkspaceStatus,
+} from '@sage-bionetworks/aridhia-client/generated/models'
+import { delay, http, HttpHandler, HttpResponse, JsonBodyType } from 'msw'
 
 export const MOCK_ARIDHIA_GATEWAY = 'https://mock-gateway.test'
 export const MOCK_ARIDHIA_FAIR_PORTAL_URL = 'https://mock-fair-portal.test'
@@ -67,7 +70,7 @@ export const MOCK_ARIDHIA_ABOUT_FIELDS: FairField[] = [
     name: 'email',
     type: 'string',
     label: 'Email address',
-    validation: { required: true },
+    validation: { required: true, format: 'email' },
   },
 ]
 
@@ -77,6 +80,12 @@ export const MOCK_ARIDHIA_PROJECT_FIELDS: FairField[] = [
     type: 'string',
     label: 'Project name',
     validation: { required: true },
+  },
+  {
+    name: 'team_size',
+    type: 'number',
+    label: 'Team size',
+    validation: { required: false, minimum: 1, maximum: 10 },
   },
 ]
 
@@ -100,17 +109,20 @@ export function getAridhiaAuthenticateHandler(
 
 /**
  * A `GET /fair/requests` list item covering `MOCK_ARIDHIA_DATASET_CODE`, created and last
- * updated at `updatedAt`.
+ * updated at `updatedAt`. `transferredAt`, when set, marks its data as transferred to its
+ * workspace.
  */
 export function mockAridhiaRequestListItem(
   request: Pick<RequestListItem, 'code' | 'name' | 'status'> & {
     updatedAt: string
     datasetCodes?: string[]
+    transferredAt?: string
   },
 ): RequestListItem {
   const {
     updatedAt,
     datasetCodes = [MOCK_ARIDHIA_DATASET_CODE],
+    transferredAt,
     ...fields
   } = request
   return {
@@ -118,7 +130,83 @@ export function mockAridhiaRequestListItem(
     datasets: datasetCodes.map(code => ({ code })),
     created_at: updatedAt,
     updated_at: updatedAt,
+    transfer: {
+      ready_for_transfer: transferredAt != null,
+      transferred_at: transferredAt,
+      transfer_dates: transferredAt ? [transferredAt] : [],
+      transfer_type: 'clear',
+    },
   }
+}
+
+/** A provisioned workspace's `GET /fair/requests/{code}/workspace` response. */
+export function mockAridhiaRequestWorkspace(
+  workspaceName: string,
+): RequestWorkspaceStatus {
+  const workspaceUrl = `https://${workspaceName}.westus2.analytixagility.test/#/workspaces/${workspaceName}`
+  return {
+    workspace_url: workspaceUrl,
+    workspace_name: workspaceName,
+    workspace_location: 'westus2',
+    workspace_inbox_url: `${workspaceUrl}/folders/inbox`,
+    workspace_status: 'available',
+  }
+}
+
+/**
+ * A `GET /fair/requests/{code}/workspace` response for a workspace that hasn't been provisioned
+ * yet: the shape observed live on RDCA-DAP dev, with null URLs (which the generated model's types
+ * don't admit, hence untyped).
+ */
+export const MOCK_ARIDHIA_REQUEST_WORKSPACE_NOT_PROVISIONED = {
+  workspace_url: null,
+  workspace_name: 'requested-6',
+  workspace_location: 'westus2',
+  workspace_inbox_url: null,
+  workspace_status: 'requested',
+}
+
+/**
+ * Serves `GET /fair/requests/{code}/workspace` from `workspacesByRequestCode`; any other request
+ * code gets the endpoint's 404 ("Request not found"). Codes in `failingRequestCodes` get a 500,
+ * and codes in `unresolvedRequestCodes` never get a response. `onRequest` sees every request code.
+ */
+export function getAridhiaRequestWorkspaceHandler(
+  workspacesByRequestCode: Record<string, JsonBodyType>,
+  options: {
+    onRequest?: (requestCode: string) => void
+    failingRequestCodes?: readonly string[]
+    unresolvedRequestCodes?: readonly string[]
+  } = {},
+): HttpHandler {
+  const {
+    onRequest,
+    failingRequestCodes = [],
+    unresolvedRequestCodes = [],
+  } = options
+  return http.get(
+    `${MOCK_ARIDHIA_GATEWAY}/fair/requests/:code/workspace`,
+    async ({ params }) => {
+      const code = String(params.code)
+      onRequest?.(code)
+      if (unresolvedRequestCodes.includes(code)) {
+        await delay('infinite')
+      }
+      if (failingRequestCodes.includes(code)) {
+        return HttpResponse.json(
+          { error: { status: 500, message: 'Internal server error' } },
+          { status: 500 },
+        )
+      }
+      const body = workspacesByRequestCode[code]
+      return body === undefined
+        ? HttpResponse.json(
+            { error: { status: 404, message: 'Request not found' } },
+            { status: 404 },
+          )
+        : HttpResponse.json(body)
+    },
+  )
 }
 
 export function getAridhiaRequestsHandler(
@@ -162,13 +250,17 @@ export function getAridhiaWorkflowHandler(
     about = MOCK_ARIDHIA_ABOUT_FIELDS,
     project = MOCK_ARIDHIA_PROJECT_FIELDS,
   } = fields
+  return getAridhiaWorkflowBodyHandler({
+    code: 'rdca_access_request',
+    fields: { about, project },
+  })
+}
+
+/** Serves `body` verbatim as the dataset's workflow (e.g. a captured gateway response). */
+export function getAridhiaWorkflowBodyHandler(body: JsonBodyType): HttpHandler {
   return http.get(
     `${MOCK_ARIDHIA_GATEWAY}/fair/workflows/rdca_access_request`,
-    () =>
-      HttpResponse.json({
-        code: 'rdca_access_request',
-        fields: { about, project },
-      }),
+    () => HttpResponse.json(body),
   )
 }
 

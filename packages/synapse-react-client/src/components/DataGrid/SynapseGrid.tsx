@@ -1,5 +1,7 @@
 import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
 import ExportCsvFromGridButton from '@/components/DataGrid/components/ExportCsvFromGridButton'
+import GridAgentChat from '@/components/DataGrid/components/GridAgentChat/GridAgentChat'
+import useGridAgentSidebarOpen from '@/components/DataGrid/components/GridAgentSidebar/useGridAgentSidebarOpen'
 import GridLoadingState from '@/components/DataGrid/components/GridLoadingState'
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import ReorderColumnsButton from '@/components/DataGrid/components/ReorderColumnsButton'
@@ -12,8 +14,10 @@ import { getNamedColumnIndices } from '@/components/DataGrid/utils/getNamedColum
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { ErrorFallbackComponent } from '@/components/error/ErrorBanner'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
+import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
 import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
 import { useGetEntity } from '@/synapse-queries/index'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import HelpOutline from '@mui/icons-material/HelpOutline'
@@ -49,13 +53,14 @@ import {
 } from 'react'
 import { ErrorBoundary, useErrorHandler } from 'react-error-boundary'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import GridAgentChat from '../SynapseChat/GridAgentChat'
 import { ValidationAlert } from './components/ValidationAlert'
+import { ValidationErrorSummary } from './components/ValidationErrorSummary'
 import DataGrid from './DataGrid'
 import { DataGridRow, GridModel, Operation } from './DataGridTypes'
 import { useGridReplicaUsers } from './hooks/useGridReplicaUsers'
 import { useGridUndoRedo } from './hooks/useGridUndoRedo'
 import { useRemoteSelections } from './hooks/useRemoteSelections'
+import { useValidationAlertToggle } from './hooks/useValidationAlertToggle'
 import { StartGridSession, StartGridSessionHandle } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { applyModelChange, ModelChange } from './utils/applyModelChange'
@@ -91,7 +96,18 @@ function SynapseGridInner({
 }: SynapseGridProps) {
   const [session, setSession] = useState<GridSession | null>(null)
   const [replicaId, setReplicaId] = useState<number | null>(null)
+  const isAgentSidebarEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.GRID_AGENT_SIDEBAR,
+  )
+  const {
+    isOpen: isAgentSidebarOpen,
+    openSidebar: openAgentSidebar,
+    closeSidebar: closeAgentSidebar,
+  } = useGridAgentSidebarOpen()
+  // The "Open Curie" dialog, used while the sidebar's feature flag is off
   const [chatOpen, setChatOpen] = useState(false)
+  const closeChat = useCallback(() => setChatOpen(false), [])
+  const validationAlertToggle = useValidationAlertToggle()
   const [lastSelection, setLastSelection] = useState<SelectionWithId | null>(
     null,
   )
@@ -398,8 +414,27 @@ function SynapseGridInner({
     )
   }
 
+  const agentSidebar = isAgentSidebarEnabled &&
+    session &&
+    hasCompletedInitialLoad && (
+      <GridAgentChat
+        variant="sidebar"
+        agentRegistrationId={agentRegistrationId}
+        open={isAgentSidebarOpen}
+        onOpen={openAgentSidebar}
+        onClose={closeAgentSidebar}
+        gridSessionId={session.sessionId!}
+        usersReplicaId={replicaId!}
+        chatbotName="Curie"
+      />
+    )
+
   return (
-    <SynapseGridLayout header={header} contentClassName={contentClassName}>
+    <SynapseGridLayout
+      header={header}
+      contentClassName={contentClassName}
+      sidebar={agentSidebar}
+    >
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, xl: 8 }}>
           <StartGridSession
@@ -491,20 +526,26 @@ function SynapseGridInner({
             {/* Grid */}
             {hasCompletedInitialLoad && (
               <>
-                <Grid size={12}>
-                  <ValidationAlert
-                    rowValues={rowValues}
-                    columnNames={columnNames}
-                    columnOrder={columnOrder}
-                    onNavigateToCell={handleNavigateToCell}
-                    isLoading={!hasCompletedInitialSync}
-                  />
-                </Grid>
+                {!validationAlertToggle.isHidden && (
+                  <Grid size={12}>
+                    <ValidationAlert
+                      rowValues={rowValues}
+                      columnNames={columnNames}
+                      columnOrder={columnOrder}
+                      onNavigateToCell={handleNavigateToCell}
+                      isLoading={!hasCompletedInitialSync}
+                      onHide={validationAlertToggle.hide}
+                      hideLinkRef={validationAlertToggle.toggleLinkRef}
+                    />
+                  </Grid>
+                )}
                 <Grid size={12}>
                   <Stack
                     direction={'row'}
                     spacing={1}
-                    sx={{ justifyContent: 'flex-end' }}
+                    useFlexGap
+                    // Wraps when the AI Assistant sidebar leaves too little width for every action
+                    sx={{ justifyContent: 'flex-end', flexWrap: 'wrap' }}
                   >
                     {/* Keep this sync indicator first in the stack, otherwise it will cause other buttons to shift */}
                     {isSyncing && (
@@ -521,16 +562,24 @@ function SynapseGridInner({
                         </Typography>
                       </Box>
                     )}
-                    <GridMenuButton
-                      variant="outlined"
-                      startIcon={<HelpOutline />}
-                      href="https://docs.synapse.org/synapse-docs/managing-metadata-with-curator"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{ mr: 'auto' }}
-                    >
-                      Help and Instructions
-                    </GridMenuButton>
+                    <Stack direction="row" spacing={1} sx={{ mr: 'auto' }}>
+                      <GridMenuButton
+                        variant="outlined"
+                        startIcon={<HelpOutline />}
+                        href="https://docs.synapse.org/synapse-docs/managing-metadata-with-curator"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Help and Instructions
+                      </GridMenuButton>
+                      {validationAlertToggle.isHidden && (
+                        <ValidationErrorSummary
+                          rowValues={rowValues}
+                          onShow={validationAlertToggle.show}
+                          showLinkRef={validationAlertToggle.toggleLinkRef}
+                        />
+                      )}
+                    </Stack>
                     {undoUI}
                     {redoUI}
                     <ReorderColumnsButton
@@ -541,21 +590,25 @@ function SynapseGridInner({
                       canRemoveColumns={isRecordSet}
                       onReorder={handleReorderColumns}
                     />
-                    <GridMenuButton
-                      variant={'outlined'}
-                      onClick={() => setChatOpen(true)}
-                      startIcon={<CurieAvatarHead />}
-                    >
-                      Open Curie
-                    </GridMenuButton>
-                    <GridAgentChat
-                      agentRegistrationId={agentRegistrationId}
-                      open={chatOpen}
-                      onClose={() => setChatOpen(false)}
-                      gridSessionId={session.sessionId!}
-                      usersReplicaId={replicaId!}
-                      chatbotName="Curie"
-                    />
+                    {!isAgentSidebarEnabled && (
+                      <>
+                        <GridMenuButton
+                          variant={'outlined'}
+                          onClick={() => setChatOpen(true)}
+                          startIcon={<CurieAvatarHead />}
+                        >
+                          Open Curie
+                        </GridMenuButton>
+                        <GridAgentChat
+                          agentRegistrationId={agentRegistrationId}
+                          open={chatOpen}
+                          onClose={closeChat}
+                          gridSessionId={session.sessionId!}
+                          usersReplicaId={replicaId!}
+                          chatbotName="Curie"
+                        />
+                      </>
+                    )}
                     {session.sourceEntityId && (
                       <UploadCsvToGridButton
                         sourceEntityId={session.sourceEntityId}

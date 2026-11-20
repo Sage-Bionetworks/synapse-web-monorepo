@@ -3,7 +3,7 @@ import {
   useCreateAgentSession,
   useUpdateAgentSession,
 } from '@/synapse-queries/chat/useChat'
-import { useSynapseContext } from '@/utils'
+import { SynapseClientError, useSynapseContext } from '@/utils'
 import {
   Alert,
   Box,
@@ -19,7 +19,8 @@ import {
   GridAgentSessionContext,
 } from '@sage-bionetworks/synapse-client'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
-import { useEffect, useRef, useState } from 'react'
+import { useIsMounted } from '@react-hookz/web'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { SkeletonParagraph } from '../Skeleton'
 import { displayToast } from '../ToastMessage'
 import AccessLevelMenu from './AccessLevelMenu'
@@ -73,7 +74,11 @@ const CURIE_AVATAR = (
 )
 
 export type SynapseChatProps = {
-  initialMessage?: string //optional initial message
+  /**
+   * A message sent as soon as the chat mounts, which creates the agent session right away. Without
+   * one, the session is created when the user sends their first message.
+   */
+  initialMessage?: string
   agentRegistrationId?: string // if provided, use this agent
   chatbotName?: string // optional name of this chatbot agent
   variant?: 'default' | 'curie'
@@ -109,9 +114,26 @@ export type SynapseChatProps = {
   /**
    * Invoked when creating the agent session fails because the current (anonymous) user is not
    * authorized to start a session with this agent. Callers should use this to prompt the user to
-   * log in. When omitted, the session creation error is shown inline instead.
+   * log in, and can keep `unsentMessage` to send once they have. When omitted, the session creation
+   * error is shown inline instead.
    */
-  onSessionCreationUnauthenticated?: () => void
+  onSessionCreationUnauthenticated?: (unsentMessage: string) => void
+}
+
+type OutgoingMessage = {
+  message: string
+  attachments: ChatAttachment[]
+}
+
+/**
+ * Whether creating a session failed because an anonymous user may not chat with this agent. A
+ * registration that the ACT has not opened to anonymous chat rejects them with a 401 or 403.
+ */
+function isAnonymousUserTurnedAway(
+  error: SynapseClientError,
+  isAuthenticated: boolean,
+) {
+  return !isAuthenticated && (error.status === 401 || error.status === 403)
 }
 
 export function SynapseChat({
@@ -132,7 +154,7 @@ export function SynapseChat({
   allowAttachments = false,
   onSessionCreationUnauthenticated,
 }: SynapseChatProps) {
-  const { accessToken, isAuthenticated } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
   const { userId } = useApplicationSessionContext()
 
   const baseDisclaimerText = chatbotName + ' can make mistakes'
@@ -147,17 +169,13 @@ export function SynapseChat({
   const agentSession = externalSession ?? localAgentSession
   const setAgentSession = setExternalSession ?? setLocalAgentSession
 
-  const { mutate: createAgentSession, error: createAgentSessionError } =
-    useCreateAgentSession({
-      onSuccess: newAgentSession => setAgentSession(newAgentSession),
-      onError: err => {
-        // A registration that the ACT has not opened to anonymous chat rejects an anonymous
-        // session with a 401/403. Defer to the caller to prompt the user to log in.
-        if (!isAuthenticated && (err.status === 401 || err.status === 403)) {
-          onSessionCreationUnauthenticated?.()
-        }
-      },
-    })
+  const {
+    mutateAsync: createAgentSession,
+    isPending: isCreatingAgentSession,
+    error: createAgentSessionError,
+  } = useCreateAgentSession({
+    onSuccess: newAgentSession => setAgentSession(newAgentSession),
+  })
 
   const { mutate: updateAgentSession } = useUpdateAgentSession({
     onSuccess: updatedAgentSession => setAgentSession(updatedAgentSession),
@@ -193,12 +211,14 @@ export function SynapseChat({
   }
   const presentAtMount = presentAtMountRef.current
 
-  // Keep track of the text that the user is currently typing into the textfield
+  // The composer's text and attachments, which are cleared only once the message is sent
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
-  const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
+  const [composerAttachments, setComposerAttachments] = useState<
+    ChatAttachment[]
+  >([])
 
   // A copy of the attachments sent with the last interaction, so it can still show rich
-  // (name/type) chips after ChatInputArea has cleared its own attachment state. This is passed to
+  // (name/type) chips after the composer's attachments are cleared. This is passed to
   // the last interaction for its entire lifetime -- sent, then processing, then completed -- as a
   // fallback filename source, since the request body (FileHandleAssociation) never carries a
   // filename and the server-resolved filename (attachmentStatuses) only arrives once the job
@@ -230,68 +250,124 @@ export function SynapseChat({
   //   [sessionHistoryInfiniteData],
   // )
 
-  useEffect(() => {
-    // on mount, create a new agent session!
-    if (createAgentSession && !agentSession) {
-      createAgentSession({
-        agentAccessLevel,
-        agentRegistrationId,
-        sessionContext,
-      })
-    }
-  }, [
-    createAgentSession,
-    agentSession,
-    accessToken,
-    sessionContext,
-    agentAccessLevel,
-    agentRegistrationId,
-  ])
+  const sendMessage = useCallback(
+    ({ message, attachments }: OutgoingMessage, sessionId?: string) => {
+      sendChat(
+        message,
+        attachments.length
+          ? attachments.map(attachment => ({
+              fileHandleId: attachment.fileHandleId,
+              // The backend short-circuits the FileHandleAssociation auth check for a user's own
+              // uploaded file handle, so associateObjectId/associateObjectType are not totally
+              // accurate here. FileHandleAssociateType has no dedicated value for "the uploader's
+              // own bare file handle", so this stubs associateObjectId to the fileHandleId itself
+              // and the FileEntity associate type, which supports the short-circuit path.
+              associateObjectId: attachment.fileHandleId,
+              associateObjectType: FileHandleAssociateType.FileEntity,
+            }))
+          : undefined,
+        sessionId,
+      )
+      setLastSentAttachments(attachments)
+    },
+    [sendChat],
+  )
 
+  // The caller prompts an anonymous user who was turned away to log in, instead of an error showing
+  const isDeferredToLogin = useCallback(
+    (error: unknown) =>
+      !!onSessionCreationUnauthenticated &&
+      error instanceof SynapseClientError &&
+      isAnonymousUserTurnedAway(error, isAuthenticated),
+    [onSessionCreationUnauthenticated, isAuthenticated],
+  )
+
+  // Clears a sent message from the composer, keeping anything edited while its session was created
+  const clearSentMessage = useCallback(
+    ({ message, attachments }: OutgoingMessage) => {
+      setUserChatTextfieldValue(current =>
+        current.trim() === message ? '' : current,
+      )
+      setComposerAttachments(current =>
+        current === attachments ? [] : current,
+      )
+    },
+    [],
+  )
+
+  const isMounted = useIsMounted()
+  const startSessionAndSend = useCallback(
+    async (outgoing: OutgoingMessage) => {
+      let newAgentSession: AgentSession
+      try {
+        newAgentSession = await createAgentSession({
+          agentAccessLevel,
+          agentRegistrationId,
+          sessionContext,
+        })
+      } catch (error) {
+        if (isDeferredToLogin(error)) {
+          onSessionCreationUnauthenticated?.(outgoing.message)
+        }
+        return
+      }
+      // Unlike a `mutate` callback, this still runs after the chat closes. A caller that keeps the
+      // chat state across close and reopen (GridAgentChat) still gets the message; a chat whose
+      // state closed with it has nowhere to show the message or its response, so it isn't sent.
+      if (!isMounted() && !externalChatState) {
+        return
+      }
+      // The new session reaches `agentSession` only on the next render, so its ID is passed directly
+      sendMessage(outgoing, newAgentSession.sessionId)
+      clearSentMessage(outgoing)
+    },
+    [
+      createAgentSession,
+      agentAccessLevel,
+      agentRegistrationId,
+      sessionContext,
+      isDeferredToLogin,
+      onSessionCreationUnauthenticated,
+      isMounted,
+      externalChatState,
+      sendMessage,
+      clearSentMessage,
+    ],
+  )
+
+  // The initial message is sent once per mount, so it starts at most one session however often
+  // this effect's dependencies change while that session is being created
+  const initialMessageSentRef = useRef(false)
   useEffect(() => {
-    // on mount, resolve the initial message chat interaction (if set)
-    if (agentSession && initialMessage && !initialMessageProcessed) {
-      sendChat(initialMessage)
-      setInitialMessageProcessed(true)
+    if (!initialMessage || initialMessageSentRef.current) {
+      return
     }
-  }, [agentSession, initialMessage, initialMessageProcessed, sendChat])
+    initialMessageSentRef.current = true
+    const outgoing = { message: initialMessage, attachments: [] }
+    if (agentSession) {
+      sendMessage(outgoing)
+    } else {
+      // Like a typed first message, it waits in the composer, so the user can retry it if its
+      // session can't be created
+      setUserChatTextfieldValue(initialMessage)
+      void startSessionAndSend(outgoing)
+    }
+  }, [initialMessage, agentSession, sendMessage, startSessionAndSend])
 
   const handleSend = (message: string, attachments: ChatAttachment[]) => {
-    sendChat(
-      message,
-      attachments.length
-        ? attachments.map(attachment => ({
-            fileHandleId: attachment.fileHandleId,
-            // The backend short-circuits the FileHandleAssociation auth check for a user's own
-            // uploaded file handle, so associateObjectId/associateObjectType are not totally
-            // accurate here. FileHandleAssociateType has no dedicated value for "the uploader's
-            // own bare file handle", so this stubs associateObjectId to the fileHandleId itself
-            // and the FileEntity associate type, which supports the short-circuit path.
-            associateObjectId: attachment.fileHandleId,
-            associateObjectType: FileHandleAssociateType.FileEntity,
-          }))
-        : undefined,
-    )
-    setUserChatTextfieldValue('')
-    setLastSentAttachments(attachments)
-  }
-
-  if (createAgentSessionError) {
-    // When an anonymous user can't start a session, the caller is redirecting them to log in, so
-    // suppress the inline error in favor of that flow.
-    const deferredToLogin =
-      !isAuthenticated &&
-      !!onSessionCreationUnauthenticated &&
-      (createAgentSessionError.status === 401 ||
-        createAgentSessionError.status === 403)
-    if (!deferredToLogin) {
-      return (
-        <Alert severity={'error'} sx={{ my: 2 }}>
-          {createAgentSessionError.reason}
-        </Alert>
-      )
+    const outgoing = { message, attachments }
+    if (agentSession) {
+      sendMessage(outgoing)
+      clearSentMessage(outgoing)
+    } else {
+      // The message stays in the composer until it is sent, so a failed session creation keeps it
+      void startSessionAndSend(outgoing)
     }
   }
+
+  const sessionCreationError = isDeferredToLogin(createAgentSessionError)
+    ? null
+    : createAgentSessionError
 
   return (
     <Box
@@ -324,17 +400,27 @@ export function SynapseChat({
       {showAccessLevelMenu && variant !== 'curie' && isAuthenticated && (
         <AccessLevelMenu
           initAccessLevel={agentAccessLevel}
+          // A change while the session is being created would apply to neither the request nor the session
+          disabled={isCreatingAgentSession}
           onChange={newAccessLevel => {
             setAgentAccessLevel(newAccessLevel)
-            updateAgentSession({
-              agentAccessLevel: newAccessLevel,
-              sessionId: agentSession!.sessionId!,
-            })
+            // Without a session yet, the new level applies when the session is created
+            if (agentSession) {
+              updateAgentSession({
+                agentAccessLevel: newAccessLevel,
+                sessionId: agentSession.sessionId!,
+              })
+            }
           }}
         />
       )}
-      {!agentSession && <SkeletonParagraph numRows={10} />}
-      {agentSession && (
+      {sessionCreationError && (
+        <Alert severity={'error'} sx={{ my: 2 }}>
+          {sessionCreationError.reason}
+        </Alert>
+      )}
+      {isCreatingAgentSession && <SkeletonParagraph numRows={10} />}
+      {!isCreatingAgentSession && (
         <Box
           sx={{
             flexGrow: 1,
@@ -430,7 +516,7 @@ export function SynapseChat({
                   label={prompt}
                   variant="outlined"
                   onClick={() => setUserChatTextfieldValue(prompt)}
-                  disabled={!agentSession}
+                  disabled={isCreatingAgentSession}
                   sx={{ cursor: 'pointer' }}
                 />
               ))}
@@ -440,11 +526,13 @@ export function SynapseChat({
           <ChatInputArea
             value={userChatTextfieldValue}
             onValueChange={setUserChatTextfieldValue}
+            attachments={composerAttachments}
+            onAttachmentsChange={setComposerAttachments}
             onSend={handleSend}
             placeholder={
               variant === 'curie' ? 'Ask anything' : `Message ${chatbotName}`
             }
-            disabled={!agentSession || isAwaitingResponse}
+            disabled={isCreatingAgentSession || isAwaitingResponse}
             allowAttachments={allowAttachments}
           />
         </Box>

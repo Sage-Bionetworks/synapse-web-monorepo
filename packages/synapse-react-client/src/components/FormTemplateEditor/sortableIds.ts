@@ -3,7 +3,6 @@
  * resolves their events back to a step or a field. Lives apart from the components so the adapter
  * can do that without importing the component tree.
  */
-import { FormTemplateField } from '@sage-bionetworks/synapse-client'
 import { EditableFormTemplateStep } from './utils'
 
 /** Field library rows are plain draggables, not sortables: dropping one binds it to a step. */
@@ -40,6 +39,6 @@ export function slotGroupId(step: EditableFormTemplateStep): string {
   return `slots:${step.uiKey}`
 }
 
-export function slotSortableId(field: FormTemplateField): string {
-  return `slot:${field.schemaPath}`
+export function slotSortableId(schemaPath: string): string {
+  return `slot:${schemaPath}`
 }

@@ -1,8 +1,90 @@
+import { DataGridRow } from '../DataGridTypes'
+import createValidationTestRow from './createValidationTestRow'
 import {
+  collectValidationErrors,
+  countValidationErrors,
   groupErrors,
   limitGroups,
   ValidationError,
 } from './groupValidationErrors'
+
+type ValidationStatus = DataGridRow['__validationStatus']
+
+// Keyed by every status, so a new status fails to compile until its expected behavior is listed
+const LISTS_CELL_ERRORS: Record<NonNullable<ValidationStatus>, boolean> = {
+  valid: false,
+  invalid: true,
+  pending: true,
+}
+
+const statusCases = [
+  ...Object.entries(LISTS_CELL_ERRORS).map(([status, listed]) => ({
+    status: status as ValidationStatus,
+    listed,
+  })),
+  { status: undefined, listed: false },
+]
+
+const CELL_ERRORS = { a: ['x', 'y'], b: ['z'] }
+const CELL_ERROR_COUNT = 3
+
+describe('collectValidationErrors', () => {
+  it.each(statusCases)(
+    'lists the cell errors of a $status row: $listed',
+    ({ status, listed }) => {
+      const errors = collectValidationErrors([
+        createValidationTestRow(status, CELL_ERRORS),
+      ])
+
+      const pending = status === 'pending'
+      expect(errors).toEqual(
+        listed
+          ? [
+              { rowIndex: 0, columnName: 'a', message: 'x', pending },
+              { rowIndex: 0, columnName: 'a', message: 'y', pending },
+              { rowIndex: 0, columnName: 'b', message: 'z', pending },
+            ]
+          : [],
+      )
+    },
+  )
+
+  it('keeps each error at its row position in the grid, counting rows without errors', () => {
+    const errors = collectValidationErrors([
+      createValidationTestRow('valid', { a: ['stale'] }),
+      createValidationTestRow('invalid', { a: ['x'] }),
+      createValidationTestRow('invalid'),
+      createValidationTestRow('pending', { b: ['y'] }),
+    ])
+
+    expect(errors).toEqual([
+      { rowIndex: 1, columnName: 'a', message: 'x', pending: false },
+      { rowIndex: 3, columnName: 'b', message: 'y', pending: true },
+    ])
+  })
+})
+
+describe('countValidationErrors', () => {
+  it('counts the errors collectValidationErrors lists, for rows of every status', () => {
+    const rows = statusCases.flatMap(({ status }) => [
+      createValidationTestRow(status, CELL_ERRORS),
+      createValidationTestRow(status),
+      { __validationStatus: status },
+    ])
+
+    const listingStatusCount = statusCases.filter(c => c.listed).length
+    expect(countValidationErrors(rows)).toBe(
+      CELL_ERROR_COUNT * listingStatusCount,
+    )
+    expect(countValidationErrors(rows)).toBe(
+      collectValidationErrors(rows).length,
+    )
+  })
+
+  it('returns 0 for an empty grid', () => {
+    expect(countValidationErrors([])).toBe(0)
+  })
+})
 
 function err(
   rowIndex: number,
