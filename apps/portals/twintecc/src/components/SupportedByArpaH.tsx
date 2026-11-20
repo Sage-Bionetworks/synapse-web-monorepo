@@ -12,9 +12,9 @@ export default function SupportedByArpaH() {
           Twin-TECC is supported by ARPA-H
         </Typography>
         <Typography className={styles.description}>
-          The Twin-TECC portal is funded by award number X, from the Advanced
-          Research Projects Agency for Health (ARPA-H). You can find more
-          information about the CIRCLE program on its ARPA-H website.{' '}
+          The Twin-TECC portal is funded by Agreement Number AY2AX000255, from
+          the Advanced Research Projects Agency for Health (ARPA-H). You can
+          find more information about the CIRCLE program on its ARPA-H website.{' '}
           <Link
             href={CIRCLE_PROGRAM_URL}
             target="_blank"
