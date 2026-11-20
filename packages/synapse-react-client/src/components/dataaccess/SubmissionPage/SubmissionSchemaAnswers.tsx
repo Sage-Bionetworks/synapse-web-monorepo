@@ -165,7 +165,7 @@ export function SubmissionSchemaAnswerList(
       {groups.map((group, index) => (
         // Step titles are not unique, and the list is derived rather than reordered.
         <Stack component="section" key={index} sx={{ gap: 2 }}>
-          <Stack sx={{ gap: 0.5 }}>
+          <Stack className="SubmissionAnswerGroupHeading" sx={{ gap: 0.5 }}>
             <Typography variant="headline3">{group.title}</Typography>
             {group.description && (
               <Typography variant="body1" color="text.secondary">
@@ -175,7 +175,11 @@ export function SubmissionSchemaAnswerList(
           </Stack>
           <Stack component="dl" sx={{ gap: 2, m: 0 }}>
             {group.fields.map(field => (
-              <Stack key={field.propertyKey} sx={{ gap: 0.5 }}>
+              <Stack
+                key={field.propertyKey}
+                className="SubmissionAnswer"
+                sx={{ gap: 0.5 }}
+              >
                 <Typography variant="smallText2" component="dt">
                   {field.label}
                 </Typography>

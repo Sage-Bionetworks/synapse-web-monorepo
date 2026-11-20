@@ -37,6 +37,8 @@ import {
   DATA_ACCESS_SUBMISSION_BY_ID,
   THREAD_FOR_SUBMISSION,
 } from '@/utils/APIConstants'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import dayjs from 'dayjs'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -57,7 +59,8 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { http, HttpResponse } from 'msw'
+import { delay, http, HttpResponse } from 'msw'
+import type { MockInstance } from 'vitest'
 import { useNavigate } from 'react-router'
 import * as RejectDataAccessRequestModalModule from '../RejectDataAccessRequestModal'
 import { CancelDataAccessRequestConfirmationModal } from './CancelDataAccessRequestConfirmationModal'
@@ -280,11 +283,13 @@ describe('Submission Page tests', () => {
         ')',
     )
 
-    // This username appears three times, in 'submittedBy', 'modifiedBy', and as an accessor
-    expect(await screen.findAllByText('@' + MOCK_USER_NAME)).toHaveLength(3)
+    // Named in full three times: as the submitter, the modifier, and a data requester
+    expect(
+      await screen.findAllByText(`First Last (@${MOCK_USER_NAME})`),
+    ).toHaveLength(3)
 
-    // This username only appears as an accessor
-    await screen.findByText('@' + MOCK_USER_NAME_2)
+    // Only a data requester
+    await screen.findByText(`John Doe (@${MOCK_USER_NAME_2})`)
 
     await screen.findByText('Institution')
     await screen.findByText(
@@ -424,9 +429,9 @@ describe('Submission Page tests', () => {
       isReviewer: true,
     })
 
-    // User 1 now appears as the submitter, modifier, an accessor, and the Reviewer
+    // User 1 now also appears as the Reviewer
     await waitFor(() =>
-      expect(screen.getAllByText('@' + MOCK_USER_NAME)).toHaveLength(4),
+      expect(screen.getAllByText('@' + MOCK_USER_NAME)).toHaveLength(1),
     )
 
     // User 3 should not appear - they are not a reviewer
@@ -434,6 +439,94 @@ describe('Submission Page tests', () => {
 
     // When an ACL exists, don't show the ACT as the reviewer
     expect(screen.queryByText(mockActTeam.name)).not.toBeInTheDocument()
+  })
+
+  describe('Download PDF', () => {
+    const pageTitle = 'Synapse'
+    let titleWhilePrinting: string | undefined
+    let printSpy: MockInstance<Window['print']>
+
+    beforeEach(() => {
+      document.title = pageTitle
+      titleWhilePrinting = undefined
+      printSpy = vi.spyOn(window, 'print').mockImplementation(() => {
+        titleWhilePrinting = document.title
+      })
+    })
+    afterEach(() => {
+      printSpy.mockRestore()
+    })
+
+    it.each([
+      { viewer: 'reviewer', isReviewer: true },
+      { viewer: 'requester', isReviewer: false },
+    ])(
+      'prints the loaded submission for a $viewer, titled so the PDF is named for it',
+      async ({ isReviewer }) => {
+        renderComponent({ submissionId: SUBMITTED_SUBMISSION_ID, isReviewer })
+
+        const downloadButton = await screen.findByRole('button', {
+          name: 'Download PDF',
+        })
+        await waitFor(() => expect(downloadButton).toBeEnabled())
+
+        await userEvent.click(downloadButton)
+        expect(printSpy).toHaveBeenCalledOnce()
+        expect(titleWhilePrinting).toBe(
+          `Data Access Request ${SUBMITTED_SUBMISSION_ID}`,
+        )
+
+        window.dispatchEvent(new Event('afterprint'))
+        expect(document.title).toBe(pageTitle)
+      },
+    )
+
+    it('keeps Download PDF disabled while the access requirement it prints is loading', async () => {
+      server.use(
+        http.get(
+          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
+          () => delay('infinite'),
+        ),
+      )
+      renderComponent({
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: true,
+      })
+
+      await screen.findByText('SUBMITTED')
+      expect(
+        screen.getByRole('button', { name: 'Download PDF' }),
+      ).toBeDisabled()
+    })
+
+    it('opens the PDF with the submission details, naming the submitter and each requester in full with their username', async () => {
+      renderComponent({
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: false,
+      })
+
+      expect(
+        await screen.findByRole('heading', { name: 'Data Access Request' }),
+      ).toBeInTheDocument()
+      await screen.findByText(
+        `${mockManagedACTAccessRequirement.name} (${mockSubmittedSubmission.accessRequirementId})`,
+      )
+      expect(
+        screen.getByText('Submission ID').nextElementSibling,
+      ).toHaveTextContent(SUBMITTED_SUBMISSION_ID)
+      expect(
+        screen.getByText('Submitted On').nextElementSibling,
+      ).toHaveTextContent(
+        formatDate(dayjs(mockSubmittedSubmission.submittedOn)),
+      )
+      expect(
+        screen.getByText('Submitted By').nextElementSibling,
+      ).toHaveTextContent(`First Last (@${MOCK_USER_NAME})`)
+      const secondRequesterName = (
+        await screen.findByText(`John Doe (@${MOCK_USER_NAME_2})`)
+      ).parentElement!
+      expect(secondRequesterName.nextElementSibling).toHaveTextContent('Gain')
+    })
   })
 
   describe('Viewing page as an accessor', () => {

@@ -14,12 +14,15 @@ import { getAttachmentsNotInSchemaData } from '@/utils/jsonschema/schemaData'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user'
 import { useGetUserAccessApproval } from '@/synapse-queries/dataaccess/useAccessApprovals'
 import { formatDate } from '@/utils/functions/DateFormatter'
+import { useMediaPrintOnly } from '@/utils/hooks/useMediaPrintOnly'
 import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
+import DownloadIcon from '@mui/icons-material/DownloadTwoTone'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   Button,
   Grid,
   Skeleton,
@@ -28,6 +31,7 @@ import {
 } from '@mui/material'
 import {
   ACCESS_TYPE,
+  AccessType,
   ManagedACTAccessRequirement,
   Submission,
   SubmissionState,
@@ -35,7 +39,7 @@ import {
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { isEmpty, toLower, upperFirst } from 'lodash-es'
-import { Fragment, ReactNode, useMemo, useState } from 'react'
+import { Fragment, ReactNode, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
@@ -53,6 +57,26 @@ export type SubmissionPageProps = {
   submissionId: string | number
   /** If true, display reviewer controls on the page */
   isReviewer: boolean // There is currently no API to check if a user has review permissions on a specific submission ID
+}
+
+const SUBMISSION_PRINT_TITLE = 'Data Access Request'
+
+/** e.g. `GAIN_ACCESS` → `Gain` */
+function formatAccessorChangeType(type: AccessType): string {
+  return upperFirst(toLower(type.substring(0, type.indexOf('_'))))
+}
+
+function SubmissionDetail(props: { label: string; children: ReactNode }) {
+  return (
+    <>
+      <Typography variant="dataFieldKey" component="dt">
+        {props.label}
+      </Typography>
+      <Typography variant="smallText1" component="dd">
+        {props.children}
+      </Typography>
+    </>
+  )
 }
 
 const THREAD_BODY =
@@ -116,9 +140,12 @@ function isRequesterOnSubmission(userId: string, submission: Submission) {
  */
 export default function SubmissionPage(props: SubmissionPageProps) {
   const { submissionId, isReviewer } = props
+  const { visibleOnPrintClassName, hiddenOnPrintClassName } =
+    useMediaPrintOnly()
   const [showRejectionDialog, setShowRejectionDialog] = useState(false)
 
-  const { data: currentUserProfile } = useGetCurrentUserProfile()
+  const { data: currentUserProfile, isLoading: isLoadingCurrentUserProfile } =
+    useGetCurrentUserProfile()
 
   const { data: submission, isLoading: isLoadingSubmission } =
     useGetDataAccessSubmission(submissionId, {
@@ -145,9 +172,9 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   const isSubmitter =
     submission && submission.submittedBy === currentUserProfile?.ownerId
 
-  const { data: accessRequirement } =
+  const { data: accessRequirement, isLoading: isLoadingAccessRequirement } =
     useGetAccessRequirements<ManagedACTAccessRequirement>(
-      parseInt(submission?.accessRequirementId!),
+      Number.parseInt(submission?.accessRequirementId!),
       { enabled: !!submission },
     )
 
@@ -206,8 +233,38 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   // Documents heading would sit directly above them.
   const showDocumentsHeading = hasDocuments || !submission?.schemaData
 
+  // Printing before these load would put placeholders in the PDF. Best effort: user names and file names load
+  // separately and are not waited for.
+  const isReadyToPrint =
+    Boolean(submission) &&
+    !isLoadingCurrentUserProfile &&
+    !isLoadingAccessRequirement &&
+    !isLoadingAccessApproval &&
+    !isLoadingSubmissionForm
+  const titleBeforePrint = useRef<string | undefined>(undefined)
+  function printSubmission() {
+    // Browsers name the saved PDF after the document title.
+    titleBeforePrint.current ??= document.title
+    document.title = `${SUBMISSION_PRINT_TITLE} ${submissionId}`
+    window.addEventListener(
+      'afterprint',
+      () => {
+        if (titleBeforePrint.current !== undefined) {
+          document.title = titleBeforePrint.current
+          titleBeforePrint.current = undefined
+        }
+      },
+      { once: true },
+    )
+    window.print()
+  }
+
   return (
-    <Grid container={true} spacing={4} className="SubmissionPage">
+    <Grid
+      container={true}
+      spacing={4}
+      className={`SubmissionPage ${visibleOnPrintClassName}`}
+    >
       {showUpdateRequestDialog && accessRequirement && (
         <AccessRequirementList
           renderAsModal={true}
@@ -250,6 +307,13 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           lg: 3,
         }}
       >
+        <Typography
+          variant="headline1"
+          component="h1"
+          className="SubmissionPrintTitle"
+        >
+          {SUBMISSION_PRINT_TITLE}
+        </Typography>
         <Typography variant="dataFieldKey" gutterBottom>
           Status
         </Typography>
@@ -265,7 +329,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
         {submission &&
           isReviewer &&
           submission.state === SubmissionState.SUBMITTED && (
-            <div className="ButtonContainer">
+            <div className={`ButtonContainer ${hiddenOnPrintClassName}`}>
               <Button
                 onClick={() => {
                   setShowApprovalConfirmation(true)
@@ -288,7 +352,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           )}
 
         {submission && isSubmitter && (
-          <div className="ButtonContainer">
+          <div className={`ButtonContainer ${hiddenOnPrintClassName}`}>
             <CancelDataAccessRequestConfirmationModal
               open={showCancelRequestConfirmationDialog}
               submissionId={String(submissionId)}
@@ -322,17 +386,70 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             )}
           </div>
         )}
-        <Typography variant="dataFieldKey" gutterBottom>
-          Access Requirement Name
-        </Typography>
-
-        <Typography variant="smallText1" gutterBottom>
-          {accessRequirement?.name ?? <Skeleton width={100} />}
-        </Typography>
-        <br />
-
+        <div className={`ButtonContainer ${hiddenOnPrintClassName}`}>
+          <Button
+            variant="outlined"
+            startIcon={<DownloadIcon />}
+            disabled={!isReadyToPrint}
+            onClick={printSubmission}
+          >
+            Download PDF
+          </Button>
+        </div>
+        {submission ? (
+          <dl className="SubmissionDetails">
+            <SubmissionDetail label="Access Requirement">
+              {accessRequirement
+                ? `${accessRequirement.name} (${submission.accessRequirementId})`
+                : submission.accessRequirementId}
+            </SubmissionDetail>
+            <SubmissionDetail label="Submission ID">
+              {submission.id}
+            </SubmissionDetail>
+            <SubmissionDetail label="Submitted By">
+              <UserBadge userId={submission.submittedBy} showFullName />
+            </SubmissionDetail>
+            <SubmissionDetail label="Submitted On">
+              {formatDate(dayjs(submission.submittedOn))}
+            </SubmissionDetail>
+            {isReviewer && (
+              <SubmissionDetail label="Modified By">
+                <UserBadge userId={submission.modifiedBy} showFullName />
+              </SubmissionDetail>
+            )}
+            <SubmissionDetail label="Modified On">
+              {formatDate(dayjs(submission.modifiedOn))}
+            </SubmissionDetail>
+            <SubmissionDetail
+              label={`Data Requesters (${submission.accessorChanges.length})`}
+            >
+              <span className="DataRequesters">
+                {submission.accessorChanges.map(accessorChange => (
+                  <Fragment key={accessorChange.userId}>
+                    <span>
+                      <UserBadge userId={accessorChange.userId} showFullName />
+                    </span>
+                    <span>{formatAccessorChangeType(accessorChange.type)}</span>
+                  </Fragment>
+                ))}
+              </span>
+            </SubmissionDetail>
+            {submission.researchProjectSnapshot && (
+              <>
+                <SubmissionDetail label="Institution">
+                  {submission.researchProjectSnapshot.institution}
+                </SubmissionDetail>
+                <SubmissionDetail label="Project Lead">
+                  {submission.researchProjectSnapshot.projectLead}
+                </SubmissionDetail>
+              </>
+            )}
+          </dl>
+        ) : (
+          <Skeleton width={200} />
+        )}
         {isReviewer && (
-          <>
+          <Box className={hiddenOnPrintClassName}>
             <Typography variant="dataFieldKey" gutterBottom>
               Assigned Reviewer
             </Typography>
@@ -348,142 +465,53 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               )}
             </Stack>
             <br />
-          </>
+          </Box>
         )}
-        <Typography variant="dataFieldKey" gutterBottom>
-          Conditions
-        </Typography>
-        {accessRequirement ? (
-          <Typography variant="smallText1" component={'div'} gutterBottom>
-            <ul>
-              <li>
-                Expiration period:{' '}
-                {dayjs
-                  .duration({
-                    milliseconds: accessRequirement.expirationPeriod,
-                  })
-                  .asDays()}{' '}
-                day(s)
-                {accessRequirement.expirationPeriod === 0 && ' (no expiration)'}
-              </li>
+        <Box className={hiddenOnPrintClassName}>
+          <Typography variant="dataFieldKey" gutterBottom>
+            Conditions
+          </Typography>
+          {accessRequirement ? (
+            <Typography variant="smallText1" component={'div'} gutterBottom>
+              <ul>
+                <li>
+                  Expiration period:{' '}
+                  {dayjs
+                    .duration({
+                      milliseconds: accessRequirement.expirationPeriod,
+                    })
+                    .asDays()}{' '}
+                  day(s)
+                  {accessRequirement.expirationPeriod === 0 &&
+                    ' (no expiration)'}
+                </li>
 
-              {accessRequirement.isCertifiedUserRequired && (
-                <li>User must be Certified</li>
-              )}
-              {accessRequirement.isValidatedProfileRequired && (
-                <li>User Profile must be Validated</li>
-              )}
-              {accessRequirement.isDUCRequired && <li>DUC is required</li>}
-              {accessRequirement.isIDURequired && <li>IDU is required</li>}
-              {accessRequirement.isIDUPublic && (
-                <li>IDU will be made public</li>
-              )}
-              {accessRequirement.isIRBApprovalRequired && (
-                <li>IRB Approval is required</li>
-              )}
-              {accessRequirement.areOtherAttachmentsRequired && (
-                <li>Other attachments are required</li>
-              )}
-            </ul>
-          </Typography>
-        ) : (
-          <Skeleton width={100} />
-        )}
-        <br />
-        <div className="SubmissionSummaryGrid">
-          <Typography variant="dataFieldKey">Submitted By</Typography>
-          <Typography variant="smallText1">
-            {submission ? (
-              <UserBadge userId={submission.submittedBy} />
-            ) : (
-              <Skeleton width={100} />
-            )}
-          </Typography>
-          <Typography variant="dataFieldKey">Submitted On</Typography>
-          <Typography variant="smallText1">
-            {submission ? (
-              formatDate(dayjs(submission.submittedOn))
-            ) : (
-              <Skeleton width={100} />
-            )}
-          </Typography>
-          {isReviewer && (
-            <>
-              <Typography variant="dataFieldKey">Modified By</Typography>
-              <Typography variant="smallText1">
-                {submission ? (
-                  <UserBadge userId={submission.modifiedBy} />
-                ) : (
-                  <Skeleton width={100} />
+                {accessRequirement.isCertifiedUserRequired && (
+                  <li>User must be Certified</li>
                 )}
-              </Typography>
-            </>
-          )}
-          <Typography variant="dataFieldKey">Modified On</Typography>
-          <Typography variant="smallText1">
-            {submission ? (
-              formatDate(dayjs(submission.modifiedOn))
-            ) : (
-              <Skeleton width={100} />
-            )}
-          </Typography>
-          <Typography className="Key" variant="dataFieldKey">
-            Data Requesters
-            {`${submission ? ` (${submission.accessorChanges.length})` : ''}`}
-          </Typography>
-          {submission ? (
-            submission.accessorChanges.map(accessorChange => (
-              <Fragment key={accessorChange.userId}>
-                <Typography className="Key DataAccessor" variant="smallText1">
-                  <span style={{ whiteSpace: 'nowrap' }}>
-                    <UserBadge
-                      key={accessorChange.userId}
-                      userId={accessorChange.userId}
-                    />
-                  </span>
-                </Typography>
-                <Typography className="Value DataAccessor" variant="smallText1">
-                  {upperFirst(
-                    toLower(
-                      accessorChange.type.substring(
-                        0,
-                        accessorChange.type.indexOf('_'),
-                      ),
-                    ),
-                  )}
-                </Typography>
-              </Fragment>
-            ))
+                {accessRequirement.isValidatedProfileRequired && (
+                  <li>User Profile must be Validated</li>
+                )}
+                {accessRequirement.isDUCRequired && <li>DUC is required</li>}
+                {accessRequirement.isIDURequired && <li>IDU is required</li>}
+                {accessRequirement.isIDUPublic && (
+                  <li>IDU will be made public</li>
+                )}
+                {accessRequirement.isIRBApprovalRequired && (
+                  <li>IRB Approval is required</li>
+                )}
+                {accessRequirement.areOtherAttachmentsRequired && (
+                  <li>Other attachments are required</li>
+                )}
+              </ul>
+            </Typography>
           ) : (
             <Skeleton width={100} />
           )}
-          {(!submission || submission.researchProjectSnapshot) && (
-            <>
-              <Typography className="Key" variant="dataFieldKey">
-                Institution
-              </Typography>
-              <Typography className="Value" variant="smallText1">
-                {submission ? (
-                  submission.researchProjectSnapshot?.institution
-                ) : (
-                  <Skeleton width={100} />
-                )}
-              </Typography>
-              <Typography className="Key" variant="dataFieldKey">
-                Project Lead
-              </Typography>
-              <Typography className="Value" variant="smallText1">
-                {submission ? (
-                  submission.researchProjectSnapshot?.projectLead
-                ) : (
-                  <Skeleton width={100} />
-                )}
-              </Typography>
-            </>
-          )}
-        </div>
+        </Box>
       </Grid>
       <Grid
+        className="SubmissionContents"
         size={{
           xs: 12,
           sm: 8,
@@ -493,9 +521,11 @@ export default function SubmissionPage(props: SubmissionPageProps) {
         <Stack sx={{ gap: 2 }}>
           <SynapseErrorBoundary>
             {submission ? (
-              <AccessRequirementWiki
-                accessRequirementId={submission.accessRequirementId}
-              />
+              <Box className={hiddenOnPrintClassName}>
+                <AccessRequirementWiki
+                  accessRequirementId={submission.accessRequirementId}
+                />
+              </Box>
             ) : (
               <></>
             )}
@@ -516,7 +546,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             </section>
           )}
           <section>
-            <Typography variant="headline1">
+            <Typography variant="headline1" className={hiddenOnPrintClassName}>
               Contents of the Access Request
               <hr />
             </Typography>
@@ -592,11 +622,13 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             </Stack>
           </section>
           {thread?.id && (
-            <DiscussionThread
-              threadId={thread.id}
-              limit={25}
-              emptyBodyContent={THREAD_BODY}
-            />
+            <Box className={hiddenOnPrintClassName}>
+              <DiscussionThread
+                threadId={thread.id}
+                limit={25}
+                emptyBodyContent={THREAD_BODY}
+              />
+            </Box>
           )}
         </Stack>
       </Grid>

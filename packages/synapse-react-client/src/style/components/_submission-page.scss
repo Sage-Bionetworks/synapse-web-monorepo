@@ -11,27 +11,26 @@
   }
   .SubmissionSummary {
     margin-bottom: 15px;
-    .SubmissionSummaryGrid {
+  }
+  .SubmissionDetails {
+    margin: 0 0 16px;
+
+    dd {
+      margin: 2px 0 12px;
+    }
+
+    // One row per requester: the user, then the access change.
+    .DataRequesters {
       display: grid;
-      gap: 8px;
-      // Grid column maximum is 50% minus 5px to account for the column gap
-      grid-template-columns: minmax(auto, calc(50% - 5px)) minmax(
-          auto,
-          calc(50% - 5px)
-        );
+      grid-template-columns: 1fr auto;
+      gap: 4px 12px;
+    }
 
-      .Key {
-        grid-column: 1;
-      }
-
-      .Value {
-        grid-column: 2;
-      }
-
-      .DataAccessor {
-        margin-top: 5px;
-        margin-bottom: 3px;
-      }
+    // UserBadge keeps a name on one line (inline nowrap, non-breaking spaces), so a long name would run out of the
+    // sidebar. Break it at the sidebar's edge instead.
+    .UserBadge {
+      white-space: normal !important;
+      overflow-wrap: anywhere;
     }
   }
   ul {
@@ -44,5 +43,59 @@
   .AccessRequirementWikiContainer {
     background: var(--synapse-gray-100);
     border: 1px solid #dfe2e6;
+  }
+
+  .SubmissionPrintTitle {
+    display: none;
+  }
+}
+
+@media print {
+  .SubmissionPage {
+    // Override MUI Grid's flex layout, whose style sheet may load after this one. useMediaPrintOnly positions the page
+    // absolutely, which would otherwise shrink it to its content's width.
+    display: block !important;
+    width: 100%;
+
+    .SubmissionSummary,
+    .SubmissionContents {
+      width: 100% !important;
+    }
+
+    // A global print rule follows each link with its URL; user names are links here.
+    a[href]::after {
+      content: none !important;
+    }
+
+    .SubmissionPrintTitle {
+      display: block;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid currentColor;
+    }
+
+    .SubmissionDetails {
+      display: grid;
+      grid-template-columns: 11rem 1fr;
+      gap: 4px 12px;
+      margin-bottom: 24px;
+
+      dd {
+        margin: 0;
+      }
+
+      // The page is wide, so size the name column to the longest name rather than stretching it.
+      .DataRequesters {
+        grid-template-columns: max-content auto;
+      }
+    }
+
+    // Keep step headings and answer labels with what follows. Answers may split across pages: one moved whole to the
+    // next page leaves the rest of this page blank.
+    .SubmissionAnswerGroupHeading,
+    .SubmissionAnswer dt {
+      break-inside: avoid;
+      break-after: avoid;
+    }
   }
 }
