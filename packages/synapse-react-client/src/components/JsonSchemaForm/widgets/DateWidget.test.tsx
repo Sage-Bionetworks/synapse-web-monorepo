@@ -1,14 +1,18 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { WidgetProps } from '@rjsf/utils'
 import { DateWidget } from './DateWidget'
+
+const FIELD_ID = 'root_project_end_date'
+const FIELD_LABEL = 'Project end date'
 
 function renderWidget(props: Partial<WidgetProps> = {}) {
   const onChange = vi.fn()
   render(
     <DateWidget
       {...({
-        id: 'root_project_end_date',
+        id: FIELD_ID,
+        label: FIELD_LABEL,
         onChange,
         onBlur: vi.fn(),
         options: {},
@@ -19,33 +23,44 @@ function renderWidget(props: Partial<WidgetProps> = {}) {
   return { onChange }
 }
 
+function getField() {
+  return screen.getByRole('group', { name: FIELD_LABEL })
+}
+
 describe('DateWidget', () => {
-  it('renders a single date-only input with no time-of-day text', () => {
+  it('renders a single date-only field with no time-of-day sections', () => {
     renderWidget({ value: '2027-03-05T00:00:00.000Z' })
 
-    // A time picker would render "AM"/"PM" text and a colon-separated time in its value.
-    expect(screen.queryByText(/\bAM\b|\bPM\b/)).not.toBeInTheDocument()
-    const input = screen.getByRole('textbox') as HTMLInputElement
-    expect(input.value).not.toContain(':')
+    const sections = within(getField()).getAllByRole('spinbutton')
+    expect(sections.map(section => section.getAttribute('aria-label'))).toEqual(
+      ['Month', 'Day', 'Year'],
+    )
+    // The hidden input carries RJSF's field id, so the form's `<label for>` applies
+    expect(document.getElementById(FIELD_ID)).toHaveValue('03/05/2027')
   })
 
   it('reports the selected day as a UTC-midnight ISO date-time string', async () => {
     const user = userEvent.setup()
     const { onChange } = renderWidget({ value: null })
 
-    const input = screen.getByRole('textbox')
-    await user.click(input)
+    await user.click(
+      within(getField()).getByRole('spinbutton', { name: 'Month' }),
+    )
+    // Pasting into the field while all of its sections are selected fills every section
+    await user.keyboard('{Control>}a{/Control}')
     await user.paste('03/05/2027')
 
     expect(onChange).toHaveBeenLastCalledWith('2027-03-05T00:00:00.000Z')
   })
 
-  it('clears the value when the input is emptied', async () => {
+  it('clears the value when the field is emptied', async () => {
     const user = userEvent.setup()
     const { onChange } = renderWidget({ value: '2027-03-05T00:00:00.000Z' })
 
-    const input = screen.getByRole('textbox')
-    await user.clear(input)
+    await user.click(
+      within(getField()).getByRole('spinbutton', { name: 'Month' }),
+    )
+    await user.keyboard('{Control>}a{/Control}{Backspace}')
 
     expect(onChange).toHaveBeenLastCalledWith(null)
   })

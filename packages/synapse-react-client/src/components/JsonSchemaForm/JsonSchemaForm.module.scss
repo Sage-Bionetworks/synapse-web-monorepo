@@ -16,7 +16,8 @@
     height: unset;
   }
 
-  :global(.MuiTextField-root):not(:global(.datetime-picker)) {
+  :global(.MuiTextField-root):not(:global(.datetime-picker)),
+  :global(.MuiPickersTextField-root):not(:global(.datetime-picker)) {
     display: flex;
   }
 

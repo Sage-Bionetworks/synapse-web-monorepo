@@ -7,11 +7,15 @@ import HighlightOffTwoTone from '@mui/icons-material/HighlightOffTwoTone'
 import InfoTwoTone from '@mui/icons-material/InfoTwoTone'
 import {
   alpha,
+  CSSObject,
   Fade,
   inputBaseClasses,
+  InputBaseProps,
   lighten,
+  Theme,
   ThemeOptions,
 } from '@mui/material'
+import type {} from '@mui/x-date-pickers/themeAugmentation'
 import { palette } from './palette/Palettes'
 import linkTheme from './typography/Link'
 import { typographyOptions } from './typography/Typography'
@@ -20,6 +24,49 @@ const DIALOG_INNER_PADDING = '2px'
 
 // The default TransitionComponent, Grow, causes click event interception issues, especially in SWC's gwtbootstrap modals.
 const TRANSITION_COMPONENT_OVERRIDE = Fade
+
+type InputRootState = {
+  error?: boolean
+  focused?: boolean
+  color?: InputBaseProps['color']
+}
+
+/** The root style of a text input; shared by InputBase and the date pickers' PickersInputBase */
+function getInputRootStyle(
+  theme: Theme,
+  { error, focused, color }: InputRootState,
+): CSSObject {
+  let outline = 'none'
+  if (error) {
+    outline = `1px solid ${theme.palette.error.main}`
+  } else if (focused && color) {
+    outline = `1px solid ${theme.palette[color].main}`
+  }
+  const backgroundColor = error
+    ? alpha(theme.palette.error.main, 0.1)
+    : theme.palette.grey[200]
+  const formHelperTextColor =
+    color === 'warning' ? theme.palette[color].main : undefined
+  return {
+    borderRadius: '3px',
+    fontSize: '14px',
+    position: 'relative',
+    backgroundColor: backgroundColor,
+    outline: outline,
+    '&+.MuiFormHelperText-root': {
+      color: formHelperTextColor,
+    },
+    '&.Mui-disabled': {
+      backgroundColor: theme.palette.grey[100],
+    },
+    '&.Mui-focused': {
+      boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.1rem`,
+    },
+    '& fieldset': {
+      border: 'none',
+    },
+  }
+}
 
 export const defaultMuiThemeOptions: ThemeOptions = {
   typography: typographyOptions,
@@ -331,47 +378,12 @@ export const defaultMuiThemeOptions: ThemeOptions = {
     },
     MuiInputBase: {
       styleOverrides: {
-        root: ({ theme, ownerState }) => {
-          const hasOutline = ownerState.error || ownerState.focused
-          let outline = 'none'
-          if (hasOutline) {
-            if (ownerState.error) {
-              outline = `1px solid ${theme.palette.error.main}`
-            } else if (ownerState.color) {
-              outline = `1px solid ${theme.palette[ownerState.color].main}`
-            }
-          }
-          let backgroundColor = theme.palette.grey[200]
-          if (ownerState.error) {
-            backgroundColor = alpha(theme.palette.error.main, 0.1)
-          }
-          const formHelperTextColor =
-            ownerState.color === 'warning'
-              ? theme.palette[ownerState.color].main
-              : undefined
-          return {
-            borderRadius: '3px',
-            fontSize: '14px',
-            position: 'relative',
-            backgroundColor: backgroundColor,
-            outline: outline,
-            '&+.MuiFormHelperText-root': {
-              color: formHelperTextColor,
-            },
-            '&.Mui-disabled': {
-              backgroundColor: theme.palette.grey[100],
-            },
-            '&.Mui-focused': {
-              boxShadow: `${alpha(
-                theme.palette.primary.main,
-                0.25,
-              )} 0 0 0 0.1rem`,
-            },
-            '& fieldset': {
-              border: 'none',
-            },
-          }
-        },
+        root: ({ theme, ownerState }) =>
+          getInputRootStyle(theme, {
+            error: ownerState.error,
+            focused: Boolean(ownerState.focused),
+            color: ownerState.color,
+          }),
         input: ({ theme }) => ({
           padding: '14px 12px',
         }),
@@ -403,6 +415,35 @@ export const defaultMuiThemeOptions: ThemeOptions = {
             marginTop: ownerState.label && theme.spacing(3),
           },
         }),
+      },
+    },
+    // The date pickers render PickersTextField instead of TextField, so give it the same look
+    MuiPickersTextField: {
+      defaultProps: {
+        // MuiInputLabel shrinks every label, but PickersTextField hides an empty field's format
+        // placeholder unless it knows its label is shrunk
+        slotProps: {
+          inputLabel: {
+            shrink: true,
+          },
+        },
+      },
+      styleOverrides: {
+        root: ({ theme, ownerState }) => ({
+          '& .MuiPickersInputBase-root': {
+            marginTop: ownerState.inputHasLabel ? theme.spacing(3) : undefined,
+          },
+        }),
+      },
+    },
+    MuiPickersInputBase: {
+      styleOverrides: {
+        root: ({ theme, ownerState }) =>
+          getInputRootStyle(theme, {
+            error: ownerState.hasFieldError,
+            focused: ownerState.isFieldFocused,
+            color: ownerState.inputColor,
+          }),
       },
     },
     MuiMenu: {

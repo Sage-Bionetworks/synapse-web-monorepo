@@ -8,6 +8,7 @@ import {
   TextField,
   TextFieldProps,
 } from '@mui/material'
+import { PickersTextFieldProps } from '@mui/x-date-pickers/PickersTextField'
 import DateTimePicker from '../../DateTimePicker/DateTimePicker'
 import dayjs from 'dayjs'
 import FormHelperText from '@mui/material/FormHelperText'
@@ -24,6 +25,11 @@ export type DefaultValueFieldProps<TValue, TReturn = TValue> = {
   onChange: (newValue: TReturn | undefined) => void
   disabled?: boolean
   TextFieldProps?: Omit<TextFieldProps, 'value' | 'onChange' | 'disabled'>
+  /** Props for the date picker's text field, used when the column type is DATE */
+  PickersTextFieldProps?: Omit<
+    Partial<PickersTextFieldProps<'outlined'>>,
+    'value' | 'onChange' | 'disabled'
+  >
   SelectProps?: Omit<SelectProps, 'variant' | 'value' | 'onChange' | 'disabled'>
   selectFormHelperText?: ReactNode
 }
@@ -58,7 +64,7 @@ function DefaultValueBooleanField(props: DefaultValueFieldProps<string>) {
 }
 
 function DefaultValueDateField(props: DefaultValueFieldProps<string>) {
-  const { onChange, value = null, disabled, TextFieldProps } = props
+  const { onChange, value = null, disabled, PickersTextFieldProps } = props
 
   const valueAsDayjs = useMemo(() => {
     if (value) {
@@ -83,7 +89,7 @@ function DefaultValueDateField(props: DefaultValueFieldProps<string>) {
       }}
       disabled={disabled}
       slotProps={{
-        textField: TextFieldProps,
+        textField: PickersTextFieldProps,
       }}
     />
   )

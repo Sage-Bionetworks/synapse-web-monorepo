@@ -86,12 +86,13 @@ export function Range(props: RangeProps): React.ReactNode {
         flex: '1 0',
         marginRight: '10px',
         gap: '10px',
-        '& .MuiInputBase-root': {
+        '& .MuiInputBase-root, & .MuiPickersInputBase-root': {
           minWidth: '150px',
         },
-        '& .MuiInputBase-root,.MuiButton-root': {
-          height: '38px',
-        },
+        '& .MuiInputBase-root, & .MuiPickersInputBase-root, & .MuiButton-root':
+          {
+            height: '38px',
+          },
         '& .MuiInputLabel-root': {
           color: 'grey.700',
           fontWeight: 400,
@@ -103,16 +104,14 @@ export function Range(props: RangeProps): React.ReactNode {
           <Box key="range_min">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                enableAccessibleFieldDOMStructure={false}
                 label="From"
-                slots={{
-                  textField: TextField,
-                }}
                 slotProps={{
                   textField: {
                     error: false,
-                    inputProps: {
-                      'aria-label': 'min',
+                    slotProps: {
+                      htmlInput: {
+                        'aria-label': 'min',
+                      },
                     },
                   },
                 }}
@@ -129,16 +128,14 @@ export function Range(props: RangeProps): React.ReactNode {
           <Box key="range_max">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                enableAccessibleFieldDOMStructure={false}
                 label="To"
-                slots={{
-                  textField: TextField,
-                }}
                 slotProps={{
                   textField: {
                     error: false,
-                    inputProps: {
-                      'aria-label': 'max',
+                    slotProps: {
+                      htmlInput: {
+                        'aria-label': 'max',
+                      },
                     },
                   },
                 }}

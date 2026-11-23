@@ -154,8 +154,12 @@ describe('test EvaluationRoundEditor', () => {
 
     render(<EvaluationRoundEditor {...props} />, { wrapper: createWrapper() })
 
-    const roundStartInput = screen.getByLabelText('Round Start')
-    expect(roundStartInput).toBeDisabled()
+    const roundStartSections = within(
+      screen.getByRole('group', { name: 'Round Start' }),
+    ).getAllByRole('spinbutton')
+    for (const section of roundStartSections) {
+      expect(section).toHaveAttribute('aria-disabled', 'true')
+    }
   })
 
   it('test start date input: enabled when current time not past start', () => {
@@ -166,8 +170,12 @@ describe('test EvaluationRoundEditor', () => {
 
     render(<EvaluationRoundEditor {...props} />, { wrapper: createWrapper() })
 
-    const roundStartInput = screen.getByLabelText('Round Start')
-    expect(roundStartInput).not.toBeDisabled()
+    const roundStartSections = within(
+      screen.getByRole('group', { name: 'Round Start' }),
+    ).getAllByRole('spinbutton')
+    for (const section of roundStartSections) {
+      expect(section).toHaveAttribute('aria-disabled', 'false')
+    }
   })
 
   it('test save: no id in props => create new EvaluationRound', async () => {

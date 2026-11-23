@@ -441,6 +441,17 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                 error: !!errorsByField['defaultValue'],
                 helperText: errorsByField['defaultValue'],
               }}
+              PickersTextFieldProps={{
+                slotProps: {
+                  input: {
+                    'aria-label': 'Default Value',
+                    sx: fieldSx,
+                  },
+                },
+                fullWidth: true,
+                error: !!errorsByField['defaultValue'],
+                helperText: errorsByField['defaultValue'],
+              }}
               SelectProps={{
                 label: 'Default Value',
                 sx: fieldSx,
