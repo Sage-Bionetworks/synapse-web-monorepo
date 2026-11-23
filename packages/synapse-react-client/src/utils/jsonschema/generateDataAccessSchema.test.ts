@@ -98,16 +98,16 @@ describe('generateDataAccessSchema', () => {
     expect(result.steps[0].jsonSchema.required).toEqual(['summaryOfUse'])
   })
 
-  it('drops a step entirely when every one of its fields is omitted for the request type', () => {
+  it('drops a step entirely when every one of its fields is omitted for the request type, reporting it as hidden', () => {
     const result = generateDataAccessSchema(
       template([
         {
-          title: 'Renewal only',
-          fields: [{ schemaPath: '/summaryOfUse', uiDefinition: {} }],
-        },
-        {
           title: 'Always',
           fields: [{ schemaPath: '/institution', uiDefinition: {} }],
+        },
+        {
+          title: 'Renewal only',
+          fields: [{ schemaPath: '/summaryOfUse', uiDefinition: {} }],
         },
       ]),
       schema,
@@ -115,6 +115,41 @@ describe('generateDataAccessSchema', () => {
     )
     expect(result.steps).toHaveLength(1)
     expect(result.steps[0].jsonSchema.title).toBe('Always')
+    expect(result.hiddenSteps).toEqual([{ position: 2, title: 'Renewal only' }])
+  })
+
+  it('does not report a step as hidden when it has no field that resolves for either request type', () => {
+    const result = generateDataAccessSchema(
+      template([
+        { title: 'Empty', fields: [] },
+        {
+          title: 'Removed field',
+          fields: [{ schemaPath: '/removed', uiDefinition: {} }],
+        },
+      ]),
+      schema,
+      DataAccessRequestType.REQUEST,
+    )
+    expect(result.steps).toHaveLength(0)
+    expect(result.hiddenSteps).toEqual([])
+  })
+
+  it('does not report a step as hidden when one of its fields applies to the request type', () => {
+    const result = generateDataAccessSchema(
+      template([
+        {
+          title: 'Mixed',
+          fields: [
+            { schemaPath: '/summaryOfUse', uiDefinition: {} },
+            { schemaPath: '/institution', uiDefinition: {} },
+          ],
+        },
+      ]),
+      schema,
+      DataAccessRequestType.REQUEST,
+    )
+    expect(result.steps).toHaveLength(1)
+    expect(result.hiddenSteps).toEqual([])
   })
 
   it('skips a field whose schemaPath no longer resolves to a schema property', () => {

@@ -12,3 +12,19 @@
   display: flex;
   align-items: center;
 }
+
+// A single dense line: the notice explains the preview, which stays the focus of the panel
+.hiddenStepsNotice {
+  padding: 0 12px;
+  font-size: 0.8125rem;
+
+  :global(.MuiAlert-icon) {
+    margin-right: 8px;
+    padding: 6px 0;
+    font-size: 1rem;
+  }
+
+  :global(.MuiAlert-message) {
+    padding: 6px 0;
+  }
+}

@@ -55,6 +55,20 @@ const schema: RJSFSchema = {
         required: ['summaryOfUse'],
       },
     },
+    {
+      if: {
+        properties: {
+          [SUBMISSION_CONTEXT_PROPERTY]: {
+            const: DataAccessRequestType.REQUEST,
+          },
+        },
+      },
+      then: {
+        properties: {
+          accessReason: { type: 'string', title: 'Reason for access' },
+        },
+      },
+    },
   ],
 }
 
@@ -160,11 +174,12 @@ describe('FormTemplatePreview', () => {
     const user = userEvent.setup()
     renderPreview({ template: renewalOnlyTemplate, jsonSchema: schema })
     expect(
-      screen.getByText(
-        'Add at least one step with a bound field to preview the form.',
-      ),
+      screen.getByText('No step has a field that applies to a Request.'),
     ).toBeInTheDocument()
     expect(getValidateCheckbox()).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Skipped in a Request (Renewal only): Step 1 “Renewal details”',
+    )
     await user.click(screen.getByRole('button', { name: 'Renewal' }))
     expect(getFieldLabel('Summary')).toBeInTheDocument()
   })
@@ -207,14 +222,110 @@ describe('FormTemplatePreview', () => {
     expect(screen.getByRole('textbox')).toHaveValue('Sage Bionetworks')
   })
 
-  it('excludes a step whose only field is gated to the other request type', () => {
-    // "summaryOfUse" is gated to RENEWAL by the schema's allOf; a REQUEST-only preview omits the
-    // "Renewal details" step entirely (generateDataAccessSchema drops steps with no fields).
+  it('excludes a step whose only field is gated to the other request type, and names it in a notice', () => {
+    // "summaryOfUse" is gated to RENEWAL by the schema's allOf, so the Request view omits the step
     renderPreview({ template: renewalGatedTemplate, jsonSchema: schema })
-    expect(screen.queryByText('Renewal details')).not.toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: 'Renewal details' }),
     ).not.toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Skipped in a Request (Renewal only): Step 2 “Renewal details”',
+    )
+    const notice = screen.getByRole('status')
+    // Outside the preview frame, which shows what a requester sees
+    expect(
+      screen.getByText('Live Preview').nextElementSibling,
+    ).not.toContainElement(notice)
+  })
+
+  it('keeps naming the hidden step while a later step is shown', async () => {
+    const user = userEvent.setup()
+    renderPreview({
+      template: template([
+        {
+          title: 'Basics',
+          fields: [{ schemaPath: '/institution', uiDefinition: {} }],
+        },
+        {
+          title: 'Renewal details',
+          fields: [{ schemaPath: '/summaryOfUse', uiDefinition: {} }],
+        },
+        {
+          title: 'Additional info',
+          fields: [{ schemaPath: '/signingOfficial', uiDefinition: {} }],
+        },
+      ]),
+      jsonSchema: schema,
+    })
+    await user.click(screen.getByRole('button', { name: 'Additional info' }))
+    expect(getFieldLabel('Signing Official')).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Step 2 “Renewal details”',
+    )
+  })
+
+  it('names a Request-only step in the Renewal view', async () => {
+    const user = userEvent.setup()
+    renderPreview({
+      template: template([
+        {
+          title: 'Basics',
+          fields: [{ schemaPath: '/institution', uiDefinition: {} }],
+        },
+        {
+          title: 'First request',
+          fields: [{ schemaPath: '/accessReason', uiDefinition: {} }],
+        },
+      ]),
+      jsonSchema: schema,
+    })
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Renewal' }))
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Skipped in a Renewal (Request only): Step 2 “First request”',
+    )
+  })
+
+  it('drops the notice once the view switches to the request type the hidden step belongs to', async () => {
+    const user = userEvent.setup()
+    renderPreview({ template: renewalGatedTemplate, jsonSchema: schema })
+    expect(screen.getByRole('status')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Renewal' }))
+    expect(
+      screen.getByRole('button', { name: 'Renewal details' }),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  })
+
+  it('shows no hidden-steps notice when every step applies to the request type', () => {
+    renderPreview({
+      template: twoAlwaysVisibleStepsTemplate,
+      jsonSchema: schema,
+    })
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  })
+
+  it('lists every hidden step by its position in the template, and an untitled one by position alone', () => {
+    renderPreview({
+      template: template([
+        {
+          title: 'Renewal details',
+          fields: [{ schemaPath: '/summaryOfUse', uiDefinition: {} }],
+        },
+        {
+          title: 'Basics',
+          fields: [{ schemaPath: '/institution', uiDefinition: {} }],
+        },
+        {
+          title: '',
+          fields: [{ schemaPath: '/summaryOfUse', uiDefinition: {} }],
+        },
+      ]),
+      jsonSchema: schema,
+    })
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Skipped in a Request (Renewal only): Step 1 “Renewal details”, Step 3',
+    )
   })
 
   it('regenerates the visible steps when the Request/Renewal toggle changes', async () => {
