@@ -1,7 +1,11 @@
 import { RJSFSchema } from '@rjsf/utils'
-import { FormTemplate } from '@sage-bionetworks/synapse-client'
-import { render, screen } from '@testing-library/react'
+import {
+  DataAccessRequestType,
+  FormTemplate,
+} from '@sage-bionetworks/synapse-client'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
 import { FormStructurePanel } from './FormStructurePanel'
 import { validateFormTemplateFields } from './formTemplateValidation'
 import { BIND_FIELD_LABEL } from './utils'
@@ -203,5 +207,57 @@ describe('FormStructurePanel', () => {
     await user.click(screen.getByRole('option', { name: '/notes' }))
 
     expect(fieldCounts()).toEqual(['2 fields', '1 field'])
+  })
+
+  it('marks a step whose fields all belong to one request type with that request type', () => {
+    const renewalSchema: RJSFSchema = {
+      ...jsonSchema,
+      properties: {
+        ...jsonSchema.properties,
+        [SUBMISSION_CONTEXT_PROPERTY]: { type: 'string' },
+      },
+      allOf: [
+        {
+          if: {
+            properties: {
+              [SUBMISSION_CONTEXT_PROPERTY]: {
+                const: DataAccessRequestType.RENEWAL,
+              },
+            },
+          },
+          then: {
+            properties: {
+              progressReport: { type: 'string', title: 'Progress report' },
+              summary: { type: 'string', title: 'Summary' },
+            },
+          },
+        },
+      ],
+    }
+    renderPanel(
+      {
+        ...template,
+        steps: [
+          { title: 'Renewal', fields: [field('/progressReport')] },
+          {
+            title: 'Mixed',
+            fields: [field('/institution'), field('/summary')],
+          },
+          { title: 'Empty', fields: [] },
+        ],
+      },
+      renewalSchema,
+    )
+
+    const stepCard = (name: string) => screen.getByRole('region', { name })
+    expect(
+      within(stepCard('Step 1: Renewal')).getByText('Renewal only'),
+    ).toBeInTheDocument()
+    expect(
+      within(stepCard('Step 2: Mixed')).queryByText('Renewal only'),
+    ).not.toBeInTheDocument()
+    expect(
+      within(stepCard('Step 3: Empty')).queryByText(/only$/),
+    ).not.toBeInTheDocument()
   })
 })
