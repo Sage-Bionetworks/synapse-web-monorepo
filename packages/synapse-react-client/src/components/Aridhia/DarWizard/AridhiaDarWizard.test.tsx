@@ -409,6 +409,45 @@ describe('AridhiaDarWizard', () => {
     expect(body.fields.workspace_name).toBe('New Team Workspace')
   })
 
+  it('submits a new-workspace phone answer as digits only', async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...wizardHandlers(
+        getAridhiaWorkspaceRequestFormHandler({
+          name: 'Request a workspace',
+          sections: {
+            workspace: {
+              label: 'Workspace details',
+              fields: [...MOCK_ARIDHIA_WORKSPACE_FORM_FIELDS, PHONE_FIELD],
+            },
+          },
+        }),
+      ),
+      submittedOkHandler(),
+    )
+    renderWizard()
+
+    await waitForDestinationStepReady()
+    await openTablesDropdown(user)
+    await selectDictionary(user, 'Dictionary A')
+    await selectLocationAndWorkspace(user, 'Request a new workspace')
+    await clickNext(user)
+
+    await fillNewWorkspaceStep(user)
+    await user.type(screen.getByLabelText(/^phone number/i), '2025550123')
+    await clickNext(user)
+
+    await fillProjectStep(user)
+    await clickNext(user)
+    await fillAboutStep(user)
+    await clickNext(user)
+
+    await acceptTermsAndSubmit(user)
+
+    await waitFor(() => expect(capturedRequestBodies).toHaveLength(1))
+    expect(capturedRequestBodies[0].fields.phone).toBe('12025550123')
+  })
+
   it('clears the new-workspace form values when switching back to an existing workspace', async () => {
     const user = userEvent.setup()
     server.use(...getAridhiaDarWizardHandlers(), submittedOkHandler())

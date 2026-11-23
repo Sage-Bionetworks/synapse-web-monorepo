@@ -301,11 +301,14 @@ function useAridhiaDarWizardParts(
     const { name, code: _formCode, ...answers } = draft.values
     // Only the submitted payload is converted; the draft keeps the widget's own value so it
     // restores into the phone input and shows formatted on the Review step.
-    const fields = toFairSubmissionAnswers(answers, [
-      ...(aboutRjsf?.phoneFieldNames ?? []),
-      ...(projectRjsf?.phoneFieldNames ?? []),
-      ...(workspaceRjsf?.phoneFieldNames ?? []),
-    ])
+    const fields = toFairSubmissionAnswers(
+      answers,
+      [
+        aboutRjsf,
+        projectRjsf,
+        draft.workspaceRequested ? workspaceRjsf : undefined,
+      ].filter(section => section !== undefined),
+    )
     submitMutation.mutate({
       code: draft.code,
       name: (name as string) ?? '',

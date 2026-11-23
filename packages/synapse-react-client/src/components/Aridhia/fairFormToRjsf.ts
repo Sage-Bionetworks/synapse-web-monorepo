@@ -20,8 +20,6 @@ export type FairRjsfSection = {
   uiSchema: UiSchema
   /** Fields whose `type` cannot be rendered; the wizard blocks submit and names them. */
   unsupported: FairField[]
-  /** Names of this section's FAIR `phone`-type fields; see `toFairSubmissionAnswers`. */
-  phoneFieldNames: string[]
 }
 
 /**
@@ -32,13 +30,19 @@ export type FairRjsfSection = {
  */
 export function toFairSubmissionAnswers(
   values: Record<string, unknown>,
-  phoneFieldNames: Iterable<string>,
+  sections: readonly Pick<FairRjsfSection, 'uiSchema'>[],
 ): Record<string, unknown> {
   const answers = { ...values }
-  for (const name of phoneFieldNames) {
-    const value = answers[name]
-    if (typeof value === 'string') {
-      answers[name] = value.replaceAll(/\D/g, '')
+  for (const { uiSchema } of sections) {
+    for (const [name, fieldUiSchema] of Object.entries(uiSchema)) {
+      const value = answers[name]
+      if (
+        (fieldUiSchema as UiSchema | undefined)?.['ui:widget'] ===
+          'PhoneWidget' &&
+        typeof value === 'string'
+      ) {
+        answers[name] = value.replaceAll(/\D/g, '')
+      }
     }
   }
   return answers
@@ -156,7 +160,6 @@ export function fairSectionToRjsf(
   }
   const required: string[] = []
   const unsupported: FairField[] = []
-  const phoneFieldNames: string[] = []
 
   for (const field of section.fields) {
     const name = field.name
@@ -254,7 +257,6 @@ export function fairSectionToRjsf(
       case 'phone': {
         properties[name] = { type: 'string', maxLength: lengthBound(v.maximum) }
         uiSchema[name] = { 'ui:widget': 'PhoneWidget' }
-        phoneFieldNames.push(name)
         break
       }
       case 'label': {
@@ -287,7 +289,6 @@ export function fairSectionToRjsf(
     },
     uiSchema,
     unsupported,
-    phoneFieldNames,
   }
 }
 

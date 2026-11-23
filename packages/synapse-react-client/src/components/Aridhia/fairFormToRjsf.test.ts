@@ -117,10 +117,6 @@ describe('fairSectionToRjsf', () => {
     expect(unsupported.map(f => f.name)).toEqual(['sso_login'])
     expect(schema.properties).not.toHaveProperty('sso_login')
   })
-
-  test('lists phone-type fields in phoneFieldNames', () => {
-    expect(fairSectionToRjsf(section).phoneFieldNames).toEqual(['phone_number'])
-  })
 })
 
 describe('FAIR string formats', () => {
@@ -712,19 +708,24 @@ describe('summarizeFormAnswers', () => {
 })
 
 describe('toFairSubmissionAnswers', () => {
+  const rjsf = fairSectionToRjsf(section)
+
   test('sends phone answers as digits only, matching what RDCA-DAP stores', () => {
-    const values = { phone_number: '+1 202 555 0123', note: '+1 202 555 0123' }
-    expect(toFairSubmissionAnswers(values, ['phone_number'])).toEqual({
+    const values = {
+      phone_number: '+1 202 555 0123',
+      nickname: '+1 202 555 0123',
+    }
+    expect(toFairSubmissionAnswers(values, [rjsf])).toEqual({
       phone_number: '12025550123',
-      note: '+1 202 555 0123',
+      nickname: '+1 202 555 0123',
     })
     // The in-form values (and so the saved draft) are left untouched.
     expect(values.phone_number).toBe('+1 202 555 0123')
   })
 
   test('leaves unanswered phone fields absent', () => {
-    expect(toFairSubmissionAnswers({ a: 'x' }, ['phone_number'])).toEqual({
-      a: 'x',
+    expect(toFairSubmissionAnswers({ nickname: 'x' }, [rjsf])).toEqual({
+      nickname: 'x',
     })
   })
 })
