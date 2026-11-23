@@ -113,8 +113,8 @@ export default function SynapsePortalBanners({
             href={link}
             target="_blank"
             rel="noopener noreferrer"
-            flex={1}
             sx={{
+              flex: 1,
               display: 'flex',
               flexWrap: 'nowrap',
               padding: '16px',
@@ -134,8 +134,8 @@ export default function SynapsePortalBanners({
             }}
           >
             <Box
-              flex={1}
               sx={{
+                flex: 1,
                 display: 'flex',
                 flexWrap: 'wrap',
                 justifyContent: 'space-between',

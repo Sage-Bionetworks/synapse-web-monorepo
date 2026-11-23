@@ -100,7 +100,9 @@ export default function ChallengeTeamTable(props: ChallengeTeamTableProps) {
               onClick={() => {
                 onSelectTeam(String(row.id))
               }}
-              inputProps={{ 'aria-label': `Select ${row.name}` }}
+              slotProps={{
+                input: { 'aria-label': `Select ${row.name}` },
+              }}
             />
           )
         },

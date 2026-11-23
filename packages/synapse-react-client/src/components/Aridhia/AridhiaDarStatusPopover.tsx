@@ -125,7 +125,12 @@ export default function AridhiaDarStatusPopover(
         )}
         {onNewRequest && (
           <>
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+              }}
+            >
               Need different tables, or was a request denied? You can submit
               another request.
             </Typography>
@@ -179,7 +184,12 @@ function DarListItem(props: {
         {chip && <Chip size="small" label={chip.label} color={chip.color} />}
       </Stack>
       {(request.created_at || request.updated_at) && (
-        <Typography variant="body2" color="text.secondary">
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           {request.created_at &&
             `Created ${new Date(request.created_at).toLocaleDateString()}`}
           {request.created_at && request.updated_at && ' · '}
@@ -259,7 +269,17 @@ function RequestDataAccessRow(props: {
 
 function DataAccessNote(props: { children: ReactNode }) {
   return (
-    <Typography variant="body2" color="text.secondary" sx={DATA_ACCESS_NOTE_SX}>
+    <Typography
+      variant="body2"
+      sx={[
+        {
+          color: 'text.secondary',
+        },
+        ...(Array.isArray(DATA_ACCESS_NOTE_SX)
+          ? DATA_ACCESS_NOTE_SX
+          : [DATA_ACCESS_NOTE_SX]),
+      ]}
+    >
       {props.children}
     </Typography>
   )

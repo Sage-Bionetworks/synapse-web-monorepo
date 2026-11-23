@@ -205,7 +205,9 @@ const RedirectDialog = (props: RedirectDialogProps): React.ReactNode => {
         open={true}
         onClose={onClose}
         className="RedirectDialog"
-        PaperProps={{ sx: { padding: 0 } }}
+        slotProps={{
+          paper: { sx: { padding: 0 } },
+        }}
       >
         <DialogContent
           sx={{

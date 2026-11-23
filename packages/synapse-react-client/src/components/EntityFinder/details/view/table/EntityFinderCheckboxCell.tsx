@@ -13,10 +13,12 @@ export function EntityFinderCheckboxCell<
 
   return (
     <Checkbox
-      inputProps={{ 'aria-label': `Select ${entityId}` }}
       checked={isSelected}
       onChange={() => {
         // no-op
+      }}
+      slotProps={{
+        input: { 'aria-label': `Select ${entityId}` },
       }}
     />
   )

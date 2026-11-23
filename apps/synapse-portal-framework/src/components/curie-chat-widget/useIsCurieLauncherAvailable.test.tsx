@@ -31,7 +31,10 @@ type CurieTestProvidersProps = PropsWithChildren<{
 function CurieTestProviders(props: CurieTestProvidersProps) {
   const { isChatAvailable, isCurieLauncherEnabled, children } = props
   const portalContextValue = useMemo(
-    () => ({ isCurieLauncherEnabled }) as PortalContextType,
+    () =>
+      ({
+        isCurieLauncherEnabled,
+      }) as PortalContextType,
     [isCurieLauncherEnabled],
   )
   const chatDialogContextValue = useMemo(

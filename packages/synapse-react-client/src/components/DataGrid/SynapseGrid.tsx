@@ -557,7 +557,12 @@ function SynapseGridInner({
                         }}
                       >
                         <SynapseSpinner size={16} margin="0" />
-                        <Typography variant="caption" color="text.secondary">
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: 'text.secondary',
+                          }}
+                        >
                           Syncing…
                         </Typography>
                       </Box>

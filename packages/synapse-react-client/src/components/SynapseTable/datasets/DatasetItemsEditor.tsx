@@ -345,7 +345,6 @@ const SelectAllCheckboxRenderer = (
 
   return (
     <Checkbox
-      inputProps={{ 'aria-label': 'Select All' }}
       checked={isChecked}
       disabled={datasetToUpdate.items.length === 0}
       onChange={() => {
@@ -354,6 +353,9 @@ const SelectAllCheckboxRenderer = (
         } else {
           addSelectedId(...datasetToUpdate.items.map(item => item.entityId))
         }
+      }}
+      slotProps={{
+        input: { 'aria-label': 'Select All' },
       }}
     />
   )

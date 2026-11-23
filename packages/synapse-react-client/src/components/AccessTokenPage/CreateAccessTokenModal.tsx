@@ -90,7 +90,11 @@ export function CreateAccessTokenModal(props: CreateAccessTokenModalProps) {
       </Typography>
     </>
   ) : (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       <TextField
         autoFocus
         label="Token Name"

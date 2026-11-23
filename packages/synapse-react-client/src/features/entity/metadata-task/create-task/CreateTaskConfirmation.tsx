@@ -23,7 +23,12 @@ export default function CreateTaskConfirmation(
   const { taskId, onDone } = props
 
   return (
-    <Stack gap={3} alignItems="flex-start">
+    <Stack
+      sx={{
+        gap: 3,
+        alignItems: 'flex-start',
+      }}
+    >
       <Typography variant="headline3" component="h3">
         {CREATE_TASK_CONFIRMATION_TITLE}
       </Typography>

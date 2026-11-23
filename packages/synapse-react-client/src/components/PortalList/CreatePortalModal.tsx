@@ -65,7 +65,11 @@ export function CreatePortalModal({
   }
 
   const dialogContent = (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       <TextField
         id="portalNameInput"
         label="Portal Name"
@@ -76,8 +80,10 @@ export function CreatePortalModal({
           setPortalName(event.target.value)
           setErrorMessage(undefined)
         }}
-        inputProps={{
-          onKeyDown: handleKeyDown,
+        slotProps={{
+          htmlInput: {
+            onKeyDown: handleKeyDown,
+          },
         }}
       />
       <TextField
@@ -91,8 +97,10 @@ export function CreatePortalModal({
           setPortalUrl(event.target.value)
           setErrorMessage(undefined)
         }}
-        inputProps={{
-          onKeyDown: handleKeyDown,
+        slotProps={{
+          htmlInput: {
+            onKeyDown: handleKeyDown,
+          },
         }}
       />
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}

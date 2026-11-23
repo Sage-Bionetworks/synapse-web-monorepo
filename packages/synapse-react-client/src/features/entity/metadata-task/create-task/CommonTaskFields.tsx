@@ -41,7 +41,11 @@ export default function CommonTaskFields(props: CommonTaskFieldsProps) {
   } = props
 
   return (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       <TextField
         label="Task Name"
         fullWidth

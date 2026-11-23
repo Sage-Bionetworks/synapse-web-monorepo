@@ -67,7 +67,11 @@ export default function MetadataTasksTableAssigneeCell(
       title="Set Assignee"
       open={showUserPicker}
       content={
-        <Stack gap={2}>
+        <Stack
+          sx={{
+            gap: 2,
+          }}
+        >
           <Typography variant="body1" gutterBottom>
             Use the Assignee field to organize work by assigning a task to a
             specific person or team. This field is only for task organization
@@ -130,14 +134,16 @@ export default function MetadataTasksTableAssigneeCell(
   return (
     <Stack
       direction={'row'}
-      alignItems={'center'}
-      justifyContent={'space-between'}
       spacing={1}
       onMouseOver={() => {
         setIsHoveringOnCell(true)
       }}
       onMouseLeave={() => {
         setIsHoveringOnCell(false)
+      }}
+      sx={{
+        alignItems: 'center',
+        justifyContent: 'space-between',
       }}
     >
       <span style={{ overflow: 'hidden' }}>{assigneeDisplay}</span>

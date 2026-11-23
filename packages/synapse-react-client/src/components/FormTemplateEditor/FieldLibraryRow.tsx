@@ -98,37 +98,66 @@ export function FieldLibraryRow({
           <Box sx={{ flexGrow: 1, minWidth: 0 }}>
             <Typography
               variant="body2"
-              fontWeight={500}
               noWrap
               title={displayLabel}
+              sx={{
+                fontWeight: 500,
+              }}
             >
               {displayLabel}
             </Typography>
             <Stack
               direction="row"
               spacing={0.5}
-              alignItems="center"
-              sx={{ mt: 0.25 }}
+              sx={{
+                alignItems: 'center',
+                mt: 0.25,
+              }}
             >
-              <Typography variant="caption" color="text.secondary">
+              <Typography
+                variant="caption"
+                sx={{
+                  color: 'text.secondary',
+                }}
+              >
                 {fieldTypeLabel(type)}
               </Typography>
               {isRequired && (
                 <>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary',
+                    }}
+                  >
                     ·
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary',
+                    }}
+                  >
                     Required
                   </Typography>
                 </>
               )}
               {context !== 'ALWAYS' && (
                 <>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary',
+                    }}
+                  >
                     ·
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary',
+                    }}
+                  >
                     {submissionContextLabel(context)}
                   </Typography>
                 </>

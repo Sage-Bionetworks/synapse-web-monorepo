@@ -115,7 +115,7 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
           value={pastedValues}
           onChange={e => setPastedValues(e.target.value)}
           slotProps={{
-            input: { inputProps: { 'aria-label': 'CSV or TSV to Append' } },
+            htmlInput: { 'aria-label': 'CSV or TSV to Append' },
           }}
         />
         <Box

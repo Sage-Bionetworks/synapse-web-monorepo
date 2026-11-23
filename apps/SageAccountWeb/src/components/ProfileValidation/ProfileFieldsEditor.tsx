@@ -56,8 +56,8 @@ export const ProfileFieldsEditor = (
   return (
     <>
       <Stack
-        gap={2}
         sx={{
+          gap: 2,
           marginBottom: theme.spacing(2),
         }}
       >

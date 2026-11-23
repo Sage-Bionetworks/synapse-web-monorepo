@@ -36,7 +36,12 @@ export function ValidationErrorSummary({
         color={errorCount > 0 ? 'error' : 'success'}
         size="small"
       />
-      <Typography variant="body1" fontWeight="bold">
+      <Typography
+        variant="body1"
+        sx={{
+          fontWeight: 'bold',
+        }}
+      >
         Errors
       </Typography>
       <Link

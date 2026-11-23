@@ -174,12 +174,30 @@ export function StepCard({
           )}
         </IconButton>
         <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-          <Typography id={headingId} variant="body2" fontWeight={500} noWrap>
+          <Typography
+            id={headingId}
+            variant="body2"
+            noWrap
+            sx={{
+              fontWeight: 500,
+            }}
+          >
             Step {stepIndex + 1}: {step.title || '(untitled)'}
           </Typography>
           {/* Beside the field count, so the chip never truncates the step title */}
-          <Stack direction="row" alignItems="center" gap={1}>
-            <Typography variant="caption" color="text.secondary">
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: 'center',
+              gap: 1,
+            }}
+          >
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'text.secondary',
+              }}
+            >
               {fieldCountLabel}
             </Typography>
             {stepContext && (
@@ -255,8 +273,10 @@ export function StepCard({
             {step.fieldPaths.length === 0 ? (
               <Typography
                 variant="caption"
-                color="text.secondary"
-                sx={{ p: 1 }}
+                sx={{
+                  color: 'text.secondary',
+                  p: 1,
+                }}
               >
                 Drag a field here, or bind one below.
               </Typography>

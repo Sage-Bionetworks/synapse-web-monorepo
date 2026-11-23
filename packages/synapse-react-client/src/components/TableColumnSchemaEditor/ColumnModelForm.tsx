@@ -212,7 +212,6 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
         >
           <Checkbox
             checked={columnModel.isSelected}
-            inputProps={{ 'aria-label': 'Select' }}
             disabled={disabled}
             onChange={() => {
               dispatch({
@@ -220,6 +219,9 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                 columnModelIndex,
                 jsonSubColumnModelIndex: jsonSubColumnIndex,
               })
+            }}
+            slotProps={{
+              input: { 'aria-label': 'Select' },
             }}
           />
         </Box>
@@ -328,20 +330,21 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
               recommendedValue={defaultAnnotationModel?.maximumSize}
               columnType={columnModel.columnType as ColumnTypeEnum}
               disabled={disabled || !canHaveSize(columnModel.columnType)}
-              InputProps={{
-                disableInjectingGlobalStyles:
-                  DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
-
-                slotProps: {
-                  input: {
-                    'aria-label': 'Maximum Size',
-                    min: 1,
-                    max: canHaveSize(columnModel.columnType)
-                      ? getMaxSizeForType(columnModel.columnType)
-                      : undefined,
+              slotProps={{
+                input: {
+                  disableInjectingGlobalStyles:
+                    DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
+                  slotProps: {
+                    input: {
+                      'aria-label': 'Maximum Size',
+                      min: 1,
+                      max: canHaveSize(columnModel.columnType)
+                        ? getMaxSizeForType(columnModel.columnType)
+                        : undefined,
+                    },
                   },
+                  sx: fieldSx,
                 },
-                sx: fieldSx,
               }}
               onChange={e => {
                 dispatch({
@@ -389,24 +392,26 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                   },
                 })
               }}
-              InputProps={{
-                disableInjectingGlobalStyles:
-                  DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
-                slotProps: {
-                  input: {
-                    'aria-label': 'Maximum List Length',
-                    min: 1,
-                    max: canHaveMaxListLength(columnModel.columnType)
-                      ? getMaxListLengthForType(
-                          columnModel.columnType,
-                          getFormDataValueAsNumber(
-                            (columnModel as ColumnModelFormData).maximumSize,
-                          ) ?? undefined,
-                        )
-                      : undefined,
+              slotProps={{
+                input: {
+                  disableInjectingGlobalStyles:
+                    DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
+                  slotProps: {
+                    input: {
+                      'aria-label': 'Maximum List Length',
+                      min: 1,
+                      max: canHaveMaxListLength(columnModel.columnType)
+                        ? getMaxListLengthForType(
+                            columnModel.columnType,
+                            getFormDataValueAsNumber(
+                              (columnModel as ColumnModelFormData).maximumSize,
+                            ) ?? undefined,
+                          )
+                        : undefined,
+                    },
                   },
+                  sx: fieldSx,
                 },
-                sx: fieldSx,
               }}
               fullWidth
               error={!!errorsByField['maximumListLength']}
@@ -429,22 +434,24 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             )
           ) : (
             <DefaultValueField
-              TextFieldProps={{
-                InputProps: {
-                  disableInjectingGlobalStyles:
-                    DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
-                  slotProps: {
-                    input: {
-                      'aria-label': 'Default Value',
+              textFieldProps={{
+                slotProps: {
+                  input: {
+                    disableInjectingGlobalStyles:
+                      DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
+                    slotProps: {
+                      input: {
+                        'aria-label': 'Default Value',
+                      },
                     },
+                    sx: fieldSx,
                   },
-                  sx: fieldSx,
                 },
                 fullWidth: true,
                 error: !!errorsByField['defaultValue'],
                 helperText: errorsByField['defaultValue'],
               }}
-              PickersTextFieldProps={{
+              pickersTextFieldProps={{
                 slotProps: {
                   input: {
                     'aria-label': 'Default Value',
@@ -455,7 +462,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                 error: !!errorsByField['defaultValue'],
                 helperText: errorsByField['defaultValue'],
               }}
-              SelectProps={{
+              selectProps={{
                 label: 'Default Value',
                 sx: fieldSx,
                 slotProps: {
@@ -512,15 +519,17 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                   columnModel.columnType,
                   isJsonSubColumn,
                 ),
-              InputProps: {
-                disableInjectingGlobalStyles:
-                  DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
-                // Is readOnly because edits are made with the JSONArrayEditorModal
-                readOnly: true,
-                sx: fieldSx,
-                slotProps: {
-                  input: {
-                    'aria-label': 'Restrict Values',
+              slotProps: {
+                input: {
+                  disableInjectingGlobalStyles:
+                    DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
+                  // Is readOnly because edits are made with the JSONArrayEditorModal
+                  readOnly: true,
+                  sx: fieldSx,
+                  slotProps: {
+                    input: {
+                      'aria-label': 'Restrict Values',
+                    },
                   },
                 },
               },

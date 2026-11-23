@@ -301,8 +301,8 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
             {subTitle && (
               <Typography
                 variant="body1"
-                color="inherit"
                 sx={{
+                  color: 'inherit',
                   fontStyle: 'italic',
                   fontSize: '1.5rem',
                 }}

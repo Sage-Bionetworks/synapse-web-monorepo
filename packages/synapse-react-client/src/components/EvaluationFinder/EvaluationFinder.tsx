@@ -110,7 +110,11 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
             {filteredEvaluations.map(evaluation => (
               <FormControlLabel
                 control={
-                  <Checkbox inputProps={{ 'aria-label': evaluation.name! }} />
+                  <Checkbox
+                    slotProps={{
+                      input: { 'aria-label': evaluation.name! },
+                    }}
+                  />
                 }
                 key={evaluation.id}
                 label={

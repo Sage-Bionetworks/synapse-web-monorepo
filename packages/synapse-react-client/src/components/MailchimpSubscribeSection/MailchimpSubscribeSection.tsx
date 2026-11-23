@@ -52,7 +52,6 @@ function MailchimpForm({ subscribe, status, message }: MailchimpFormProps) {
           type="email"
           size="small"
           required
-          inputProps={{ 'aria-label': 'Email address' }}
           className={styles.emailInput}
           slotProps={{
             input: {
@@ -62,6 +61,7 @@ function MailchimpForm({ subscribe, status, message }: MailchimpFormProps) {
                 </InputAdornment>
               ),
             },
+            htmlInput: { 'aria-label': 'Email address' },
           }}
         />
         <Button

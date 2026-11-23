@@ -58,8 +58,10 @@ const TotalChallengesTrackedSection = ({
       <Typography
         variant="body1"
         color="textSecondary"
-        textAlign="center"
-        sx={{ mb: '50px' }}
+        sx={{
+          textAlign: 'center',
+          mb: '50px',
+        }}
       >
         *The plot does not include challenges that are planned beyond this year,
         or those with unspecified start dates.

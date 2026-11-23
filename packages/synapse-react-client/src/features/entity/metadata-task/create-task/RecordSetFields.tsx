@@ -58,7 +58,11 @@ export default function RecordSetFields(props: RecordSetFieldsProps) {
   })
 
   return (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       <EntityIdTextField
         label={RECORD_SET_FOLDER_ID_LABEL}
         value={value.folderId}

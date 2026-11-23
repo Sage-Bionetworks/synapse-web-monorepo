@@ -24,22 +24,22 @@ export type DefaultValueFieldProps<TValue, TReturn = TValue> = {
   value: TValue | undefined
   onChange: (newValue: TReturn | undefined) => void
   disabled?: boolean
-  TextFieldProps?: Omit<TextFieldProps, 'value' | 'onChange' | 'disabled'>
+  textFieldProps?: Omit<TextFieldProps, 'value' | 'onChange' | 'disabled'>
   /** Props for the date picker's text field, used when the column type is DATE */
-  PickersTextFieldProps?: Omit<
+  pickersTextFieldProps?: Omit<
     Partial<PickersTextFieldProps<'outlined'>>,
     'value' | 'onChange' | 'disabled'
   >
-  SelectProps?: Omit<SelectProps, 'variant' | 'value' | 'onChange' | 'disabled'>
+  selectProps?: Omit<SelectProps, 'variant' | 'value' | 'onChange' | 'disabled'>
   selectFormHelperText?: ReactNode
 }
 
 function DefaultValueBooleanField(props: DefaultValueFieldProps<string>) {
-  const { onChange, value, disabled, SelectProps, selectFormHelperText } = props
+  const { onChange, value, disabled, selectProps, selectFormHelperText } = props
   return (
     <FormControl fullWidth>
       <Select
-        {...SelectProps}
+        {...selectProps}
         disabled={disabled}
         value={value || ''}
         onChange={e => {
@@ -64,7 +64,7 @@ function DefaultValueBooleanField(props: DefaultValueFieldProps<string>) {
 }
 
 function DefaultValueDateField(props: DefaultValueFieldProps<string>) {
-  const { onChange, value = null, disabled, PickersTextFieldProps } = props
+  const { onChange, value = null, disabled, pickersTextFieldProps } = props
 
   const valueAsDayjs = useMemo(() => {
     if (value) {
@@ -89,7 +89,7 @@ function DefaultValueDateField(props: DefaultValueFieldProps<string>) {
       }}
       disabled={disabled}
       slotProps={{
-        textField: PickersTextFieldProps,
+        textField: pickersTextFieldProps,
       }}
     />
   )
@@ -105,7 +105,7 @@ function DefaultValueListField(
     onChange,
     value: _value = null,
     columnModel,
-    TextFieldProps,
+    textFieldProps,
     disabled,
   } = props
   const value = useMemo(() => {
@@ -141,13 +141,13 @@ function DefaultValueListField(
         }
       }}
       columnType={columnModel.columnType as ColumnTypeEnum}
-      TextFieldProps={{ ...TextFieldProps, disabled }}
+      TextFieldProps={{ ...textFieldProps, disabled }}
     />
   )
 }
 
 export default function DefaultValueField<T>(props: DefaultValueFieldProps<T>) {
-  const { columnModel, onChange, value, disabled, TextFieldProps } = props
+  const { columnModel, onChange, value, disabled, textFieldProps } = props
 
   const { columnType } = columnModel
 
@@ -177,7 +177,7 @@ export default function DefaultValueField<T>(props: DefaultValueFieldProps<T>) {
 
   return (
     <TextField
-      {...TextFieldProps}
+      {...textFieldProps}
       type={'text'}
       value={value || undefined}
       onChange={event => {

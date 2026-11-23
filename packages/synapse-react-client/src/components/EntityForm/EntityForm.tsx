@@ -272,7 +272,14 @@ export default function EntityForm(props: EntityFormProps) {
 
 function LoadingIndicator(props: { text: string }) {
   return (
-    <Stack direction="row" alignItems="center" gap={1} sx={{ my: 2 }}>
+    <Stack
+      direction="row"
+      sx={{
+        alignItems: 'center',
+        gap: 1,
+        my: 2,
+      }}
+    >
       <SynapseSpinner margin="0" />
       <Typography variant="body1">{props.text}&hellip;</Typography>
     </Stack>

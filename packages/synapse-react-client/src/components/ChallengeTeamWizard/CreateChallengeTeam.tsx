@@ -110,7 +110,11 @@ export const CreateChallengeTeam = forwardRef(function CreateChallengeTeam(
   ])
 
   return (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       <Typography variant="body1" sx={{ lineHeight: '20px' }}>
         Create a new team for this Challenge!
       </Typography>

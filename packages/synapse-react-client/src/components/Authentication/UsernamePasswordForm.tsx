@@ -33,7 +33,12 @@ export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
         handleLogin(e)
       }}
     >
-      <Stack gap={2} sx={{ mb: 1 }}>
+      <Stack
+        sx={{
+          gap: 2,
+          mb: 1,
+        }}
+      >
         <TextField
           required
           fullWidth

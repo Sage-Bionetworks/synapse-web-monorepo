@@ -220,7 +220,12 @@ const MODEL_ROWS: {
  */
 export const Overview: StoryObj = {
   render: () => (
-    <Stack gap={3} sx={{ maxWidth: 820 }}>
+    <Stack
+      sx={{
+        gap: 3,
+        maxWidth: 820,
+      }}
+    >
       <Box>
         <Typography variant="headline3" sx={{ mb: 1 }}>
           Dataset hosting — data model
@@ -328,12 +333,24 @@ export const Overview: StoryObj = {
 export const AllFlavors: StoryObj = {
   name: 'All Flavors - Chip Style',
   render: () => (
-    <Stack gap={4} sx={{ maxWidth: 900 }}>
+    <Stack
+      sx={{
+        gap: 4,
+        maxWidth: 900,
+      }}
+    >
       {Object.values(EXAMPLES).map(example => {
         const config = DATASET_HOSTING_CONFIG[example.hosting]
         return (
           <Box key={example.hosting}>
-            <Stack direction="row" gap={1} alignItems="baseline" sx={{ mb: 1 }}>
+            <Stack
+              direction="row"
+              sx={{
+                gap: 1,
+                alignItems: 'baseline',
+                mb: 1,
+              }}
+            >
               <Typography variant="overline" sx={{ fontWeight: 700 }}>
                 {example.hosting}
               </Typography>
@@ -362,7 +379,12 @@ export const AllFlavors: StoryObj = {
 export const ButtonStyle: StoryObj = {
   name: 'All Flavors - Button Style',
   render: () => (
-    <Stack gap={4} sx={{ maxWidth: 900 }}>
+    <Stack
+      sx={{
+        gap: 4,
+        maxWidth: 900,
+      }}
+    >
       {Object.values(EXAMPLES).map(example => (
         <Box key={example.hosting}>
           <Typography variant="overline" sx={{ fontWeight: 700 }}>
@@ -384,7 +406,12 @@ export const ButtonStyle: StoryObj = {
 export const SignedOut: StoryObj = {
   args: { isAuthenticated: false },
   render: () => (
-    <Stack gap={4} sx={{ maxWidth: 900 }}>
+    <Stack
+      sx={{
+        gap: 4,
+        maxWidth: 900,
+      }}
+    >
       {[EXAMPLES.synapse, EXAMPLES.externalAccess, EXAMPLES.unavailable].map(
         example => (
           <Box key={example.hosting}>
@@ -456,12 +483,24 @@ export const Unavailable: StoryObj = {
  */
 export const FreeTextRepository: StoryObj = {
   render: () => (
-    <Stack gap={3} sx={{ maxWidth: 720 }}>
+    <Stack
+      sx={{
+        gap: 3,
+        maxWidth: 720,
+      }}
+    >
       <Box>
         <Typography variant="body1" sx={{ fontWeight: 700, mb: 1 }}>
           external-download — any repository, still a download
         </Typography>
-        <Stack direction="row" gap={2} flexWrap="wrap" alignItems="center">
+        <Stack
+          direction="row"
+          sx={{
+            gap: 2,
+            flexWrap: 'wrap',
+            alignItems: 'center',
+          }}
+        >
           {['GEO', 'ENA', 'Zenodo', 'figshare', 'Smith Lab Server'].map(
             repository => (
               <DemoDownloadButton
@@ -479,7 +518,14 @@ export const FreeTextRepository: StoryObj = {
         <Typography variant="body1" sx={{ fontWeight: 700, mb: 1 }}>
           external-access — any repository, still an external link
         </Typography>
-        <Stack direction="row" gap={2} flexWrap="wrap" alignItems="center">
+        <Stack
+          direction="row"
+          sx={{
+            gap: 2,
+            flexWrap: 'wrap',
+            alignItems: 'center',
+          }}
+        >
           {['dbGaP', 'EGA', 'JGA', 'Some Other Archive'].map(repository => (
             <DemoDownloadButton
               key={repository}
@@ -495,7 +541,14 @@ export const FreeTextRepository: StoryObj = {
         <Typography variant="body1" sx={{ fontWeight: 700, mb: 1 }}>
           No repository provided — graceful generic label
         </Typography>
-        <Stack direction="row" gap={2} flexWrap="wrap" alignItems="center">
+        <Stack
+          direction="row"
+          sx={{
+            gap: 2,
+            flexWrap: 'wrap',
+            alignItems: 'center',
+          }}
+        >
           <DemoDownloadButton
             entityId={MOCK_DATASET_ID}
             name={MOCK_DATASET_NAME}

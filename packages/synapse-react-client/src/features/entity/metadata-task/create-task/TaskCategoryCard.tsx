@@ -43,9 +43,9 @@ export default function TaskCategoryCard(props: TaskCategoryCardProps) {
         }}
       >
         <Stack
-          alignItems="center"
-          justifyContent="center"
           sx={{
+            alignItems: 'center',
+            justifyContent: 'center',
             width: '100%',
             height: ILLUSTRATION_HEIGHT,
             bgcolor: 'grey.200',
@@ -61,10 +61,15 @@ export default function TaskCategoryCard(props: TaskCategoryCardProps) {
           )}
         </Stack>
         <Stack
-          alignItems="center"
-          justifyContent="center"
-          gap={1}
-          sx={{ width: '100%', bgcolor: 'primary.700', py: 2.5, px: 2 }}
+          sx={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 1,
+            width: '100%',
+            bgcolor: 'primary.700',
+            py: 2.5,
+            px: 2,
+          }}
         >
           <Typography
             variant="headline3"

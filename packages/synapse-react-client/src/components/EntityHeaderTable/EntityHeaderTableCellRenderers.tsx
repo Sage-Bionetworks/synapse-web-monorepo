@@ -39,12 +39,14 @@ export function CheckBoxHeader<TData = never, TValue = never>(
   const { table } = props
   return (
     <Checkbox
-      inputProps={{
-        'aria-label': 'Select All',
-      }}
       checked={table.getIsAllRowsSelected()}
       indeterminate={table.getIsSomeRowsSelected()}
       onClick={table.getToggleAllRowsSelectedHandler()}
+      slotProps={{
+        input: {
+          'aria-label': 'Select All',
+        },
+      }}
     />
   )
 }

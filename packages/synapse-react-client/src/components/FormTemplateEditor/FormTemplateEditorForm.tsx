@@ -203,16 +203,24 @@ export function FormTemplateEditorForm({
         />
         <Typography
           variant="caption"
-          color="text.secondary"
           component="p"
-          sx={{ mb: 3 }}
+          sx={{
+            color: 'text.secondary',
+            mb: 3,
+          }}
         >
           JSON Schema:{' '}
           {initialTemplate?.schema$id ?? formatSchema$id(templateSchemaName)}
           {!initialTemplate && ' (a new version is registered when saved)'}
         </Typography>
 
-        <Grid container spacing={2} alignItems="stretch">
+        <Grid
+          container
+          spacing={2}
+          sx={{
+            alignItems: 'stretch',
+          }}
+        >
           <Grid size={{ xs: 12, md: 4 }}>
             <FieldLibrary
               jsonSchema={jsonSchema}
@@ -345,10 +353,20 @@ export function FormTemplateEditorForm({
               elevation={6}
               sx={{ p: 1.25, cursor: 'grabbing', opacity: 0.95 }}
             >
-              <Typography variant="body2" fontWeight={500}>
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: 500,
+                }}
+              >
                 {property.title || propertyKey}
               </Typography>
-              <Typography variant="caption" color="text.secondary">
+              <Typography
+                variant="caption"
+                sx={{
+                  color: 'text.secondary',
+                }}
+              >
                 {fieldTypeLabel(
                   detectFieldType(
                     property,

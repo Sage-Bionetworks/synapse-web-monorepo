@@ -104,13 +104,24 @@ export function FieldLibrary({
     <Paper variant="outlined" sx={{ p: 2, height: '100%' }}>
       <Box sx={{ mb: 1 }}>
         <Typography variant="subtitle2">Fields</Typography>
-        <Typography variant="caption" color="text.secondary">
+        <Typography
+          variant="caption"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           Define the data you want to collect. Click a field to edit it.
         </Typography>
       </Box>
 
       <Stack spacing={1.5}>
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{
+            alignItems: 'center',
+          }}
+        >
           <TextField
             placeholder="Search fields…"
             value={search}

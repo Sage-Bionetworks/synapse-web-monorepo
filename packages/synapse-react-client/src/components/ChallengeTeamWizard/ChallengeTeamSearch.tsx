@@ -39,7 +39,7 @@ export function ChallengeTeamSearch(props: ChallengeTeamSearchProps) {
           backgroundColor: 'white',
         }}
         placeholder="Search all teams"
-        inputProps={{ 'aria-label': 'search all teams' }}
+        slotProps={{ input: { 'aria-label': 'search all teams' } }}
       />
     </Box>
   )

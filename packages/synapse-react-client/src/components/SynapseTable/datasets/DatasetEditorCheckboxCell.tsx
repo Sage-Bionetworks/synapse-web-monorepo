@@ -14,10 +14,12 @@ export function DatasetEditorCheckboxCell<
     !isDisabled && (
       <Checkbox
         disabled={isDisabled}
-        inputProps={{ 'aria-label': `Select ${entityId}` }}
         checked={isSelected}
         onChange={(_event, checked) => {
           setSelected(checked)
+        }}
+        slotProps={{
+          input: { 'aria-label': `Select ${entityId}` },
         }}
       />
     )

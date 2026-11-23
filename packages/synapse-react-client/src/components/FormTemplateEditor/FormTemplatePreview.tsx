@@ -113,12 +113,21 @@ export function FormTemplatePreview({
     // The controls stay available: when every field belongs to the other request type, this view has no
     // steps, and the Request/Renewal toggle is the only way to reach them
     return (
-      <Stack gap={2}>
+      <Stack
+        sx={{
+          gap: 2,
+        }}
+      >
         {controls}
         {hiddenStepsNotice}
         <LivePreview>
           <Box sx={{ py: 4, textAlign: 'center' }}>
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+              }}
+            >
               {hiddenSteps.length > 0
                 ? `No step has a field that applies to a ${REQUEST_TYPE_LABELS[requestType]}.`
                 : 'Add at least one step with a bound field to preview the form.'}
@@ -145,7 +154,11 @@ export function FormTemplatePreview({
   }
 
   return (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       {controls}
       {hiddenStepsNotice}
       <LivePreview>
@@ -189,7 +202,13 @@ export function FormTemplatePreview({
 function LivePreview({ children }: { children: ReactNode }) {
   return (
     <Box>
-      <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+      <Typography
+        variant="subtitle2"
+        gutterBottom
+        sx={{
+          color: 'text.secondary',
+        }}
+      >
         Live Preview
       </Typography>
       <Paper variant="outlined" sx={{ p: 2 }}>
@@ -249,13 +268,27 @@ function PreviewControls({
   const titleId = useId()
   return (
     <section aria-labelledby={titleId} className={styles.controls}>
-      <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1.5 }}>
+      <Stack
+        direction="row"
+        sx={{
+          alignItems: 'center',
+          gap: 1,
+          mb: 1.5,
+        }}
+      >
         <TuneIcon fontSize="small" color="action" />
         <Typography id={titleId} variant="subtitle2">
           Preview controls
         </Typography>
       </Stack>
-      <Stack direction="row" flexWrap="wrap" columnGap={4} rowGap={2}>
+      <Stack
+        direction="row"
+        sx={{
+          flexWrap: 'wrap',
+          columnGap: 4,
+          rowGap: 2,
+        }}
+      >
         <PreviewControl caption="Show the form for a">
           <ToggleButtonGroup
             value={requestType}
@@ -302,7 +335,13 @@ function PreviewControl({
 }) {
   return (
     <div>
-      <Typography variant="caption" color="text.secondary" component="div">
+      <Typography
+        variant="caption"
+        component="div"
+        sx={{
+          color: 'text.secondary',
+        }}
+      >
         {caption}
       </Typography>
       <div className={styles.controlRow}>{children}</div>

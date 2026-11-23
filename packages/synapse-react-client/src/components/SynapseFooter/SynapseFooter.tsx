@@ -319,7 +319,12 @@ export function SynapseFooter({
             repo: {repoVersion}
           </Typography>
           {realm && (
-            <Stack direction="row" alignItems="center">
+            <Stack
+              direction="row"
+              sx={{
+                alignItems: 'center',
+              }}
+            >
               <Typography
                 variant="body1"
                 sx={{

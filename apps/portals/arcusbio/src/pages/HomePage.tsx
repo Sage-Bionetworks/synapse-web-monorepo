@@ -26,7 +26,13 @@ export default function HomePage() {
         </Container>
       </Box>
       <SectionLayout title={'What’s in the portal?'}>
-        <Grid container spacing={3} alignItems="center">
+        <Grid
+          container
+          spacing={3}
+          sx={{
+            alignItems: 'center',
+          }}
+        >
           <Grid size="grow">
             <Typography>
               This portal serves as a centralized repository for Arcus

@@ -233,10 +233,12 @@ export function SynapseHomepageNavBar({
             }}
             open={Boolean(mobileMenuAnchorEl)}
             onClose={handleCloseMobileMenu}
-            MenuListProps={{
-              style: {
-                width: '100%',
-                height: '100%',
+            slotProps={{
+              list: {
+                style: {
+                  width: '100%',
+                  height: '100%',
+                },
               },
             }}
           >

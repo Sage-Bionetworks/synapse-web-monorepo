@@ -75,9 +75,11 @@ export const CheckboxCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
 
   return (
     <Checkbox
-      inputProps={{ 'aria-label': `Select ${entityId}` }}
       checked={isSelected || isCascadeSelected}
       onChange={isCascadeSelected ? undefined : handleChange}
+      slotProps={{
+        input: { 'aria-label': `Select ${entityId}` },
+      }}
     />
   )
 }

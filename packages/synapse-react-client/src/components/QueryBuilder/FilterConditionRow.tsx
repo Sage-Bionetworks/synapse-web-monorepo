@@ -127,7 +127,12 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
             {...params}
             variant="outlined"
             placeholder="Select property…"
-            inputProps={{ ...params.inputProps, 'aria-label': 'Property' }}
+            slotProps={{
+              htmlInput: {
+                ...params.inputProps,
+                'aria-label': 'Property',
+              },
+            }}
           />
         )}
         onChange={(_event, value) => {
