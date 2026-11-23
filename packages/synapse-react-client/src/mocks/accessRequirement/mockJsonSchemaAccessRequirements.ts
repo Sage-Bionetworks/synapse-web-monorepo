@@ -57,6 +57,15 @@ export const mockJsonSchemaAR2: JsonSchemaAccessRequirement = {
   ducTemplateFileHandleId: MOCK_DUC_TEMPLATE_FILE_HANDLE_ID,
 }
 
+/**
+ * {@link mockJsonSchemaAR1} with an eDUC template, so the requester continues to the eDUC steps instead of submitting.
+ * It keeps AR 1's ID, so it shares AR 1's FormTemplate and in-progress request mocks.
+ */
+export const mockEDucJsonSchemaAR: JsonSchemaAccessRequirement = {
+  ...mockJsonSchemaAR1,
+  eDucTemplateId: 'template-abc-123',
+}
+
 export const mockJsonSchemaAccessRequirements: JsonSchemaAccessRequirement[] = [
   mockJsonSchemaAR1,
   mockJsonSchemaAR2,
