@@ -1,0 +1,40 @@
+.details {
+  margin: 0 0 16px;
+
+  dd {
+    margin: 2px 0 12px;
+  }
+}
+
+// One row per requester: the user, then the access change.
+.requesters {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+}
+
+// UserBadge keeps a name on one line (an inline nowrap style and non-breaking spaces), so a long name would run out of
+// the sidebar. Break it at the sidebar's edge instead.
+.userBadge {
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+}
+
+@media print {
+  .details {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    gap: 4px 12px;
+    margin-bottom: 24px;
+
+    dd {
+      margin: 0;
+    }
+  }
+
+  // The page is wide, so size the name column to the longest name rather than stretching it, but leave the access
+  // change room beside a name too long for one line.
+  .requesters {
+    grid-template-columns: fit-content(75%) auto;
+  }
+}

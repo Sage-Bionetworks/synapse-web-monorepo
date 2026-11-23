@@ -36,6 +36,7 @@ import {
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   DATA_ACCESS_SUBMISSION_BY_ID,
   THREAD_FOR_SUBMISSION,
+  USER_PROFILE,
 } from '@/utils/APIConstants'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import dayjs from 'dayjs'
@@ -64,12 +65,23 @@ import type { MockInstance } from 'vitest'
 import { useNavigate } from 'react-router'
 import * as RejectDataAccessRequestModalModule from '../RejectDataAccessRequestModal'
 import { CancelDataAccessRequestConfirmationModal } from './CancelDataAccessRequestConfirmationModal'
-import SubmissionPage, { SubmissionPageProps } from './SubmissionPage'
+import SubmissionPage, {
+  SUBMISSION_PRINT_TITLE,
+  SubmissionPageProps,
+} from './SubmissionPage'
 
 function renderComponent(props: SubmissionPageProps) {
   render(<SubmissionPage {...props} />, {
     wrapper: createWrapper(),
   })
+}
+
+/** The value the submission details list gives for `label` */
+function getSubmissionDetail(label: string) {
+  const index = screen
+    .getAllByRole('term')
+    .findIndex(term => term.textContent === label)
+  return screen.getAllByRole('definition')[index]
 }
 
 const SUBMITTED_SUBMISSION_ID = mockSubmittedSubmission.id
@@ -429,7 +441,7 @@ describe('Submission Page tests', () => {
       isReviewer: true,
     })
 
-    // User 1 now also appears as the Reviewer
+    // Only the reviewer card shows User 1 by username alone; elsewhere they are named in full
     await waitFor(() =>
       expect(screen.getAllByText('@' + MOCK_USER_NAME)).toHaveLength(1),
     )
@@ -442,6 +454,7 @@ describe('Submission Page tests', () => {
   })
 
   describe('Download PDF', () => {
+    const repoEndpoint = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
     const pageTitle = 'Synapse'
     let titleWhilePrinting: string | undefined
     let printSpy: MockInstance<Window['print']>
@@ -473,7 +486,7 @@ describe('Submission Page tests', () => {
         await userEvent.click(downloadButton)
         expect(printSpy).toHaveBeenCalledOnce()
         expect(titleWhilePrinting).toBe(
-          `Data Access Request ${SUBMITTED_SUBMISSION_ID}`,
+          `${SUBMISSION_PRINT_TITLE} ${SUBMITTED_SUBMISSION_ID}`,
         )
 
         window.dispatchEvent(new Event('afterprint'))
@@ -481,11 +494,59 @@ describe('Submission Page tests', () => {
       },
     )
 
-    it('keeps Download PDF disabled while the access requirement it prints is loading', async () => {
+    // Each case stalls one request the printout needs, once everything else it waits for has loaded.
+    it.each([
+      {
+        stalled: 'the current user profile',
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: true,
+        path: USER_PROFILE,
+        loaded: `${mockManagedACTAccessRequirement.name} (${mockSubmittedSubmission.accessRequirementId})`,
+      },
+      {
+        stalled: 'the access requirement',
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: true,
+        path: ACCESS_REQUIREMENT_BY_ID(':id'),
+        loaded: 'Submission ID',
+      },
+      {
+        stalled: "the requester's access approval",
+        submissionId: APPROVED_SUBMISSION_ID,
+        isReviewer: false,
+        path: USER_ACCESS_APPROVAL_PATH(':id'),
+        loaded: `${mockManagedACTAccessRequirement.name} (${mockApprovedSubmission.accessRequirementId})`,
+      },
+      {
+        stalled: 'the form template',
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+        path: '/repo/v1/accessRequirement/formTemplate/*',
+        loaded: `${mockManagedACTAccessRequirement.name} (${mockSchemaDataSubmission.accessRequirementId})`,
+      },
+    ])(
+      'keeps Download PDF disabled while $stalled is loading',
+      async ({ submissionId, isReviewer, path, loaded }) => {
+        server.use(
+          ...getFormTemplateHandlers(repoEndpoint),
+          ...getRegisteredSchemaHandlers(repoEndpoint, [
+            mockClinicalSchema as JSONSchema7,
+          ]),
+          http.get(`${repoEndpoint}${path}`, () => delay('infinite')),
+        )
+        renderComponent({ submissionId, isReviewer })
+
+        await screen.findByText(loaded)
+        expect(
+          screen.getByRole('button', { name: 'Download PDF' }),
+        ).toBeDisabled()
+      },
+    )
+
+    it('keeps Download PDF disabled while the submission is loading', async () => {
       server.use(
-        http.get(
-          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
-          () => delay('infinite'),
+        http.get(`${repoEndpoint}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`, () =>
+          delay('infinite'),
         ),
       )
       renderComponent({
@@ -493,40 +554,39 @@ describe('Submission Page tests', () => {
         isReviewer: true,
       })
 
-      await screen.findByText('SUBMITTED')
       expect(
-        screen.getByRole('button', { name: 'Download PDF' }),
+        await screen.findByRole('button', { name: 'Download PDF' }),
       ).toBeDisabled()
     })
+  })
 
-    it('opens the PDF with the submission details, naming the submitter and each requester in full with their username', async () => {
-      renderComponent({
-        submissionId: SUBMITTED_SUBMISSION_ID,
-        isReviewer: false,
-      })
-
-      expect(
-        await screen.findByRole('heading', { name: 'Data Access Request' }),
-      ).toBeInTheDocument()
-      await screen.findByText(
-        `${mockManagedACTAccessRequirement.name} (${mockSubmittedSubmission.accessRequirementId})`,
-      )
-      expect(
-        screen.getByText('Submission ID').nextElementSibling,
-      ).toHaveTextContent(SUBMITTED_SUBMISSION_ID)
-      expect(
-        screen.getByText('Submitted On').nextElementSibling,
-      ).toHaveTextContent(
-        formatDate(dayjs(mockSubmittedSubmission.submittedOn)),
-      )
-      expect(
-        screen.getByText('Submitted By').nextElementSibling,
-      ).toHaveTextContent(`First Last (@${MOCK_USER_NAME})`)
-      const secondRequesterName = (
-        await screen.findByText(`John Doe (@${MOCK_USER_NAME_2})`)
-      ).parentElement!
-      expect(secondRequesterName.nextElementSibling).toHaveTextContent('Gain')
+  it('shows the submission ID, submitter, submission date and each requester with their access change', async () => {
+    renderComponent({
+      submissionId: SUBMITTED_SUBMISSION_ID,
+      isReviewer: false,
     })
+
+    await screen.findByText(
+      `${mockManagedACTAccessRequirement.name} (${mockSubmittedSubmission.accessRequirementId})`,
+    )
+    expect(getSubmissionDetail('Submission ID')).toHaveTextContent(
+      SUBMITTED_SUBMISSION_ID,
+    )
+    expect(getSubmissionDetail('Submitted On')).toHaveTextContent(
+      formatDate(dayjs(mockSubmittedSubmission.submittedOn)),
+    )
+    await waitFor(() =>
+      expect(getSubmissionDetail('Submitted By')).toHaveTextContent(
+        `First Last (@${MOCK_USER_NAME})`,
+      ),
+    )
+    await waitFor(() =>
+      expect(
+        getSubmissionDetail(
+          `Data Requesters (${mockSubmittedSubmission.accessorChanges.length})`,
+        ),
+      ).toHaveTextContent(`John Doe (@${MOCK_USER_NAME_2})Gain`),
+    )
   })
 
   describe('Viewing page as an accessor', () => {
@@ -710,11 +770,14 @@ describe('Submission Page tests', () => {
       expect(mockDiscussionThread).not.toHaveBeenCalled()
     })
 
-    it('hides certain ui elements that should not be shown to accessors', () => {
+    it('hides certain ui elements that should not be shown to accessors', async () => {
       renderComponent({
         submissionId: SUBMITTED_SUBMISSION_ID,
         isReviewer: false,
       })
+
+      // Wait for the submission details, which include Modified By for a reviewer
+      await screen.findByText('Submitted By')
 
       // approve/reject buttons
       expect(
