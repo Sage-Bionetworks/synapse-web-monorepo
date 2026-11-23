@@ -41,7 +41,9 @@
     }
   },
   "dependencies": {
-    "@juggle/resize-observer": "^3.4.0"
+    "@juggle/resize-observer": "^3.4.0",
+    "p-limit": "^6.2.0",
+    "parse5": "^8.0.1"
   },
   "devDependencies": {
     "@rolldown/plugin-babel": "^0.2.3",

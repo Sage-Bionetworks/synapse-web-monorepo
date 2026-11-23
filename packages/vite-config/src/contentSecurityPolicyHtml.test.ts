@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
@@ -39,6 +40,10 @@ function getPolicy(html: string) {
   )?.[1]
 }
 
+function sha256Source(scriptText: string) {
+  return `'sha256-${createHash('sha256').update(scriptText).digest('base64')}'`
+}
+
 describe('getInlineScriptHashes', () => {
   it('hashes inline classic and module scripts the way browsers do', () => {
     const html = `<script>${MDN_SCRIPT}</script><script type="module">import "/a.js";</script>`
@@ -70,19 +75,28 @@ describe('getInlineScriptHashes', () => {
     }
   })
 
-  it('finds scripts only where the HTML parser does', () => {
+  it('finds scripts and their text exactly as the HTML parser does', () => {
     const html = [
       // Not a script element
       '<scripts>x</scripts>',
       // "<!--" inside a script is script text, not a comment hiding the next script
       "<script>const marker = '<!--'</script>",
       `<script data-src="x">${MDN_SCRIPT}</script>`,
+      // ">" inside a quoted attribute value doesn't end the start tag
+      '<script data-x="a>b">attribute()</script>',
+      // Inside "<!--" in a script, "<script>…</script>" doesn't end the script
+      '<script><!--<script>escaped()</script>--></script>',
+      // Template content runs once it is cloned into the document
+      '<template><script>template()</script></template>',
       // An unterminated comment runs to the end of the document
       '<!-- <script>hidden()</script>',
     ].join('')
     expect(getInlineScriptHashes(html)).toEqual([
-      getInlineScriptHashes("<script>const marker = '<!--'</script>")[0],
+      sha256Source("const marker = '<!--'"),
       MDN_SCRIPT_HASH,
+      sha256Source('attribute()'),
+      sha256Source('<!--<script>escaped()</script>-->'),
+      sha256Source('template()'),
     ])
   })
 
@@ -114,6 +128,16 @@ describe('addContentSecurityPolicyToHtml', () => {
     expect(result).toMatch(
       /^<html><head lang="en"><meta http-equiv="Content-Security-Policy" content="[^"]+"><title>/,
     )
+  })
+
+  it('leaves the rest of the document byte-for-byte unchanged', () => {
+    const html =
+      '<!DOCTYPE html>\r\n<HTML>\r\n<head>\r\n  <meta charset=utf-8>\r\n  <title>t</title>\r\n</head><body><p class=a>x</body>\r\n'
+    const result = addContentSecurityPolicyToHtml(html, SELF)
+    const meta =
+      /<meta http-equiv="Content-Security-Policy" content="[^"]+">/.exec(result)
+    expect(result.replace(meta![0], '')).toBe(html)
+    expect(result).toContain(`<meta charset=utf-8>${meta![0]}\r\n  <title>`)
   })
 
   it('refuses documents it cannot protect', () => {

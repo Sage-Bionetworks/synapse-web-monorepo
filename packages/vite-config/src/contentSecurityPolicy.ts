@@ -106,9 +106,10 @@ export const GOOGLE_ANALYTICS_SOURCES: AllowedSource[] = [
     owner: GOOGLE_ANALYTICS,
   },
   {
-    source: 'https://stats.g.doubleclick.net',
-    directives: ['connect-src'],
-    purpose: 'Google Analytics 4 measurement pings',
+    source: 'https://*.g.doubleclick.net',
+    directives: ['connect-src', 'img-src'],
+    purpose:
+      'Google Analytics 4 and Google Ads measurement requests and pixels (e.g. stats.g.doubleclick.net), per Google’s CSP guide for Google tag',
     owner: GOOGLE_ANALYTICS,
   },
   {
@@ -147,6 +148,12 @@ export const PRODUCTION_SYNAPSE_ENDPOINTS: SynapseEndpoints = {
   portal: 'https://www.synapse.org',
 }
 
+/** The staging stack, e.g. an account app's staging build, or a portal pointed at staging for testing. */
+export const STAGING_SYNAPSE_ENDPOINTS: SynapseEndpoints = {
+  repo: 'https://repo-staging.prod.sagebase.org',
+  portal: 'https://staging.synapse.org',
+}
+
 // Host of the presigned URLs that each stack's repo returns for Synapse-managed files. Stacks not listed (e.g. a
 // local repo) get no file download host.
 const FILE_DOWNLOAD_ORIGIN_BY_REPO_ORIGIN: Record<string, string> = {
@@ -160,6 +167,7 @@ export function getSynapseSources(
   endpoints: SynapseEndpoints,
 ): AllowedSource[] {
   const repo = new URL(endpoints.repo).origin
+  const portal = new URL(endpoints.portal).origin
   const fileDownloads = FILE_DOWNLOAD_ORIGIN_BY_REPO_ORIGIN[repo]
   return [
     {
@@ -169,7 +177,7 @@ export function getSynapseSources(
       owner: SAGE,
     },
     {
-      source: new URL(endpoints.portal).origin,
+      source: portal,
       directives: ['connect-src'],
       purpose:
         'Synapse web client servlets: session cookie, feature flags, file handle downloads',
@@ -217,38 +225,4 @@ export function serializeContentSecurityPolicy(
       )
     return `${directive} ${unique.length > 0 ? unique.join(' ') : "'none'"}`
   }).join('; ')
-}
-
-/** The Synapse web client endpoint that logs CSP violation reports (SWC CSPReportServlet). */
-export const CSP_REPORT_URL = 'https://www.synapse.org/Portal/csp-report'
-export const CSP_REPORTING_ENDPOINT_NAME = 'csp-endpoint'
-
-/**
- * Response headers for an app's CloudFront distribution. Browsers ignore `frame-ancestors`, `report-to`, and
- * `report-uri` in the `<meta>` policy added at build time, and S3 cannot send custom headers, so these must be set in
- * a CloudFront response headers policy.
- *
- * @param reportOnlySources sources of the report-only policy. A violation of the enforced `<meta>` policy is reported
- * unless these sources allow it. The policy cannot list per-page inline script hashes, so it allows inline scripts;
- * the `<meta>` policy still enforces the hashes. Its sources are written without the `https://` scheme to fit
- * CloudFront's limit on a header value.
- */
-export function getSecurityHeaders(
-  reportOnlySources: AllowedSource[],
-): Record<string, string> {
-  const reporting = `report-to ${CSP_REPORTING_ENDPOINT_NAME}; report-uri ${CSP_REPORT_URL}`
-  const reportOnlyPolicy = serializeContentSecurityPolicy(
-    reportOnlySources,
-    ["'unsafe-inline'"],
-    { omitHttpsScheme: true },
-  )
-  return {
-    'Content-Security-Policy': `frame-ancestors 'none'; ${reporting}`,
-    'Content-Security-Policy-Report-Only': `${reportOnlyPolicy}; ${reporting}`,
-    'Reporting-Endpoints': `${CSP_REPORTING_ENDPOINT_NAME}="${CSP_REPORT_URL}"`,
-    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-    'X-Content-Type-Options': 'nosniff',
-    'X-Frame-Options': 'DENY',
-    'Referrer-Policy': 'strict-origin-when-cross-origin',
-  }
 }

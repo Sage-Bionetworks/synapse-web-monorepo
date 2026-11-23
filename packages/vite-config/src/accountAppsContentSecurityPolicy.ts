@@ -7,13 +7,13 @@
  * `VITE_SYNAPSE_REPO_ENDPOINT` and `VITE_SYNAPSE_PORTAL_ENDPOINT`. A production build allows no staging or development
  * hosts.
  */
+import { getSecurityHeaders } from './cloudFrontSecurityHeaders.js'
 import {
   type AllowedSource,
   GOOGLE_ANALYTICS_SOURCES,
   SAGE,
   STYLE_AND_FONT_SOURCES,
   type SynapseEndpoints,
-  getSecurityHeaders,
   getSynapseSources,
 } from './contentSecurityPolicy.js'
 

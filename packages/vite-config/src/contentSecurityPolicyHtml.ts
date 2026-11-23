@@ -1,130 +1,110 @@
 import { createHash } from 'node:crypto'
 import { readdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
+import pLimit from 'p-limit'
+import { type DefaultTreeAdapterTypes, defaultTreeAdapter, parse } from 'parse5'
 import type { Plugin } from 'vite'
 import {
   type AllowedSource,
   serializeContentSecurityPolicy,
 } from './contentSecurityPolicy.js'
 
-const SRC_ATTRIBUTE = /(?:^|\s)src\s*=/i
-const TYPE_ATTRIBUTE = /(?:^|\s)type\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i
-// The policy must precede every element it governs. It goes after <meta charset> so the charset declaration stays
-// within the first 1024 bytes, where browsers look for it.
-const HEAD_START = /<head\b[^>]*>(?:\s*<meta\s+charset\s*=[^>]*>)?/i
-const CSP_HTTP_EQUIV = /http-equiv\s*=\s*["']?content-security-policy/i
+type Document = DefaultTreeAdapterTypes.Document
+type Element = DefaultTreeAdapterTypes.Element
+type ParentNode = DefaultTreeAdapterTypes.ParentNode
 
-// The document is scanned with indexOf instead of document-wide regular expressions, which take quadratic time on
-// unterminated comments or tags.
+// A portal can prerender thousands of pages; opening them all at once can exceed the open-file limit
+const CONCURRENT_HTML_FILES = 8
 
-/**
- * Returns the index of the next `tag` (e.g. `<script` or `</script`) at or after `from` whose name ends there, as the
- * HTML tokenizer reads it: followed by whitespace, `/`, or `>`, so `<scripts` doesn't match. `lowerHtml` is the
- * lower-cased document.
- */
-function indexOfTag(lowerHtml: string, tag: string, from: number): number {
-  for (
-    let index = lowerHtml.indexOf(tag, from);
-    index !== -1;
-    index = lowerHtml.indexOf(tag, index + 1)
-  ) {
-    if (/[\s/>]/.test(lowerHtml.charAt(index + tag.length))) {
-      return index
-    }
-  }
-  return -1
+function getAttribute(element: Element, name: string): string | undefined {
+  return element.attrs.find(attribute => attribute.name === name)?.value
 }
 
-type InlineScript = { attributes: string; text: string }
-
-/** Returns every `<script>` element outside HTML comments, in document order. */
-function findScripts(html: string): InlineScript[] {
-  const lowerHtml = html.toLowerCase()
-  const scripts: InlineScript[] = []
-  // The next comment and script, searched from the end of the last one found, so no text is scanned twice
-  let comment = lowerHtml.indexOf('<!--')
-  let script = indexOfTag(lowerHtml, '<script', 0)
-  let position: number
-  while (script !== -1) {
-    if (comment !== -1 && comment < script) {
-      // A <script> inside a comment is commented out. An unterminated comment runs to the end of the document.
-      const commentEnd = lowerHtml.indexOf('-->', comment + '<!--'.length)
-      if (commentEnd === -1) {
-        break
+/** Returns every element in the document, in document order. */
+function getElements(root: ParentNode): Element[] {
+  const elements: Element[] = []
+  const visit = (parent: ParentNode) => {
+    for (const child of parent.childNodes) {
+      if (defaultTreeAdapter.isElementNode(child)) {
+        elements.push(child)
+        // A <template>'s scripts run once its content is cloned into the document
+        visit('content' in child ? child.content : child)
       }
-      position = commentEnd + '-->'.length
-    } else {
-      const startTagEnd = lowerHtml.indexOf('>', script)
-      const endTag =
-        startTagEnd === -1
-          ? -1
-          : indexOfTag(lowerHtml, '</script', startTagEnd + 1)
-      if (endTag === -1) {
-        break
-      }
-      scripts.push({
-        attributes: html.slice(script + '<script'.length, startTagEnd),
-        text: html.slice(startTagEnd + 1, endTag),
-      })
-      const endTagEnd = lowerHtml.indexOf('>', endTag)
-      position = endTagEnd === -1 ? html.length : endTagEnd + 1
-    }
-    if (comment !== -1 && comment < position) {
-      comment = lowerHtml.indexOf('<!--', position)
-    }
-    if (script < position) {
-      script = indexOfTag(lowerHtml, '<script', position)
     }
   }
-  return scripts
+  visit(root)
+  return elements
 }
 
-function hasContentSecurityPolicyMeta(html: string): boolean {
-  const lowerHtml = html.toLowerCase()
-  for (
-    let meta = indexOfTag(lowerHtml, '<meta', 0);
-    meta !== -1;
-    meta = indexOfTag(lowerHtml, '<meta', meta + 1)
-  ) {
-    const metaEnd = lowerHtml.indexOf('>', meta)
-    if (metaEnd === -1) {
-      return false
-    }
-    if (CSP_HTTP_EQUIV.test(lowerHtml.slice(meta, metaEnd))) {
-      return true
-    }
-  }
-  return false
-}
-
-function isDataBlock(scriptAttributes: string): boolean {
-  const match = TYPE_ATTRIBUTE.exec(scriptAttributes)
-  const type = match?.[1] ?? match?.[2] ?? match?.[3] ?? ''
-  // e.g. application/ld+json. Browsers never execute these, so they need no hash.
-  return /json/i.test(type)
+function getChildElement(
+  parent: ParentNode | undefined,
+  nodeName: string,
+): Element | undefined {
+  return parent?.childNodes.find(
+    (child): child is Element =>
+      defaultTreeAdapter.isElementNode(child) && child.nodeName === nodeName,
+  )
 }
 
 /**
- * Returns `'sha256-…'` sources for every inline script in the document that a browser would execute.
+ * Returns where the policy goes: it must precede every element it governs, and it follows a leading `<meta charset>`
+ * so the charset declaration stays within the first 1024 bytes, where browsers look for it. Returns `undefined` if
+ * the document has no `<head>` start tag.
  */
-export function getInlineScriptHashes(html: string): string[] {
+function getPolicyOffset(document: Document): number | undefined {
+  const head = getChildElement(getChildElement(document, 'html'), 'head')
+  const headStartTag = head?.sourceCodeLocation?.startTag
+  if (!head || !headStartTag) {
+    return undefined
+  }
+  const firstChild = head.childNodes.find(
+    child => !(defaultTreeAdapter.isTextNode(child) && !child.value.trim()),
+  )
+  if (
+    firstChild &&
+    defaultTreeAdapter.isElementNode(firstChild) &&
+    firstChild.nodeName === 'meta' &&
+    getAttribute(firstChild, 'charset') !== undefined &&
+    firstChild.sourceCodeLocation
+  ) {
+    return firstChild.sourceCodeLocation.endOffset
+  }
+  return headStartTag.endOffset
+}
+
+function getScriptHashes(document: Document): string[] {
   const hashes = new Set<string>()
-  for (const { attributes, text } of findScripts(html)) {
-    if (SRC_ATTRIBUTE.test(attributes) || isDataBlock(attributes)) {
+  for (const element of getElements(document)) {
+    if (
+      element.nodeName !== 'script' ||
+      getAttribute(element, 'src') !== undefined ||
+      // e.g. application/ld+json. Browsers never execute these, so they need no hash.
+      /json/i.test(getAttribute(element, 'type') ?? '')
+    ) {
       continue
     }
-    // Browsers hash the script text after the HTML parser normalizes newlines
-    const normalized = text.replaceAll(/\r\n?/g, '\n')
+    const text = element.childNodes
+      .flatMap(child =>
+        defaultTreeAdapter.isTextNode(child) ? [child.value] : [],
+      )
+      .join('')
     hashes.add(
-      `'sha256-${createHash('sha256').update(normalized, 'utf8').digest('base64')}'`,
+      `'sha256-${createHash('sha256').update(text, 'utf8').digest('base64')}'`,
     )
   }
   return [...hashes]
 }
 
 /**
+ * Returns `'sha256-…'` sources for every inline script in the document that a browser would execute.
+ */
+export function getInlineScriptHashes(html: string): string[] {
+  return getScriptHashes(parse(html))
+}
+
+/**
  * Adds a Content Security Policy built from `allowedSources` to an HTML document as a `<meta http-equiv>` element,
- * allowing the document's own inline scripts by hash.
+ * allowing the document's own inline scripts by hash. The rest of the markup is left byte-for-byte unchanged.
  *
  * @throws if the document has no `<head>` or already has a Content Security Policy
  */
@@ -132,21 +112,30 @@ export function addContentSecurityPolicyToHtml(
   html: string,
   allowedSources: AllowedSource[],
 ): string {
-  if (hasContentSecurityPolicyMeta(html)) {
+  // parse5 implements the HTML parsing algorithm that browsers use, so the script text it yields is the text a
+  // browser hashes, and its source locations let the policy be spliced into the original markup without
+  // reserializing it
+  const document = parse(html, { sourceCodeLocationInfo: true })
+  const hasPolicy = getElements(document).some(
+    element =>
+      element.nodeName === 'meta' &&
+      getAttribute(element, 'http-equiv')?.toLowerCase() ===
+        'content-security-policy',
+  )
+  if (hasPolicy) {
     throw new Error('The document already has a Content-Security-Policy')
   }
-  const headStart = HEAD_START.exec(html)
-  if (!headStart) {
+  const insertAt = getPolicyOffset(document)
+  if (insertAt === undefined) {
     throw new Error(
       'The document has no <head> for the Content-Security-Policy',
     )
   }
   const policy = serializeContentSecurityPolicy(
     allowedSources,
-    getInlineScriptHashes(html),
+    getScriptHashes(document),
   )
   const meta = `<meta http-equiv="Content-Security-Policy" content="${policy}">`
-  const insertAt = headStart.index + headStart[0].length
   return html.slice(0, insertAt) + meta + html.slice(insertAt)
 }
 
@@ -160,6 +149,22 @@ async function findHtmlFiles(directory: string): Promise<string[]> {
     .map(entry => path.join(entry.parentPath, entry.name))
 }
 
+async function addContentSecurityPolicyToHtmlFile(
+  file: string,
+  allowedSources: AllowedSource[],
+): Promise<void> {
+  const html = await readFile(file, 'utf8')
+  let withPolicy: string
+  try {
+    withPolicy = addContentSecurityPolicyToHtml(html, allowedSources)
+  } catch (error) {
+    throw new Error(`Could not add the Content-Security-Policy to ${file}`, {
+      cause: error,
+    })
+  }
+  await writeFile(file, withPolicy)
+}
+
 /**
  * Adds a Content Security Policy to every HTML file under `directory`, e.g. the pages prerendered by React Router.
  */
@@ -167,22 +172,13 @@ export async function addContentSecurityPolicyToHtmlFiles(
   directory: string,
   allowedSources: AllowedSource[],
 ): Promise<void> {
-  // One page at a time: a portal can prerender thousands of pages, and opening them all at once can exceed the
-  // open-file limit and hold every page in memory
-  for (const file of await findHtmlFiles(directory)) {
-    // oxlint-disable-next-line no-await-in-loop
-    const html = await readFile(file, 'utf8')
-    let withPolicy: string
-    try {
-      withPolicy = addContentSecurityPolicyToHtml(html, allowedSources)
-    } catch (error) {
-      throw new Error(`Could not add the Content-Security-Policy to ${file}`, {
-        cause: error,
-      })
-    }
-    // oxlint-disable-next-line no-await-in-loop
-    await writeFile(file, withPolicy)
-  }
+  const limit = pLimit(CONCURRENT_HTML_FILES)
+  const files = await findHtmlFiles(directory)
+  await Promise.all(
+    files.map(file =>
+      limit(() => addContentSecurityPolicyToHtmlFile(file, allowedSources)),
+    ),
+  )
 }
 
 /**

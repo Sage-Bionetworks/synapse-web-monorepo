@@ -2684,6 +2684,12 @@ importers:
       '@juggle/resize-observer':
         specifier: ^3.4.0
         version: 3.4.0
+      p-limit:
+        specifier: ^6.2.0
+        version: 6.2.0
+      parse5:
+        specifier: ^8.0.1
+        version: 8.0.1
     devDependencies:
       '@rolldown/plugin-babel':
         specifier: ^0.2.3

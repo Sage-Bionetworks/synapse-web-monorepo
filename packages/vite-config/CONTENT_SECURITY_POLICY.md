@@ -10,6 +10,7 @@ The allowlists in `src/` are the only place the policies are defined. Each entry
 - `portalContentSecurityPolicy.ts`: the portals.
   - `SHARED_ALLOWED_SOURCES`: needed by every portal.
   - `PORTAL_ALLOWED_SOURCES`: needed by one portal, keyed by its `VITE_PORTAL_KEY`. Examples are a portal's news feed, the challenges map, and the cancercomplexity help widget.
+  - The portals always use the production stack, but they also allow the staging stack's Synapse origins, so a portal build can be tested against staging with the commented-out `SRC_OVERRIDE_ENDPOINT_CONFIG` snippet in its `index.html`.
 - `accountAppsContentSecurityPolicy.ts`: SageAccountWeb and synapse-oauth-signin. These apps are built once per Synapse stack, so their Synapse origins come from the build's `VITE_SYNAPSE_REPO_ENDPOINT` and `VITE_SYNAPSE_PORTAL_ENDPOINT`; a production build allows no staging or development hosts.
 
 Directives with no allowed source are `'none'`. `default-src 'none'` blocks every resource type the policy does not list.
@@ -26,7 +27,7 @@ Exceptions that a stricter policy cannot remove yet:
 
 Images from S3 in the account apps are limited to the `static.synapse.org` bucket by a path-scoped source.
 
-Inline scripts are allowed only by SHA-256 hash, and each page carries its own hashes. The enforced policies contain no `'unsafe-inline'` scripts, no development hosts, and no S3 host in `script-src`, `frame-src`, or `img-src` beyond that one bucket.
+Inline scripts are allowed only by SHA-256 hash, and each page carries its own hashes. The scripts are found with parse5, which implements the HTML parsing algorithm browsers use, so each hash covers the same script text a browser hashes. The enforced policies contain no `'unsafe-inline'` scripts, no development hosts, and no S3 host in `script-src`, `frame-src`, or `img-src` beyond that one bucket.
 
 ### Known limitation: script hosts that serve chosen code
 
@@ -48,7 +49,7 @@ Browsers ignore `frame-ancestors`, `report-to`, `report-uri`, and `sandbox` in a
 
 ### CloudFront response headers (infrastructure, not in this repository)
 
-S3 can't send custom response headers, so these belong in CloudFront response headers policies ([IT-5554](https://sagebionetworks.jira.com/browse/IT-5554)):
+S3 can't send custom response headers, so these belong in CloudFront response headers policies ([IT-5554](https://sagebionetworks.jira.com/browse/IT-5554)). `cloudFrontSecurityHeaders.ts` specifies their values; the build doesn't apply them.
 
 - **Portals:** one policy for every portal distribution, staging and production.
 - **SageAccountWeb and synapse-oauth-signin:** one policy per Synapse stack, shared by both apps' distributions on that stack.
@@ -80,4 +81,4 @@ Regenerate the headers whenever an allowlist changes, and update the CloudFront 
 2. Build the app and load the affected page from the build. The browser console reports anything the policy blocks.
 3. Update the CloudFront response headers policies.
 
-An inline `<script>` in an `index.html` or a React Router layout is hashed automatically. The commented-out `SRC_OVERRIDE_ENDPOINT_CONFIG` snippet in the portals would also need its endpoints in `connect-src`.
+An inline `<script>` in an `index.html` or a React Router layout is hashed automatically.

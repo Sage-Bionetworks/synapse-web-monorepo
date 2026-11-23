@@ -2,13 +2,14 @@
  * Content Security Policy for the data portals: the documented list of origins that may supply script, frames, and
  * other content to a portal (NIST SP 800-53 SC-18, SWC-8037).
  */
+import { getSecurityHeaders } from './cloudFrontSecurityHeaders.js'
 import {
   type AllowedSource,
   GOOGLE_ANALYTICS_SOURCES,
   PRODUCTION_SYNAPSE_ENDPOINTS,
   SAGE,
+  STAGING_SYNAPSE_ENDPOINTS,
   STYLE_AND_FONT_SOURCES,
-  getSecurityHeaders,
   getSynapseSources,
 } from './contentSecurityPolicy.js'
 
@@ -59,6 +60,8 @@ export const SHARED_ALLOWED_SOURCES: AllowedSource[] = [
     owner: 'Wiki authors',
   },
   ...getSynapseSources(PRODUCTION_SYNAPSE_ENDPOINTS),
+  // Lets a developer test a portal build against the staging stack by setting SRC_OVERRIDE_ENDPOINT_CONFIG
+  ...getSynapseSources(STAGING_SYNAPSE_ENDPOINTS),
   {
     source: 'https://s3.amazonaws.com',
     directives: ['connect-src'],
