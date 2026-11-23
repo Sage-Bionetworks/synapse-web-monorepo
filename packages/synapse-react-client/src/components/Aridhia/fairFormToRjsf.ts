@@ -35,12 +35,9 @@ export function toFairSubmissionAnswers(
   const answers = { ...values }
   for (const { uiSchema } of sections) {
     for (const [name, fieldUiSchema] of Object.entries(uiSchema)) {
+      const widget = (fieldUiSchema as UiSchema | undefined)?.['ui:widget']
       const value = answers[name]
-      if (
-        (fieldUiSchema as UiSchema | undefined)?.['ui:widget'] ===
-          'PhoneWidget' &&
-        typeof value === 'string'
-      ) {
+      if (widget === 'PhoneWidget' && typeof value === 'string') {
         answers[name] = value.replaceAll(/\D/g, '')
       }
     }
