@@ -16,6 +16,20 @@ export const navbarConfig: NavbarConfig = {
       path: 'https://help.namhub.org/help/about',
     },
     {
+      name: 'People',
+      path: '/People',
+      children: [
+        {
+          name: 'MPI Leadership',
+          path: 'https://nhdcc.wpenginepowered.com/mpi-leadership/',
+        },
+        {
+          name: 'Scientific Advisory Board',
+          path: 'https://nhdcc.wpenginepowered.com/scientific-advisory-board/',
+        },
+      ],
+    },
+    {
       name: 'Events',
       path: 'https://nhdcc.wpenginepowered.com/',
     },
