@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { UserEvent } from '@testing-library/user-event'
 import { HttpHandler, HttpResponse } from 'msw'
@@ -315,6 +315,14 @@ async function acceptTermsAndSubmit(user: UserEvent) {
 
 function clickNext(user: UserEvent) {
   return user.click(screen.getByRole('button', { name: 'Next' }))
+}
+
+/** Replaces the whole value of the date picker field named `name` by pasting `date` into it. */
+async function pasteDate(user: UserEvent, name: RegExp, date: string) {
+  const field = screen.getByRole('group', { name })
+  await user.click(within(field).getByRole('spinbutton', { name: 'Month' }))
+  await user.keyboard('{Control>}a{/Control}')
+  await user.paste(date)
 }
 
 /** Fixes the user's local date (at noon), so a `today` date minimum doesn't move mid-test. */
@@ -882,8 +890,7 @@ describe('AridhiaDarWizard', () => {
     await clickNext(user)
 
     await fillProjectStep(user)
-    await user.click(screen.getByLabelText(/^project end date/i))
-    await user.paste('03/05/2027')
+    await pasteDate(user, /^project end date/i, '03/05/2027')
     await clickNext(user)
 
     await fillAboutStep(user)
@@ -1100,16 +1107,12 @@ describe('AridhiaDarWizard', () => {
     await clickNext(user)
     await fillProjectStep(user)
 
-    const startDate = screen.getByLabelText(/^project start date/i)
-    await user.click(startDate)
-    await user.paste('01/14/2027')
+    await pasteDate(user, /^project start date/i, '01/14/2027')
     await user.tab()
     expect(screen.getByText('Must be today or later')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled()
 
-    await user.clear(startDate)
-    await user.click(startDate)
-    await user.paste('01/15/2027')
+    await pasteDate(user, /^project start date/i, '01/15/2027')
     expect(screen.queryByText('Must be today or later')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled()
   })
@@ -1143,8 +1146,7 @@ describe('AridhiaDarWizard', () => {
       screen.getByText('Must be at least 200 characters'),
     ).toBeInTheDocument()
 
-    await user.click(screen.getByLabelText(/^date - renders a date input/i))
-    await user.paste('01/16/2027')
+    await pasteDate(user, /^date - renders a date input/i, '01/16/2027')
     await fillRjsfTextField(
       user,
       'text - multiline',
