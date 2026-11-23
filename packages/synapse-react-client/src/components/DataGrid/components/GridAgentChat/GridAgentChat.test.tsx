@@ -17,7 +17,9 @@ const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 const MESSAGE = 'Which fields are missing?'
 const RESPONSE = /This is the only response this agent is told/
 
-const defaultProps: Omit<GridAgentChatProps, 'onClose'> = {
+type DialogChatProps = Extract<GridAgentChatProps, { variant?: 'dialog' }>
+
+const defaultProps: Omit<DialogChatProps, 'onClose'> = {
   gridSessionId: 'test-grid-session',
   usersReplicaId: 7,
   open: true,
@@ -42,16 +44,16 @@ function registerChatHandlers() {
   return { sessionCreation, releaseSession }
 }
 
-function renderChat(props: Partial<GridAgentChatProps> = {}) {
+function renderChat(props: Partial<DialogChatProps> = {}) {
   const user = userEvent.setup()
   // A new onClose on each render bypasses memoization, as an unmemoized parent callback would
-  const renderElement = (newProps: Partial<GridAgentChatProps>) => (
+  const renderElement = (newProps: Partial<DialogChatProps>) => (
     <GridAgentChat {...defaultProps} onClose={() => {}} {...newProps} />
   )
   const result = render(renderElement(props), { wrapper: createWrapper() })
   return {
     user,
-    rerender: (newProps: Partial<GridAgentChatProps> = {}) =>
+    rerender: (newProps: Partial<DialogChatProps> = {}) =>
       result.rerender(renderElement({ ...props, ...newProps })),
   }
 }

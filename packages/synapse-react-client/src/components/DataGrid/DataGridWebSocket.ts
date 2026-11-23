@@ -12,14 +12,14 @@ import {
   CompactCodecPatch,
   decode,
 } from 'json-joy/lib/json-crdt-patch/codec/compact'
-import { Encoder as VerboseEncoder } from 'json-joy/lib/json-crdt/codec/structural/verbose/Encoder'
-import { JsonCrdtVerboseLogicalTimestamp } from 'json-joy/lib/json-crdt/codec/structural/verbose/types'
 import noop from 'lodash-es/noop'
 import throttle from 'lodash-es/throttle'
 import { type DebouncedFunc } from 'lodash-es'
-import { Decoder as SnapshotDecoder } from 'json-joy/lib/json-crdt/codec/indexed/binary/Decoder'
-import { decode as decodeCbor } from 'cbor2'
-import type { IndexedFields } from 'json-joy/lib/json-crdt/codec/indexed/binary'
+import {
+  decodeServerSnapshot,
+  HubClockEntry,
+  toHubClock,
+} from '@/components/DataGrid/utils/hubClock'
 import { fetchWithExponentialTimeout } from '@sage-bionetworks/synapse-client'
 
 enum SynapseGridWebSocketMessagePayloadType {
@@ -67,30 +67,13 @@ const DEFAULT_PATCH_THROTTLE_MS = 250
 // A patch is acknowledged only after the server has stored it, so a missing acknowledgement means the connection is unusable
 const DEFAULT_PATCH_ACK_TIMEOUT_MS = 15 * 1000
 
-/**
- * Makes `model` write as `replicaId`, equivalently to `model.fork(replicaId)` but without copying it.
- * The model is mutated in place, so call this only on a model nothing else holds yet, such as one just
- * decoded from the server.
- */
-export function adoptReplicaSession(model: GridModel, replicaId: number): void {
-  // The clock is a Lamport clock: its
-  // time is already past every operation in the model, including any by `replicaId` from an earlier
-  // connection, so new local operations stay newer than all of them. `setSid` keeps a peer entry for
-  // `replicaId` if the model saw its operations; `fork` drops it. Drop it too, otherwise the clock sent in
-  // sync messages reports that stale entry instead of the local time.
-  model.setSid(replicaId)
-  model.clock.peers.delete(replicaId)
-}
-
 export class DataGridWebSocket {
   private readonly socket: WebSocket
   private model: GridModel | null = null
   private readonly messageCounter: MessageCounter
   private readonly replicaId: number
-  private readonly verboseEncoder = new VerboseEncoder()
   private readonly maxPayloadSizeBytes: number
   private readonly throttledSendPatch: DebouncedFunc<() => void>
-  private readonly snapshotDecoder = new SnapshotDecoder()
   // Oldest first. The server must receive patches in order, so only the head is ever on the wire
   // (identified by inFlightPatchRequestId); the rest wait for its acknowledgement.
   private readonly unacknowledgedPatches: CompactCodecPatch[]
@@ -242,8 +225,7 @@ export class DataGridWebSocket {
     const patchesWereSent = this.sendPatchImmediate()
     if (!patchesWereSent) {
       // We've flushed all of our changes, so now we can receive changes from the server
-      const verbModel = this.verboseEncoder.encode(this.model)
-      this.sendSyncMessage(verbModel.time)
+      this.sendSyncMessage(toHubClock(this.model.clock))
     }
   }
 
@@ -293,8 +275,13 @@ export class DataGridWebSocket {
     try {
       const patches = encodedPatch.map(decode)
       if (!this.model) {
-        const model = Model.fromPatches(patches) as unknown as GridModel
-        adoptReplicaSession(model, this.replicaId)
+        // Not Model.fromPatches, which writes as the first patch's replica: switching to this replica afterwards
+        // records that one at the newest time in the patches, past its own operations
+        const model = Model.create(
+          undefined,
+          this.replicaId,
+        ) as unknown as GridModel
+        model.applyBatch(patches)
         this.model = model
         this.onModelCreate(this.model)
       } else {
@@ -310,7 +297,6 @@ export class DataGridWebSocket {
     console.debug('Received snapshot URL from server:', snapshotUrl)
     try {
       const decodedModel = await this.fetchAndDecodeSnapshot(snapshotUrl)
-      adoptReplicaSession(decodedModel, this.replicaId)
       this.model = decodedModel
       this.onModelCreate(this.model)
       this.sendClockSync()
@@ -343,7 +329,7 @@ export class DataGridWebSocket {
     } else if (this.isSyncExchangeOpen && this.model) {
       // The sync was answered with local patches instead of a clock. Now that they are stored,
       // confirm the clock so the server can complete the exchange.
-      this.sendSyncMessage(this.verboseEncoder.encode(this.model).time)
+      this.sendSyncMessage(toHubClock(this.model.clock))
     }
   }
 
@@ -358,9 +344,7 @@ export class DataGridWebSocket {
 
       case 'connected':
         console.debug('Server ready to receive patches')
-        this.sendSyncMessage(
-          this.model ? this.verboseEncoder.encode(this.model).time : undefined,
-        )
+        this.sendSyncMessage(this.model ? toHubClock(this.model.clock) : [])
         // Resend patches an earlier connection never saw acknowledged
         this.sendNextPatch()
         break
@@ -378,9 +362,9 @@ export class DataGridWebSocket {
           break
         }
         {
-          const verbModel = this.verboseEncoder.encode(this.model)
-          console.debug('New patch received, syncing data:', verbModel.time)
-          this.sendSyncMessage(verbModel.time)
+          const clock = toHubClock(this.model.clock)
+          console.debug('New patch received, syncing data:', clock)
+          this.sendSyncMessage(clock)
         }
         break
 
@@ -484,11 +468,11 @@ export class DataGridWebSocket {
     this.onStatusChange(false, this)
   }
 
-  private sendSyncMessage(clock?: number | JsonCrdtVerboseLogicalTimestamp[]) {
+  private sendSyncMessage(clock: HubClockEntry[]) {
     const message = new JsonRxRequestComplete(
       this.messageCounter.getNext(),
       'synchronize-clock',
-      clock ?? [],
+      clock,
     )
     this.isSyncExchangeOpen = true
     this.onSyncStart()
@@ -501,10 +485,6 @@ export class DataGridWebSocket {
     const response = await fetchWithExponentialTimeout(snapshotUrl)
     const blob = await response.blob()
     const buffer = await blob.arrayBuffer()
-    const decodedFromCbor = decodeCbor(new Uint8Array(buffer))
-    const decodedModel = this.snapshotDecoder.decode(
-      decodedFromCbor as IndexedFields,
-    ) as unknown as GridModel
-    return decodedModel
+    return decodeServerSnapshot(new Uint8Array(buffer), this.replicaId)
   }
 }

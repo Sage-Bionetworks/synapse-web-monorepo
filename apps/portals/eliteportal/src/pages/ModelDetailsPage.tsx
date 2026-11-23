@@ -1,15 +1,45 @@
-import { Box } from '@mui/material'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnSingleValueFilterOperator,
+  Query,
+} from '@sage-bionetworks/synapse-types'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
 import CategorizedRowDataTable from 'synapse-react-client/components/RowDataTable/CategorizedRowDataTable'
-import { modelColumnCategoriesTableId, modelsSql } from '../config/resources'
+import {
+  datasetsSql,
+  modelColumnCategoriesTableId,
+  modelsSql,
+  publicationsSql,
+} from '../config/resources'
+import { datasetCardConfiguration } from '../config/synapseConfigs/datasets'
 import {
   modelCardConfiguration,
   modelColumnAliases,
 } from '../config/synapseConfigs/models'
+import { publicationCardProps } from '../config/synapseConfigs/publications'
+
+/**
+ * @param sql query against a view/collection with an `id` column
+ * @param entityIds comma-separated entity IDs, as provided by DetailsPageContextConsumer for an ENTITYID_LIST column
+ */
+function getEntityIdInQuery(sql: string, entityIds: string): Query {
+  return {
+    sql,
+    additionalFilters: [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        columnName: 'id',
+        operator: ColumnSingleValueFilterOperator.IN,
+        values: entityIds.split(',').map(id => id.trim()),
+      },
+    ],
+  }
+}
 
 function ModelDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()
@@ -43,19 +73,75 @@ function ModelDetailsPage() {
       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
       resourcePrimaryKey={['id']}
     >
-      <DetailsPageContextConsumer>
-        {({ context }) =>
-          context.rowData && context.rowSet ? (
-            <Box sx={{ mt: 4 }}>
-              <CategorizedRowDataTable
-                rowData={context.rowData.values}
-                headers={context.rowSet.headers}
-                columnCategoryTableId={modelColumnCategoriesTableId}
+      <DetailsPageContent
+        content={[
+          {
+            id: 'Acknowledgement',
+            title: 'Acknowledgement',
+            element: (
+              <MarkdownSynapseFromColumnData
+                columnName={'acknowledgment'}
+                showNoContentAvailable
               />
-            </Box>
-          ) : null
-        }
-      </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            id: 'Acceptable Use',
+            title: 'Acceptable Use',
+            element: (
+              <MarkdownSynapseFromColumnData
+                columnName={'acceptableUse'}
+                showNoContentAvailable
+              />
+            ),
+          },
+          {
+            id: 'Model Description',
+            title: 'Model Description',
+            element: (
+              <DetailsPageContextConsumer>
+                {({ context }) =>
+                  context.rowData && context.rowSet ? (
+                    <CategorizedRowDataTable
+                      rowData={context.rowData.values}
+                      headers={context.rowSet.headers}
+                      columnCategoryTableId={modelColumnCategoriesTableId}
+                    />
+                  ) : null
+                }
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            id: 'Related Datasets',
+            title: 'Related Datasets',
+            element: (
+              <DetailsPageContextConsumer columnName={'datasetIds'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={datasetCardConfiguration}
+                    query={getEntityIdInQuery(datasetsSql, value!)}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            id: 'Related Publications',
+            title: 'Related Publications',
+            element: (
+              <DetailsPageContextConsumer columnName={'publicationIds'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={publicationCardProps}
+                    query={getEntityIdInQuery(publicationsSql, value!)}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+        ]}
+      />
     </DetailsPage>
   )
 }

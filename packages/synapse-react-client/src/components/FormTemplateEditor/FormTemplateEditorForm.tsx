@@ -44,6 +44,7 @@ import {
   FormTemplateFieldValidationError,
   validateFormTemplateFields,
 } from './formTemplateValidation'
+import { fieldSettingsFor } from './utils'
 import { useFormTemplateDraft } from './useFormTemplateDraft'
 import { useFormTemplateDrag } from './useFormTemplateDrag'
 import { useSaveFormTemplate } from './useSaveFormTemplate'
@@ -85,7 +86,7 @@ export function FormTemplateEditorForm({
     handleCreateField,
     renamePropertyKey,
     handleUpdateProperty,
-    handleReplaceProperty,
+    handleChangeFieldType,
     handleChangeRequired,
     handleChangeContext,
     handleRemoveProperty,
@@ -149,19 +150,23 @@ export function FormTemplateEditorForm({
     }
   }
 
-  const editingResolved =
+  const editingPath =
     editingPropertyKey !== null
-      ? resolveSchemaPropertyAtPointer(
-          jsonSchema,
-          propertyKeyToPointer(editingPropertyKey),
-        )
+      ? propertyKeyToPointer(editingPropertyKey)
+      : null
+  const editingResolved =
+    editingPath !== null
+      ? resolveSchemaPropertyAtPointer(jsonSchema, editingPath)
       : undefined
   const editingProperty: RJSFSchema | null = editingResolved?.subSchema ?? null
+  const editingUiDefinition =
+    editingPath !== null
+      ? fieldSettingsFor(fieldSettings, editingPath).uiDefinition
+      : undefined
   const editingIsRequired = editingResolved?.isRequired ?? false
   const editingContext = editingResolved?.context ?? 'ALWAYS'
   const editingIsUsedInSteps =
-    editingPropertyKey !== null &&
-    usedPaths.has(propertyKeyToPointer(editingPropertyKey))
+    editingPath !== null && usedPaths.has(editingPath)
 
   const templateSchemaName = resolveFormTemplateSchemaName(
     trimmedName,
@@ -212,6 +217,7 @@ export function FormTemplateEditorForm({
             <FieldLibrary
               jsonSchema={jsonSchema}
               usedPaths={usedPaths}
+              fieldSettings={fieldSettings}
               selectedPropertyKey={editingPropertyKey}
               onSelectField={setEditingPropertyKey}
               onCreateField={handleCreateField}
@@ -292,6 +298,7 @@ export function FormTemplateEditorForm({
           propertyKey={editingPropertyKey}
           existingKeys={existingPropertyKeys}
           property={editingProperty}
+          uiDefinition={editingUiDefinition}
           isRequired={editingIsRequired}
           context={editingContext}
           isUsedInSteps={editingIsUsedInSteps}
@@ -304,9 +311,9 @@ export function FormTemplateEditorForm({
             if (editingPropertyKey)
               renamePropertyKey(editingPropertyKey, newKey)
           }}
-          onReplace={next => {
+          onChangeType={type => {
             if (editingPropertyKey)
-              handleReplaceProperty(editingPropertyKey, next)
+              handleChangeFieldType(editingPropertyKey, type)
           }}
           onChangeRequired={isReq => {
             if (editingPropertyKey)
@@ -327,9 +334,10 @@ export function FormTemplateEditorForm({
           if (source.type !== FIELD_DRAG_TYPE) return null
           const propertyKey = readFieldDragData(source.data)
           if (!propertyKey) return null
+          const path = propertyKeyToPointer(propertyKey)
           const property = resolveSchemaPropertyAtPointer(
             jsonSchema,
-            propertyKeyToPointer(propertyKey),
+            path,
           )?.subSchema
           if (!property) return null
           return (
@@ -341,7 +349,12 @@ export function FormTemplateEditorForm({
                 {property.title || propertyKey}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                {fieldTypeLabel(detectFieldType(property))}
+                {fieldTypeLabel(
+                  detectFieldType(
+                    property,
+                    fieldSettingsFor(fieldSettings, path).uiDefinition,
+                  ),
+                )}
               </Typography>
             </Paper>
           )

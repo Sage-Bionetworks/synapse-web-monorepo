@@ -206,7 +206,7 @@ function getByPointer(root: any, pointer: string): any {
   const parts = pointer
     .replace(/^#\//, '')
     .split('/')
-    .map(p => p.replaceAll(/~1/g, '/').replaceAll(/~0/g, '~'))
+    .map(p => p.replaceAll('~1', '/').replaceAll('~0', '~'))
   let cur = root
   for (const part of parts) {
     if (cur == null) return undefined

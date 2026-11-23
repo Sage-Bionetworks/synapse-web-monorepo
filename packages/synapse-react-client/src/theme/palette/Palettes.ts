@@ -215,6 +215,12 @@ export const arcusbioPalette: PaletteOptions = {
   secondary: generatePalette('#252861'),
 }
 
+export const twinteccPortalPalette: PaletteOptions = {
+  ...palette,
+  primary: generatePalette('#5a50db'),
+  secondary: generatePalette('#5a50db'),
+}
+
 export default {
   palette,
   generatePalette,
@@ -236,4 +242,5 @@ export default {
   classicPalette,
   arcusbioPalette,
   namhubPortalPalette,
+  twinteccPortalPalette,
 }

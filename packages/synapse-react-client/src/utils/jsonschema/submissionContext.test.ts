@@ -4,6 +4,8 @@ import {
   contextAppliesForRequestType,
   listResolvedSchemaProperties,
   pointerToPropertyKey,
+  requestTypeOnlyContext,
+  SchemaPropertyContext,
   propertyKeyToPointer,
   removeSchemaProperty,
   renameSchemaProperty,
@@ -203,6 +205,19 @@ describe('contextAppliesForRequestType', () => {
         DataAccessRequestType.RENEWAL,
       ),
     ).toBe(false)
+  })
+})
+
+describe('requestTypeOnlyContext', () => {
+  it.each<[SchemaPropertyContext[], SchemaPropertyContext | undefined]>([
+    [['RENEWAL_ONLY'], 'RENEWAL_ONLY'],
+    [['REQUEST_ONLY', 'REQUEST_ONLY'], 'REQUEST_ONLY'],
+    [['REQUEST_ONLY', 'RENEWAL_ONLY'], undefined],
+    [['RENEWAL_ONLY', 'ALWAYS'], undefined],
+    [['ALWAYS'], undefined],
+    [[], undefined],
+  ])('given %j, returns %s', (contexts, expected) => {
+    expect(requestTypeOnlyContext(contexts)).toBe(expected)
   })
 })
 

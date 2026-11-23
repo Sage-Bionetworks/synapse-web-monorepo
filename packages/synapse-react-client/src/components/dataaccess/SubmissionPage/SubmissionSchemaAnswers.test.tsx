@@ -48,6 +48,7 @@ const form: GeneratedSubmissionForm = {
       },
     },
   ],
+  hiddenSteps: [],
   schema: stepSchema,
 }
 
