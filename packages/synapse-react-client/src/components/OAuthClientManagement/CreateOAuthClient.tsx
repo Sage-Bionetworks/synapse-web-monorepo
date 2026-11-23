@@ -10,7 +10,7 @@ import {
   Alert,
   Box,
   Button,
-  GridLegacy as Grid,
+  Grid,
   IconButton,
   InputAdornment,
   MenuItem,
@@ -322,7 +322,7 @@ export function CreateOAuthModal({
             rowSpacing={GRID_ROW_SPACING}
             columnSpacing={GRID_COL_SPACING}
           >
-            <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+            <Grid size={{ xs: GRID_NARROW, md: GRID_WIDE }}>
               <TextField
                 label="Client Name"
                 required
@@ -335,7 +335,7 @@ export function CreateOAuthModal({
                 fullWidth
               />
             </Grid>
-            <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+            <Grid size={{ xs: GRID_NARROW, md: GRID_WIDE }}>
               <TextField
                 label="Client Homepage"
                 onChange={e => setClientUri(e.target.value)}
@@ -349,15 +349,15 @@ export function CreateOAuthModal({
             </Grid>
             {!isEdit && (
               <>
-                <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+                <Grid size={{ xs: GRID_NARROW, md: GRID_WIDE }}>
                   {redirectURIInputs}
                 </Grid>
-                <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+                <Grid size={{ xs: GRID_NARROW, md: GRID_WIDE }}>
                   {sectorIdentifierURIInput}
                 </Grid>
               </>
             )}
-            <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+            <Grid size={{ xs: GRID_NARROW, md: GRID_WIDE }}>
               <TextField
                 label="Link to Privacy Policy"
                 onChange={e => setPolicyUri(e.target.value)}
@@ -368,7 +368,7 @@ export function CreateOAuthModal({
                 margin="normal"
               />
             </Grid>
-            <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+            <Grid size={{ xs: GRID_NARROW, md: GRID_WIDE }}>
               <TextField
                 label="Links to Terms of Service"
                 onChange={e => setTosUri(e.target.value)}
@@ -379,7 +379,7 @@ export function CreateOAuthModal({
                 margin="normal"
               />
             </Grid>
-            <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+            <Grid size={{ xs: GRID_NARROW, md: GRID_WIDE }}>
               <TextField
                 label="User Info Signed Response Algorithm"
                 value={userinfoSignedResponseAlg}
@@ -420,10 +420,10 @@ export function CreateOAuthModal({
                 rowSpacing={GRID_ROW_SPACING}
                 columnSpacing={GRID_COL_SPACING}
               >
-                <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+                <Grid size={{ xs: GRID_NARROW, md: GRID_WIDE }}>
                   {redirectURIInputs}
                 </Grid>
-                <Grid item md={GRID_WIDE} xs={GRID_NARROW}>
+                <Grid size={{ xs: GRID_NARROW, md: GRID_WIDE }}>
                   {sectorIdentifierURIInput}
                 </Grid>
               </Grid>

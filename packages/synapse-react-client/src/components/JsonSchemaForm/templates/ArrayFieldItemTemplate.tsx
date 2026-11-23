@@ -1,4 +1,4 @@
-import { Box, GridLegacy as Grid } from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import {
   ArrayFieldItemTemplateType,
   FormContextType,
@@ -34,7 +34,7 @@ export default function ArrayFieldItemTemplate<
         justifyContent: 'space-between',
       }}
     >
-      <Grid item={true} xs>
+      <Grid size="grow">
         <Box
           sx={{
             mb: 2,
@@ -45,7 +45,6 @@ export default function ArrayFieldItemTemplate<
       </Grid>
       {hasToolbar && (
         <Grid
-          item={true}
           sx={{
             display: 'flex',
             flexDirection: 'row',

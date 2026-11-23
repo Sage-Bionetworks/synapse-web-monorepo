@@ -7,7 +7,6 @@ import {
   Collapse,
   List,
   ListItem,
-  MenuItem,
   TextField,
   Typography,
 } from '@mui/material'
@@ -142,14 +141,19 @@ function AvailableEvaluationQueueAutocompleteList(
       }}
       options={evaluations}
       getOptionLabel={option => option.name!}
-      renderOption={(props, option, state, ownerState) => {
+      renderOption={({ key, ...optionProps }, option, state, ownerState) => {
         return (
-          <MenuItem {...props}>
+          <Box
+            component="li"
+            key={key}
+            {...optionProps}
+            sx={{ height: '38px', whiteSpace: 'nowrap' }}
+          >
             <TextWithHelpIcon
               text={ownerState.getOptionLabel(option)}
               tooltipMarkdownText={option.submissionInstructionsMessage}
             />
-          </MenuItem>
+          </Box>
         )
       }}
       renderInput={params => (

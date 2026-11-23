@@ -3,7 +3,7 @@ import { computeDefaultColumnOrder } from '@/components/DataGrid/utils/computeDe
 import { getNamedColumnIndices } from '@/components/DataGrid/utils/getNamedColumnIndices'
 import { moveItem } from '@/utils/functions/ArrayUtils'
 import { collectTopLevelProperties } from '@/utils/jsonschema/collectTopLevelProperties'
-import DeleteOutline from '@mui/icons-material/DeleteOutline'
+import DeleteOutlineOutlined from '@mui/icons-material/DeleteOutlineOutlined'
 import North from '@mui/icons-material/North'
 import RestartAlt from '@mui/icons-material/RestartAlt'
 import RestoreFromTrash from '@mui/icons-material/RestoreFromTrash'
@@ -151,7 +151,7 @@ export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
                                 ])
                               }
                             >
-                              <DeleteOutline fontSize="small" />
+                              <DeleteOutlineOutlined fontSize="small" />
                             </IconButton>
                           )
                         ))}

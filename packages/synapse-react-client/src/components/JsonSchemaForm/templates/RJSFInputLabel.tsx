@@ -1,5 +1,5 @@
 import { StyledPopover } from '@/components/styled/StyledPopover'
-import HelpOutline from '@mui/icons-material/HelpOutline'
+import HelpOutlineOutlined from '@mui/icons-material/HelpOutlineOutlined'
 import HelpTwoTone from '@mui/icons-material/HelpTwoTone'
 import { Collapse, IconButton, Tooltip } from '@mui/material'
 import {
@@ -56,7 +56,10 @@ export function RJSFInputLabelWrapper<
         aria-expanded={showDetails}
         size={'small'}
       >
-        <HelpOutline color={'primary'} sx={{ width: '16px', height: '16px' }} />
+        <HelpOutlineOutlined
+          color={'primary'}
+          sx={{ width: '16px', height: '16px' }}
+        />
       </IconButton>
     </Tooltip>
   )

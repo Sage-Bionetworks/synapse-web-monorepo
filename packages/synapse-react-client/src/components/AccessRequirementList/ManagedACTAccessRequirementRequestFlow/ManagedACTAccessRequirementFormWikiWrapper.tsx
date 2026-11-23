@@ -1,5 +1,5 @@
 import { useGetAccessRequirementWikiPageKey } from '@/synapse-queries'
-import { GridLegacy as Grid, Typography } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import { PropsWithChildren } from 'react'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { useShowAccessRequirementWikiInWizard } from '../AccessRequirementListUtils'
@@ -33,10 +33,7 @@ export default function ManagedACTAccessRequirementFormWikiWrapper(
   return (
     <Grid container spacing={5}>
       <Grid
-        item
-        xs={12}
-        md={6}
-        lg={5}
+        size={{ xs: 12, md: 6, lg: 5 }}
         sx={{
           overflow: 'auto',
           pr: {
@@ -48,9 +45,7 @@ export default function ManagedACTAccessRequirementFormWikiWrapper(
         {children}
       </Grid>
       <Grid
-        item
-        md={6}
-        lg={7}
+        size={{ md: 6, lg: 7 }}
         sx={{
           overflowY: 'scroll',
           pr: 1,

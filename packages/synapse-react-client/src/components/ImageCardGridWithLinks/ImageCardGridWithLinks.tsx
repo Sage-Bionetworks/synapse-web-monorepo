@@ -9,7 +9,7 @@ import {
   Box,
   Card,
   CardMedia,
-  GridLegacy as Grid,
+  Grid,
   Link,
   Skeleton,
   Typography,
@@ -22,9 +22,10 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { Link as RouterLink } from 'react-router'
 import PortalSectionHeader from '../PortalSectionHeader'
-import { RegularBreakpoints } from '@mui/material/GridLegacy'
 
 const BORDER_RADIUS = '6px'
+// Space between cards. `heightPx` includes one gap, so each card is `heightPx - CARD_GAP_PX` tall.
+const CARD_GAP_PX = 24
 
 export type ImageCardGridWithLinksProps = {
   sql: string
@@ -70,20 +71,16 @@ const ImageCard = ({
     enabled: !!fileId,
   })
   const dataUrl = stablePresignedUrl?.dataUrl
-  const breakpoints: RegularBreakpoints = {
-    xs: 12,
-    sm: columnCount === 1 ? 12 : 6,
-    md: 12 / columnCount,
-  }
   return (
     <Grid
-      item
-      {...breakpoints}
+      size={{
+        xs: 12,
+        sm: columnCount === 1 ? 12 : 6,
+        md: 12 / columnCount,
+      }}
       key={card.rowId}
       sx={{
-        height: `${heightPx}px`,
-        paddingTop: '24px',
-        paddingLeft: '24px',
+        height: `${heightPx - CARD_GAP_PX}px`,
       }}
     >
       {isLoading ? (
@@ -201,7 +198,7 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
       />
       <Grid
         container
-        spacing={2.5}
+        spacing={`${CARD_GAP_PX}px`}
         sx={{
           order: { xs: 1, md: 0 },
         }}

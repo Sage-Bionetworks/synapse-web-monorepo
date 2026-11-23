@@ -3,7 +3,7 @@ import {
   useDeleteGridSession,
   useGetGridSessionsInfinite,
 } from '@/synapse-queries/grid/useGridSession'
-import { Autocomplete, Grid, MenuItem, TextField } from '@mui/material'
+import { Autocomplete, Grid, TextField } from '@mui/material'
 import { GridSession } from '@sage-bionetworks/synapse-client'
 import noop from 'lodash-es/noop'
 import { useMemo } from 'react'
@@ -79,12 +79,13 @@ export default function GridSessionSelectionField(
           onConfirmInput(inputValue)
         }
       }}
-      renderOption={(props, session) => (
-        <MenuItem
-          {...props}
-          key={session.sessionId}
+      renderOption={({ key, ...optionProps }, session) => (
+        <li
+          key={key}
+          {...optionProps}
           style={{
             display: 'block',
+            height: '38px',
             padding: '8px',
             cursor: 'pointer',
             borderBottom: '1px solid #eee',
@@ -126,7 +127,7 @@ export default function GridSessionSelectionField(
               </span>
             </Grid>
           </Grid>
-        </MenuItem>
+        </li>
       )}
     />
   )

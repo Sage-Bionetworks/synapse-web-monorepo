@@ -8,7 +8,7 @@ import { isEqual } from 'lodash-es'
 import { useEffect, useState } from 'react'
 import FullWidthAlert from '../../FullWidthAlert/FullWidthAlert'
 import { convertToArray } from '../AnnotationEditorUtils'
-import { GridLegacy as Grid, InputLabel } from '@mui/material'
+import { Grid, InputLabel } from '@mui/material'
 import { AdditionalPropertyContextProvider } from '../template/AdditionalPropertyContext'
 
 // Matches ####-##-##T##:##:##.###Z, e.g. 1970-01-01T12:00:000Z
@@ -225,7 +225,7 @@ export function AdditionalPropertiesSchemaField<
         },
       }}
     >
-      <Grid item xs={2}>
+      <Grid size={2}>
         <InputLabel htmlFor={`${id}-type`}>Type</InputLabel>
         <SelectWidget
           name={'Type'}
@@ -251,7 +251,7 @@ export function AdditionalPropertiesSchemaField<
           label={'Type'}
         />
       </Grid>
-      <Grid item xs={7}>
+      <Grid size={7}>
         <ArrayField
           {...props}
           uiSchema={{
