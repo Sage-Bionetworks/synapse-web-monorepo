@@ -42,8 +42,9 @@ export default function TOTPForm(props: TOTPFormProps) {
         validateChar={(character: string) => {
           return DIGIT_CHARACTERS.has(character) || character === ''
         }}
-        gap={'2px'}
         sx={{
+          // v7 sets its own `gap` in `sx`, which beats a `gap` prop
+          gap: '2px',
           mx: 'auto',
           maxWidth: '350px',
           '.MuiInputBase-root': {

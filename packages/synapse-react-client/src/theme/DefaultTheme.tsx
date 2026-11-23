@@ -438,12 +438,30 @@ export const defaultMuiThemeOptions: ThemeOptions = {
     },
     MuiPickersInputBase: {
       styleOverrides: {
-        root: ({ theme, ownerState }) =>
-          getInputRootStyle(theme, {
+        root: ({ theme, ownerState }) => ({
+          ...getInputRootStyle(theme, {
             error: ownerState.hasFieldError,
             focused: ownerState.isFieldFocused,
             color: ownerState.inputColor,
           }),
+          // Match InputBase, which doesn't set the body1 letter spacing
+          letterSpacing: 'normal',
+        }),
+        sectionsContainer: {
+          // The width of a default <input> in this theme; MUI's 182px matches one at 16px Roboto
+          width: '169px',
+        },
+      },
+    },
+    MuiPickersOutlinedInput: {
+      styleOverrides: {
+        root: {
+          // InputBase's root style hides the outline, but the focused rule here sets a 2px
+          // solid border with higher specificity
+          '&.Mui-focused .MuiPickersOutlinedInput-notchedOutline': {
+            borderStyle: 'none',
+          },
+        },
       },
     },
     MuiMenu: {
