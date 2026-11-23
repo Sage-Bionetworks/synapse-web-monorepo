@@ -22,6 +22,29 @@ export type FairRjsfSection = {
   unsupported: FairField[]
 }
 
+/**
+ * Converts in-form answers into the values FAIR stores. `PhoneWidget` keeps a formatted
+ * international number (e.g. `+1 202 555 0123`) so drafts restore into the widget, but
+ * RDCA-DAP's own form stores phone answers as digits only (`12025550123`) and prepends `+`
+ * when displaying them, so a `+` sent here would render as `++1 …`.
+ */
+export function toFairSubmissionAnswers(
+  values: Record<string, unknown>,
+  sections: readonly Pick<FairRjsfSection, 'uiSchema'>[],
+): Record<string, unknown> {
+  const answers = { ...values }
+  for (const { uiSchema } of sections) {
+    for (const [name, fieldUiSchema] of Object.entries(uiSchema)) {
+      const widget = (fieldUiSchema as UiSchema | undefined)?.['ui:widget']
+      const value = answers[name]
+      if (widget === 'PhoneWidget' && typeof value === 'string') {
+        answers[name] = value.replaceAll(/\D/g, '')
+      }
+    }
+  }
+  return answers
+}
+
 const RENDERABLE_TYPES = new Set([
   'string',
   'text',
