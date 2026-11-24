@@ -2,8 +2,16 @@
 $wheel-min-width: 640px;
 
 .container {
-  --hub-and-spokes-label-color: #7aa0d8;
-  --hub-and-spokes-ring-color: #d1e1f3;
+  // Consumers override --hub-and-spokes-label-color / --hub-and-spokes-ring-color on an ancestor; otherwise both follow
+  // the portal theme. The resolved values get distinct names so declaring them here doesn't shadow the overrides.
+  --hub-and-spokes-resolved-label-color: var(
+    --hub-and-spokes-label-color,
+    var(--synapse-primary-action-color)
+  );
+  --hub-and-spokes-resolved-ring-color: var(
+    --hub-and-spokes-ring-color,
+    var(--synapse-primary-200)
+  );
 
   container-type: inline-size;
   width: 100%;
@@ -43,8 +51,13 @@ $wheel-min-width: 640px;
   width: min(60%, 240px);
   aspect-ratio: 1;
   border-radius: 50%;
-  border: 3px solid var(--hub-and-spokes-ring-color);
-  box-shadow: 0 0 12px rgba(122, 160, 216, 0.3);
+  border: 3px solid var(--hub-and-spokes-resolved-ring-color);
+  box-shadow: 0 0 12px
+    color-mix(
+      in srgb,
+      var(--hub-and-spokes-resolved-label-color) 30%,
+      transparent
+    );
   overflow: hidden;
   background-color: #fff;
 
@@ -120,7 +133,7 @@ $wheel-min-width: 640px;
 }
 
 .spokeLabel:global(.MuiTypography-root) {
-  color: var(--hub-and-spokes-label-color);
+  color: var(--hub-and-spokes-resolved-label-color);
   font-size: 16px;
   font-weight: 500;
   line-height: 1.2;

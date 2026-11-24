@@ -2,17 +2,17 @@ import { Stack, Typography } from '@mui/material'
 import HubAndSpokes, {
   Spoke,
 } from 'synapse-react-client/components/HubAndSpokes/HubAndSpokes'
-import { SectionLayout } from '../SectionLayout'
+import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import styles from './NamhubTechnologyDevelopmentCenters.module.scss'
-import hubImageUrl from './assets/tdc/namhub-hub.png'
-import mitLogoUrl from './assets/tdc/mit.png'
-import cincinnatiLogoUrl from './assets/tdc/cincinnati.png'
-import jhuLogoUrl from './assets/tdc/jhu.png'
-import tamuLogoUrl from './assets/tdc/tamu.png'
-import mdAndersonLogoUrl from './assets/tdc/mdanderson.png'
-import ncatsLogoUrl from './assets/tdc/ncats.png'
-import harvardLogoUrl from './assets/tdc/harvard.png'
-import stanfordLogoUrl from './assets/tdc/stanford.png'
+import hubImageUrl from '@/assets/tdc/namhub-hub.png'
+import mitLogoUrl from '@/assets/tdc/mit.png'
+import cincinnatiLogoUrl from '@/assets/tdc/cincinnati.png'
+import jhuLogoUrl from '@/assets/tdc/jhu.png'
+import tamuLogoUrl from '@/assets/tdc/tamu.png'
+import mdAndersonLogoUrl from '@/assets/tdc/mdanderson.png'
+import ncatsLogoUrl from '@/assets/tdc/ncats.png'
+import harvardLogoUrl from '@/assets/tdc/harvard.png'
+import stanfordLogoUrl from '@/assets/tdc/stanford.png'
 
 const technologyDevelopmentCenters: Spoke[] = [
   {

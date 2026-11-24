@@ -1,6 +1,6 @@
 import NamhubHeader from '@sage-bionetworks/synapse-portal-framework/components/namhub/NamhubHeader'
 import NamhubAbout from '@sage-bionetworks/synapse-portal-framework/components/namhub/NamhubAbout'
-import NamhubTechnologyDevelopmentCenters from '@sage-bionetworks/synapse-portal-framework/components/namhub/NamhubTechnologyDevelopmentCenters'
+import NamhubTechnologyDevelopmentCenters from '@/components/NamhubTechnologyDevelopmentCenters'
 import DevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/DevelopedBySage'
 import nyuGsomLogoUrl from '../assets/NYUGSOM.png'
 import { ReactComponent as SageLogo } from '@sage-bionetworks/synapse-portal-framework/components/assets/sage-logo.svg'
