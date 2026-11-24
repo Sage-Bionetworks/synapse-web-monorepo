@@ -417,6 +417,9 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
         <Box
           sx={{
             my: isDefaultColumn ? 'auto' : undefined,
+            // The date picker's sections don't shrink like an <input>, so let the grid column
+            // keep its share of the width and clip the field instead
+            minWidth: 0,
           }}
         >
           {isDefaultColumn ? (
@@ -436,6 +439,17 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                     },
                   },
                   sx: fieldSx,
+                },
+                fullWidth: true,
+                error: !!errorsByField['defaultValue'],
+                helperText: errorsByField['defaultValue'],
+              }}
+              PickersTextFieldProps={{
+                slotProps: {
+                  input: {
+                    'aria-label': 'Default Value',
+                    sx: fieldSx,
+                  },
                 },
                 fullWidth: true,
                 error: !!errorsByField['defaultValue'],

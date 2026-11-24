@@ -15,6 +15,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
  */
 export const DateWidget: Widget = ({
   id,
+  label,
   disabled,
   value,
   options,
@@ -30,11 +31,17 @@ export const DateWidget: Widget = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
-        enableAccessibleFieldDOMStructure={false}
         disabled={disabled}
         minDate={minDate}
-        // Carries RJSF's field id onto the input so the form's own `<label for>` applies.
-        slotProps={{ textField: { id, onBlur: () => onBlur(id, value) } }}
+        slotProps={{
+          textField: {
+            // Carries RJSF's field id onto the field's hidden input, which the form's own
+            // `<label for>` points at. The field's sections are in a group named after the label.
+            id,
+            onBlur: () => onBlur(id, value),
+            slotProps: { input: { 'aria-label': label } },
+          },
+        }}
         value={dateOnly ? dayjs(dateOnly) : null}
         onChange={(newValue: Dayjs | null) =>
           onChange(

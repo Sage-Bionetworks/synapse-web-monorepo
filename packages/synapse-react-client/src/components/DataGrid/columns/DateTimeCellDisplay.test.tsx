@@ -1,4 +1,5 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { pickersSectionListClasses } from '@mui/x-date-pickers/PickersSectionList'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentType } from 'react'
@@ -17,19 +18,22 @@ import { POINTER_REST_MS } from './LazyCellEditor'
 // The display stands in for the picker until the cell is reached, so these
 // tests render the real pickers and check that the display shows the same text.
 
-function renderPickerInput(
+/** The text the picker's field shows: its value, or its format as a placeholder when empty */
+function renderPickerFieldText(
   rowData: unknown,
   { format, utcTime = false }: { format?: string; utcTime?: boolean } = {},
 ) {
   const props = { rowData, setRowData: vi.fn(), active: false, format }
-  const { unmount } = render(
+  const { container, unmount } = render(
     <DateTimeCell {...(props as unknown as DateTimeCellProps)} />,
     { wrapper: createWrapper({ utcTime }) },
   )
-  const input = screen.getByRole<HTMLInputElement>('textbox')
-  const shown = { value: input.value, placeholder: input.placeholder }
+  const shown = container.querySelector(
+    `.${pickersSectionListClasses.root}`,
+  )!.textContent
   unmount()
-  return shown
+  // `textContent` is nullable in some of the DOM typings that type-check this file
+  return shown ?? ''
 }
 
 function renderDisplay(
@@ -45,7 +49,7 @@ describe('DateTimeCellDisplay', () => {
   const instant = '2024-01-06T21:30:00.000Z'
 
   it('shows a date-time value as the picker does', () => {
-    const { value } = renderPickerInput(instant)
+    const value = renderPickerFieldText(instant)
     expect(value).toMatch(/2024/)
 
     renderDisplay(instant)
@@ -54,7 +58,7 @@ describe('DateTimeCellDisplay', () => {
   })
 
   it('shows a date-time value in UTC as the picker does', () => {
-    const { value } = renderPickerInput(instant, { utcTime: true })
+    const value = renderPickerFieldText(instant, { utcTime: true })
     expect(value).toMatch(/09:30 PM/)
 
     renderDisplay(instant, { utcTime: true })
@@ -64,7 +68,7 @@ describe('DateTimeCellDisplay', () => {
   })
 
   it("shows the date-time picker's placeholder when the cell is empty", () => {
-    const { placeholder } = renderPickerInput(null)
+    const placeholder = renderPickerFieldText(null)
 
     renderDisplay(null)
 
@@ -73,7 +77,7 @@ describe('DateTimeCellDisplay', () => {
   })
 
   it('shows a date value as the picker does', () => {
-    const { value } = renderPickerInput('2026-12-25', {
+    const value = renderPickerFieldText('2026-12-25', {
       format: FULL_DATE_FORMAT_NAME,
     })
     expect(value).toMatch(/12.25.2026/)
@@ -84,7 +88,7 @@ describe('DateTimeCellDisplay', () => {
   })
 
   it("shows the date picker's placeholder when the cell is empty", () => {
-    const { placeholder } = renderPickerInput(null, {
+    const placeholder = renderPickerFieldText(null, {
       format: FULL_DATE_FORMAT_NAME,
     })
 

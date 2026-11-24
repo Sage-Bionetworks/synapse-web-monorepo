@@ -38,7 +38,7 @@ const UNPARSEABLE_VALUE_SX: SxProps<Theme> = {
 const PICKER_SX: SxProps<Theme> = {
   width: '100%',
   height: '100%',
-  '& .MuiInputBase-root': {
+  '& .MuiPickersInputBase-root': {
     height: '100%',
     backgroundColor: 'inherit',
   },
