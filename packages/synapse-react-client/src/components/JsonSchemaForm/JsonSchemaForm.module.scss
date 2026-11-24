@@ -2,6 +2,8 @@
   display: grid;
   // We can't rearrange the order of the HTML elements, so we use grid rows to reorder them.
   grid-template-rows: auto auto auto auto auto;
+  // An `auto` column grows to fit its widest child, overflowing the form's container
+  grid-template-columns: minmax(0, 1fr);
   margin-bottom: 15px;
 
   :global(.react-select-container) > :global(.form-control) {
@@ -70,6 +72,8 @@
     display: flex;
     label {
       flex-grow: 1;
+      // MUI keeps an InputLabel on one line and cuts it off; a question must be readable in full
+      white-space: normal;
       span:global(.required) {
         color: var(--synapse-red-required);
         margin-left: 2px;
