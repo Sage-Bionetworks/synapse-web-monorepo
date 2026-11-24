@@ -44,8 +44,12 @@ import { TableColumnSchemaFormActions } from './TableColumnSchemaFormActions'
 import { tableColumnSchemaFormDataAtom } from './TableColumnSchemaFormReducer'
 import { validateColumnModelFormData } from './Validators/ColumnModelValidator'
 
+// Default Value gets the most width: a DATE default needs about 261px for its date-time sections,
+// time zone and calendar button. The Column Name, Size and Max List Length minimums keep a name
+// and a 4-digit value readable when a wide select label squeezes the row. The select columns grow
+// to fit their selected label, so they don't need a minimum.
 const COLUMN_SCHEMA_FORM_GRID_TEMPLATE_COLUMNS =
-  '18px 18px 1.75fr 1.75fr 0.75fr 1fr 1.25fr 1.25fr 1fr 1.25fr'
+  '18px 18px minmax(100px, 1.75fr) 1.1fr minmax(64px, 0.65fr) minmax(68px, 0.8fr) 2.65fr 1fr 0.85fr 1.2fr'
 const GRID_CONTAINER_Y_MARGIN_PX = 6
 export const HIERARCHY_VERTICAL_LINE_COMPONENT = (
   <Box
