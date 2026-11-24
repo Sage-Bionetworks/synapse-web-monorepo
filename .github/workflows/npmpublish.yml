@@ -11,6 +11,12 @@ permissions:
   id-token: write # for NPM provenance attestation
   pull-requests: read
 
+# Pull request runs cancel the run for the push they supersede; other events get a group per run, so publishing
+# runs on main are never cancelled
+concurrency:
+  group: "${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}"
+  cancel-in-progress: true
+
 jobs:
   tag-and-publish:
     strategy:
