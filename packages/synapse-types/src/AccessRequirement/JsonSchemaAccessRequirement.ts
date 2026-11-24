@@ -6,7 +6,7 @@ import ACCESS_TYPE from '../ACCESS_TYPE'
 import { RestrictableObjectDescriptor } from './RestrictableObjectDescriptor'
 
 export const JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE =
-  'JSON Schema'
+  'Schema-driven'
 export const JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE =
   'org.sagebionetworks.repo.model.JsonSchemaAccessRequirement'
 export type JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE =
