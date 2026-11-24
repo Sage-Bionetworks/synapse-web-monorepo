@@ -416,7 +416,7 @@ export const SetAccessRequirementCommonFields = forwardRef(
                 <FormControlLabel
                   value={JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE}
                   control={<Radio />}
-                  label="Schema-driven - requests are in Synapse, using a form template"
+                  label="Schema-based - requests are in Synapse, using a form template"
                 />
               )}
             </RadioGroup>

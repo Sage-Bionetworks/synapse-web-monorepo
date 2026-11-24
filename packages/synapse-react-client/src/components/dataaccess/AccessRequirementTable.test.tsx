@@ -323,7 +323,7 @@ describe('Access Requirement Table tests', () => {
     ).toEqual(JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE)
   })
 
-  it('labels and filters JSON Schema ARs as Schema-driven', async () => {
+  it('labels and filters JSON Schema ARs as Schema-based', async () => {
     const onTypeFilterChange = vi.fn()
     renderComponent({ onTypeFilterChange })
 
