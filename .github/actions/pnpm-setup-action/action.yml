@@ -29,6 +29,7 @@ runs:
     # The path must be workspace-relative: actions/cache stores paths relative to the workspace, and container jobs
     # (HOME=/github/home) would otherwise save archives that host jobs extract outside their HOME.
     - name: Setup OpenAPI generator cache
+      id: openapi-generator-cache
       uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
       with:
         path: node_modules/.cache/openapi-generator
@@ -37,4 +38,12 @@ runs:
           ${{ runner.os }}-openapi-generator-v2-
     - name: Install dependencies (use frozen lockfile)
       run: pnpm install --frozen-lockfile
+      shell: bash
+    # The first job to finish saves the entry, and jobs that hit it never save again. Download every jar on a miss
+    # so that entry is complete even when the saving job generates only one client.
+    - name: Download OpenAPI generator jars
+      if: steps.openapi-generator-cache.outputs.cache-hit != 'true'
+      run: |
+        pnpm --filter @sage-bionetworks/aridhia-client exec openapi-generator-cli version
+        pnpm --filter @sage-bionetworks/synapse-client exec openapi-generator-cli version
       shell: bash
