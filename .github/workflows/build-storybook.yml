@@ -19,10 +19,10 @@ on:
 permissions:
   contents: read
 
-# A new push to a pull request cancels its in-progress run. Other events get a group per run, so runs on main
-# are never cancelled or queued behind each other.
+# Pull request runs cancel the run for the push they supersede. Label events and other events get a group per run,
+# so adding a label never cancels a build.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  group: "${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.event.action != 'labeled' && github.ref || github.run_id }}"
   cancel-in-progress: true
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
     name: Build Storybook
     runs-on: ubuntu-latest
     # Run on all events except labeled PRs without the 'chromatic' label
-    if: ${{ github.event_name != 'labeled' || github.event.label.name == 'chromatic' }}
+    if: ${{ github.event.action != 'labeled' || github.event.label.name == 'chromatic' }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:

@@ -11,10 +11,10 @@ permissions:
   id-token: write # for NPM provenance attestation
   pull-requests: read
 
-# A new push to a pull request cancels its in-progress run. Other events get a group per run, so publishing runs
-# on main are never cancelled or queued behind each other.
+# Pull request runs cancel the run for the push they supersede; other events get a group per run, so publishing
+# runs on main are never cancelled
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  group: "${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}"
   cancel-in-progress: true
 
 jobs:
