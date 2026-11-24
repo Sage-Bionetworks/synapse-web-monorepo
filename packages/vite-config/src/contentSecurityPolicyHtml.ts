@@ -5,9 +5,10 @@ import pLimit from 'p-limit'
 import { type DefaultTreeAdapterTypes, defaultTreeAdapter, parse } from 'parse5'
 import type { Plugin } from 'vite'
 import {
-  type AllowedSource,
+  type ContentSecurityPolicyConfig,
   serializeContentSecurityPolicy,
 } from './contentSecurityPolicy.js'
+import { getViolationReporterScript } from './cspViolationReporter.js'
 
 type Document = DefaultTreeAdapterTypes.Document
 type Element = DefaultTreeAdapterTypes.Element
@@ -72,6 +73,10 @@ function getPolicyOffset(document: Document): number | undefined {
   return headStartTag.endOffset
 }
 
+function sha256Source(scriptText: string): string {
+  return `'sha256-${createHash('sha256').update(scriptText, 'utf8').digest('base64')}'`
+}
+
 function getScriptHashes(document: Document): string[] {
   const hashes = new Set<string>()
   for (const element of getElements(document)) {
@@ -88,11 +93,26 @@ function getScriptHashes(document: Document): string[] {
         defaultTreeAdapter.isTextNode(child) ? [child.value] : [],
       )
       .join('')
-    hashes.add(
-      `'sha256-${createHash('sha256').update(text, 'utf8').digest('base64')}'`,
-    )
+    hashes.add(sha256Source(text))
   }
   return [...hashes]
+}
+
+function assertReportUrlIsAllowed({
+  allowedSources,
+  reportUrl,
+}: ContentSecurityPolicyConfig): void {
+  const reportOrigin = new URL(reportUrl).origin
+  const allowed = allowedSources.some(
+    allowedSource =>
+      allowedSource.source === reportOrigin &&
+      allowedSource.directives.includes('connect-src'),
+  )
+  if (!allowed) {
+    throw new Error(
+      `connect-src must allow ${reportOrigin}, or the page cannot send its violation reports`,
+    )
+  }
 }
 
 /**
@@ -103,15 +123,18 @@ export function getInlineScriptHashes(html: string): string[] {
 }
 
 /**
- * Adds a Content Security Policy built from `allowedSources` to an HTML document as a `<meta http-equiv>` element,
- * allowing the document's own inline scripts by hash. The rest of the markup is left byte-for-byte unchanged.
+ * Adds a Content Security Policy built from `policy` to an HTML document as a `<meta http-equiv>` element, allowing
+ * the document's own inline scripts by hash. Right after it goes an inline script that reports the page's violations
+ * to `policy.reportUrl`. The rest of the markup is left byte-for-byte unchanged.
  *
- * @throws if the document has no `<head>` or already has a Content Security Policy
+ * @throws if the document has no `<head>` or already has a Content Security Policy, or if `connect-src` does not allow
+ * the report URL's origin
  */
 export function addContentSecurityPolicyToHtml(
   html: string,
-  allowedSources: AllowedSource[],
+  policy: ContentSecurityPolicyConfig,
 ): string {
+  assertReportUrlIsAllowed(policy)
   // parse5 implements the HTML parsing algorithm that browsers use, so the script text it yields is the text a
   // browser hashes, and its source locations let the policy be spliced into the original markup without
   // reserializing it
@@ -131,12 +154,13 @@ export function addContentSecurityPolicyToHtml(
       'The document has no <head> for the Content-Security-Policy',
     )
   }
-  const policy = serializeContentSecurityPolicy(
-    allowedSources,
-    getScriptHashes(document),
+  const reporter = getViolationReporterScript(policy.reportUrl)
+  const serializedPolicy = serializeContentSecurityPolicy(
+    policy.allowedSources,
+    [sha256Source(reporter), ...getScriptHashes(document)],
   )
-  const meta = `<meta http-equiv="Content-Security-Policy" content="${policy}">`
-  return html.slice(0, insertAt) + meta + html.slice(insertAt)
+  const meta = `<meta http-equiv="Content-Security-Policy" content="${serializedPolicy}">`
+  return `${html.slice(0, insertAt)}${meta}<script>${reporter}</script>${html.slice(insertAt)}`
 }
 
 async function findHtmlFiles(directory: string): Promise<string[]> {
@@ -151,12 +175,12 @@ async function findHtmlFiles(directory: string): Promise<string[]> {
 
 async function addContentSecurityPolicyToHtmlFile(
   file: string,
-  allowedSources: AllowedSource[],
+  policy: ContentSecurityPolicyConfig,
 ): Promise<void> {
   const html = await readFile(file, 'utf8')
   let withPolicy: string
   try {
-    withPolicy = addContentSecurityPolicyToHtml(html, allowedSources)
+    withPolicy = addContentSecurityPolicyToHtml(html, policy)
   } catch (error) {
     throw new Error(`Could not add the Content-Security-Policy to ${file}`, {
       cause: error,
@@ -170,13 +194,13 @@ async function addContentSecurityPolicyToHtmlFile(
  */
 export async function addContentSecurityPolicyToHtmlFiles(
   directory: string,
-  allowedSources: AllowedSource[],
+  policy: ContentSecurityPolicyConfig,
 ): Promise<void> {
   const limit = pLimit(CONCURRENT_HTML_FILES)
   const files = await findHtmlFiles(directory)
   await Promise.all(
     files.map(file =>
-      limit(() => addContentSecurityPolicyToHtmlFile(file, allowedSources)),
+      limit(() => addContentSecurityPolicyToHtmlFile(file, policy)),
     ),
   )
 }
@@ -187,22 +211,20 @@ export async function addContentSecurityPolicyToHtmlFiles(
  *
  * Place it after plugins that rewrite HTML (e.g. vite-plugin-html's minifier) so the hashes match the final markup.
  *
- * @param getAllowedSources returns the policy's sources for the build's environment variables (`VITE_*`)
+ * @param getPolicy returns the policy for the build's environment variables (`VITE_*`)
  */
 export function contentSecurityPolicyPlugin(
-  getAllowedSources: (
+  getPolicy: (
     env: Record<string, string | undefined>,
-  ) => AllowedSource[],
+  ) => ContentSecurityPolicyConfig,
 ): Plugin {
-  let allowedSources: AllowedSource[] = []
+  let policy!: ContentSecurityPolicyConfig
   return {
     name: 'content-security-policy',
     apply: 'build',
     enforce: 'post',
     configResolved(config) {
-      allowedSources = getAllowedSources(
-        config.env as Record<string, string | undefined>,
-      )
+      policy = getPolicy(config.env as Record<string, string | undefined>)
     },
     generateBundle(_options, bundle) {
       for (const output of Object.values(bundle)) {
@@ -211,10 +233,7 @@ export function contentSecurityPolicyPlugin(
           output.fileName.endsWith('.html') &&
           typeof output.source === 'string'
         ) {
-          output.source = addContentSecurityPolicyToHtml(
-            output.source,
-            allowedSources,
-          )
+          output.source = addContentSecurityPolicyToHtml(output.source, policy)
         }
       }
     },

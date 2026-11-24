@@ -1,25 +1,17 @@
 import { describe, expect, it } from 'vitest'
-import {
-  CSP_DIRECTIVES,
-  serializeContentSecurityPolicy,
-} from './contentSecurityPolicy.js'
+import { serializeContentSecurityPolicy } from './contentSecurityPolicy.js'
 import {
   PORTAL_ALLOWED_SOURCES,
   getPortalAllowedSources,
-  getPortalSecurityHeaders,
+  getPortalContentSecurityPolicy,
 } from './portalContentSecurityPolicy.js'
-import {
-  CLOUDFRONT_MAX_HEADER_VALUE_LENGTH,
-  parseContentSecurityPolicy as parse,
-} from './testUtils/parseContentSecurityPolicy.js'
+import { parseContentSecurityPolicy as parse } from './testUtils/parseContentSecurityPolicy.js'
 
 const portalKeys = [undefined, ...Object.keys(PORTAL_ALLOWED_SOURCES)]
 
-function getPortalPolicy(portalKey?: string, omitHttpsScheme = false) {
+function getPortalPolicy(portalKey?: string) {
   return parse(
-    serializeContentSecurityPolicy(getPortalAllowedSources(portalKey), [], {
-      omitHttpsScheme,
-    }),
+    serializeContentSecurityPolicy(getPortalAllowedSources(portalKey)),
   )
 }
 
@@ -55,28 +47,18 @@ describe('getPortalAllowedSources', () => {
   })
 })
 
-describe('getPortalSecurityHeaders', () => {
-  it("reports exactly the sources some portal's build-time policy allows, plus inline scripts", () => {
-    const reportOnly = parse(
-      getPortalSecurityHeaders()['Content-Security-Policy-Report-Only'],
-    )
-    const enforcedPolicies = portalKeys.map(key => getPortalPolicy(key, true))
-    for (const directive of CSP_DIRECTIVES) {
-      const allowedByAnyPortal = new Set(
-        enforcedPolicies.flatMap(policy => policy.get(directive)!),
-      )
-      if (directive === 'script-src') {
-        allowedByAnyPortal.add("'unsafe-inline'")
-      }
-      expect(new Set(reportOnly.get(directive))).toEqual(allowedByAnyPortal)
-    }
-  })
-
-  it('fits within CloudFront response headers policy value limits', () => {
-    for (const value of Object.values(getPortalSecurityHeaders())) {
-      expect(value.length).toBeLessThanOrEqual(
-        CLOUDFRONT_MAX_HEADER_VALUE_LENGTH,
-      )
-    }
-  })
+describe('getPortalContentSecurityPolicy', () => {
+  it.each(portalKeys)(
+    "reports portal %s's violations to the production web client, which its connect-src allows",
+    portalKey => {
+      const { allowedSources, reportUrl } =
+        getPortalContentSecurityPolicy(portalKey)
+      expect(reportUrl).toBe('https://www.synapse.org/Portal/csp-report')
+      expect(
+        parse(serializeContentSecurityPolicy(allowedSources)).get(
+          'connect-src',
+        ),
+      ).toContain('https://www.synapse.org')
+    },
+  )
 })

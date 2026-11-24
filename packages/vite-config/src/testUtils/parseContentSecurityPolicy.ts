@@ -9,6 +9,3 @@ export function parseContentSecurityPolicy(
     }),
   )
 }
-
-// CloudFront rejects a custom header or Content-Security-Policy value longer than this
-export const CLOUDFRONT_MAX_HEADER_VALUE_LENGTH = 1783

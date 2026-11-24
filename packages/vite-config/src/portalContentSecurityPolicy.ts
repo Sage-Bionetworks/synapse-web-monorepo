@@ -2,14 +2,15 @@
  * Content Security Policy for the data portals: the documented list of origins that may supply script, frames, and
  * other content to a portal (NIST SP 800-53 SC-18, SWC-8037).
  */
-import { getSecurityHeaders } from './cloudFrontSecurityHeaders.js'
 import {
   type AllowedSource,
+  type ContentSecurityPolicyConfig,
   GOOGLE_ANALYTICS_SOURCES,
   PRODUCTION_SYNAPSE_ENDPOINTS,
   SAGE,
   STAGING_SYNAPSE_ENDPOINTS,
   STYLE_AND_FONT_SOURCES,
+  getCspReportUrl,
   getSynapseSources,
 } from './contentSecurityPolicy.js'
 
@@ -37,6 +38,13 @@ export const SHARED_ALLOWED_SOURCES: AllowedSource[] = [
     purpose:
       '@rjsf/validator-ajv8 compiles JSON schemas into functions at runtime (table Export dialog, data access request forms, DynamicForm). Remove when RJSF forms use a validator that does not generate code',
     owner: 'ajv (synapse-react-client dependency)',
+  },
+  {
+    source: "'sha256-LzqK46qqX2MczBUDxYikB3KB+vC59oHr/pgueXg5jqk='",
+    directives: ['script-src'],
+    purpose:
+      "Height reporter that synapse-react-client's HtmlPreview writes into its sandboxed srcdoc frame, which inherits the portal policy. HtmlPreview's tests fail if the script no longer matches this hash",
+    owner: SAGE,
   },
   {
     source: 'data:',
@@ -233,13 +241,16 @@ export function getPortalAllowedSources(portalKey?: string): AllowedSource[] {
 }
 
 /**
- * Response headers for every portal's CloudFront distribution. The headers are the same for every portal, so one
- * response headers policy serves them all: the report-only policy allows every source that any portal allows, so a
- * violation of a portal's enforced policy is reported unless another portal allows that source.
+ * A portal's build-time policy. Every portal uses the production Synapse stack, so its violations are reported to the
+ * production web client.
+ *
+ * @param portalKey the portal's `VITE_PORTAL_KEY`; omitted or unknown keys get only the shared sources
  */
-export function getPortalSecurityHeaders(): Record<string, string> {
-  return getSecurityHeaders([
-    ...SHARED_ALLOWED_SOURCES,
-    ...Object.values(PORTAL_ALLOWED_SOURCES).flat(),
-  ])
+export function getPortalContentSecurityPolicy(
+  portalKey?: string,
+): ContentSecurityPolicyConfig {
+  return {
+    allowedSources: getPortalAllowedSources(portalKey),
+    reportUrl: getCspReportUrl(PRODUCTION_SYNAPSE_ENDPOINTS),
+  }
 }

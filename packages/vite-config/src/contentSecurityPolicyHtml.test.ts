@@ -11,16 +11,31 @@ import {
   contentSecurityPolicyPlugin,
   getInlineScriptHashes,
 } from './contentSecurityPolicyHtml.js'
-import type { AllowedSource } from './contentSecurityPolicy.js'
+import type {
+  AllowedSource,
+  ContentSecurityPolicyConfig,
+} from './contentSecurityPolicy.js'
+import { getViolationReporterScript } from './cspViolationReporter.js'
 
-const SELF: AllowedSource[] = [
-  {
-    source: "'self'",
-    directives: ['script-src'],
-    purpose: 'test',
-    owner: 'test',
-  },
-]
+const REPORT_URL = 'https://report.example/csp-report'
+
+function allowed(
+  source: string,
+  ...directives: AllowedSource['directives']
+): AllowedSource {
+  return { source, directives, purpose: 'test', owner: 'test' }
+}
+
+const SELF: ContentSecurityPolicyConfig = {
+  allowedSources: [
+    allowed("'self'", 'script-src'),
+    allowed('https://report.example', 'connect-src'),
+  ],
+  reportUrl: REPORT_URL,
+}
+
+const POLICY_AND_REPORTER =
+  /<meta http-equiv="Content-Security-Policy" content="[^"]+"><script>[\s\S]*?<\/script>/
 
 let directory: string
 beforeEach(async () => {
@@ -43,6 +58,8 @@ function getPolicy(html: string) {
 function sha256Source(scriptText: string) {
   return `'sha256-${createHash('sha256').update(scriptText).digest('base64')}'`
 }
+
+const REPORTER_HASH = sha256Source(getViolationReporterScript(REPORT_URL))
 
 describe('getInlineScriptHashes', () => {
   it('hashes inline classic and module scripts the way browsers do', () => {
@@ -109,14 +126,19 @@ describe('getInlineScriptHashes', () => {
 })
 
 describe('addContentSecurityPolicyToHtml', () => {
-  it('adds the policy after <meta charset> and before any resource it governs', () => {
+  it('adds the policy and the violation reporter after <meta charset> and before any resource the policy governs', () => {
     const html = `<!DOCTYPE html><html><head><meta charSet="utf-8"/><link rel="stylesheet" href="/a.css"/></head><body><script>${MDN_SCRIPT}</script></body></html>`
     const result = addContentSecurityPolicyToHtml(html, SELF)
     expect(result).toMatch(
-      /^<!DOCTYPE html><html><head><meta charSet="utf-8"\/><meta http-equiv="Content-Security-Policy" content="[^"]+"><link rel="stylesheet"/,
+      new RegExp(
+        `^<!DOCTYPE html><html><head><meta charSet="utf-8"/>${POLICY_AND_REPORTER.source}<link rel="stylesheet"`,
+      ),
     )
     expect(getPolicy(result)?.split('; ')).toContain(
-      `script-src 'self' ${MDN_SCRIPT_HASH}`,
+      `script-src 'self' ${REPORTER_HASH} ${MDN_SCRIPT_HASH}`,
+    )
+    expect(result).toContain(
+      `<script>${getViolationReporterScript(REPORT_URL)}</script>`,
     )
   })
 
@@ -126,7 +148,7 @@ describe('addContentSecurityPolicyToHtml', () => {
       SELF,
     )
     expect(result).toMatch(
-      /^<html><head lang="en"><meta http-equiv="Content-Security-Policy" content="[^"]+"><title>/,
+      new RegExp(`^<html><head lang="en">${POLICY_AND_REPORTER.source}<title>`),
     )
   })
 
@@ -134,10 +156,9 @@ describe('addContentSecurityPolicyToHtml', () => {
     const html =
       '<!DOCTYPE html>\r\n<HTML>\r\n<head>\r\n  <meta charset=utf-8>\r\n  <title>t</title>\r\n</head><body><p class=a>x</body>\r\n'
     const result = addContentSecurityPolicyToHtml(html, SELF)
-    const meta =
-      /<meta http-equiv="Content-Security-Policy" content="[^"]+">/.exec(result)
-    expect(result.replace(meta![0], '')).toBe(html)
-    expect(result).toContain(`<meta charset=utf-8>${meta![0]}\r\n  <title>`)
+    const inserted = POLICY_AND_REPORTER.exec(result)
+    expect(result.replace(inserted![0], '')).toBe(html)
+    expect(result).toContain(`<meta charset=utf-8>${inserted![0]}\r\n  <title>`)
   })
 
   it('refuses documents it cannot protect', () => {
@@ -152,6 +173,18 @@ describe('addContentSecurityPolicyToHtml', () => {
         addContentSecurityPolicyToHtml(`<head>${meta}</head>`, SELF),
       ).toThrow(/already has/)
     }
+  })
+
+  it('refuses a policy whose connect-src would block its own violation reports', () => {
+    expect(() =>
+      addContentSecurityPolicyToHtml('<head></head>', {
+        allowedSources: [
+          allowed("'self'", 'script-src'),
+          allowed('https://report.example', 'img-src'),
+        ],
+        reportUrl: REPORT_URL,
+      }),
+    ).toThrow(/connect-src must allow https:\/\/report\.example/)
   })
 
   it('ignores other meta elements and unterminated tags, in linear time', () => {
@@ -179,7 +212,7 @@ describe('addContentSecurityPolicyToHtmlFiles', () => {
     )
     for (const html of pages) {
       expect(getPolicy(html)?.split('; ')).toContain(
-        `script-src 'self' ${MDN_SCRIPT_HASH}`,
+        `script-src 'self' ${REPORTER_HASH} ${MDN_SCRIPT_HASH}`,
       )
     }
     expect(await readFile(path.join(directory, 'robots.txt'), 'utf8')).toBe(
@@ -220,15 +253,13 @@ describe('contentSecurityPolicyPlugin', () => {
       plugins: [
         // Minifies the HTML in generateBundle, so the hashes must be taken after it
         createHtmlPlugin({ minify: true, inject: { data: { body: '<p>' } } }),
-        contentSecurityPolicyPlugin(env => [
+        contentSecurityPolicyPlugin(env => ({
           ...SELF,
-          {
-            source: env.VITE_TEST_ORIGIN!,
-            directives: ['connect-src'],
-            purpose: 'test',
-            owner: 'test',
-          },
-        ]),
+          allowedSources: [
+            ...SELF.allowedSources,
+            allowed(env.VITE_TEST_ORIGIN!, 'connect-src'),
+          ],
+        })),
       ],
     })
     if (!('output' in result)) {
@@ -242,11 +273,14 @@ describe('contentSecurityPolicyPlugin', () => {
     }
     const htmlSource = String(html.source)
     const policy = getPolicy(htmlSource)!.split('; ')
-    expect(policy).toContain('connect-src https://repo.example')
+    expect(policy).toContain(
+      'connect-src https://report.example https://repo.example',
+    )
     const scriptSrc = policy.find(d => d.startsWith('script-src '))!
+    // The reporter and the page's own inline script
     const finalHashes = getInlineScriptHashes(htmlSource)
-    expect(finalHashes).toHaveLength(1)
-    expect(scriptSrc).toBe(`script-src 'self' ${finalHashes[0]}`)
+    expect(finalHashes).toHaveLength(2)
+    expect(scriptSrc).toBe(`script-src 'self' ${finalHashes.join(' ')}`)
     expect(script.code).not.toContain('Content-Security-Policy')
   })
 })

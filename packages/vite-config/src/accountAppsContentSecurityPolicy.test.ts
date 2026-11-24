@@ -2,17 +2,13 @@ import { describe, expect, it } from 'vitest'
 import {
   ACCOUNT_APPS,
   getAccountAppAllowedSources,
-  getAccountAppSecurityHeaders,
-  getSynapseEndpointsFromEnv,
+  getAccountAppContentSecurityPolicy,
 } from './accountAppsContentSecurityPolicy.js'
 import {
   type SynapseEndpoints,
   serializeContentSecurityPolicy,
 } from './contentSecurityPolicy.js'
-import {
-  CLOUDFRONT_MAX_HEADER_VALUE_LENGTH,
-  parseContentSecurityPolicy as parse,
-} from './testUtils/parseContentSecurityPolicy.js'
+import { parseContentSecurityPolicy as parse } from './testUtils/parseContentSecurityPolicy.js'
 
 // The endpoints in the apps' .env.<mode> files
 const STACKS: Record<string, SynapseEndpoints> = {
@@ -117,58 +113,34 @@ describe('getAccountAppAllowedSources', () => {
   })
 })
 
-describe('getSynapseEndpointsFromEnv', () => {
-  it('reads the endpoints the app is built with, and refuses a build without them', () => {
-    expect(
-      getSynapseEndpointsFromEnv({
-        VITE_SYNAPSE_REPO_ENDPOINT: STACKS.staging.repo,
-        VITE_SYNAPSE_PORTAL_ENDPOINT: STACKS.staging.portal,
-      }),
-    ).toEqual(STACKS.staging)
+describe('getAccountAppContentSecurityPolicy', () => {
+  it.each(appsOnStacks)(
+    "uses the $stack stack from the $app build's env, and reports to that stack's web client",
+    ({ app, endpoints }) => {
+      const { allowedSources, reportUrl } = getAccountAppContentSecurityPolicy(
+        app,
+        {
+          VITE_SYNAPSE_REPO_ENDPOINT: endpoints.repo,
+          VITE_SYNAPSE_PORTAL_ENDPOINT: endpoints.portal,
+        },
+      )
+      expect(allowedSources).toEqual(
+        getAccountAppAllowedSources(app, endpoints),
+      )
+      expect(reportUrl).toBe(`${endpoints.portal}/Portal/csp-report`)
+      expect(
+        parse(serializeContentSecurityPolicy(allowedSources)).get(
+          'connect-src',
+        ),
+      ).toContain(endpoints.portal)
+    },
+  )
+
+  it('refuses a build without the Synapse endpoints', () => {
     expect(() =>
-      getSynapseEndpointsFromEnv({
+      getAccountAppContentSecurityPolicy('SageAccountWeb', {
         VITE_SYNAPSE_REPO_ENDPOINT: STACKS.staging.repo,
       }),
     ).toThrow(/VITE_SYNAPSE_PORTAL_ENDPOINT/)
   })
-})
-
-describe('getAccountAppSecurityHeaders', () => {
-  it.each(Object.entries(STACKS))(
-    'reports every source either app allows on %s',
-    (_stack, endpoints) => {
-      const reportOnly = parse(
-        getAccountAppSecurityHeaders(endpoints)[
-          'Content-Security-Policy-Report-Only'
-        ],
-      )
-      for (const app of ACCOUNT_APPS) {
-        const enforced = parse(
-          serializeContentSecurityPolicy(
-            getAccountAppAllowedSources(app, endpoints),
-            [],
-            { omitHttpsScheme: true },
-          ),
-        )
-        for (const [directive, sources] of enforced) {
-          expect(reportOnly.get(directive)).toEqual(
-            expect.arrayContaining(sources.filter(s => s !== "'none'")),
-          )
-        }
-      }
-    },
-  )
-
-  it.each(Object.entries(STACKS))(
-    'fits within CloudFront response headers policy value limits on %s',
-    (_stack, endpoints) => {
-      for (const value of Object.values(
-        getAccountAppSecurityHeaders(endpoints),
-      )) {
-        expect(value.length).toBeLessThanOrEqual(
-          CLOUDFRONT_MAX_HEADER_VALUE_LENGTH,
-        )
-      }
-    },
-  )
 })

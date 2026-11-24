@@ -49,25 +49,4 @@ describe('serializeContentSecurityPolicy', () => {
     expect(policy.get('img-src')).toEqual(['https:', 'http://b.example'])
     expect(policy.get('connect-src')).toEqual(['https://a.example'])
   })
-
-  it('can omit the https:// scheme without dropping other schemes or paths', () => {
-    const policy = parse(
-      serializeContentSecurityPolicy(
-        [
-          allowed('https://a.example/path/', 'connect-src'),
-          allowed('https://*.b.example', 'connect-src'),
-          allowed('http://c.example', 'connect-src'),
-          allowed("'self'", 'connect-src'),
-        ],
-        [],
-        { omitHttpsScheme: true },
-      ),
-    )
-    expect(policy.get('connect-src')).toEqual([
-      'a.example/path/',
-      '*.b.example',
-      'http://c.example',
-      "'self'",
-    ])
-  })
 })

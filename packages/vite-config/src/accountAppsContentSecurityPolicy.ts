@@ -7,13 +7,14 @@
  * `VITE_SYNAPSE_REPO_ENDPOINT` and `VITE_SYNAPSE_PORTAL_ENDPOINT`. A production build allows no staging or development
  * hosts.
  */
-import { getSecurityHeaders } from './cloudFrontSecurityHeaders.js'
 import {
   type AllowedSource,
+  type ContentSecurityPolicyConfig,
   GOOGLE_ANALYTICS_SOURCES,
   SAGE,
   STYLE_AND_FONT_SOURCES,
   type SynapseEndpoints,
+  getCspReportUrl,
   getSynapseSources,
 } from './contentSecurityPolicy.js'
 
@@ -102,7 +103,7 @@ export function getAccountAppAllowedSources(
  *
  * @throws if either endpoint variable is missing
  */
-export function getSynapseEndpointsFromEnv(
+function getSynapseEndpointsFromEnv(
   env: Record<string, string | undefined>,
 ): SynapseEndpoints {
   const repo = env.VITE_SYNAPSE_REPO_ENDPOINT
@@ -116,14 +117,18 @@ export function getSynapseEndpointsFromEnv(
 }
 
 /**
- * Response headers for the account apps' CloudFront distributions on one Synapse stack. Both apps get the same
- * headers, so one response headers policy per stack serves them both: the report-only policy allows every source that
- * either app allows on that stack.
+ * An account app's build-time policy for the Synapse stack in the build's environment. Violations are reported to that
+ * stack's web client.
+ *
+ * @throws if `VITE_SYNAPSE_REPO_ENDPOINT` or `VITE_SYNAPSE_PORTAL_ENDPOINT` is missing
  */
-export function getAccountAppSecurityHeaders(
-  endpoints: SynapseEndpoints,
-): Record<string, string> {
-  return getSecurityHeaders(
-    ACCOUNT_APPS.flatMap(app => getAccountAppAllowedSources(app, endpoints)),
-  )
+export function getAccountAppContentSecurityPolicy(
+  app: AccountApp,
+  env: Record<string, string | undefined>,
+): ContentSecurityPolicyConfig {
+  const endpoints = getSynapseEndpointsFromEnv(env)
+  return {
+    allowedSources: getAccountAppAllowedSources(app, endpoints),
+    reportUrl: getCspReportUrl(endpoints),
+  }
 }

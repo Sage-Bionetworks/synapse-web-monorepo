@@ -4,7 +4,7 @@ import baseConfig from './baseConfig.js'
 import vitestConfig from './vitest-config.js'
 import { reactPlugins, nodePolyfillsPlugin } from './plugins.js'
 import { contentSecurityPolicyPlugin } from './contentSecurityPolicyHtml.js'
-import { getPortalAllowedSources } from './portalContentSecurityPolicy.js'
+import { getPortalContentSecurityPolicy } from './portalContentSecurityPolicy.js'
 
 /**
  * Pre-composed Vite configuration for standard (SPA) portal apps.
@@ -85,7 +85,7 @@ const portalsViteConfig = mergeConfig(
       }),
       // After createHtmlPlugin, whose minifier would otherwise rewrite the HTML after it is hashed
       contentSecurityPolicyPlugin(env =>
-        getPortalAllowedSources(env.VITE_PORTAL_KEY),
+        getPortalContentSecurityPolicy(env.VITE_PORTAL_KEY),
       ),
     ],
   }),

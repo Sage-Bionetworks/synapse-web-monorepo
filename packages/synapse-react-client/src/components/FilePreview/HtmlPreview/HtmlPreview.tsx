@@ -28,6 +28,8 @@ type HeightMessage = {
 }
 
 // The sandboxed frame is cross-origin, so it reports its own height on load and on resize
+// The srcdoc frame inherits the embedding page's Content Security Policy. The portals' policy (vite-config's portal
+// allowlist) allows this script only by its hash, so changing it needs a new hash there
 const HEIGHT_REPORTER_SCRIPTS = `
     <script>
       window.addEventListener('load', () => {

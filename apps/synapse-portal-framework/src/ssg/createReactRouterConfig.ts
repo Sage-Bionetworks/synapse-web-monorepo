@@ -1,7 +1,7 @@
 import path from 'node:path'
 import type { Config } from '@react-router/dev/config'
 import { addContentSecurityPolicyToHtmlFiles } from 'vite-config/contentSecurityPolicyHtml'
-import { getPortalAllowedSources } from 'vite-config/portalContentSecurityPolicy'
+import { getPortalContentSecurityPolicy } from 'vite-config/portalContentSecurityPolicy'
 import { fetchResourceIds } from '../sitemap/queryTableForSitemap'
 import type { SitemapConfig } from '../sitemap/types'
 import {
@@ -126,7 +126,7 @@ export function createReactRouterConfig(
     buildEnd: async ({ reactRouterConfig, viteConfig }) => {
       await addContentSecurityPolicyToHtmlFiles(
         path.join(reactRouterConfig.buildDirectory, 'client'),
-        getPortalAllowedSources(
+        getPortalContentSecurityPolicy(
           viteConfig.env.VITE_PORTAL_KEY as string | undefined,
         ),
       )

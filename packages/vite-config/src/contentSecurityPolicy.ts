@@ -34,6 +34,13 @@ export type AllowedSource = {
   owner: string
 }
 
+/** A build's Content Security Policy. */
+export type ContentSecurityPolicyConfig = {
+  allowedSources: AllowedSource[]
+  /** Endpoint that receives the build's violation reports. `connect-src` must allow its origin. */
+  reportUrl: string
+}
+
 export const SAGE = 'Sage Bionetworks'
 const GOOGLE_ANALYTICS =
   'Google (Sage GTM container GTM-KPW4KS62 / GA4 property G-CEKFPZDZX7)'
@@ -154,6 +161,11 @@ export const STAGING_SYNAPSE_ENDPOINTS: SynapseEndpoints = {
   portal: 'https://staging.synapse.org',
 }
 
+/** The Synapse web client's CSP violation report endpoint (CSPReportServlet), which logs reports to CloudWatch. */
+export function getCspReportUrl(endpoints: SynapseEndpoints): string {
+  return new URL('/Portal/csp-report', endpoints.portal).href
+}
+
 // Host of the presigned URLs that each stack's repo returns for Synapse-managed files. Stacks not listed (e.g. a
 // local repo) get no file download host.
 const FILE_DOWNLOAD_ORIGIN_BY_REPO_ORIGIN: Record<string, string> = {
@@ -201,13 +213,10 @@ export function getSynapseSources(
  * Serializes a policy from its allowed sources.
  *
  * @param extraScriptSources additional `script-src` sources, such as hashes of a page's inline scripts
- * @param options.omitHttpsScheme writes `https://` sources without the scheme. On an HTTPS page, a source without a
- * scheme still matches only HTTPS URLs (and WSS for connections), so this only shortens the policy.
  */
 export function serializeContentSecurityPolicy(
   sources: AllowedSource[],
   extraScriptSources: string[] = [],
-  options: { omitHttpsScheme?: boolean } = {},
 ): string {
   return CSP_DIRECTIVES.map(directive => {
     const values = sources
@@ -218,11 +227,9 @@ export function serializeContentSecurityPolicy(
     }
     // An HTTPS origin adds nothing to a directive that already allows every HTTPS URL
     const allowsAllHttps = values.includes('https:')
-    const unique = [...new Set(values)]
-      .filter(value => !(allowsAllHttps && value.startsWith('https://')))
-      .map(value =>
-        options.omitHttpsScheme ? value.replace(/^https:\/\//, '') : value,
-      )
+    const unique = [...new Set(values)].filter(
+      value => !(allowsAllHttps && value.startsWith('https://')),
+    )
     return `${directive} ${unique.length > 0 ? unique.join(' ') : "'none'"}`
   }).join('; ')
 }
