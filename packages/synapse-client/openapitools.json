@@ -3,6 +3,6 @@
   "spaces": 2,
   "generator-cli": {
     "version": "7.15.0",
-    "storageDir": "~/.openapi-generator"
+    "storageDir": "../../node_modules/.cache/openapi-generator"
   }
 }
