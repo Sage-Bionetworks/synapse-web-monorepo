@@ -1,5 +1,5 @@
 import NamhubHeader from '@sage-bionetworks/synapse-portal-framework/components/namhub/NamhubHeader'
-import NamhubAbout from '@sage-bionetworks/synapse-portal-framework/components/namhub/NamhubAbout'
+import NamhubAbout from '@/components/NamhubAbout'
 import NamhubTechnologyDevelopmentCenters from '@/components/NamhubTechnologyDevelopmentCenters'
 import DevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/DevelopedBySage'
 import nyuGsomLogoUrl from '../assets/NYUGSOM.png'
