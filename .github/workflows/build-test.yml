@@ -31,7 +31,7 @@ jobs:
           filter: tree:0
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4.4.0
-      # The one job that saves the shared caches on pushes to main
+      # The one job that saves the shared caches
       - uses: ./.github/actions/pnpm-setup-action
         with:
           save-cache: true

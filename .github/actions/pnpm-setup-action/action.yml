@@ -2,7 +2,7 @@ name: 'Set up pnpm and configure environment'
 description: 'Installs Node, pnpm, fetches cache (if exists), and runs pnpm install'
 inputs:
   save-cache:
-    description: 'Save the pnpm store and OpenAPI generator caches when they miss. Only applies to pushes to main; set it in one job.'
+    description: 'Save the caches when they miss: the pnpm store on pushes to main, the OpenAPI generator jars on pushes to main and on pull requests. Set it in one job.'
     required: false
     default: 'false'
 runs:
@@ -23,12 +23,15 @@ runs:
     - name: Use a pnpm store in the workspace
       shell: bash
       run: pnpm config set store-dir "$GITHUB_WORKSPACE/.pnpm-store" --location=global
-    # Only one job on main writes caches; every other run restores main's entries. Per-PR or per-job writes pushed the
-    # repo past its cache quota and raced to save partial entries.
-    - name: Decide whether this job saves caches
+    # One job writes caches so jobs don't race to save partial entries. The pnpm store is saved only from main, so pull
+    # requests reuse main's entry instead of each keeping a copy against the repo's cache quota. The jar entry is small
+    # and only misses when the generator config changes, so pull requests that change it save their own.
+    - name: Decide which caches this job saves
       id: cache-writer
       shell: bash
-      run: echo "enabled=${{ inputs.save-cache == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}" >> "$GITHUB_OUTPUT"
+      run: |
+        echo "writes-pnpm-cache=${{ inputs.save-cache == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}" >> "$GITHUB_OUTPUT"
+        echo "writes-jar-cache=${{ inputs.save-cache == 'true' && (github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) }}" >> "$GITHUB_OUTPUT"
     - name: Restore pnpm cache
       id: pnpm-store-cache
       uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -38,39 +41,38 @@ runs:
         restore-keys: |
           ${{ runner.os }}-pnpm-store-
     # Saves jobs from downloading the generator jars from Maven Central, which rate-limits parallel CI jobs. The path
-    # matches storageDir in packages/*/openapitools.json. v2 keeps restore-keys off entries from the old ~ location.
+    # must match the generator config's storageDir. No restore-keys: an entry restored for older config would carry
+    # jars no package uses.
     - name: Restore OpenAPI generator cache
       id: openapi-generator-cache
       uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
       with:
         path: node_modules/.cache/openapi-generator
-        key: ${{ runner.os }}-openapi-generator-v2-${{ hashFiles('packages/*/openapitools.json') }}
-        restore-keys: |
-          ${{ runner.os }}-openapi-generator-v2-
+        key: ${{ runner.os }}-openapi-generator-${{ hashFiles('packages/*/openapitools.json') }}
     - name: Install dependencies (use frozen lockfile)
       run: pnpm install --frozen-lockfile
       shell: bash
+    # A store restored through restore-keys still holds packages this lockfile dropped
+    - name: Prune pnpm store
+      if: steps.cache-writer.outputs.writes-pnpm-cache == 'true' && steps.pnpm-store-cache.outputs.cache-hit != 'true'
+      run: pnpm store prune
+      shell: bash
+    - name: Save pnpm cache
+      if: steps.cache-writer.outputs.writes-pnpm-cache == 'true' && steps.pnpm-store-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      with:
+        path: .pnpm-store
+        key: ${{ steps.pnpm-store-cache.outputs.cache-primary-key }}
     # The CLI downloads its configured jar on startup, before running any command
     - name: Download OpenAPI generator jars
-      if: steps.cache-writer.outputs.enabled == 'true' && steps.openapi-generator-cache.outputs.cache-hit != 'true'
+      if: steps.cache-writer.outputs.writes-jar-cache == 'true' && steps.openapi-generator-cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
         for config in packages/*/openapitools.json; do
           (cd "$(dirname "$config")" && pnpm exec openapi-generator-cli version)
         done
-    # A store restored through restore-keys still holds packages this lockfile dropped
-    - name: Prune pnpm store
-      if: steps.cache-writer.outputs.enabled == 'true' && steps.pnpm-store-cache.outputs.cache-hit != 'true'
-      run: pnpm store prune
-      shell: bash
-    - name: Save pnpm cache
-      if: steps.cache-writer.outputs.enabled == 'true' && steps.pnpm-store-cache.outputs.cache-hit != 'true'
-      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-      with:
-        path: .pnpm-store
-        key: ${{ steps.pnpm-store-cache.outputs.cache-primary-key }}
     - name: Save OpenAPI generator cache
-      if: steps.cache-writer.outputs.enabled == 'true' && steps.openapi-generator-cache.outputs.cache-hit != 'true'
+      if: steps.cache-writer.outputs.writes-jar-cache == 'true' && steps.openapi-generator-cache.outputs.cache-hit != 'true'
       uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
       with:
         path: node_modules/.cache/openapi-generator
