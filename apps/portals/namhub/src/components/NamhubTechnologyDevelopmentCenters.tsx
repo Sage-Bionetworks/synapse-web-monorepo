@@ -14,52 +14,54 @@ import ncatsLogoUrl from '@/assets/tdc/ncats.png'
 import harvardLogoUrl from '@/assets/tdc/harvard.png'
 import stanfordLogoUrl from '@/assets/tdc/stanford.png'
 
+const TDC_SITE_URL = 'https://nhdcc.wpenginepowered.com'
+
 const technologyDevelopmentCenters: Spoke[] = [
   {
     label: 'Gynecological Diseases',
-    href: 'https://www.mit.edu',
+    href: `${TDC_SITE_URL}/mit-nams_tdc-wh/`,
     imageUrl: mitLogoUrl,
     imageAlt: 'Massachusetts Institute of Technology',
   },
   {
     label: 'GI Diseases',
-    href: 'https://www.cincinnatichildrens.org',
+    href: `${TDC_SITE_URL}/cch-nams-gi-diseases-and-drug-response-prediction/`,
     imageUrl: cincinnatiLogoUrl,
     imageAlt: "Cincinnati Children's",
   },
   {
     label: 'Cognitive Functions',
-    href: 'https://www.hopkinsmedicine.org',
+    href: `${TDC_SITE_URL}/jhu-droidp/`,
     imageUrl: jhuLogoUrl,
     imageAlt: 'Johns Hopkins Medicine',
   },
   {
     label: 'Toxicology of Chemicals',
-    href: 'https://www.tamu.edu',
+    href: `${TDC_SITE_URL}/tamu-nams-decision-ctr-industrial-and-consumer-use-chemicals/`,
     imageUrl: tamuLogoUrl,
     imageAlt: 'Texas A&M University',
   },
   {
     label: 'Oncology',
-    href: 'https://www.mdanderson.org',
+    href: `${TDC_SITE_URL}/utmdanderson-optima/`,
     imageUrl: mdAndersonLogoUrl,
     imageAlt: 'UT MD Anderson Cancer Center',
   },
   {
     label: 'Fibrotic Pathologies',
-    href: 'https://ncats.nih.gov',
+    href: `${TDC_SITE_URL}/ncats-3d-mofib/`,
     imageUrl: ncatsLogoUrl,
     imageAlt: 'NIH National Center for Advancing Translational Sciences',
   },
   {
     label: 'Musculoskeletal System',
-    href: 'https://hms.harvard.edu',
+    href: `${TDC_SITE_URL}/bwh-msk-system/`,
     imageUrl: harvardLogoUrl,
     imageAlt: 'Harvard Medical School',
   },
   {
     label: 'Cardiac Disease',
-    href: 'https://med.stanford.edu',
+    href: `${TDC_SITE_URL}/stanford-coin/`,
     imageUrl: stanfordLogoUrl,
     imageAlt: 'Stanford Medicine School of Medicine',
   },
