@@ -90,7 +90,6 @@ function HomePageInternal() {
             'loneliness',
             'depression',
             'sleep',
-            'risk-taking',
             'cognitive function',
           ]}
           path="/Search"
