@@ -7,10 +7,9 @@ permissions:
   contents: read
   pull-requests: read
 
-# A new push to a pull request cancels its in-progress run. Other events get a group per run, so runs on main
-# are never cancelled or queued behind each other.
+# Pull request runs cancel the run for the push they supersede; other events get a group per run
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  group: "${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}"
   cancel-in-progress: true
 
 on:
@@ -32,7 +31,10 @@ jobs:
           filter: tree:0
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4.4.0
+      # The one job that saves the shared caches on pushes to main
       - uses: ./.github/actions/pnpm-setup-action
+        with:
+          save-cache: true
       - run: pnpm nx affected --target=build
   test:
     runs-on:
