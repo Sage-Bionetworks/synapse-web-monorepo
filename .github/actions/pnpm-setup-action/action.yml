@@ -18,8 +18,11 @@ runs:
       shell: bash
       run: |
         echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-    - name: Setup pnpm cache
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+    # Caches are written only by pushes to main and read everywhere. Pull request runs fall back to main's entries,
+    # so letting them write too only adds per-PR copies that push the repo past its cache quota and evict main's.
+    - name: Restore pnpm cache
+      id: pnpm-store-cache
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
       with:
         path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -28,9 +31,9 @@ runs:
     # Every job otherwise downloads the generator jars from Maven Central, which rate-limits parallel CI jobs.
     # The path must be workspace-relative: actions/cache stores paths relative to the workspace, and container jobs
     # (HOME=/github/home) would otherwise save archives that host jobs extract outside their HOME.
-    - name: Setup OpenAPI generator cache
+    - name: Restore OpenAPI generator cache
       id: openapi-generator-cache
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
       with:
         path: node_modules/.cache/openapi-generator
         key: ${{ runner.os }}-openapi-generator-v2-${{ hashFiles('packages/*/openapitools.json') }}
@@ -39,11 +42,28 @@ runs:
     - name: Install dependencies (use frozen lockfile)
       run: pnpm install --frozen-lockfile
       shell: bash
-    # The first job to finish saves the entry, and jobs that hit it never save again. Download every jar on a miss
-    # so that entry is complete even when the saving job generates only one client.
+    # The first job to save an entry wins, so download every jar on a miss to make that entry complete even when
+    # the job itself generates only one client.
     - name: Download OpenAPI generator jars
       if: steps.openapi-generator-cache.outputs.cache-hit != 'true'
       run: |
         pnpm --filter @sage-bionetworks/aridhia-client exec openapi-generator-cli version
         pnpm --filter @sage-bionetworks/synapse-client exec openapi-generator-cli version
       shell: bash
+    # A store restored from an older lockfile still holds packages this lockfile dropped
+    - name: Prune pnpm store
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.pnpm-store-cache.outputs.cache-hit != 'true'
+      run: pnpm store prune
+      shell: bash
+    - name: Save pnpm cache
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.pnpm-store-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      with:
+        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+        key: ${{ steps.pnpm-store-cache.outputs.cache-primary-key }}
+    - name: Save OpenAPI generator cache
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.openapi-generator-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      with:
+        path: node_modules/.cache/openapi-generator
+        key: ${{ steps.openapi-generator-cache.outputs.cache-primary-key }}
