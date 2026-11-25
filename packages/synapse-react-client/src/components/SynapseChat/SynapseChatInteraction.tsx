@@ -25,6 +25,10 @@ import {
   ChatAttachmentStrip,
 } from './components/ChatAttachmentStrip/ChatAttachmentStrip'
 import { AgentChatAttachmentStatus } from '@sage-bionetworks/synapse-client'
+import {
+  ChatScrollBlock,
+  scrollMessageIntoPageView,
+} from './utils/scrollChatMessage'
 
 /**
  * A chat attachment to display on a sent/pending turn. Only `fileHandleId` is guaranteed --
@@ -43,6 +47,11 @@ export type SynapseChatInteractionProps = {
   chatResponseText?: string
   chatResponseTrace?: TraceEvent[]
   scrollIntoView?: boolean
+  /**
+   * Scrolls this interaction's elements when `scrollIntoView` is set. Defaults to the browser's
+   * scrollIntoView, which also scrolls the page.
+   */
+  scrollToElement?: (element: HTMLElement, block: ChatScrollBlock) => void
   chatErrorReason?: string
   onSendChat?: (message: string) => void
   agentAvatar: React.ReactNode
@@ -84,6 +93,7 @@ export function SynapseChatInteraction({
   chatErrorReason,
   chatResponseTrace,
   scrollIntoView = false,
+  scrollToElement = scrollMessageIntoPageView,
   onSendChat,
   agentAvatar,
   userAvatar,
@@ -103,18 +113,18 @@ export function SynapseChatInteraction({
   useEffect(() => {
     // on mount, scroll into view if instructed. This brings the "Thinking..." row to the top so
     // the answer's opening lines are usually visible as soon as it starts streaming in.
-    if (scrollIntoView) {
-      userMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (scrollIntoView && userMessageRef.current) {
+      scrollToElement(userMessageRef.current, 'start')
     }
-  }, [scrollIntoView])
+  }, [scrollIntoView, scrollToElement])
 
   useEffect(() => {
     // once the response (or an error) arrives, scroll all the way to the bottom so the full
     // answer - which may be taller than the viewport - is brought into view.
-    if (scrollIntoView && !isLoading) {
-      responseRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    if (scrollIntoView && !isLoading && responseRef.current) {
+      scrollToElement(responseRef.current, 'end')
     }
-  }, [scrollIntoView, isLoading])
+  }, [scrollIntoView, scrollToElement, isLoading])
 
   const traceMessages = useMemo(
     () =>
