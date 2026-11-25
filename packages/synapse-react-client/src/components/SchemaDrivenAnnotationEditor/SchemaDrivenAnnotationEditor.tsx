@@ -1,4 +1,5 @@
 import AddToList from '@/assets/icons/AddToList'
+import { jsonSchemaFormValidator } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 import {
   useGetJson,
   useGetSchema,
@@ -10,37 +11,66 @@ import {
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
 import { Alert, Box, Divider, Link, Typography } from '@mui/material'
-import RJSF from '@rjsf/core'
-import { RJSFValidationError } from '@rjsf/utils'
+import { FormRef } from '@rjsf/core'
+import {
+  createSchemaUtils,
+  DefaultFormStateBehavior,
+  RJSFValidationError,
+} from '@rjsf/utils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { EntityJson } from '@sage-bionetworks/synapse-types'
 import { JSONSchema7 } from 'json-schema'
-import { omitBy } from 'lodash-es'
+import { isEqual, omitBy } from 'lodash-es'
 import isEmpty from 'lodash-es/isEmpty'
 import noop from 'lodash-es/noop'
-import { RefObject, useEffect, useMemo, useRef, useState } from 'react'
+import { RefObject, useCallback, useMemo, useRef, useState } from 'react'
 import {
   ConfirmationButtons,
   ConfirmationDialog,
 } from '../ConfirmationDialog/ConfirmationDialog'
+import { CustomFormContext } from '../JsonSchemaForm/CustomFormContext'
 import { JsonSchemaForm } from '../JsonSchemaForm/JsonSchemaForm'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { collectTopLevelProperties } from '@/utils/jsonschema/collectTopLevelProperties'
 import {
+  AnnotationFormData,
+  customTranslateString,
   dropNullishArrayValues,
   dropNullValues,
   getFriendlyPropertyName,
   getJsonSchemaForForm,
   getSchemaIdForConcreteType,
-  transformErrors,
   getUiSchemaForForm,
+  shapeAnnotationFormData,
   shouldLiveValidate,
-  customTranslateString,
+  transformErrors,
 } from './AnnotationEditorUtils'
-import SynapseAnnotationsRJSFObjectField from './field/SynapseAnnotationsRJSFObjectField'
 import { ObjectFieldTemplate } from './template/ObjectFieldTemplate'
 import SynapseAnnotationsWrapIfAdditionalTemplate from './template/SynapseAnnotationsWrapIfAdditionalTemplate'
 import TextWidget from './widget/TextWidget'
+
+// RJSF compares its props shallowly, so these keep their identity across renders
+const FORM_CONTEXT: CustomFormContext = {
+  showDerivedAnnotationPlaceholder: true,
+  descriptionVariant: 'expand',
+  descriptionFormat: 'table',
+  allowFreeSoloEnum: true,
+}
+const DEFAULT_FORM_STATE_BEHAVIOR: DefaultFormStateBehavior = {
+  emptyObjectFields: 'skipDefaults',
+}
+const TEMPLATES = {
+  ObjectFieldTemplate: ObjectFieldTemplate,
+  WrapIfAdditionalTemplate: SynapseAnnotationsWrapIfAdditionalTemplate,
+}
+const WIDGETS = {
+  TextWidget: TextWidget,
+}
+/**
+ * The form schema allows any custom annotation through its root `additionalProperties: true`, but RJSF loses it when it
+ * merges the schema's `allOf`, so the form takes an object without `additionalProperties` to allow any key.
+ */
+const ADDITIONAL_PROPERTIES_WHEN_ABSENT = 'allow'
 
 export type SchemaDrivenAnnotationEditorProps = {
   /** The entity whose annotations should be edited with the form */
@@ -50,7 +80,7 @@ export type SchemaDrivenAnnotationEditorProps = {
   /** May be used to directly provide a JSON Schema to use for the form */
   validationSchema?: JSONSchema7
   /** Optionally supply a ref to the form to handle submission externally with `formRef.current.submit()`. */
-  formRef?: RefObject<RJSF | null>
+  formRef?: RefObject<FormRef<AnnotationFormData> | null>
   /** Provide live input validation. This can cause performance degradation. By default, liveValidate will be true if an entity with a schema and existing annotations is being edited */
   liveValidate?: boolean
   /** Invoked after a successful form submission */
@@ -99,7 +129,7 @@ export function SchemaDrivenAnnotationEditor(
     onChange = noop,
     hideActions = false,
   } = props
-  const localRef = useRef<RJSF>(null)
+  const localRef = useRef<FormRef<AnnotationFormData>>(null)
   const ref = formRefFromParent ?? localRef
 
   // Client-side validation errors
@@ -130,25 +160,6 @@ export function SchemaDrivenAnnotationEditor(
 
   const entityJson = data?.entityMetadata
   const annotations = data?.annotations
-
-  // Annotation fields fetched and modified via the form
-  const [formData, setFormData] = useState<Record<string, unknown> | undefined>(
-    undefined,
-  )
-
-  // Set initial form data when the entity or its annotations change
-  useEffect(() => {
-    if (data?.entity) {
-      const formData = data.entity
-      const hasAnnotations = annotations && Object.keys(annotations).length > 0
-
-      const newFormData = !hasAnnotations
-        ? { ...formData, newKey: [''] }
-        : formData
-
-      setFormData(newFormData)
-    }
-  }, [data?.entity, annotations])
 
   const { data: schema, isLoading: isLoadingBinding } = useGetSchemaBinding(
     entityId!,
@@ -192,8 +203,53 @@ export function SchemaDrivenAnnotationEditor(
     [entitySchemaBaseProperties],
   )
 
+  const schemaUtils = useMemo(
+    () =>
+      createSchemaUtils<AnnotationFormData>(
+        {
+          validator: jsonSchemaFormValidator,
+          defaultFormStateBehavior: DEFAULT_FORM_STATE_BEHAVIOR,
+          additionalPropertiesWhenAbsent: ADDITIONAL_PROPERTIES_WHEN_ABSENT,
+        },
+        formSchema,
+      ),
+    [formSchema],
+  )
+
+  // Keeps the data in the shape of Synapse annotations as the user edits it
+  const transformChange = useCallback(
+    (
+      next: AnnotationFormData | undefined,
+      previous: AnnotationFormData | undefined,
+    ) => shapeAnnotationFormData(schemaUtils, formSchema, next, previous),
+    [schemaUtils, formSchema],
+  )
+
+  // The entity's annotations, with an empty custom annotation to fill in if it has none
+  const initialFormData = useMemo(() => {
+    if (!data?.entity) {
+      return undefined
+    }
+    const hasAnnotations = annotations && Object.keys(annotations).length > 0
+    return shapeAnnotationFormData(
+      schemaUtils,
+      formSchema,
+      hasAnnotations ? data.entity : { ...data.entity, newKey: [''] },
+    )
+  }, [data?.entity, annotations, schemaUtils, formSchema])
+
+  // The form's data, as of its last change
+  const [changedFormData, setChangedFormData] = useState<
+    AnnotationFormData | undefined
+  >(undefined)
+  const formData = changedFormData ?? initialFormData
+
+  // The form reads its data when it mounts, so it waits for the entity
   const isLoading =
-    isLoadingBinding || isLoadingSchema || isLoadingEntityTypeSchema
+    (!!entityId && !data) ||
+    isLoadingBinding ||
+    isLoadingSchema ||
+    isLoadingEntityTypeSchema
 
   const { mutate, isPending: updateIsPending } = useUpdateViaJson({
     onSuccess: () => {
@@ -205,7 +261,7 @@ export function SchemaDrivenAnnotationEditor(
     },
   })
 
-  function submitChangedEntity() {
+  function submitChangedEntity(formData: AnnotationFormData | undefined) {
     mutate({
       ...cleanFormData(formData, true),
       ...entityJson,
@@ -272,59 +328,49 @@ export function SchemaDrivenAnnotationEditor(
               </Box>
             </Alert>
           )}
-          <JsonSchemaForm
-            liveValidate={liveValidate}
+          <JsonSchemaForm<AnnotationFormData>
+            // A form reads its data on mount only, so it remounts for another entity or version
+            key={`${entityId}-${entityJson?.etag}`}
+            liveValidate={liveValidate ? 'onChange' : undefined}
             formRef={ref}
             disabled={updateIsPending}
             translateString={customTranslateString}
-            formContext={{
-              showDerivedAnnotationPlaceholder: true,
-              descriptionVariant: 'expand',
-              descriptionFormat: 'table',
-              allowFreeSoloEnum: true,
-            }}
-            experimental_defaultFormStateBehavior={{
-              emptyObjectFields: 'skipDefaults',
-            }}
-            fields={{
-              ObjectField: SynapseAnnotationsRJSFObjectField,
-            }}
-            templates={{
-              ObjectFieldTemplate: ObjectFieldTemplate,
-              WrapIfAdditionalTemplate:
-                SynapseAnnotationsWrapIfAdditionalTemplate,
-            }}
-            widgets={{
-              TextWidget: TextWidget,
-            }}
+            formContext={FORM_CONTEXT}
+            defaultFormStateBehavior={DEFAULT_FORM_STATE_BEHAVIOR}
+            additionalPropertiesWhenAbsent={ADDITIONAL_PROPERTIES_WHEN_ABSENT}
+            templates={TEMPLATES}
+            widgets={WIDGETS}
             schema={formSchema}
             uiSchema={uiSchema}
             transformErrors={transformErrors}
-            formData={formData}
+            initialFormData={initialFormData}
+            transformChange={transformChange}
             onChange={({ formData }) => {
-              onChange(formData)
-              setFormData(formData)
+              onChange(formData ?? {})
+              setChangedFormData(formData)
               setValidationError(undefined)
             }}
             onBlur={() => {
-              setFormData(
-                // Clean the formData onBlur to remove null values that we will need to strip before submission
-                // This will ensure that the user gets accurate validation information since the data will match what the backend will receive
-                cleanFormData(
-                  formData,
-                  // Don't remove null values in arrays--the fields will disappear, which the user probably does not want
-                  false,
-                ),
+              // Clean the formData onBlur to remove null values that we will need to strip before submission
+              // This will ensure that the user gets accurate validation information since the data will match what the backend will receive
+              const form = ref.current
+              const current = form?.getFormData()
+              const cleaned = cleanFormData(
+                current,
+                // Don't remove null values in arrays--the fields will disappear, which the user probably does not want
+                false,
               )
+              if (form && current && !isEqual(cleaned, current)) {
+                form.setFieldValue('', cleaned)
+              }
             }}
             onSubmit={({ formData, errors }, event) => {
               event.preventDefault()
               if (errors && errors.length > 0) {
-                setValidationError(errors)
+                setValidationError([...errors])
               }
               setShowSubmissionError(false)
-              setFormData(formData)
-              submitChangedEntity()
+              submitChangedEntity(formData)
             }}
             onError={(errors: RJSFValidationError[]) => {
               // invoked when submit is clicked and there are client-side validation errors
@@ -357,7 +403,7 @@ export function SchemaDrivenAnnotationEditor(
                       }
                     }}
                     onConfirm={() => {
-                      ref.current!.formElement.current.requestSubmit()
+                      ref.current?.submit()
                     }}
                     confirmButtonProps={{
                       children: entityId ? 'Save' : 'Validate',
@@ -371,7 +417,7 @@ export function SchemaDrivenAnnotationEditor(
             <ConfirmationDialog
               open={true}
               onConfirm={() => {
-                submitChangedEntity()
+                submitChangedEntity(ref.current?.getFormData())
                 setShowConfirmation(false)
               }}
               onCancel={() => {

@@ -9,13 +9,14 @@ import {
 } from '@/utils/functions/getEndpoint'
 import { Button, Tooltip } from '@mui/material'
 import Skeleton from '@mui/material/Skeleton'
-import Form from '@rjsf/core'
+import { FormRef } from '@rjsf/core'
 import { VersionableEntity } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ConfirmationDialog } from '../../ConfirmationDialog'
 import { DialogBase } from '../../DialogBase'
 import { SynapseErrorBoundary } from '../../error/ErrorBanner'
+import { AnnotationFormData } from '../../SchemaDrivenAnnotationEditor/AnnotationEditorUtils'
 import { SchemaDrivenAnnotationEditor } from '../../SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor'
 import { displayToast } from '../../ToastMessage/ToastMessage'
 import { AnnotationsTable } from './AnnotationsTable'
@@ -53,7 +54,7 @@ export function EntityModal(props: EntityModalProps) {
     showTabs = true,
     onEditModeChanged = noop,
   } = props
-  const annotationEditorFormRef = useRef<Form>(null)
+  const annotationEditorFormRef = useRef<FormRef<AnnotationFormData>>(null)
 
   const [currentTab, setCurrentTab] = useState<EntityModalTab>(initialTab)
   const [showEditCancellationWarning, setShowEditCancellationWarning] =
@@ -112,8 +113,7 @@ export function EntityModal(props: EntityModalProps) {
     <Button
       variant={'contained'}
       onClick={() => {
-        // Workaround for https://github.com/rjsf-team/react-jsonschema-form/issues/3121
-        annotationEditorFormRef.current!.formElement.current.requestSubmit()
+        annotationEditorFormRef.current?.submit()
       }}
     >
       Save Annotations

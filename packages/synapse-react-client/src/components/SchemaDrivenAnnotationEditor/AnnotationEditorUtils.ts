@@ -2,11 +2,14 @@ import { ALLOWED_VALUES_MESSAGE } from '@/components/JsonSchemaForm/JsonSchemaFo
 import { AdditionalPropertiesSchemaField } from '@/components/SchemaDrivenAnnotationEditor/field/AdditionalPropertiesSchemaField'
 import { collectTopLevelProperties } from '@/utils/jsonschema/collectTopLevelProperties'
 import {
+  ADDITIONAL_PROPERTY_FLAG,
   englishStringTranslator,
+  hasSchemaMarker,
   RJSFValidationError,
+  SchemaUtilsType,
   TranslatableString,
 } from '@rjsf/utils'
-import { JSONSchema7 } from 'json-schema'
+import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
 import { flatMap, groupBy, isEmpty } from 'lodash-es'
 
 /**
@@ -181,6 +184,78 @@ export function convertToArray<T>(value: T): Array<unknown> {
   } else {
     return [value]
   }
+}
+
+export type AnnotationFormData = Record<string, unknown>
+
+function isDeclaredProperty(property: JSONSchema7Definition | undefined) {
+  return (
+    typeof property === 'object' &&
+    !hasSchemaMarker(property, ADDITIONAL_PROPERTY_FLAG)
+  )
+}
+
+/**
+ * Puts annotation form data in the shape Synapse stores annotations in, under the schema the data selects:
+ * - a custom annotation (an additional property) is an array;
+ * - a schema-defined property that is not an array holds a single value, so a custom annotation that the schema comes to
+ *   define (e.g. through a conditional) is joined into a string.
+ *
+ * Given the data before an edit, it also keeps the values of schema-defined properties that the edit took out of the
+ * schema (e.g. by flipping a conditional), as custom annotations. RJSF drops a value whose field left the form unless it
+ * can render the value as an additional property, which it can't for an array.
+ *
+ * Pure, so it can be the form's `transformChange`. Unchanged values are returned as they are.
+ */
+export function shapeAnnotationFormData(
+  schemaUtils: SchemaUtilsType<AnnotationFormData>,
+  schema: JSONSchema7,
+  next: AnnotationFormData | undefined,
+  previous?: AnnotationFormData,
+): AnnotationFormData | undefined {
+  if (!next) {
+    return next
+  }
+  const properties = schemaUtils.retrieveSchema(schema, next).properties ?? {}
+  let shaped = next
+  const set = (key: string, value: unknown) => {
+    if (shaped === next) {
+      shaped = { ...next }
+    }
+    shaped[key] = value
+  }
+  for (const [key, value] of Object.entries(next)) {
+    const property = properties[key]
+    if (typeof property !== 'object' || value === undefined) {
+      continue
+    }
+    if (hasSchemaMarker(property, ADDITIONAL_PROPERTY_FLAG)) {
+      if (!Array.isArray(value)) {
+        set(key, convertToArray(value))
+      }
+    } else if (
+      property.type !== undefined &&
+      property.type !== 'array' &&
+      Array.isArray(value)
+    ) {
+      set(key, value.map(v => `${v}`).join(', '))
+    }
+  }
+  if (previous) {
+    const previousProperties =
+      schemaUtils.retrieveSchema(schema, previous).properties ?? {}
+    for (const [key, value] of Object.entries(previous)) {
+      if (
+        value != null &&
+        !Object.hasOwn(next, key) &&
+        isDeclaredProperty(previousProperties[key]) &&
+        !isDeclaredProperty(properties[key])
+      ) {
+        set(key, convertToArray(value))
+      }
+    }
+  }
+  return shaped
 }
 
 /**

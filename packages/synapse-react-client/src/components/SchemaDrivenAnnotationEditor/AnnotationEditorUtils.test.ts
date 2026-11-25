@@ -1,4 +1,4 @@
-import { RJSFSchema, RJSFValidationError } from '@rjsf/utils'
+import { createSchemaUtils, RJSFSchema, RJSFValidationError } from '@rjsf/utils'
 import {
   ALLOWED_VALUES_MESSAGE,
   jsonSchemaFormValidator,
@@ -7,7 +7,9 @@ import {
   dropNullishArrayValues,
   dropNullValues,
   getFriendlyPropertyName,
+  getJsonSchemaForForm,
   getSchemaIdForConcreteType,
+  shapeAnnotationFormData,
   transformErrors,
   shouldLiveValidate,
 } from './AnnotationEditorUtils'
@@ -164,11 +166,12 @@ describe('AnnotationEditorUtils tests', () => {
         transformErrors,
       )
 
+      // The validator reports the two options' identical `const` errors once
       expect(
         errors
           .map(error => error.name ?? '')
           .toSorted((a, b) => a.localeCompare(b)),
-      ).toEqual(['anyOf', 'const', 'const', 'maxLength'])
+      ).toEqual(['anyOf', 'const', 'maxLength'])
     })
   })
 
@@ -211,5 +214,66 @@ describe('AnnotationEditorUtils tests', () => {
     const result = getSchemaIdForConcreteType(concreteType)
 
     expect(result).toEqual(expectedSchemaId)
+  })
+
+  describe('shapeAnnotationFormData', () => {
+    // The form schema for a validation schema with conditionals, as `getJsonSchemaForForm` builds it
+    const formSchema = getJsonSchemaForForm({
+      type: 'object',
+      properties: {
+        country: { enum: ['USA', 'CA'] },
+        showStringArray: { type: 'boolean' },
+      },
+      allOf: [
+        {
+          if: { properties: { country: { const: 'USA' } } },
+          then: { properties: { state: { type: 'string' } } },
+        },
+        {
+          if: { properties: { showStringArray: { const: true } } },
+          then: {
+            properties: {
+              stringArray: { type: 'array', items: { type: 'string' } },
+            },
+          },
+        },
+      ],
+    })
+    const schemaUtils = createSchemaUtils<Record<string, unknown>>(
+      {
+        validator: jsonSchemaFormValidator,
+        additionalPropertiesWhenAbsent: 'allow',
+      },
+      formSchema,
+    )
+
+    it('stores a custom annotation as an array and a schema-defined one as a single value', () => {
+      expect(
+        shapeAnnotationFormData(schemaUtils, formSchema, {
+          country: 'USA',
+          state: ['Washington'],
+          custom: 'value',
+        }),
+      ).toEqual({ country: 'USA', state: 'Washington', custom: ['value'] })
+    })
+
+    it('keeps a schema-defined array that a change took out of the schema, as a custom annotation', () => {
+      // RJSF 7 drops an array whose field leaves the form, since it renders an extra key's value only as a scalar
+      const previous = { showStringArray: true, stringArray: ['one', 'two'] }
+      const next = { showStringArray: false }
+
+      expect(
+        shapeAnnotationFormData(schemaUtils, formSchema, next, previous),
+      ).toEqual({ showStringArray: false, stringArray: ['one', 'two'] })
+    })
+
+    it('does not bring back a custom annotation the user removed', () => {
+      const previous = { country: 'CA', custom: ['value'] }
+      const next = { country: 'CA' }
+
+      expect(
+        shapeAnnotationFormData(schemaUtils, formSchema, next, previous),
+      ).toBe(next)
+    })
   })
 })

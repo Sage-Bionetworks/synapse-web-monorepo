@@ -1,11 +1,13 @@
 import {
   FieldProps,
   FormContextType,
+  partId,
   RJSFSchema,
   StrictRJSFSchema,
+  UiSchema,
 } from '@rjsf/utils'
 import { isEqual } from 'lodash-es'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import FullWidthAlert from '../../FullWidthAlert/FullWidthAlert'
 import { convertToArray } from '../AnnotationEditorUtils'
 import { Grid, InputLabel } from '@mui/material'
@@ -115,8 +117,9 @@ export function getSchemaForPropertyType(propertyType: PropertyType) {
  * This component provides these enhancements to the SchemaField:
  * - Supports selecting a type, and changing the input widget appropriately
  * - Identifying the type on mount
- * - Treat all field values as arrays
  * - When the last array value is removed, remove the entire key from the form.
+ *
+ * The annotation editor's `transformChange` keeps every custom annotation an array.
  * @param props
  * @returns
  */
@@ -124,127 +127,124 @@ export function AdditionalPropertiesSchemaField<
   T extends Array<unknown> = Array<unknown>,
   S extends StrictRJSFSchema = RJSFSchema,
   F extends FormContextType = any,
->(
-  props: FieldProps<T, S, F> & {
-    onDropPropertyClick: (key: string) => (event: any) => void
-  },
-) {
+>(props: FieldProps<T, S, F>) {
   const {
     formData,
     onChange,
     registry,
     schema,
     name,
-    onDropPropertyClick,
-    idSchema,
+    onRemoveProperty,
+    id,
+    fieldPath,
   } = props
-  const id = idSchema.$id
   const { ArrayField } = registry.fields
   const { SelectWidget } = registry.widgets
 
   // The type determines which widget we show.
-  const [propertyType, setPropertyType] = useState(
+  const [propertyType, setPropertyType] = useState(() =>
     guessPropertyType(convertToArray(formData)),
   )
 
-  // If the property type is updated, store it in a new variable where we'll show a warning if data may be lost on coersion
-  const [nextPropertyType, setNextPropertyType] = useState(propertyType)
+  // A type the user chose whose conversion may lose data, waiting for them to confirm it
+  const [pendingPropertyType, setPendingPropertyType] = useState<
+    PropertyType | undefined
+  >(undefined)
 
-  /**
-   * This effect is invoked whenever the user attempts to change the datatype of a custom annotation.
-   */
-  useEffect(() => {
-    function onNextPropertyTypeUpdate() {
-      if (Array.isArray(formData)) {
-        const dataIsEmpty = formData.every(item => item == null || item == '')
-        const coercedList = transformDataFromPropertyType(
-          formData,
-          nextPropertyType,
+  function convertTo(newPropertyType: PropertyType) {
+    setPropertyType(newPropertyType)
+    setPendingPropertyType(undefined)
+    if (Array.isArray(formData)) {
+      if (formData.every(item => item == null)) {
+        onRemoveProperty?.()
+      } else {
+        // Coerce the data to match the new type
+        onChange(
+          transformDataFromPropertyType(formData, newPropertyType),
+          fieldPath,
         )
-        // if the data is empty or identical after conversion, then just update the property type
-        if (dataIsEmpty || nextPropertyType !== propertyType) {
-          if (isEqual(formData, coercedList)) {
-            setPropertyType(nextPropertyType)
-          }
-        }
       }
     }
+  }
 
-    onNextPropertyTypeUpdate()
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [nextPropertyType])
+  function onPropertyTypeSelected(newPropertyType: PropertyType) {
+    if (newPropertyType === propertyType) {
+      setPendingPropertyType(undefined)
+    } else if (
+      Array.isArray(formData) &&
+      isEqual(
+        formData,
+        transformDataFromPropertyType(formData, newPropertyType),
+      )
+    ) {
+      // The conversion changes no data, so make it right away
+      convertTo(newPropertyType)
+    } else {
+      setPendingPropertyType(newPropertyType)
+    }
+  }
 
-  /**
-   * This effect is invoked whenever the propertyType changes.
-   */
+  // Store the values as the guessed type, e.g. a Float's whole numbers as "1.0". Only a value that changes is reported.
   useEffect(() => {
-    function coerceDataAndUpdateWidget() {
-      if (Array.isArray(formData)) {
-        if (formData.every(item => item == null)) {
-          onDropPropertyClick(name)(new CustomEvent('dropEmptyProperty'))
-        } else {
-          const coercedList = transformDataFromPropertyType(
-            formData,
-            nextPropertyType,
-          ) as unknown as T
-
-          // Data conversion is non-destructive or has been confirmed by the user
-          setPropertyType(nextPropertyType)
-          // Coerce the data to match the new type
-          onChange(coercedList)
-        }
+    if (Array.isArray(formData)) {
+      const coercedList = transformDataFromPropertyType(formData, propertyType)
+      if (!isEqual(formData, coercedList)) {
+        onChange(coercedList, fieldPath)
       }
     }
-
-    coerceDataAndUpdateWidget()
-    // Don't add other properties to dependency array because we don't want to automatically coerce input
-    // i.e. Only coerce data when the type changes, which should only be on mount or when the user explicitly chooses a new type.
+    // Only on mount: later, the data changes only by the user's edits and their chosen type
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [propertyType])
+  }, [])
 
-  const itemsSchema = getSchemaForPropertyType(propertyType)
+  const additionalPropertyContext = useMemo(
+    () => ({ dropProperty: () => onRemoveProperty?.() }),
+    [onRemoveProperty],
+  )
 
-  useEffect(() => {
-    // If the additional property has not yet been coerced to an array, trigger an update to coerce and render nothing.
-    // We must do this because RJSF does not currently batch these kinds of updates
-    // See https://github.com/rjsf-team/react-jsonschema-form/issues/3367
-    if (!Array.isArray(formData)) {
-      onChange(convertToArray(formData) as unknown as T)
-    }
-  }, [formData, onChange])
+  const uiSchema = useMemo(
+    () => ({
+      ...props.uiSchema,
+      'ui:title': 'Value(s)',
+      items: {
+        ...props.uiSchema?.items,
+        'ui:placeholder': 'New Value',
+      },
+    }),
+    [props.uiSchema],
+  )
+  const arraySchema = useMemo(
+    () => ({ ...schema, items: getSchemaForPropertyType(propertyType) }),
+    [schema, propertyType],
+  )
 
   if (!Array.isArray(formData)) {
     return <></>
   }
 
+  const typeId = partId(id, 'type')
   return (
-    <AdditionalPropertyContextProvider
-      value={{
-        dropProperty: e => {
-          onDropPropertyClick(name)(e)
-        },
-      }}
-    >
+    <AdditionalPropertyContextProvider value={additionalPropertyContext}>
       <Grid size={2}>
-        <InputLabel htmlFor={`${id}-type`}>Type</InputLabel>
+        <InputLabel htmlFor={typeId}>Type</InputLabel>
         <SelectWidget
           name={'Type'}
-          id={`${id}-type`}
+          id={typeId}
+          htmlName={typeId}
           schema={{} as S}
           options={{
             enumOptions: propertyTypeArray.map(type => ({
               label: type,
               value: type,
             })),
+            isClearable: false,
           }}
-          value={propertyType}
+          value={pendingPropertyType ?? propertyType}
           onChange={value => {
-            setNextPropertyType(value as PropertyType)
+            onPropertyTypeSelected(value as PropertyType)
           }}
           disabled={props.disabled}
-          readOnly={props.readonly}
+          readonly={props.readonly}
           required={true}
-          isClearable={false}
           onBlur={() => {}}
           onFocus={() => {}}
           registry={registry}
@@ -254,37 +254,26 @@ export function AdditionalPropertiesSchemaField<
       <Grid size={7}>
         <ArrayField
           {...props}
-          uiSchema={{
-            ...props.uiSchema,
-            'ui:title': 'Value(s)',
-            items: {
-              ...props.uiSchema?.items,
-              'ui:placeholder': 'New Value',
-            },
-          }}
-          schema={{
-            ...schema,
-            items: {
-              ...itemsSchema,
-            },
-          }}
+          // The items' uiSchema is the custom annotation's, which `UiSchema<T>` can't relate to the items of `T`
+          uiSchema={uiSchema as UiSchema<T, S, F>}
+          schema={arraySchema}
         />
       </Grid>
-      {propertyType !== nextPropertyType && (
+      {pendingPropertyType !== undefined && (
         <FullWidthAlert
           variant="warning"
           title="Data may be lost when converting types"
-          description={`Are you sure you want to convert ${name} from ${propertyType} to ${nextPropertyType}? Current values may be lost on conversion.`}
+          description={`Are you sure you want to convert ${name} from ${propertyType} to ${pendingPropertyType}? Current values may be lost on conversion.`}
           primaryButtonConfig={{
             text: 'Convert',
             onClick: () => {
-              setPropertyType(nextPropertyType)
+              convertTo(pendingPropertyType)
             },
           }}
           secondaryButtonConfig={{
             text: 'Cancel',
             onClick: () => {
-              setNextPropertyType(propertyType)
+              setPendingPropertyType(undefined)
             },
           }}
           isGlobal={false}
