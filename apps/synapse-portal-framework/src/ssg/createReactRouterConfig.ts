@@ -1,4 +1,7 @@
+import path from 'node:path'
 import type { Config } from '@react-router/dev/config'
+import { addContentSecurityPolicyToHtmlFiles } from 'vite-config/contentSecurityPolicyHtml'
+import { getPortalContentSecurityPolicy } from 'vite-config/portalContentSecurityPolicy'
 import { fetchResourceIds } from '../sitemap/queryTableForSitemap'
 import type { SitemapConfig } from '../sitemap/types'
 import {
@@ -40,7 +43,8 @@ function encodePathSegment(id: string): string {
  * Encapsulates the portal-agnostic prerender pipeline: enumerate detail-page
  * record IDs, hydrate metadata caches in production, and exclude legacy
  * `/DetailsPage` paths (their prerendered directory output causes S3 to drop
- * the redirect query string).
+ * the redirect query string). After prerendering, every HTML file gets the
+ * portal Content Security Policy with hashes of that page's inline scripts.
  */
 export function createReactRouterConfig(
   options: CreateReactRouterConfigOptions,
@@ -117,6 +121,15 @@ export function createReactRouterConfig(
         return [...staticPaths, ...dynamicRoutes]
       },
       concurrency,
+    },
+    // Runs after prerendering, so it sees every page React Router wrote, including __spa-fallback.html
+    buildEnd: async ({ reactRouterConfig, viteConfig }) => {
+      await addContentSecurityPolicyToHtmlFiles(
+        path.join(reactRouterConfig.buildDirectory, 'client'),
+        getPortalContentSecurityPolicy(
+          viteConfig.env.VITE_PORTAL_KEY as string | undefined,
+        ),
+      )
     },
   } satisfies Config
 }

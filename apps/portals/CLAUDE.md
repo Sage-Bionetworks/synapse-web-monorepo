@@ -158,6 +158,10 @@ import { generateSitemapRoutesFile } from '@sage-bionetworks/synapse-portal-fram
 generateSitemapRoutesFile(routes)
 ```
 
+### 5. Content Security Policy
+
+Portal builds enforce a Content Security Policy built from the allowlist in `vite-config`'s `portalContentSecurityPolicy` module. When a portal starts loading script, frames, fonts, styles, or data from a new origin, add that origin to `PORTAL_ALLOWED_SOURCES` (one portal) or `SHARED_ALLOWED_SOURCES` (every portal), or the browser will block it in production builds. See `CONTENT_SECURITY_POLICY.md` in the `vite-config` package.
+
 ## Adding a New Portal
 
 When creating a new portal, copy the structure from an existing portal (e.g., `nf` or `adknowledgeportal`) and update:

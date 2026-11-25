@@ -81,6 +81,10 @@ Coverage reports are written to `./coverage/report/index.html`.
 
 Prefer using SCSS module files. Runtime theming uses CSS variables prefixed `--synapse-*` (e.g., `--synapse-primary-action-color`). Sass compile-time functions (`color.adjust`, `color.mix`) cannot use CSS vars—use hardcoded values there. Global variables are defined in `_cssVariables.scss`.
 
+### Content Security Policy
+
+Production builds of the portals, SageAccountWeb, and synapse-oauth-signin enforce a Content Security Policy built from allowlists in the `vite-config` package. Loading script, styles, fonts, frames, or data from a new origin requires adding it to the app's allowlist, or the browser blocks it. See `CONTENT_SECURITY_POLICY.md` in `vite-config`.
+
 ### Nx Caching & Build Order
 
 Nx enforces that all `^build` dependencies run before `test`, `lint`, `type-check`, or `dev` targets. This means dependencies must be built before you can run tests or the dev server in a downstream package.
