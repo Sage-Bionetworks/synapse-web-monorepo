@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   generateStaticUrls,
   generateDynamicUrls,
@@ -153,6 +153,10 @@ describe('generateDynamicUrls', () => {
   const baseUrl = 'https://example.synapse.org'
   const lastmod = '2024-01-01T00:00:00.000Z'
 
+  beforeEach(() => {
+    vi.mocked(fetchResourceIds).mockReset()
+  })
+
   it('generates query-param style URLs by default (no urlParamStyle set)', async () => {
     vi.mocked(fetchResourceIds).mockResolvedValueOnce({
       config: {} as never,
@@ -282,6 +286,46 @@ describe('generateDynamicUrls', () => {
     expect(pathSegmentUrls[0].loc).toBe(
       'https://example.synapse.org/Explore/Programs/value%20with%20spaces',
     )
+  })
+
+  it('queries every detail page at once and keeps URLs in config order', async () => {
+    const finishQueries: (() => void)[] = []
+    vi.mocked(fetchResourceIds).mockImplementation(
+      config =>
+        new Promise(resolve => {
+          finishQueries.push(() =>
+            resolve({ config, ids: ['syn1'], success: true }),
+          )
+        }),
+    )
+
+    const result = generateDynamicUrls(
+      [
+        {
+          path: 'Explore/Studies',
+          sql: 'SELECT * FROM syn666',
+          primaryKeyColumn: 'studyId',
+          urlParamStyle: 'path-segment',
+        },
+        {
+          path: 'Explore/Tools',
+          sql: 'SELECT * FROM syn777',
+          primaryKeyColumn: 'resourceId',
+          urlParamStyle: 'path-segment',
+        },
+      ],
+      baseUrl,
+      lastmod,
+    )
+
+    expect(fetchResourceIds).toHaveBeenCalledTimes(2)
+
+    finishQueries.reverse().forEach(finish => finish())
+    const { urls } = await result
+    expect(urls.map(url => url.loc)).toEqual([
+      'https://example.synapse.org/Explore/Studies/syn1',
+      'https://example.synapse.org/Explore/Tools/syn1',
+    ])
   })
 
   it('records a warning and skips URLs when fetchResourceIds fails', async () => {

@@ -33,10 +33,15 @@ export async function generateDynamicUrls(
   const urls: SitemapUrl[] = []
   const warnings: string[] = []
 
-  for (const config of detailPages) {
-    console.log(`Fetching resource IDs for ${config.path}...`)
-    const result: ResourceQueryResult = await fetchResourceIds(config)
+  console.log(
+    `Fetching resource IDs for ${detailPages.map(config => config.path).join(', ')}...`,
+  )
+  const results: ResourceQueryResult[] = await Promise.all(
+    detailPages.map(config => fetchResourceIds(config)),
+  )
 
+  for (const [index, config] of detailPages.entries()) {
+    const result = results[index]
     if (!result.success) {
       warnings.push(
         `Warning: Failed to fetch resources for ${config.path}: ${result.error}`,
@@ -45,7 +50,7 @@ export async function generateDynamicUrls(
       continue
     }
 
-    console.log(`  Found ${result.ids.length} resources`)
+    console.log(`  Found ${result.ids.length} resources for ${config.path}`)
 
     const encodedParamName = encodeURIComponent(config.primaryKeyColumn)
     for (const id of result.ids) {

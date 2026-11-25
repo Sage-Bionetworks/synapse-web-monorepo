@@ -2,7 +2,10 @@ import {
   QueryResultBundle,
   waitForAsyncResult,
 } from '@sage-bionetworks/synapse-client'
-import { extractEntityIdFromSql } from '../sitemap/queryTableForSitemap'
+import {
+  extractEntityIdFromSql,
+  selectOnlyColumns,
+} from '../sitemap/queryTableForSitemap'
 import { getSharedPrerenderCache } from './cache'
 import { createAnonymousSynapseClient } from './synapseClient'
 
@@ -92,7 +95,8 @@ export async function fetchDetailPageMetadata(
  *
  * The function queries the table for ALL rows (paginated), extracts the
  * title and description columns, and pre-populates {@link metadataCache}
- * using its `set()` method.
+ * using its `set()` method. It selects only the configured columns, so each
+ * one must exist in the table.
  *
  * Each call re-queries the whole table, so call it once per build.
  *
@@ -111,6 +115,9 @@ export async function preloadDetailPageMetadata(
   }
 
   const client = createAnonymousSynapseClient()
+  const columns = [config.paramName, config.titleColumn]
+  if (config.descriptionColumn) columns.push(config.descriptionColumn)
+  const sql = selectOnlyColumns(config.sql, columns)
 
   let offset = 0
   let hasMore = true
@@ -134,7 +141,7 @@ export async function preloadDetailPageMetadata(
         entityId,
         partMask,
         query: {
-          sql: config.sql,
+          sql,
           offset,
           limit,
         },
