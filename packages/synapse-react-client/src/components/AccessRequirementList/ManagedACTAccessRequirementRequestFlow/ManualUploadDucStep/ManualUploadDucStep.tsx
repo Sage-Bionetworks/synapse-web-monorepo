@@ -29,6 +29,7 @@ import { ReviewCollaboratorsAndSigningOfficialAccordion } from '../ReviewCollabo
 import { UploadDocumentField } from '../UploadDocumentField'
 import { longFieldLabelSx } from '../styles'
 import { RequestFlowAccessRequirement } from '../requestFlowTypes'
+import { getSubmissionErrorMessage } from '../../accessRequirementOutOfDate'
 
 export type ManualUploadDucStepProps = {
   managedACTAccessRequirement: RequestFlowAccessRequirement
@@ -108,7 +109,7 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
   const { mutate: submit, isPending: isSubmitting } =
     useSubmitDataAccessRequest({
       onSuccess: submission => onSubmissionCreated(submission.submissionId),
-      onError: e => setSubmitDarError(e.reason),
+      onError: e => setSubmitDarError(getSubmissionErrorMessage(e)),
     })
 
   const accessorChanges = dataAccessRequest?.accessorChanges ?? []

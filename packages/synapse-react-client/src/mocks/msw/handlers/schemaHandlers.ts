@@ -1,4 +1,5 @@
 // MSW handlers for JSON Schema services
+import { mockJsonSchemaValidationSchemas } from '@/mocks/accessRequirement/mockJsonSchemas'
 import {
   mockConditionalOnConcreteTypeSchema,
   mockFileEntityValidationSchema,
@@ -21,6 +22,7 @@ const validationSchemas: JSONSchema7[] = [
   mockConditionalOnConcreteTypeSchema,
   mockFileEntityValidationSchema,
   mockProjectValidationSchema,
+  ...mockJsonSchemaValidationSchemas,
 ]
 
 export function getValidationSchemaHandlers(

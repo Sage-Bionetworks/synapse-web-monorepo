@@ -16,6 +16,7 @@ import OpenInNew from '@mui/icons-material/OpenInNew'
 import Refresh from '@mui/icons-material/Refresh'
 import {
   Alert,
+  AlertTitle,
   Box,
   Button,
   DialogActions,
@@ -39,6 +40,8 @@ import { useState } from 'react'
 import { DialogBaseTitle } from '../../../DialogBase'
 import { longFieldLabelSx } from '../styles'
 import { RequestFlowAccessRequirement } from '../requestFlowTypes'
+import { getSubmissionErrorMessage } from '../../accessRequirementOutOfDate'
+import { useRequestAnswersNeedReview } from '../../JsonSchemaAccessRequirementRequestFlow/requestAnswerIssues'
 
 /** Browser defaults indent a blockquote far too much for a nested list item. */
 const declinedReasonSx: SxProps = {
@@ -148,8 +151,14 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
   const { mutate: submit, isPending: isSubmitting } =
     useSubmitDataAccessRequest({
       onSuccess: submission => onSubmissionCreated(submission.submissionId),
-      onError: e => setSubmitDarError(e.reason),
+      onError: e => setSubmitDarError(getSubmissionErrorMessage(e)),
     })
+
+  // Answers are not part of the signed DUC, so changing them keeps the signatures collected
+  const answersNeedReview = useRequestAnswersNeedReview(
+    managedACTAccessRequirement,
+    dataAccessRequest,
+  )
 
   const isSubmitDisabled =
     isLoadingDar ||
@@ -158,6 +167,7 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
     !dataAccessRequest ||
     !allCollected ||
     !signedFileHandle?.fileHandleId ||
+    answersNeedReview !== false ||
     isUpdating ||
     isSubmitting
 
@@ -188,6 +198,23 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
         <Typography variant={'headline3'} sx={{ mb: 2 }}>
           Sign a Data Use Certificate (DUC)
         </Typography>
+        {answersNeedReview && (
+          <Alert severity={'warning'} sx={{ mb: 2 }}>
+            <AlertTitle>
+              This form was updated after your DUC was sent for signature.
+            </AlertTitle>
+            Some of your answers no longer fit.{' '}
+            {onBackClicked ? (
+              <>
+                Press <strong>Back</strong> to review them before you submit.
+              </>
+            ) : (
+              'Review them from your data access request before you submit.'
+            )}{' '}
+            Changing your answers to the form does not affect the signatures
+            already collected.
+          </Alert>
+        )}
         <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 2 }}>
           Your DUC has been emailed to your Collaborators. Once all signatures
           (including the Signing Official) have been collected, you can submit

@@ -17,6 +17,7 @@ import {
   ACTSubmissionStatus,
   CreateAccessApprovalRequest,
   ManagedACTAccessRequirementStatus,
+  JsonSchemaAccessRequirement,
   Renewal,
   Request,
   ResearchProject,
@@ -53,6 +54,38 @@ export function useGetAccessRequirements<T extends AccessRequirement>(
         accessRequirementId,
       ),
   })
+}
+
+/**
+ * The JsonSchemaAccessRequirement as it is on the server now. A copy cached before this hook mounted is never used:
+ * `accessRequirement` is undefined until the fetch started on mount completes.
+ */
+export function useGetCurrentJsonSchemaAccessRequirement(
+  accessRequirementId: string | number,
+  options?: { enabled?: boolean },
+) {
+  const { accessToken, keyFactory } = useSynapseContext()
+  const { data, isFetchedAfterMount, error, refetch } = useQuery<
+    JsonSchemaAccessRequirement,
+    SynapseClientError
+  >({
+    ...options,
+    queryKey: keyFactory.getAccessRequirementQueryKey(
+      String(accessRequirementId),
+    ),
+    queryFn: () =>
+      // The legacy access requirement types do not include JsonSchemaAccessRequirement
+      SynapseClient.getAccessRequirementById(
+        accessToken,
+        accessRequirementId,
+      ) as unknown as Promise<JsonSchemaAccessRequirement>,
+    refetchOnMount: 'always',
+  })
+  return {
+    accessRequirement: isFetchedAfterMount ? data : undefined,
+    error,
+    refetch,
+  }
 }
 
 export function useGetAccessRequirementsForEntity(

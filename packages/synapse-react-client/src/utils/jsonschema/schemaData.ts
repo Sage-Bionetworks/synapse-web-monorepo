@@ -71,7 +71,8 @@ export function getAttachmentsNotInSchemaData(
   return attachments.filter(id => !answerFileHandleIds.has(id))
 }
 
-function getStepPropertyKeys(step: GeneratedFormStepForRjsf): string[] {
+/** The keys of the properties the given step asks for. */
+export function getStepPropertyKeys(step: GeneratedFormStepForRjsf): string[] {
   return Object.keys(step.jsonSchema.properties ?? {})
 }
 
@@ -81,6 +82,21 @@ export function getStepData(
   step: GeneratedFormStepForRjsf,
 ): SchemaData {
   return pick(schemaData, getStepPropertyKeys(step))
+}
+
+/**
+ * The answers to the questions the given steps ask, and the submission context. Answers to questions a form no longer
+ * asks are left over from an earlier version of it; the requester can neither see nor change them, so they are not
+ * submitted.
+ */
+export function withoutUnaskedAnswers(
+  schemaData: SchemaData,
+  steps: GeneratedFormStepForRjsf[],
+): SchemaData {
+  return pick(schemaData, [
+    SUBMISSION_CONTEXT_PROPERTY,
+    ...steps.flatMap(getStepPropertyKeys),
+  ])
 }
 
 /**
