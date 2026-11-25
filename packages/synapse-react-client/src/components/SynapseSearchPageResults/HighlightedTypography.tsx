@@ -15,17 +15,18 @@ export function HighlightedTypography({
   searchTerms,
   ...typographyProps
 }: HighlightedTypographyProps) {
-  if (searchTerms.length === 0) {
+  const nonBlankTerms = searchTerms.filter(term => term.trim() !== '')
+  if (nonBlankTerms.length === 0) {
     return <Typography {...typographyProps}>{text}</Typography>
   }
-  const pattern = searchTerms.map(escapeRegex).join('|')
-  const regex = new RegExp(`(${pattern})`, 'gi')
-  const parts = text.split(regex)
+  const pattern = nonBlankTerms.map(escapeRegex).join('|')
+  // With a capturing group, split places each match at an odd index
+  const parts = text.split(new RegExp(`(${pattern})`, 'i'))
 
   return (
     <Typography {...typographyProps}>
       {parts.map((part, i) =>
-        regex.test(part) ? (
+        i % 2 === 1 ? (
           <span key={i} className={styles.highlight}>
             {part}
           </span>
