@@ -5,7 +5,7 @@ import SynapseGrid, { SynapseGridHandle } from './SynapseGrid'
 
 type SynapseGridPropsAndCustomArgs = React.ComponentProps<
   typeof SynapseGrid
-> & { query?: string }
+> & { query?: string; isAuthenticated?: boolean }
 
 const meta = {
   title: 'Components/SynapseGrid',
@@ -60,5 +60,42 @@ export const GridWithQuery = {
 export const GridWithUserInputAndDebugInfo: Story = {
   args: {
     showDebugInfo: true,
+  },
+}
+
+/**
+ * Fixture for the grid load benchmark (`benchmarks/grid`). The benchmark serves every REST
+ * call, the websocket, and the snapshot itself, so this story turns MSW off, uses the mock
+ * stack, and only renders a button the benchmark clicks to start the session.
+ */
+export const GridLoadBenchmark: Story = {
+  parameters: {
+    stack: 'mock',
+    msw: false,
+  },
+  args: {
+    isAuthenticated: true,
+  },
+  render: function GridLoadBenchmarkRender(args) {
+    const gridRef = useRef<SynapseGridHandle>(null)
+
+    return (
+      <div>
+        <Button
+          variant="outlined"
+          onClick={() =>
+            gridRef.current?.initializeGrid({
+              initialQuery: { sql: 'SELECT * FROM syn123' },
+              concreteType:
+                'org.sagebionetworks.repo.model.grid.CreateGridRequest',
+            })
+          }
+          sx={{ margin: '10px 0' }}
+        >
+          Start Grid Session
+        </Button>
+        <SynapseGrid ref={gridRef} {...args} />
+      </div>
+    )
   },
 }
