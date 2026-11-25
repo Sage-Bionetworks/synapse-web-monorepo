@@ -67,19 +67,20 @@
       },
       "test": {
         "dependsOn": [
-          "generate"
+          "generate",
+          "^build"
+        ]
+      },
+      "lint": {
+        "dependsOn": [
+          "generate",
+          "^build"
         ]
       },
       "build": {
         "dependsOn": [
           "generate",
           "^build"
-        ],
-        "inputs": [
-          "{projectRoot}/src/**/*.ts",
-          "!{projectRoot}/src/codegen/**/*",
-          "{projectRoot}/tsconfig.json",
-          "{projectRoot}/package.json"
         ],
         "outputs": [
           "{projectRoot}/dist",

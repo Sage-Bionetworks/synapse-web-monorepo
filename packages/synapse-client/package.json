@@ -49,7 +49,8 @@
       "generate": {
         "inputs": [
           "{projectRoot}/src/spec/openapispecification.json",
-          "{projectRoot}/src/codegen",
+          "{projectRoot}/src/codegen/**/*",
+          "{projectRoot}/out/**/*",
           "{projectRoot}/package.json",
           "{projectRoot}/openapitools.json",
           "{projectRoot}/config.json"
@@ -65,7 +66,14 @@
       },
       "test": {
         "dependsOn": [
-          "generate"
+          "generate",
+          "^build"
+        ]
+      },
+      "lint": {
+        "dependsOn": [
+          "generate",
+          "^build"
         ]
       },
       "build": {
