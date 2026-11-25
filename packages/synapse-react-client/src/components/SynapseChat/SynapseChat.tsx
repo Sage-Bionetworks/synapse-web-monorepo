@@ -4,15 +4,7 @@ import {
   useUpdateAgentSession,
 } from '@/synapse-queries/chat/useChat'
 import { SynapseClientError, useSynapseContext } from '@/utils'
-import {
-  Alert,
-  Box,
-  Chip,
-  List,
-  ListItem,
-  Stack,
-  Typography,
-} from '@mui/material'
+import { Alert, Box, List, ListItem, Typography } from '@mui/material'
 import {
   AgentSession,
   FileHandleAssociateType,
@@ -24,8 +16,16 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { SkeletonParagraph } from '../Skeleton'
 import { displayToast } from '../ToastMessage'
 import AccessLevelMenu from './AccessLevelMenu'
-import { ChatAttachment } from './utils/types'
-import { ChatInputArea } from './components/ChatInputArea/ChatInputArea'
+import { ChatAppearance, ChatAttachment } from './utils/types'
+import {
+  ChatInputArea,
+  ChatInputAreaHandle,
+} from './components/ChatInputArea/ChatInputArea'
+import {
+  ChatWelcome,
+  ChatWelcomeContent,
+} from './components/ChatWelcome/ChatWelcome'
+import { SuggestedPrompts } from './components/SuggestedPrompts/SuggestedPrompts'
 import SynapseChatMessage from './SynapseChatMessage'
 import SmartToyTwoTone from '@mui/icons-material/SmartToyTwoTone'
 import { UserCard } from '../UserCard/UserCard'
@@ -118,6 +118,18 @@ export type SynapseChatProps = {
    * error is shown inline instead.
    */
   onSessionCreationUnauthenticated?: (unsentMessage: string) => void
+  /**
+   * Introduction shown while the conversation is empty, in place of the default greeting. When
+   * attachments are allowed, it includes a card that opens the composer's file upload.
+   */
+  welcome?: ChatWelcomeContent
+  /** Placeholder for the message input. Defaults to a prompt naming the chatbot. */
+  inputPlaceholder?: string
+  /**
+   * The look of the suggested prompts and the composer's buttons.
+   * @default 'default'
+   */
+  appearance?: ChatAppearance
 }
 
 type OutgoingMessage = {
@@ -153,6 +165,9 @@ export function SynapseChat({
   suggestedPrompts,
   allowAttachments = false,
   onSessionCreationUnauthenticated,
+  welcome,
+  inputPlaceholder,
+  appearance = 'default',
 }: SynapseChatProps) {
   const { isAuthenticated } = useSynapseContext()
   const { userId } = useApplicationSessionContext()
@@ -195,7 +210,10 @@ export function SynapseChat({
   const chatState = externalChatState ?? internalChatState
   const { interactions, isAwaitingResponse, sendChat } = chatState
 
-  const showGreeting = variant === 'curie' && interactions.length === 0
+  const isConversationEmpty = interactions.length === 0
+  const shownWelcome = isConversationEmpty ? welcome : undefined
+  const showGreeting = !welcome && variant === 'curie' && isConversationEmpty
+  const chatInputAreaRef = useRef<ChatInputAreaHandle>(null)
 
   const curieAccessLevelSuffix =
     variant === 'curie' ? CURIE_ACCESS_LEVEL_SUFFIX[agentAccessLevel] : ''
@@ -424,6 +442,9 @@ export function SynapseChat({
         <Box
           sx={{
             flexGrow: 1,
+            // Without this, the list can't shrink below its content, so a tall conversation
+            // overflows the chat and slides under the sticky composer instead of scrolling here
+            minHeight: 0,
             overflowY: 'auto',
             mb: variant === 'curie' ? 0 : 2,
           }}
@@ -436,7 +457,7 @@ export function SynapseChat({
               ...(variant === 'curie' && { pt: 0, pb: 0, gap: '20px' }),
               display: 'flex',
               flexDirection: 'column',
-              ...(showGreeting && {
+              ...((showGreeting || shownWelcome) && {
                 minHeight: '100%',
                 justifyContent: 'flex-end',
               }),
@@ -467,6 +488,19 @@ export function SynapseChat({
                 <Typography sx={{ justifySelf: 'start', mt: '14px' }}>
                   {CURIE_GREETING}
                 </Typography>
+              </ListItem>
+            )}
+            {shownWelcome && (
+              <ListItem sx={{ p: 0 }}>
+                <ChatWelcome
+                  {...shownWelcome}
+                  onUploadClick={
+                    allowAttachments
+                      ? () => chatInputAreaRef.current?.openAddFilesDialog()
+                      : undefined
+                  }
+                  disabled={isAwaitingResponse}
+                />
               </ListItem>
             )}
             {interactions.map((interaction, index) => {
@@ -504,36 +538,29 @@ export function SynapseChat({
       >
         {suggestedPrompts &&
           suggestedPrompts.length > 0 &&
-          interactions.length === 0 && (
-            <Stack
-              direction="row"
-              spacing={1}
-              sx={{ pt: '8px', flexWrap: 'wrap', gap: 1 }}
-            >
-              {suggestedPrompts.map(prompt => (
-                <Chip
-                  key={prompt}
-                  label={prompt}
-                  variant="outlined"
-                  onClick={() => setUserChatTextfieldValue(prompt)}
-                  disabled={isCreatingAgentSession}
-                  sx={{ cursor: 'pointer' }}
-                />
-              ))}
-            </Stack>
+          isConversationEmpty && (
+            <SuggestedPrompts
+              prompts={suggestedPrompts}
+              onSelect={setUserChatTextfieldValue}
+              disabled={isCreatingAgentSession}
+              appearance={appearance}
+            />
           )}
         <Box sx={{ mt: '5px' }}>
           <ChatInputArea
+            ref={chatInputAreaRef}
             value={userChatTextfieldValue}
             onValueChange={setUserChatTextfieldValue}
             attachments={composerAttachments}
             onAttachmentsChange={setComposerAttachments}
             onSend={handleSend}
             placeholder={
-              variant === 'curie' ? 'Ask anything' : `Message ${chatbotName}`
+              inputPlaceholder ??
+              (variant === 'curie' ? 'Ask anything' : `Message ${chatbotName}`)
             }
             disabled={isCreatingAgentSession || isAwaitingResponse}
             allowAttachments={allowAttachments}
+            appearance={appearance}
           />
         </Box>
       </Box>

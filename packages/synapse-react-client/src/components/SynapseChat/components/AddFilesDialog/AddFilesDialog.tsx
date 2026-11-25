@@ -6,21 +6,16 @@ import { UploaderState } from '@/utils/hooks/useUploadFileEntity/useUploadFiles'
 import { Alert, Button, Typography } from '@mui/material'
 import { useRef, useState } from 'react'
 import { DialogBase } from '@/components/DialogBase'
-import { getContentTypeLabel } from '../AttachmentChip/AttachmentChip'
+import {
+  ALLOWED_FILE_TYPES_LABEL,
+  ATTACHMENT_COUNT_AND_SIZE_LIMIT_LABEL,
+} from '../../utils/attachmentLabels'
 import {
   APPROVED_ATTACHMENT_CONTENT_TYPES,
   MAX_AGENT_CHAT_ATTACHMENTS,
   MAX_ATTACHMENT_FILE_SIZE_BYTES,
 } from '../../utils/constants'
 import { ChatAttachment } from '../../utils/types'
-
-const MAX_FILE_SIZE_MB = Math.round(
-  MAX_ATTACHMENT_FILE_SIZE_BYTES / (1024 * 1024),
-)
-
-export const ALLOWED_FILE_TYPES_LABEL = APPROVED_ATTACHMENT_CONTENT_TYPES.map(
-  contentType => getContentTypeLabel(contentType).toLowerCase(),
-).join(', ')
 
 export type AddFilesDialogProps = {
   open: boolean
@@ -84,10 +79,7 @@ export function AddFilesDialog({
           />
           <Typography sx={{ fontWeight: 700, mt: 2 }}>Limitations</Typography>
           <Typography component="ul" sx={{ pl: 3, m: 0 }}>
-            <li>
-              {MAX_AGENT_CHAT_ATTACHMENTS} files maximum, up to{' '}
-              {MAX_FILE_SIZE_MB} MB per file
-            </li>
+            <li>{ATTACHMENT_COUNT_AND_SIZE_LIMIT_LABEL}</li>
             <li>Allowed file types: {ALLOWED_FILE_TYPES_LABEL}</li>
           </Typography>
           {validationError && (

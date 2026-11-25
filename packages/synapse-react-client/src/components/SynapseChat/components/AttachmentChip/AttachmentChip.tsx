@@ -1,5 +1,6 @@
 import CloseIcon from '@mui/icons-material/Close'
 import { Box, IconButton, Tooltip, Typography } from '@mui/material'
+import { getContentTypeLabel } from '../../utils/attachmentLabels'
 import styles from './AttachmentChip.module.scss'
 
 export type AttachmentChipStatus = 'default' | 'failed'
@@ -26,21 +27,6 @@ export type AttachmentChipProps = {
   onRemove?: () => void
   /** Accessible label for the remove button. @default `Remove ${label}` */
   removeButtonLabel?: string
-}
-
-const CONTENT_TYPE_LABELS: Record<string, string> = {
-  'application/pdf': 'PDF',
-  'text/plain': 'TXT',
-  'text/csv': 'CSV',
-  'application/json': 'JSON',
-  'text/tab-separated-values': 'TSV',
-}
-
-export function getContentTypeLabel(contentType?: string): string {
-  if (!contentType) {
-    return 'FILE'
-  }
-  return CONTENT_TYPE_LABELS[contentType] ?? 'FILE'
 }
 
 /**

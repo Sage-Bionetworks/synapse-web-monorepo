@@ -1,0 +1,38 @@
+.pills {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+// Long prompts wrap onto more lines rather than being cut off in a narrow chat
+.pill:global(.MuiChip-root) {
+  max-width: 100%;
+  height: auto;
+  min-height: 32px;
+  padding-block: 4px;
+  background-color: var(--synapse-secondary-100);
+  cursor: pointer;
+
+  // Outranks MUI's own hover color for clickable chips
+  &:global(.MuiChip-clickable):hover {
+    background-color: var(--synapse-secondary-200);
+  }
+
+  :global(.MuiChip-label) {
+    white-space: normal;
+  }
+}
+
+.pillLabel {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pillChevron:global(.MuiSvgIcon-root) {
+  flex-shrink: 0;
+  font-size: 16px;
+  color: var(--synapse-gray-700);
+}
