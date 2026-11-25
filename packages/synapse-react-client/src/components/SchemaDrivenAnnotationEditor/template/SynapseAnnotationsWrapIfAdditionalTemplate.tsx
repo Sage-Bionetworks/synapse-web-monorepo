@@ -1,12 +1,13 @@
 import {
   ADDITIONAL_PROPERTY_FLAG,
+  additionalKeyId,
   FormContextType,
+  hasSchemaMarker,
   RJSFSchema,
   StrictRJSFSchema,
   TranslatableString,
   WrapIfAdditionalTemplateProps,
 } from '@rjsf/utils'
-import { FocusEventHandler } from 'react'
 import { Grid, TextField } from '@mui/material'
 
 /** The `WrapIfAdditional` component is used by the `FieldTemplate` to rename, or remove properties that are
@@ -23,8 +24,8 @@ export default function SynapseAnnotationsWrapIfAdditionalTemplate<
     id,
     classNames,
     disabled,
-    label,
-    onKeyChange,
+    keyName,
+    onKeyRenameBlur,
     readonly,
     required,
     schema,
@@ -33,18 +34,13 @@ export default function SynapseAnnotationsWrapIfAdditionalTemplate<
   } = props
   const { translateString } = registry
   const keyLabel = translateString(TranslatableString.KeyLabel, [''])
-  const additional = ADDITIONAL_PROPERTY_FLAG in schema
+  const additional = hasSchemaMarker(schema, ADDITIONAL_PROPERTY_FLAG)
 
   if (!additional) {
     return <div className={classNames}>{children}</div>
   }
 
-  const handleBlur: FocusEventHandler<
-    HTMLInputElement | HTMLTextAreaElement
-  > = ({ target }) => {
-    if (target) onKeyChange(target.value)
-  }
-
+  const keyId = additionalKeyId(id)
   return (
     <div className={classNames}>
       <Grid
@@ -57,14 +53,16 @@ export default function SynapseAnnotationsWrapIfAdditionalTemplate<
       >
         <Grid size={3}>
           <TextField
+            // The field keeps its state through a rename, so the uncontrolled input restarts from the key it was given
+            key={keyName}
             fullWidth={true}
             required={required}
             label={keyLabel}
-            defaultValue={label}
+            defaultValue={keyName}
             disabled={disabled || readonly}
-            id={`${id}-key`}
-            name={`${id}-key`}
-            onBlur={!readonly ? handleBlur : undefined}
+            id={keyId}
+            name={keyId}
+            onBlur={!readonly ? onKeyRenameBlur : undefined}
             type="text"
           />
         </Grid>

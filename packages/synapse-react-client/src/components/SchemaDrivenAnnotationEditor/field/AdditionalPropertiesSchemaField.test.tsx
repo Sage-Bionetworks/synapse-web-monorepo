@@ -7,21 +7,36 @@ import {
   PropertyType,
   transformDataFromPropertyType,
 } from './AdditionalPropertiesSchemaField'
-import { getDefaultRegistry } from '@rjsf/core'
+import { getTestRegistry } from '@rjsf/core/testing'
 import validator from '@rjsf/validator-ajv8'
-import { createSchemaUtils, IdSchema } from '@rjsf/utils'
+import {
+  ADDITIONAL_PROPERTY_FLAG,
+  createSchemaUtils,
+  Registry,
+  RJSFSchema,
+  ROOT_FIELD_PATH,
+} from '@rjsf/utils'
 import { JSONSchema7 } from 'json-schema'
 
 const schemaUtils = createSchemaUtils(
-  validator,
+  {
+    validator,
+    defaultFormStateBehavior: { emptyObjectFields: 'skipDefaults' },
+  },
   {},
-  { emptyObjectFields: 'skipDefaults' },
 )
 
+// The field's data is a custom annotation's array; the test registry is typed for any data
 const registry = {
-  ...getDefaultRegistry(),
+  ...getTestRegistry(),
   schemaUtils,
-}
+} as Registry<unknown[]>
+
+// The schema RJSF gives a custom annotation: an additional property
+const CUSTOM_ANNOTATION_SCHEMA = {
+  [ADDITIONAL_PROPERTY_FLAG]: true,
+  type: 'array',
+} as RJSFSchema
 
 describe('AdditionalPropertiesSchemaField unit tests', () => {
   describe('guessPropertyType tests', () => {
@@ -76,7 +91,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
 
     it('converts strings to floats', () => {
       const data = ['abc', '3.4', '4', 'NaN']
-      expect(4.0).toEqual(4)
+      expect(4.0).toBe(4)
       expect(transformDataFromPropertyType(data, 'Float')).toEqual([
         'NaN',
         3.4,
@@ -120,9 +135,10 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
 
       render(
         <AdditionalPropertiesSchemaField
-          schema={{ __additional_property: true, type: 'array' }}
+          schema={CUSTOM_ANNOTATION_SCHEMA}
           uiSchema={{}}
-          idSchema={{ $id: 'root' } as IdSchema}
+          id="root"
+          fieldPath={ROOT_FIELD_PATH}
           formData={initialData}
           registry={registry}
           onChange={vi.fn()}
@@ -131,7 +147,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
           disabled={false}
           readonly={false}
           name={''}
-          onDropPropertyClick={vi.fn()}
+          onRemoveProperty={vi.fn()}
         />,
       )
 
@@ -163,9 +179,10 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
 
       render(
         <AdditionalPropertiesSchemaField
-          schema={{ __additional_property: true, type: 'array' }}
+          schema={CUSTOM_ANNOTATION_SCHEMA}
           uiSchema={{}}
-          idSchema={{ $id: 'root' } as IdSchema}
+          id="root"
+          fieldPath={ROOT_FIELD_PATH}
           formData={initialData}
           registry={registry}
           onChange={vi.fn()}
@@ -174,7 +191,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
           disabled={false}
           readonly={false}
           name={''}
-          onDropPropertyClick={vi.fn()}
+          onRemoveProperty={vi.fn()}
         />,
       )
 
@@ -219,9 +236,10 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
 
       render(
         <AdditionalPropertiesSchemaField
-          schema={{ __additional_property: true, type: 'array' }}
+          schema={CUSTOM_ANNOTATION_SCHEMA}
           uiSchema={{}}
-          idSchema={{ $id: 'root' } as IdSchema}
+          id="root"
+          fieldPath={ROOT_FIELD_PATH}
           formData={initialData}
           registry={registry}
           onChange={vi.fn()}
@@ -230,7 +248,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
           disabled={false}
           readonly={false}
           name={''}
-          onDropPropertyClick={vi.fn()}
+          onRemoveProperty={vi.fn()}
         />,
       )
 

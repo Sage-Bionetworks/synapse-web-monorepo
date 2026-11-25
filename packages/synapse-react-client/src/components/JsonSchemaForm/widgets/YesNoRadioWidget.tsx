@@ -1,6 +1,6 @@
 import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
 import {
-  ariaDescribedByIds,
+  getControlDescribedBy,
   enumOptionsIndexForValue,
   enumOptionsValueForIndex,
   optionId,
@@ -27,7 +27,7 @@ export function YesNoRadioWidget(props: WidgetProps) {
       name={id}
       row
       aria-label={label}
-      aria-describedby={ariaDescribedByIds(id)}
+      aria-describedby={getControlDescribedBy(props)}
       value={enumOptionsIndexForValue(value, enumOptions) ?? null}
       onChange={(_, index) => props.onChange(valueForIndex(index))}
       onBlur={({ target }: FocusEvent<HTMLInputElement>) =>

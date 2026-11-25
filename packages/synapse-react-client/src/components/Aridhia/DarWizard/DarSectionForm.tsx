@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Alert } from '@mui/material'
+import { FormRef } from '@rjsf/core'
 import { ErrorSchema, RJSFSchema, UiSchema } from '@rjsf/utils'
+import { isEqual } from 'lodash-es'
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
 import { DateWidget } from '@/components/JsonSchemaForm/widgets/DateWidget'
 import { PhoneWidget } from '@/components/JsonSchemaForm/widgets/PhoneWidget'
@@ -20,6 +22,15 @@ const FIELD_ID_PREFIX = 'root_'
 /** Shown when a section's schema can't be compiled, so its answers can't be checked. */
 export const SCHEMA_ERROR_MESSAGE =
   "This form couldn't be checked. Contact support."
+
+// RJSF compares its props shallowly, so these keep their identity across renders
+const FIELDS = { fairLabel: FairLabelField }
+const WIDGETS = { DateWidget, PhoneWidget }
+const FORM_CONTEXT = { booleanWidget: 'checkbox' } as const
+// A `list` field is a `oneOf` of option consts. By default RJSF would pre-fill an
+// unanswered list with its first option, which the user never chose. Only a default FAIR
+// declares (`default_options` or `defaultValue`) should pre-select one.
+const DEFAULT_FORM_STATE_BEHAVIOR = { constAsDefaults: 'skipOneOf' } as const
 
 /** `formData` with each unanswered field's schema default, as RJSF fills them in on mount. */
 function withSchemaDefaults(
@@ -45,13 +56,26 @@ function withSchemaDefaults(
  */
 export function DarSectionForm(props: DarFormSectionStepProps) {
   const { schema, uiSchema, formData, onChange } = props
-  const section = { schema, uiSchema }
-  const { fieldErrors, schemaError } = validateFairSection(section, formData)
+  const formRef = useRef<FormRef<Record<string, unknown>>>(null)
+  const { fieldErrors, schemaError } = useMemo(
+    () => validateFairSection({ schema, uiSchema }, formData),
+    [schema, uiSchema, formData],
+  )
   useEffect(() => {
     if (schemaError) {
       console.error(`DAR form section schema failed to compile: ${schemaError}`)
     }
   }, [schemaError])
+  // The form fills in the schema's defaults on mount without reporting them as a change, but the
+  // wizard checks and submits the answers it was given, so hand them the defaults once.
+  useEffect(() => {
+    const filled = formRef.current?.getFormData()
+    if (filled && !isEqual(filled, formData)) {
+      onChange(filled)
+    }
+    // Only on mount: after that, every change is the user's and is reported by the form
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   // Flag a field once the user leaves it rather than while they're still typing. Values the
   // user didn't type (restored from a draft, or the form's own defaults) are flagged right away.
   // TODO(PORTALS-4456, RJSF 7): replace this blur tracking and `extraErrors` with RJSF's
@@ -60,16 +84,23 @@ export function DarSectionForm(props: DarFormSectionStepProps) {
     () =>
       new Set(
         Object.keys(
-          validateFairSection(section, withSchemaDefaults(schema, formData))
-            .fieldErrors,
+          validateFairSection(
+            { schema, uiSchema },
+            withSchemaDefaults(schema, formData),
+          ).fieldErrors,
         ),
       ),
   )
-  const extraErrors = Object.fromEntries(
-    Object.entries(fieldErrors)
-      .filter(([name]) => visitedFields.has(name))
-      .map(([name, message]) => [name, { __errors: [message] }]),
-  ) as ErrorSchema<Record<string, unknown>>
+  // RJSF re-derives its state when `extraErrors` changes identity, so it changes only with the errors
+  const extraErrors = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(fieldErrors)
+          .filter(([name]) => visitedFields.has(name))
+          .map(([name, message]) => [name, { __errors: [message] }]),
+      ) as ErrorSchema<Record<string, unknown>>,
+    [fieldErrors, visitedFields],
+  )
 
   return (
     <>
@@ -79,16 +110,15 @@ export function DarSectionForm(props: DarFormSectionStepProps) {
         </Alert>
       )}
       <JsonSchemaForm<Record<string, unknown>>
+        formRef={formRef}
         schema={schema}
         uiSchema={uiSchema}
-        formData={formData}
-        fields={{ fairLabel: FairLabelField }}
-        widgets={{ DateWidget, PhoneWidget }}
-        formContext={{ booleanWidget: 'checkbox' }}
-        // A `list` field is a `oneOf` of option consts. By default RJSF would pre-fill an
-        // unanswered list with its first option, which the user never chose. Only a default FAIR
-        // declares (`default_options` or `defaultValue`) should pre-select one.
-        experimental_defaultFormStateBehavior={{ constAsDefaults: 'skipOneOf' }}
+        // Read on mount only: the form owns its data after that
+        initialFormData={formData}
+        fields={FIELDS}
+        widgets={WIDGETS}
+        formContext={FORM_CONTEXT}
+        defaultFormStateBehavior={DEFAULT_FORM_STATE_BEHAVIOR}
         onChange={({ formData: next }) => onChange(next ?? {})}
         onBlur={id => {
           const name = id.startsWith(FIELD_ID_PREFIX)

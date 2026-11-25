@@ -2,16 +2,16 @@ import AddToList from '@/assets/icons/AddToList'
 import { Button, Tooltip } from '@mui/material'
 import {
   ADDITIONAL_PROPERTY_FLAG,
-  canExpand,
+  descriptionId,
   FormContextType,
-  getTemplate,
+  getTemplates,
   getUiOptions,
-  ObjectFieldTemplatePropertyType,
+  hasSchemaMarker,
   ObjectFieldTemplateProps,
   RJSFSchema,
   StrictRJSFSchema,
+  titleId,
 } from '@rjsf/utils'
-import { JSONSchema7Definition } from 'json-schema'
 import { useRef } from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import { displayToast } from '../../ToastMessage'
@@ -35,8 +35,8 @@ export function ObjectFieldTemplate<
     description,
     disabled,
     formData,
-    idSchema,
-    onAddClick,
+    id,
+    onAddProperty,
     properties,
     readonly,
     registry,
@@ -46,18 +46,12 @@ export function ObjectFieldTemplate<
     uiSchema,
   } = props
 
-  const options = getUiOptions<T, S, F>(uiSchema)
-  const TitleFieldTemplate = getTemplate<'TitleFieldTemplate', T, S, F>(
-    'TitleFieldTemplate',
-    registry,
-    options,
-  )
-  const DescriptionFieldTemplate = getTemplate<
-    'DescriptionFieldTemplate',
+  const options = getUiOptions<T, S, F>(uiSchema, registry.globalUiOptions)
+  const { TitleFieldTemplate, DescriptionFieldTemplate } = getTemplates<
     T,
     S,
     F
-  >('DescriptionFieldTemplate', registry, options)
+  >(registry, options)
 
   /*
      Tracks the property keys that were last known to exist in the object.
@@ -75,16 +69,14 @@ export function ObjectFieldTemplate<
    */
   useDeepCompareEffectNoCheck(() => {
     if ('properties' in schema && schema.properties) {
-      const propertyKeys = Object.keys(schema.properties)
       // Schema-defined properties are those properties in the schema without the additional property flag.
       const schemaDefinedProperties = new Set<string>(
-        propertyKeys.filter(key => {
-          const propertyObject = schema.properties![
-            key
-          ] as JSONSchema7Definition &
-            Record<typeof ADDITIONAL_PROPERTY_FLAG, any>
-          return !propertyObject[ADDITIONAL_PROPERTY_FLAG]
-        }),
+        Object.entries(schema.properties)
+          .filter(
+            ([, property]) =>
+              !hasSchemaMarker(property, ADDITIONAL_PROPERTY_FLAG),
+          )
+          .map(([key]) => key),
       )
 
       if (previousSchemaDefinedProperties.current != null) {
@@ -126,10 +118,10 @@ export function ObjectFieldTemplate<
   }, [schema.properties])
 
   return (
-    <fieldset id={idSchema.$id}>
+    <fieldset id={id}>
       {(options.title || title) && (
         <TitleFieldTemplate
-          id={`${idSchema.$id}__title`}
+          id={titleId(id)}
           schema={schema}
           title={options.title || title}
           required={required}
@@ -139,21 +131,21 @@ export function ObjectFieldTemplate<
       )}
       {(options.description || description) && (
         <DescriptionFieldTemplate
-          id={`${idSchema.$id}__description`}
+          id={descriptionId(id)}
           description={options.description || description!}
           registry={registry}
           schema={schema}
         />
       )}
-      {properties.map((prop: ObjectFieldTemplatePropertyType) => prop.content)}
+      {properties.map(prop => prop.content)}
 
-      {canExpand(schema, uiSchema, formData) && (
+      {registry.schemaUtils.canExpand(schema, uiSchema, formData) && (
         <Tooltip title="Add a new custom field" placement="top">
           <Button
             sx={{ my: 2 }}
             variant="contained"
             className="rjsf-object-property-expand"
-            onClick={onAddClick(schema)}
+            onClick={onAddProperty}
             disabled={disabled || readonly}
             aria-label={'Add Custom Field'}
           >

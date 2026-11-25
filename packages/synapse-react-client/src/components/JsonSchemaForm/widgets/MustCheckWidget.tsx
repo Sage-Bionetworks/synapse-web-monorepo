@@ -1,5 +1,9 @@
 import { Checkbox, FormControlLabel } from '@mui/material'
-import { ariaDescribedByIds, WidgetProps } from '@rjsf/utils'
+import {
+  getControlDescribedBy,
+  hasWidgetErrors,
+  WidgetProps,
+} from '@rjsf/utils'
 
 /**
  * A single checkbox for a boolean the schema only accepts as `true` (see `isMustCheckBoolean`),
@@ -8,17 +12,8 @@ import { ariaDescribedByIds, WidgetProps } from '@rjsf/utils'
  * the field's description above it.
  */
 export function MustCheckWidget(props: WidgetProps) {
-  const {
-    id,
-    value,
-    label,
-    required,
-    disabled,
-    readonly,
-    autofocus,
-    rawErrors = [],
-  } = props
-  const hasError = rawErrors.length > 0
+  const { id, value, label, required, disabled, readonly, autofocus } = props
+  const hasError = hasWidgetErrors(props)
 
   return (
     <FormControlLabel
@@ -56,7 +51,7 @@ export function MustCheckWidget(props: WidgetProps) {
           // Not the native `required`, which would block submission before RJSF can explain it.
           slotProps={{
             input: {
-              'aria-describedby': ariaDescribedByIds(id),
+              'aria-describedby': getControlDescribedBy(props),
               'aria-invalid': hasError,
               'aria-required': required,
             },

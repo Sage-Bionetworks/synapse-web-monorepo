@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import Form from '@rjsf/mui'
 import validator from '@rjsf/validator-ajv8'
@@ -24,8 +23,6 @@ function DynamicForm(props: DynamicFormProps) {
     onCancel,
     onSubmit,
   } = props
-  const [formData, setFormData] = useState({})
-
   const queryOptions = (endpoint: string) => {
     return {
       queryFn: async () => {
@@ -128,9 +125,7 @@ function DynamicForm(props: DynamicFormProps) {
       <Form
         schema={schema}
         uiSchema={uiSchema}
-        formData={formData}
         validator={validator}
-        onChange={({ formData }) => setFormData(formData)}
         onSubmit={({ formData }) => handleSubmit(formData)}
         disabled={isPending}
       >

@@ -1,6 +1,11 @@
 import Blocker from '@/components/utils/Blocker'
-import Form from '@rjsf/core'
-import { ErrorListProps, RJSFValidationError, UiSchema } from '@rjsf/utils'
+import Form, { FormRef } from '@rjsf/core'
+import {
+  DefaultFormStateBehavior,
+  ErrorListProps,
+  RJSFValidationError,
+  UiSchema,
+} from '@rjsf/utils'
 import { jsonSchemaFormValidator } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 import { Engine, EngineResult } from 'json-rules-engine'
 import cloneDeep from 'lodash-es/cloneDeep'
@@ -26,6 +31,7 @@ import SummaryTable from './SummaryTable'
 import SynapseFormCheckboxesWidget from './SynapseFormCheckboxesWidget'
 import SynapseFormCheckboxWidget from './SynapseFormCheckboxWidget'
 import SynapseFormRadioWidget from './SynapseFormRadioWidget'
+import { BOOTSTRAP3_CLASS_MAP } from '@/utils/jsonschema/bootstrap3ClassMap'
 import {
   FormSchema,
   IRulesNavigationEvent,
@@ -73,6 +79,19 @@ type SynapseFormState = {
   hasUnsavedChanges: boolean
   isSubmitted?: boolean
   isLoadingSaved: boolean
+  /** Changes whenever this component replaces the form's data or schema, which remounts the form to show them */
+  formRevision: number
+}
+
+// RJSF compares its props shallowly, so these keep their identity across renders
+const WIDGETS = {
+  CheckboxWidget: SynapseFormCheckboxWidget,
+  CheckboxesWidget: SynapseFormCheckboxesWidget,
+  RadioWidget: SynapseFormRadioWidget,
+}
+// Leave a required boolean unanswered rather than filling it with `false`
+const DEFAULT_FORM_STATE_BEHAVIOR: DefaultFormStateBehavior = {
+  requiredBooleanDefault: 'skip',
 }
 
 export interface SummaryFormat {
@@ -96,11 +115,11 @@ export default class SynapseForm extends Component<
   )
   excludeWarningHeader = 'Skip This Step?'
   unsavedDataWarning = `You might have some unsaved data. Are you sure you want to leave?`
-  formRef: RefObject<Form<IFormData> | null> //ref to form for submission
+  formRef: RefObject<FormRef<IFormData> | null> //ref to form for submission
   submitButtonRef: RefObject<HTMLButtonElement | null>
   formDivRef: any // ref to the div containing form (for scrolling on validation failure)
   navAction: NavActionEnum = NavActionEnum.NONE
-  uiSchema: UiSchema
+  uiSchema: UiSchema<IFormData, FormSchema>
   nextStep: Step | undefined
   extraErrors: RJSFValidationError[] = []
 
@@ -127,7 +146,7 @@ export default class SynapseForm extends Component<
     this.uiSchema = stringToElementForProp(
       cloneDeep(props.uiSchema),
       'ui:help',
-    ) as UiSchema
+    ) as UiSchema<IFormData, FormSchema>
     //create steps array from the navSchema
     const steps = props.navSchema.steps
       .map((step, i) => {
@@ -142,7 +161,8 @@ export default class SynapseForm extends Component<
     this.formDivRef = createRef()
     this.submitButtonRef = createRef()
     const currentStep = this.getFirstStep(steps, props.formData)
-    this.state = {
+    const isNewForm = this.isNewForm(props.formData)
+    const initialState = {
       currentStep,
       steps,
       previousStepIds: [],
@@ -151,8 +171,17 @@ export default class SynapseForm extends Component<
       doShowHelp: true,
       hasUnsavedChanges: false,
       isSubmitted: props.isSubmitted,
-      isLoadingSaved: !this.isNewForm(this.props.formData),
+      isLoadingSaved: !isNewForm,
+      formRevision: 0,
     }
+    // for validation of optional forms. Validation is enforced only if included property is set.
+    // The form reads its data when it mounts, so this is part of the data it starts with.
+    if (isNewForm) {
+      initialState.formData = props.isWizardMode
+        ? this._setIncludedPropInFormDataWizard(initialState)
+        : this._setIncludedPropInFormDataNonWizard(initialState, props.schema)
+    }
+    this.state = initialState
   }
 
   onUnload = (ev: any) => {
@@ -211,25 +240,14 @@ export default class SynapseForm extends Component<
 
   componentDidMount() {
     this.setupBeforeUnloadListener()
-    const isNewForm = this.isNewForm(this.state.formData)
-    if (!isNewForm) {
+    if (this.state.isLoadingSaved) {
       //when loading saved form - validate to see the steps status
       this.triggerAction(NavActionEnum.VALIDATE)
-    } else {
-      // for validation of optional forms. Validation is enforced only if included property is set.
-      this.setState(prevState => {
-        const newFormData = this.props.isWizardMode
-          ? this._setIncludedPropInFormDataWizard(prevState)
-          : this._setIncludedPropInFormDataNonWizard(
-              prevState,
-              this.props.schema,
-            )
-        return {
-          formData: newFormData,
-        }
-      })
     }
   }
+
+  // The schema slice of each step, kept so the form is given the same schema on every render
+  schemaSlices = new WeakMap<FormSchema, Map<string, FormSchema>>()
 
   // get the schema slice for the current screen/step
   getSchema = ({ id, final }: Step): FormSchema => {
@@ -237,12 +255,20 @@ export default class SynapseForm extends Component<
       return this.props.schema
     }
     //only get schema for current step. Only the portion of entire form is shown
-
-    const currentStepSlice = pick(this.props.schema, [
-      'title',
-      'type',
-      `properties.${id}`,
-    ])
+    let slices = this.schemaSlices.get(this.props.schema)
+    if (!slices) {
+      slices = new Map()
+      this.schemaSlices.set(this.props.schema, slices)
+    }
+    let currentStepSlice = slices.get(id)
+    if (!currentStepSlice) {
+      currentStepSlice = pick(this.props.schema, [
+        'title',
+        'type',
+        `properties.${id}`,
+      ])
+      slices.set(id, currentStepSlice)
+    }
     return currentStepSlice
   }
 
@@ -276,17 +302,17 @@ export default class SynapseForm extends Component<
 
   // called when going next, previous or a given step
   moveStep = async (
-    formData: any,
+    formDataToMove: IFormData,
     nextStepId: string | undefined,
     isError: boolean,
     previousStack = [...this.state.previousStepIds],
   ) => {
+    // The form's data is read-only, and this changes it
+    const formData = cloneDeep(formDataToMove)
     const currentStep = this.state.currentStep
     let currentStepState: StepStateEnum
-    //we don't wnat to display errors on the page - this will be done explicitly in validation
-    if (this.formRef?.current) {
-      this.formRef.current.setState({ errorSchema: {} })
-    }
+    //we don't wnat to display errors on the page - this will be done explicitly in validation.
+    // The form for the next step is a new one, which starts without errors.
     //in wizard mode we can only move forwards (don't know next step yet) or backwards (do know next step)
     const isMoveForwardInWizardMode = this.props.isWizardMode && !nextStepId
 
@@ -347,20 +373,23 @@ export default class SynapseForm extends Component<
     previousStepIds: string[],
     steps: Step[],
     currentStep: Step,
-    formData: any,
+    formData: IFormData,
   ) => {
-    this.setState({
+    this.setState(prevState => ({
       previousStepIds,
       steps,
       currentStep,
       formData,
       hasValidated: false,
       doShowErrors: false,
-    })
+      formRevision: prevState.formRevision + 1,
+    }))
   }
 
   //--------- fns to support navigation --------------------//
-  goPrevious = async (formData: any, isError: boolean) => {
+  goPrevious = async (formDataToMove: IFormData, isError: boolean) => {
+    // The form's data is read-only, and this changes it
+    const formData = cloneDeep(formDataToMove)
     let previousStepId: string | undefined
     const previousStack: string[] = [...this.state.previousStepIds]
     // in wizard mode we go to the previously visited screen.
@@ -481,9 +510,11 @@ export default class SynapseForm extends Component<
     }
   }
 
-  performAction(navAction: NavActionEnum, hasError: boolean) {
-    const formData = this.state.formData
-
+  performAction(
+    navAction: NavActionEnum,
+    hasError: boolean,
+    formData: IFormData = this.state.formData,
+  ) {
     switch (navAction) {
       case NavActionEnum.NEXT: {
         return this.moveStep(formData, undefined, hasError)
@@ -532,11 +563,13 @@ export default class SynapseForm extends Component<
   }
 
   //we need to route things through submit - otherwise validation does not kick in
-  // it triggers internal library validation and calls the performAction with the params for action
-  onSubmit: () => any = () => {
+  // it triggers internal library validation and calls the performAction with the params for action.
+  // The submitted data holds the schema's defaults, which the form fills in without reporting them as a change.
+  onSubmit = ({ formData }: { formData?: IFormData }) => {
     this.performAction(
       this.navAction,
-      this.state.currentStep.state === StepStateEnum.ERROR,
+      this.currentStepHasErrors,
+      formData ?? this.state.formData,
     )
   }
 
@@ -587,6 +620,7 @@ export default class SynapseForm extends Component<
         formData: formDataUpdated,
         modalContext: undefined,
         currentStep,
+        formRevision: prevState.formRevision + 1,
       }
     })
   }
@@ -759,10 +793,19 @@ export default class SynapseForm extends Component<
     return errors
   }
 
-  transformErrors = (errors: RJSFValidationError[]): RJSFValidationError[] => {
+  /**
+   * Whether the current step had errors when it was last validated. RJSF runs `transformErrors` while it renders, so
+   * it records this rather than setting state.
+   */
+  currentStepHasErrors = false
+
+  transformErrors = (
+    validatorErrors: RJSFValidationError[],
+  ): RJSFValidationError[] => {
     // if we are not in wizard mode and not trying to submit or validate we just want to skip
     // over the errors and just set the step status
     // https://github.com/rjsf-team/react-jsonschema-form/issues/1263
+    const errors = [...validatorErrors]
     this.extraErrors.forEach(extraError => {
       if (!errors.some(error => error.stack === extraError.stack)) {
         errors.push(extraError)
@@ -774,19 +817,11 @@ export default class SynapseForm extends Component<
       this.navAction !== NavActionEnum.VALIDATE &&
       (!this.props.isWizardMode || this.state.currentStep.final)
     ) {
-      const currentStep = {
-        ...this.state.currentStep,
-      }
-      if (errors.length > 0) {
-        currentStep.state = StepStateEnum.ERROR
-      } else {
-        currentStep.state = StepStateEnum.COMPLETED
-      }
-
-      this.setState({ currentStep })
-
+      this.currentStepHasErrors = errors.length > 0
       return []
     }
+    this.currentStepHasErrors =
+      this.state.currentStep.state === StepStateEnum.ERROR
 
     // there is an odd behavior in the lib that in cases when we have additional fields depending on enum
     // value if it's required and not entered we get 3 error: enum, required, and oneOf
@@ -809,12 +844,11 @@ export default class SynapseForm extends Component<
       }
     })
 
-    return errors.map(error => {
-      if (error.message) {
-        error.message = error.message.replace('property', 'field')
-      }
-      return error
-    })
+    return errors.map(error =>
+      error.message
+        ? { ...error, message: error.message.replace('property', 'field') }
+        : error,
+    )
   }
 
   renderErrorListTemplate = (props: ErrorListProps) => {
@@ -837,6 +871,10 @@ export default class SynapseForm extends Component<
         <ul className="error-detail">{currentLis}</ul>
       </div>
     )
+  }
+
+  templates = {
+    ErrorListTemplate: this.renderErrorListTemplate,
   }
 
   render() {
@@ -943,17 +981,19 @@ export default class SynapseForm extends Component<
                   } `}
                 >
                   <Form
+                    key={this.state.formRevision}
                     validator={jsonSchemaFormValidator}
                     noHtml5Validate
+                    classMap={BOOTSTRAP3_CLASS_MAP}
                     className={
                       this.state.doShowHelp
                         ? 'submissionInputForm'
                         : 'submissionInputForm no-help'
                     }
-                    liveValidate={false}
-                    formData={this.state.formData}
+                    initialFormData={this.state.formData}
                     schema={this.getSchema(this.state.currentStep)}
                     uiSchema={this.uiSchema}
+                    defaultFormStateBehavior={DEFAULT_FORM_STATE_BEHAVIOR}
                     onSubmit={this.onSubmit}
                     onChange={args => this.handleOnChange(args)}
                     onError={args =>
@@ -967,19 +1007,13 @@ export default class SynapseForm extends Component<
                         ? 'top'
                         : false
                     }
-                    templates={{
-                      ErrorListTemplate: this.renderErrorListTemplate,
-                    }}
+                    templates={this.templates}
                     transformErrors={this.transformErrors}
                     ref={this.formRef}
                     disabled={
                       this.state.currentStep.excluded || this.state.isSubmitted
                     }
-                    widgets={{
-                      CheckboxWidget: SynapseFormCheckboxWidget,
-                      CheckboxesWidget: SynapseFormCheckboxesWidget,
-                      RadioWidget: SynapseFormRadioWidget,
-                    }}
+                    widgets={WIDGETS}
                   >
                     <div style={{ display: 'none' }}>
                       <button type="submit" ref={this.submitButtonRef}></button>

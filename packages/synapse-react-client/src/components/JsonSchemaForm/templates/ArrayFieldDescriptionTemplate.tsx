@@ -1,14 +1,15 @@
 import {
-  getTemplate,
-  getUiOptions,
   ArrayFieldDescriptionProps,
+  descriptionId,
   FormContextType,
+  getTemplates,
+  getUiOptions,
   RJSFSchema,
   StrictRJSFSchema,
 } from '@rjsf/utils'
 
 /** The `ArrayFieldDescriptionTemplate` component renders a `DescriptionFieldTemplate` with an `id` derived from
- * the `idSchema`.
+ * the array's `id`.
  *
  * Identical to @rjsf/core ArrayFieldDescriptionTemplate except this renders something if there is no description.
  * Our description field also includes the type, so it should always be rendered.
@@ -19,23 +20,17 @@ export default function ArrayFieldDescriptionTemplate<
   S extends StrictRJSFSchema = RJSFSchema,
   F extends FormContextType = any,
 >(props: ArrayFieldDescriptionProps<T, S, F>) {
-  const { idSchema, description, registry, schema, uiSchema } = props
+  const { id, description, registry, schema, uiSchema } = props
   const options = getUiOptions<T, S, F>(uiSchema, registry.globalUiOptions)
   const { label: displayLabel } = options
   if (displayLabel === false) {
     return null
   }
 
-  const DescriptionFieldTemplate = getTemplate<
-    'DescriptionFieldTemplate',
-    T,
-    S,
-    F
-  >('DescriptionFieldTemplate', registry, options)
-  const id = `${idSchema.$id}__description`
+  const { DescriptionFieldTemplate } = getTemplates<T, S, F>(registry, options)
   return (
     <DescriptionFieldTemplate
-      id={id}
+      id={descriptionId(id)}
       description={description ?? ''}
       schema={schema}
       uiSchema={uiSchema}

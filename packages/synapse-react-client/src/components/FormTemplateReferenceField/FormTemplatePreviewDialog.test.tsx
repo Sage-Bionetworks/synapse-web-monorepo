@@ -22,9 +22,7 @@ describe('FormTemplatePreviewDialog', () => {
       attachments: [MOCK_FILE_HANDLE_ID],
     }
     server.use(
-      ...getRegisteredSchemaHandlers(REPO_ENDPOINT, [
-        mockClinicalSchema as JSONSchema7,
-      ]),
+      ...getRegisteredSchemaHandlers(REPO_ENDPOINT, [mockClinicalSchema]),
       http.get(`${REPO_ENDPOINT}/file/v1/file/:id`, ({ request, params }) => {
         const url = new URL(request.url)
         return params.id === MOCK_FILE_HANDLE_ID &&
@@ -42,8 +40,8 @@ describe('FormTemplatePreviewDialog', () => {
       { wrapper: createWrapper() },
     )
 
-    // The document belongs to a field of the Compliance step
-    await user.click(await screen.findByRole('button', { name: 'Compliance' }))
+    // The document belongs to a field of the Compliance step; a MUI 9 StepButton is a tab
+    await user.click(await screen.findByRole('tab', { name: 'Compliance' }))
     await user.click(
       await screen.findByRole('button', { name: 'Download Template' }),
     )

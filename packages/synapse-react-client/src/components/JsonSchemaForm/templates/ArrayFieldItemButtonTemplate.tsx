@@ -1,105 +1,94 @@
-import { useMemo } from 'react'
 import {
-  ArrayFieldItemButtonsTemplateType,
+  ArrayFieldItemButtonsTemplateProps,
   buttonId,
   FormContextType,
   RJSFSchema,
   StrictRJSFSchema,
 } from '@rjsf/utils'
 
-/** The `ArrayFieldTemplateItemButtons` component is the template used to render the buttons associate3d with items of
- * an array.
+/** The `ArrayFieldTemplateItemButtons` component is the template used to render the buttons associated with items of
+ * an array. Unlike RJSF's, every item has a button that adds a new item below it.
  *
- * @param props - The `ArrayFieldItemButtonsTemplateType` props for the component
+ * @param props - The `ArrayFieldItemButtonsTemplateProps` props for the component
  */
 export default function ArrayFieldItemButtonsTemplate<
   T = any,
   S extends StrictRJSFSchema = RJSFSchema,
   F extends FormContextType = any,
->(props: ArrayFieldItemButtonsTemplateType<T, S, F>) {
+>(props: ArrayFieldItemButtonsTemplateProps<T, S, F>) {
   const {
+    canAdd,
     disabled,
     hasCopy,
     hasMoveDown,
     hasMoveUp,
     hasRemove,
-    idSchema,
-    index,
-    onCopyIndexClick,
-    onDropIndexClick,
-    onReorderClick,
-    onAddIndexClick,
+    id,
+    itemButtonProps,
+    onAddItem,
+    onCopyItem,
+    onRemoveItem,
+    onMoveDownItem,
+    onMoveUpItem,
     readonly,
     registry,
     uiSchema,
   } = props
   const { CopyButton, MoveDownButton, MoveUpButton, RemoveButton, AddButton } =
     registry.templates.ButtonTemplates
-  const onCopyClick = useMemo(
-    () => onCopyIndexClick(index),
-    [index, onCopyIndexClick],
-  )
-  const onRemoveClick = useMemo(
-    () => onDropIndexClick(index),
-    [index, onDropIndexClick],
-  )
-  const onArrowUpClick = useMemo(
-    () => onReorderClick(index, index - 1),
-    [index, onReorderClick],
-  )
-  const onArrowDownClick = useMemo(
-    () => onReorderClick(index, index + 1),
-    [index, onReorderClick],
-  )
 
   return (
     <>
       {(hasMoveUp || hasMoveDown) && (
         <MoveUpButton
-          id={buttonId<T>(idSchema, 'moveUp')}
+          {...itemButtonProps?.moveUp}
+          id={buttonId(id, 'moveUp')}
           className="rjsf-array-item-move-up"
           disabled={disabled || readonly || !hasMoveUp}
-          onClick={onArrowUpClick}
+          onClick={onMoveUpItem}
           uiSchema={uiSchema}
           registry={registry}
         />
       )}
       {(hasMoveUp || hasMoveDown) && (
         <MoveDownButton
-          id={buttonId<T>(idSchema, 'moveDown')}
+          {...itemButtonProps?.moveDown}
+          id={buttonId(id, 'moveDown')}
           className="rjsf-array-item-move-down"
           disabled={disabled || readonly || !hasMoveDown}
-          onClick={onArrowDownClick}
+          onClick={onMoveDownItem}
           uiSchema={uiSchema}
           registry={registry}
         />
       )}
       {hasCopy && (
         <CopyButton
-          id={buttonId<T>(idSchema, 'copy')}
+          {...itemButtonProps?.copy}
+          id={buttonId(id, 'copy')}
           className="rjsf-array-item-copy"
           disabled={disabled || readonly}
-          onClick={onCopyClick}
+          onClick={onCopyItem}
           uiSchema={uiSchema}
           registry={registry}
         />
       )}
       {hasRemove && (
         <RemoveButton
-          id={buttonId<T>(idSchema, 'remove')}
+          {...itemButtonProps?.remove}
+          id={buttonId(id, 'remove')}
           className="rjsf-array-item-remove"
           disabled={disabled || readonly}
-          onClick={onRemoveClick}
+          onClick={onRemoveItem}
           uiSchema={uiSchema}
           registry={registry}
         />
       )}
       <AddButton
-        disabled={disabled || readonly}
+        disabled={disabled || readonly || !canAdd}
         uiSchema={uiSchema}
         registry={registry}
         aria-label={`Add Item`}
-        onClick={onAddIndexClick(index + 1)}
+        onClick={onAddItem}
       />
     </>
   )

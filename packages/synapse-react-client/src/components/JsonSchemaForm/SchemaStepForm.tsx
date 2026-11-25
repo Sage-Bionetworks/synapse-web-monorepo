@@ -11,9 +11,9 @@ import {
   SchemaData,
   SYNAPSE_FILE_HANDLE_ID_FORMAT,
 } from '@/utils/jsonschema/schemaData'
-import RJSFForm from '@rjsf/core'
+import { FormRef } from '@rjsf/core'
 import { RJSFSchema, RJSFValidationError } from '@rjsf/utils'
-import { Ref, useImperativeHandle, useMemo, useRef } from 'react'
+import { Ref, useCallback, useImperativeHandle, useMemo, useRef } from 'react'
 
 const SCHEMA_STEP_FORM_CONTEXT: CustomFormContext = {
   descriptionVariant: 'inline',
@@ -43,6 +43,9 @@ function withoutRequiredFileErrors(
  * for the requester; their answers start from what they gave instead.
  */
 const DEFAULT_FORM_STATE_BEHAVIOR = { constAsDefaults: 'never' } as const
+
+// A property with this format is a number in the schema, and the widget is chosen by its format
+const WIDGETS = { [SYNAPSE_FILE_HANDLE_ID_FORMAT]: FileHandleWidget }
 
 export type SchemaStepFormHandle = {
   /** Validates the step's answers, showing errors against invalid fields. */
@@ -82,7 +85,7 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
     fileHandleWidgetContext,
     ignoreRequiredFileAnswers = false,
   } = props
-  const formRef = useRef<RJSFForm>(null)
+  const formRef = useRef<FormRef<SchemaData>>(null)
   const formContext = useMemo<CustomFormContext>(
     () => ({
       ...SCHEMA_STEP_FORM_CONTEXT,
@@ -95,31 +98,32 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
     submit: () => formRef.current?.submit(),
   }))
 
+  const transformErrors = useCallback(
+    (errors: RJSFValidationError[]) =>
+      explainMustCheckErrors(
+        step.jsonSchema,
+        ignoreRequiredFileAnswers
+          ? withoutRequiredFileErrors(step.jsonSchema, errors)
+          : errors,
+      ),
+    [step.jsonSchema, ignoreRequiredFileAnswers],
+  )
+
   return (
-    <JsonSchemaForm
+    <JsonSchemaForm<SchemaData>
       formRef={formRef}
       schema={step.jsonSchema}
       uiSchema={step.uiSchema}
-      formData={getStepData(schemaData, step)}
+      // Read on mount only: the form owns its data after that
+      initialFormData={getStepData(schemaData, step)}
       formContext={formContext}
-      // A property with this format is a number in the schema, and the widget is chosen by its format
-      widgets={{ [SYNAPSE_FILE_HANDLE_ID_FORMAT]: FileHandleWidget }}
-      liveValidate={false}
-      experimental_defaultFormStateBehavior={DEFAULT_FORM_STATE_BEHAVIOR}
-      transformErrors={errors =>
-        explainMustCheckErrors(
-          step.jsonSchema,
-          ignoreRequiredFileAnswers
-            ? withoutRequiredFileErrors(step.jsonSchema, errors)
-            : errors,
-        )
-      }
+      widgets={WIDGETS}
+      defaultFormStateBehavior={DEFAULT_FORM_STATE_BEHAVIOR}
+      transformErrors={transformErrors}
       onChange={event =>
         onSchemaDataChange({ ...schemaData, ...event.formData })
       }
-      onSubmit={event =>
-        onValid?.({ ...schemaData, ...(event.formData as SchemaData) })
-      }
+      onSubmit={event => onValid?.({ ...schemaData, ...event.formData })}
       onError={onInvalid}
     >
       <></>

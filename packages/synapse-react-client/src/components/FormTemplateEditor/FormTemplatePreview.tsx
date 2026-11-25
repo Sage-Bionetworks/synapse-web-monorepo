@@ -175,8 +175,9 @@ export function FormTemplatePreview({
         )}
 
         <SchemaStepForm
-          // Each step is a separate form, as it is for a requester
-          key={safeIndex}
+          // Each step is a separate form, as it is for a requester. A form reads its data on mount, so it starts over
+          // from the answers kept so far when the request type changes its steps.
+          key={`${requestType}-${safeIndex}`}
           ref={schemaStepFormRef}
           step={currentStep}
           schemaData={schemaData}

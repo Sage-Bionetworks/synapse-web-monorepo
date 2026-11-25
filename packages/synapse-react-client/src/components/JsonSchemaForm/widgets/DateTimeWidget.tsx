@@ -13,7 +13,7 @@ export const DateTimeWidget: Widget = ({
   return (
     <DateTimePicker
       disabled={disabled}
-      value={value ? dayjs(value) : null}
+      value={typeof value === 'string' && value ? dayjs(value) : null}
       onChange={(newValue: string | Dayjs | null) => {
         if (newValue == null || typeof newValue === 'string') {
           onChange(newValue)

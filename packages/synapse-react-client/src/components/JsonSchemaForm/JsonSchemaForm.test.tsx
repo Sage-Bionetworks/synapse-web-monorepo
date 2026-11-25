@@ -1,4 +1,4 @@
-import RJSFForm from '@rjsf/core'
+import { FormRef } from '@rjsf/core'
 import { RJSFSchema } from '@rjsf/utils'
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -84,7 +84,7 @@ describe('JsonSchemaForm', () => {
   it('shows its own messages, not the browser’s, when submitted through its ref', async () => {
     // `submit()` calls `requestSubmit()`, which runs the browser's constraint validation
     // against the input's `max` unless `noHtml5Validate` is set.
-    const formRef = createRef<RJSFForm>()
+    const formRef = createRef<FormRef>()
     const onError = vi.fn()
     render(
       <JsonSchemaForm
