@@ -4,14 +4,10 @@ import { Link, Stack, SxProps } from '@mui/material'
 import HeaderSearchBox from '../HeaderSearchBox'
 
 const searchExampleTerms = [
-  'LLFS',
-  'whole genome sequencing',
-  'RNAseq',
-  'APOE cognitive aging',
-  'proteomics aging',
-  'epigenetics',
+  'RNASeq',
   'open access',
-  'longevity intervention',
+  'ATAC-seq',
+  'Multi-omics data',
 ]
 
 // HeaderSearchBox only accepts sx; its first child is the card that holds the field and chips.
@@ -35,8 +31,8 @@ function NamhubHomePageHeader() {
   )
   const description = (
     <>
-      Explore datasets, models, and more shared on the <b>N</b>ew <b>A</b>
-      pproach <b>M</b>ethodologies Hub.
+      Explore datasets, models, and more shared on the New Approach
+      Methodologies Hub.
       <br /> <br />{' '}
       <Link
         href="https://commonfund.nih.gov/complementarie"
