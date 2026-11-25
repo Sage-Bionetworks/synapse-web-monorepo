@@ -128,12 +128,13 @@ export function PortalFullTextSearchField({
               className={props.className}
               sx={textFieldSx}
               slotProps={{
+                ...params.slotProps,
                 input: {
-                  ...params.InputProps,
+                  ...params.slotProps.input,
                   startAdornment,
                 },
                 htmlInput: {
-                  ...params.inputProps,
+                  ...params.slotProps.htmlInput,
                   type: 'search',
                   'data-lpignore': 'true',
                 },

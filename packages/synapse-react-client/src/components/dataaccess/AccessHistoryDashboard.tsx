@@ -23,7 +23,10 @@ import AccessRequirementSearchBox from './AccessRequirementSearchBox/AccessRequi
 const SearchStartComponent = (): React.ReactNode => {
   return (
     <div className="text-center">
-      <SearchImage className="SearchPlaceholderImage" height="167px" />
+      <SearchImage
+        className="SearchPlaceholderImage"
+        sx={{ height: '167px' }}
+      />
       <Typography variant="body1Italic">
         Select a user using the search field above to view their data access
         history

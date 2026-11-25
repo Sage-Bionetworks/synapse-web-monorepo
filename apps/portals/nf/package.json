@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@mui/icons-material": "^7.3.11",
-    "@mui/material": "^7.3.11",
+    "@mui/icons-material": "catalog:",
+    "@mui/material": "catalog:",
     "@react-router/node": "catalog:",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",

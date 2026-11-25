@@ -278,7 +278,7 @@ describe('FormTemplateReferenceField', () => {
       ),
     ).toBeVisible()
     expect(
-      await within(dialog).findByRole('button', {
+      await within(dialog).findByRole('tab', {
         name: mockClinicalTemplate.steps[0].title,
       }),
     ).toBeVisible()

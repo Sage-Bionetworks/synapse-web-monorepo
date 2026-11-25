@@ -68,7 +68,7 @@ const NAME_HELP_TEXT =
 
 const headerProps: Partial<TypographyProps> = {
   variant: 'body1',
-  fontWeight: 700,
+  sx: { fontWeight: 700 },
 }
 
 function getAccessType(subjectType: RestrictableObjectType) {

@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@mui/icons-material": "^7.3.11",
-    "@mui/material": "^7.3.11",
-    "@mui/utils": "^7.3.11",
+    "@mui/icons-material": "catalog:",
+    "@mui/material": "catalog:",
+    "@mui/utils": "catalog:",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "@upsetjs/react": "^1.11.0",

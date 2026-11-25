@@ -372,8 +372,9 @@ export function JsonSchemaPicker(props: JsonSchemaPickerProps) {
             label="Organization"
             placeholder="Select an organization"
             slotProps={{
+              ...params.slotProps,
               input: {
-                ...params.InputProps,
+                ...params.slotProps.input,
                 endAdornment: (
                   <>
                     {isLoadingAllOrganizations && (
@@ -383,7 +384,7 @@ export function JsonSchemaPicker(props: JsonSchemaPickerProps) {
                         aria-label="Loading organizations"
                       />
                     )}
-                    {params.InputProps.endAdornment}
+                    {params.slotProps.input.endAdornment}
                   </>
                 ),
               },

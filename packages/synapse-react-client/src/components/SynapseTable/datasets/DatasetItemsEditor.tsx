@@ -757,7 +757,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
             styledTableContainerProps={{
               className: 'DatasetEditorTable',
               ref: tableContainerRef,
-              height: '350px',
+              sx: { height: '350px' },
             }}
             table={table}
             rowVirtualizer={rowVirtualizer}

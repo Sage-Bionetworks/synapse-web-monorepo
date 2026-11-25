@@ -25,7 +25,7 @@ const NoSearchResultComponent = (): React.ReactNode => {
         textAlign: 'center',
       }}
     >
-      <NoSearchResults height="181px" sx={{ pt: '40px', pb: '10px' }} />
+      <NoSearchResults sx={{ height: '181px', pt: '40px', pb: '10px' }} />
       <Typography variant="body1">No results with this query</Typography>
       <Typography variant="body1Italic">
         Search the full text of posts, replies, and titles

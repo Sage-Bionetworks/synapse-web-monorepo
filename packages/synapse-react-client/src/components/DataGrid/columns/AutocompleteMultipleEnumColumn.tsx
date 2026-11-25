@@ -292,8 +292,9 @@ function AutocompleteMultipleEnumCell({
               {...params}
               inputRef={inputRef}
               slotProps={{
+                ...params.slotProps,
                 input: {
-                  ...params.InputProps,
+                  ...params.slotProps.input,
                   disableUnderline: true,
                   sx: TEXT_FIELD_SX,
                 },

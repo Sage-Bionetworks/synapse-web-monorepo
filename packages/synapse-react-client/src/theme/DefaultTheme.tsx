@@ -83,15 +83,20 @@ export const defaultMuiThemeOptions: ThemeOptions = {
         },
       },
       styleOverrides: {
-        root: ({ ownerState, theme }) => ({
-          alignItems: 'center',
-          fontSize: '14px',
-          borderLeft: `10px solid ${
-            // The default severity is 'success'.
-            theme.palette[ownerState.severity || 'success']['main']
-          }`,
-          color: theme.palette.text.primary,
-        }),
+        root: ({ ownerState, theme }) => {
+          // The default severity is 'success'.
+          const severity = ownerState.severity || 'success'
+          const colorSeverity = ownerState.color || severity
+          return {
+            alignItems: 'center',
+            fontSize: '14px',
+            borderLeft: `10px solid ${theme.palette[severity]['main']}`,
+            color: theme.palette.text.primary,
+            ...((ownerState.variant ?? 'standard') === 'standard' && {
+              backgroundColor: lighten(theme.palette[colorSeverity].light, 0.8),
+            }),
+          }
+        },
         icon: ({ theme }) => ({
           marginRight: theme.spacing(3),
         }),
@@ -99,18 +104,6 @@ export const defaultMuiThemeOptions: ThemeOptions = {
           paddingRight: theme.spacing(2),
           ...(ownerState.onClose &&
             !ownerState.action && { color: theme.palette.grey[700] }),
-        }),
-        standardSuccess: ({ theme }) => ({
-          backgroundColor: lighten(theme.palette.success.light, 0.8),
-        }),
-        standardError: ({ theme }) => ({
-          backgroundColor: lighten(theme.palette.error.light, 0.8),
-        }),
-        standardWarning: ({ theme }) => ({
-          backgroundColor: lighten(theme.palette.warning.light, 0.8),
-        }),
-        standardInfo: ({ theme }) => ({
-          backgroundColor: lighten(theme.palette.info.light, 0.8),
         }),
       },
     },

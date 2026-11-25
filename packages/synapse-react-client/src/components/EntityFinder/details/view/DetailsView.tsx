@@ -720,7 +720,7 @@ export function DetailsView(props: DetailsViewProps) {
           styledTableContainerProps={{
             className: 'DetailsViewTable',
             ref: tableContainerRef,
-            height: '100%',
+            sx: { height: '100%' },
           }}
           onTableContainerScroll={target =>
             fetchMoreOnBottomReached(target as HTMLDivElement)

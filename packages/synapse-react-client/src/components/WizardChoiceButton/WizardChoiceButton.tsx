@@ -53,11 +53,8 @@ export default function WizardChoiceButton(props: {
       component={'button'}
       role={'menuitem'}
       aria-label={title}
-      display={'flex'}
-      p={'20px'}
       onClick={onClick}
-      alignItems={'center'}
-      gap={'10px'}
+      sx={{ display: 'flex', p: '20px', alignItems: 'center', gap: '10px' }}
       selected={selected}
     >
       {icon && (
