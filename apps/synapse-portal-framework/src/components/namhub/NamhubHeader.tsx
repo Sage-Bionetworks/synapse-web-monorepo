@@ -1,9 +1,27 @@
 // import { usePortalContext } from '@/components/PortalContext'
 import styles from './NamhubHeader.module.scss'
-import { Link, Stack } from '@mui/material'
-import { ReactComponent as HeaderImage } from './assets/namhub-header-background.svg'
-import { RssFeedCards } from 'synapse-react-client'
-import { SectionLayout } from '../SectionLayout'
+import { Link, Stack, SxProps } from '@mui/material'
+import HeaderSearchBox from '../HeaderSearchBox'
+
+const searchExampleTerms = [
+  'RNASeq',
+  'open access',
+  'ATAC-seq',
+  'Multi-omics data',
+]
+
+// HeaderSearchBox only accepts sx; its first child is the card that holds the field and chips.
+const searchBoxSx: SxProps = {
+  '& > :first-child': {
+    background: 'rgba(226, 239, 249, 0.6)',
+    border: '1px solid #b9cfe4',
+    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+  },
+  '& .MuiButton-root, & .MuiButton-root:hover': {
+    backgroundColor: '#fff',
+    borderColor: '#e4e4e4',
+  },
+}
 
 function NamhubHomePageHeader() {
   const title = (
@@ -13,8 +31,8 @@ function NamhubHomePageHeader() {
   )
   const description = (
     <>
-      Explore datasets, models, and more shared on the <b>N</b>ew <b>A</b>
-      pproach <b>M</b>ethodologies Hub.
+      Explore datasets, models, and more shared on the New Approach
+      Methodologies Hub.
       <br /> <br />{' '}
       <Link
         href="https://commonfund.nih.gov/complementarie"
@@ -29,26 +47,18 @@ function NamhubHomePageHeader() {
   )
 
   return (
-    <Stack className={styles.headerContainer}>
-      <div className={styles.topSectionContainer}>
-        <Stack className={styles.headerTextContainer}>
-          <div className={styles.headerText}>{title}</div>
-          <div className={styles.descriptionText}>{description}</div>
-        </Stack>
-        <HeaderImage className={styles.headerImage} />
-      </div>
-      <div className={styles.eventSection}>
-        <SectionLayout title="Events" centerTitle>
-          <RssFeedCards
-            url="https://nhdcc.wpenginepowered.com"
-            itemsToShow={3}
-            allowCategories={[]}
-            viewAllNewsButtonText="View All Events"
-            hideDate
-          />
-        </SectionLayout>
-      </div>
-    </Stack>
+    <div className={styles.topSectionContainer}>
+      <Stack className={styles.headerTextContainer}>
+        <div className={styles.headerText}>{title}</div>
+        <div className={styles.descriptionText}>{description}</div>
+      </Stack>
+      <HeaderSearchBox
+        searchPlaceholder="Search for data and resources"
+        searchExampleTerms={searchExampleTerms}
+        path="/Search"
+        sx={searchBoxSx}
+      />
+    </div>
   )
 }
 

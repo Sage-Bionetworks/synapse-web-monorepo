@@ -20,6 +20,8 @@ import {
   waitFor,
 } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
+import { getInlineScriptHashes } from 'vite-config/contentSecurityPolicyHtml'
+import { getPortalAllowedSources } from 'vite-config/portalContentSecurityPolicy'
 import HtmlPreview, {
   EXPORTED_FOR_UNIT_TESTING,
   HtmlPreviewProps,
@@ -210,6 +212,16 @@ describe('HTML Preview tests', () => {
       expect(frame).not.toBeNull()
       expect(frame).toHaveAttribute('srcdoc', HEIGHT_REPORTER_SCRIPTS + rawHtml)
     })
+  })
+
+  it('Height reporter is allowed by the portal Content Security Policy that the srcdoc frame inherits', () => {
+    const portalScriptSources = getPortalAllowedSources()
+      .filter(allowed => allowed.directives.includes('script-src'))
+      .map(allowed => allowed.source)
+    const reporterHashes = getInlineScriptHashes(HEIGHT_REPORTER_SCRIPTS)
+
+    expect(reporterHashes).toHaveLength(1)
+    expect(portalScriptSources).toContain(reporterHashes[0])
   })
 
   it.each([

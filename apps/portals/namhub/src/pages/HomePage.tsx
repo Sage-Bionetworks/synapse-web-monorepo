@@ -1,7 +1,9 @@
 import NamhubHeader from '@sage-bionetworks/synapse-portal-framework/components/namhub/NamhubHeader'
-import NamhubAbout from '@sage-bionetworks/synapse-portal-framework/components/namhub/NamhubAbout'
+import NamhubAbout from '@/components/NamhubAbout'
 import NamhubTechnologyDevelopmentCenters from '@/components/NamhubTechnologyDevelopmentCenters'
 import DevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/DevelopedBySage'
+import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+import RssFeedCards from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
 import nyuGsomLogoUrl from '../assets/NYUGSOM.png'
 import { ReactComponent as SageLogo } from '@sage-bionetworks/synapse-portal-framework/components/assets/sage-logo.svg'
 import { Link } from '@mui/material'
@@ -41,6 +43,17 @@ export default function Homepage() {
       <NamhubHeader />
       <NamhubAbout />
       <NamhubTechnologyDevelopmentCenters />
+      <div className={styles.eventSection}>
+        <SectionLayout title="Events" centerTitle>
+          <RssFeedCards
+            url="https://nhdcc.wpenginepowered.com"
+            itemsToShow={3}
+            allowCategories={[]}
+            viewAllNewsButtonText="View All Events"
+            hideDate
+          />
+        </SectionLayout>
+      </div>
       <div className={styles.termsAndConditions}>
         <DevelopedBySage />
       </div>
