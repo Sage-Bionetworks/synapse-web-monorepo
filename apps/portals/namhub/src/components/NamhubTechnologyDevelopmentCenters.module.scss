@@ -1,5 +1,6 @@
 @use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
 @use 'sass:map';
+@use './sectionTitle';
 
 .container {
   display: flex;
@@ -36,20 +37,10 @@
 }
 
 .title {
+  @include sectionTitle.section-title;
+
   :global(.MuiContainer-root) {
     color: var(--synapse-gray-1000);
-    padding: 0;
-  }
-
-  :global(h2.title) {
-    text-transform: none;
-    font-size: 24px;
-    font-weight: 700;
-    margin-top: 30px;
-
-    @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
-      font-size: 32px;
-    }
   }
 }
 
