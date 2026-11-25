@@ -1,4 +1,4 @@
-import { Button, GridLegacy as Grid, Link, Typography } from '@mui/material'
+import { Button, Grid, Link, Typography } from '@mui/material'
 import { Link as RouterLink } from 'react-router'
 import { AppContextConsumer } from '../AppContext'
 import useMembershipInvitationTokenHandler from '../hooks/useMembershipInvitationTokenHandler'
@@ -124,8 +124,7 @@ function AccountCreatedPage() {
                     ) {
                       return (
                         <Grid
-                          item
-                          xs={6}
+                          size={6}
                           className="sourceAppItem"
                           key={config.appId}
                           // sx={{

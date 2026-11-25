@@ -1,7 +1,7 @@
 import { RJSFInputLabelWrapper } from '@/components/JsonSchemaForm/templates/RJSFInputLabel'
 import { CustomFormContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import { isMustCheckBoolean } from '@/components/JsonSchemaForm/mustCheckBoolean'
-import { GridLegacy as Grid, InputLabel } from '@mui/material'
+import { Grid, InputLabel } from '@mui/material'
 import {
   FieldTemplateProps,
   FormContextType,
@@ -83,9 +83,7 @@ export function FieldTemplate<
         registry={registry}
       >
         {children}
-        <Grid item xs={12}>
-          {errors}
-        </Grid>
+        <Grid size={12}>{errors}</Grid>
       </RJSFInputLabelWrapper>
       {help}
     </WrapIfAdditionalTemplate>

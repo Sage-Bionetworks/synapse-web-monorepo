@@ -186,7 +186,6 @@ function EvaluationCardDropdown({
       >
         {permissions.canEdit && (
           <MenuItem
-            role="menuitem"
             onClick={() => {
               handleClose()
               onEdit()
@@ -197,7 +196,6 @@ function EvaluationCardDropdown({
         )}
         {permissions.canChangePermissions && (
           <MenuItem
-            role="menuitem"
             onClick={() => {
               handleClose()
               onModifyAccess()
@@ -210,7 +208,6 @@ function EvaluationCardDropdown({
         {permissions.canDelete && <Divider />}
         {permissions.canDelete && (
           <MenuItem
-            role="menuitem"
             onClick={() => {
               handleClose()
               setDeleteWarningShow(true)

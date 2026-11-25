@@ -1,4 +1,4 @@
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import { useSortable } from '@dnd-kit/react/sortable'
 import {
   Autocomplete,
@@ -111,7 +111,7 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
           aria-label="Remove condition"
           onClick={() => removeConditionAt(condition.id)}
         >
-          <DeleteOutlineIcon fontSize="small" />
+          <DeleteOutlineOutlinedIcon fontSize="small" />
         </IconButton>
       </Tooltip>
 

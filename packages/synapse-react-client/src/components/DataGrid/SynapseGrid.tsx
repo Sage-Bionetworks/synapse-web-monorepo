@@ -20,7 +20,7 @@ import { useGetEntity } from '@/synapse-queries/index'
 import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import HelpOutline from '@mui/icons-material/HelpOutline'
+import HelpOutlineOutlined from '@mui/icons-material/HelpOutlineOutlined'
 import {
   Accordion,
   AccordionDetails,
@@ -570,7 +570,7 @@ function SynapseGridInner({
                     <Stack direction="row" spacing={1} sx={{ mr: 'auto' }}>
                       <GridMenuButton
                         variant="outlined"
-                        startIcon={<HelpOutline />}
+                        startIcon={<HelpOutlineOutlined />}
                         href="https://docs.synapse.org/synapse-docs/managing-metadata-with-curator"
                         target="_blank"
                         rel="noopener noreferrer"

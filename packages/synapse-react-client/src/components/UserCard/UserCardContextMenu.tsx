@@ -31,7 +31,7 @@ function UserCardContextMenu(props: UserCardContextMenuProps) {
           return <Divider key={`${menuAction.field}_${index}`} />
         }
         return (
-          <MenuItem role="menuitem" key={menuAction.field} onClick={callback}>
+          <MenuItem key={menuAction.field} onClick={callback}>
             {menuAction.field}
           </MenuItem>
         )

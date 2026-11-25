@@ -21,7 +21,7 @@ import ScheduleOutlined from '@mui/icons-material/ScheduleOutlined'
 import HourglassEmptyOutlined from '@mui/icons-material/HourglassEmptyOutlined'
 import BlockOutlined from '@mui/icons-material/BlockOutlined'
 import RuleOutlined from '@mui/icons-material/RuleOutlined'
-import HelpOutline from '@mui/icons-material/HelpOutline'
+import HelpOutlineOutlined from '@mui/icons-material/HelpOutlineOutlined'
 import {
   DuoCategory,
   DuoTerm,
@@ -66,7 +66,7 @@ const DUO_ICONS: Record<string, ComponentType> = {
 
 const TermIcon = (props: { term: DuoTerm }): ReactNode => {
   const { term } = props
-  const Icon = DUO_ICONS[term.code] ?? HelpOutline
+  const Icon = DUO_ICONS[term.code] ?? HelpOutlineOutlined
   return <Icon />
 }
 

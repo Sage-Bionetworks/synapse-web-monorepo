@@ -48,7 +48,7 @@ import Rat from '@/assets/mui_components/Rat'
 import SpatialProfiling from '@/assets/mui_components/SpatialProfiling'
 import AccessTimeTwoTone from '@mui/icons-material/AccessTimeTwoTone'
 import AddBoxOutlined from '@mui/icons-material/AddBoxOutlined'
-import AddCircleOutline from '@mui/icons-material/AddCircleOutline'
+import AddCircleOutlineOutlined from '@mui/icons-material/AddCircleOutlineOutlined'
 import AddCircleTwoTone from '@mui/icons-material/AddCircleTwoTone'
 import AddShoppingCart from '@mui/icons-material/AddShoppingCart'
 import AddTwoTone from '@mui/icons-material/AddTwoTone'
@@ -132,7 +132,7 @@ import ShareTwoTone from '@mui/icons-material/ShareTwoTone'
 import ShoppingCartOutlined from '@mui/icons-material/ShoppingCartOutlined'
 import Sort from '@mui/icons-material/Sort'
 import Star from '@mui/icons-material/Star'
-import StarOutline from '@mui/icons-material/StarOutline'
+import StarOutlineOutlined from '@mui/icons-material/StarOutlineOutlined'
 import StarTwoTone from '@mui/icons-material/StarTwoTone'
 import StrikethroughS from '@mui/icons-material/StrikethroughS'
 import Subscript from '@mui/icons-material/Subscript'
@@ -412,7 +412,7 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
     case 'addToCart':
       return <AddShoppingCart {...otherProps} />
     case 'addCircleOutline':
-      return <AddCircleOutline {...otherProps} />
+      return <AddCircleOutlineOutlined {...otherProps} />
     case 'addCircleTwoTone':
       return <AddCircleTwoTone {...otherProps} />
     case 'reload':
@@ -443,7 +443,7 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
     case 'favTwoTone':
       return <StarTwoTone {...otherProps} />
     case 'favOutline':
-      return <StarOutline {...otherProps} />
+      return <StarOutlineOutlined {...otherProps} />
     case 'fav':
       return <Star {...otherProps} />
     case 'github':

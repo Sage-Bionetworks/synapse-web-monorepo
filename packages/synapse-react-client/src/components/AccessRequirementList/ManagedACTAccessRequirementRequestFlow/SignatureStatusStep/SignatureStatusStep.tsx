@@ -10,7 +10,7 @@ import {
 import SynapseClient from '@/synapse-client'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline'
+import CheckCircleOutlineOutlined from '@mui/icons-material/CheckCircleOutlineOutlined'
 import HourglassEmpty from '@mui/icons-material/HourglassEmpty'
 import OpenInNew from '@mui/icons-material/OpenInNew'
 import Refresh from '@mui/icons-material/Refresh'
@@ -235,7 +235,7 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
               sx={{ alignItems: 'center', gap: 1, mb: 1 }}
             >
               {allCollected ? (
-                <CheckCircleOutline color={'success'} />
+                <CheckCircleOutlineOutlined color={'success'} />
               ) : (
                 <HourglassEmpty sx={{ color: 'grey.700' }} />
               )}

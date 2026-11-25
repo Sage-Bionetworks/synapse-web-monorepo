@@ -8,7 +8,7 @@ import {
   Skeleton,
   Typography,
 } from '@mui/material'
-import HelpOutline from '@mui/icons-material/HelpOutline'
+import HelpOutlineOutlined from '@mui/icons-material/HelpOutlineOutlined'
 import {
   TaskBundle,
   TaskStatusStateEnum,
@@ -202,7 +202,7 @@ export default function CurationTaskCardLayout(
               className={styles.helpLink}
               sx={{ fontWeight: 400 }}
             >
-              <HelpOutline className={styles.helpIcon} />
+              <HelpOutlineOutlined className={styles.helpIcon} />
               Have questions or need help?
             </Link>
           </div>

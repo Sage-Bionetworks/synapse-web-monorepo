@@ -8,7 +8,7 @@ import {
 import { StyledComponent } from '@emotion/styled'
 import ArticleOutlined from '@mui/icons-material/ArticleOutlined'
 import DashboardTwoTone from '@mui/icons-material/DashboardTwoTone'
-import InfoOutline from '@mui/icons-material/InfoOutline'
+import InfoOutlined from '@mui/icons-material/InfoOutlined'
 import UpdateIcon from '@mui/icons-material/Update'
 import {
   Box,
@@ -178,7 +178,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
 
           {friendlySize && (
             <Box sx={{ display: 'flex' }}>
-              <InfoOutline className={styles.cardMetadataIcon} />
+              <InfoOutlined className={styles.cardMetadataIcon} />
               <Typography className={styles.cardMetadataTypographyWithIcon}>
                 File size: <b>{friendlySize}</b>
               </Typography>
