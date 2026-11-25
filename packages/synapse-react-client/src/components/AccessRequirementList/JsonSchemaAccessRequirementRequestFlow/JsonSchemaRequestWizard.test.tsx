@@ -12,8 +12,12 @@ import {
   GENOMICS_TERMS_LABEL as TERMS_LABEL,
   mockClinicalSchema,
   mockGenomicsSchema,
+  toMockValidationSchema,
 } from '@/mocks/accessRequirement/mockJsonSchemas'
-import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
+import {
+  getRegisteredSchemaHandlers,
+  getValidationSchemaHandlers,
+} from '@/mocks/msw/handlers/schemaHandlers'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
@@ -37,6 +41,12 @@ import JsonSchemaRequestWizard, {
   JsonSchemaRequestWizardProps,
 } from './JsonSchemaRequestWizard'
 import { REQUIRED_MESSAGE } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
+import {
+  getUpdatedClinicalFormHandlers,
+  mockUpdatedJsonSchemaAR2,
+  REMOVED_DATA_USE_PURPOSE,
+} from '@/mocks/accessRequirement/mockUpdatedClinicalForm'
+import { ACCESS_REQUIREMENT_CHANGED_ON_SUBMIT_MESSAGE } from '../accessRequirementOutOfDate'
 
 // The upload completes with whichever file handle the test sets, or fails. While `holdUploads` is set, it completes
 // only when the test calls `completeHeldUpload`.
@@ -142,8 +152,8 @@ function createRenewal(
 }
 
 /**
- * Serves the request for the access requirement, records what is saved to it, and creates a submission (or rejects it).
- * Like Synapse, a save with an etag other than the current one is rejected as a conflict.
+ * Serves the access requirement and the request for it, records what is saved to the request, and creates a submission
+ * (or rejects it). Like Synapse, a save with an etag other than the current one is rejected as a conflict.
  */
 function mockRequestServices(
   accessRequirement: JsonSchemaAccessRequirement,
@@ -151,14 +161,21 @@ function mockRequestServices(
   options: { submissionRejection?: string } = {},
 ) {
   let currentRequest = initialRequest
+  let currentAccessRequirement = accessRequirement
   const savedRequests: Array<Request | Renewal> = []
   const submissionRequests: unknown[] = []
+  // Each rejects the next submission, before `options.submissionRejection` applies
+  const nextSubmissionErrors: Array<{ reason: string; errorCode?: string }> = []
   let heldSave: Promise<void> | undefined
   server.use(
     ...getRegisteredSchemaHandlers(REPO_ENDPOINT, [
       mockGenomicsSchema as JSONSchema7,
       mockClinicalSchema as JSONSchema7,
     ]),
+    http.get(
+      `${REPO_ENDPOINT}/repo/v1/accessRequirement/${accessRequirement.id}`,
+      () => HttpResponse.json(currentAccessRequirement),
+    ),
     http.get(
       `${REPO_ENDPOINT}/repo/v1/accessRequirement/${accessRequirement.id}/dataAccessRequestForUpdate`,
       () => HttpResponse.json(currentRequest),
@@ -187,6 +204,10 @@ function mockRequestServices(
       `${REPO_ENDPOINT}/repo/v1/dataAccessRequest/:requestId/submission`,
       async ({ request }) => {
         submissionRequests.push(await request.json())
+        const error = nextSubmissionErrors.shift()
+        if (error) {
+          return HttpResponse.json(error, { status: 400 })
+        }
         if (options.submissionRejection) {
           return HttpResponse.json(
             { reason: options.submissionRejection },
@@ -203,7 +224,17 @@ function mockRequestServices(
     heldSave = promise
     return resolve
   }
-  return { savedRequests, submissionRequests, holdNextSave }
+  /** Serves the given access requirement from now on, as if it had been updated on the server */
+  function updateAccessRequirement(updated: JsonSchemaAccessRequirement) {
+    currentAccessRequirement = updated
+  }
+  return {
+    savedRequests,
+    submissionRequests,
+    nextSubmissionErrors,
+    holdNextSave,
+    updateAccessRequirement,
+  }
 }
 
 function renderWizard(
@@ -894,5 +925,270 @@ describe('JsonSchemaRequestWizard', () => {
     expect(
       within(question).getByRole('radio', { name: 'Yes' }),
     ).not.toBeChecked()
+  })
+
+  describe('when the form has changed', () => {
+    const updatedClinicalAccessRequirement =
+      mockUpdatedJsonSchemaAR2 as unknown as JsonSchemaAccessRequirement
+    const RESUMED_ALERT_TITLE =
+      'This form was updated since you last worked on this request.'
+    const CHANGED_DURING_SESSION_ALERT_TITLE =
+      'This form was updated while you were filling it out.'
+    const REMOVED_OPTION_MESSAGE = `Your previous answer, “${REMOVED_DATA_USE_PURPOSE}”, is no longer an option. Choose another answer.`
+    const COMPLIANCE_STEP_DESCRIPTION =
+      'Provide any required compliance documentation.'
+    const OUT_OF_DATE_ERROR = {
+      reason:
+        'This request was last saved against version 1 of the access requirement, which is now on version 2. Answer the current form and save the request before submitting it.',
+      errorCode: 'ACCESS_REQUIREMENT_VERSION_OUT_OF_DATE',
+    }
+
+    function clinicalAnswers(dataUsePurpose: string) {
+      return {
+        projectTitle: 'Trial',
+        dataUsePurpose,
+        signedDataUseAgreement: 123,
+      }
+    }
+
+    async function chooseDataUsePurpose(user: UserEvent, purpose: string) {
+      await user.click(
+        await screen.findByRole('combobox', { name: /Data Use Purpose/ }),
+      )
+      await user.click(await screen.findByRole('option', { name: purpose }))
+    }
+
+    it.each([
+      { requestType: 'request', create: createRequest },
+      { requestType: 'renewal', create: createRenewal },
+    ])(
+      'flags a saved answer that the current form no longer accepts until it is changed ($requestType)',
+      async ({ create }) => {
+        const { savedRequests } = mockRequestServices(
+          updatedClinicalAccessRequirement,
+          {
+            ...create(clinicalAccessRequirement),
+            schemaData: clinicalAnswers(REMOVED_DATA_USE_PURPOSE),
+            attachments: ['123'],
+          },
+        )
+        server.use(...getUpdatedClinicalFormHandlers(REPO_ENDPOINT))
+        const user = userEvent.setup()
+        // The copy passed in is out of date: the wizard uses the access requirement as it is now
+        renderWizard(clinicalAccessRequirement)
+
+        const alert = (await screen.findByText(RESUMED_ALERT_TITLE)).closest(
+          '[role="alert"]',
+        )
+        expect(alert).toHaveTextContent(RESUMED_ALERT_TITLE)
+        expect(alert).toHaveTextContent('Project Details: 1 answer')
+
+        await advanceToStep(user)
+        // Shown against the field, and in the step's list of errors
+        await screen.findAllByText(REMOVED_OPTION_MESSAGE)
+        const savesBeforeNext = savedRequests.length
+        await user.click(screen.getByRole('button', { name: 'Next' }))
+        expect(screen.queryByText(COMPLIANCE_STEP_DESCRIPTION)).toBeNull()
+        expect(savedRequests).toHaveLength(savesBeforeNext)
+
+        await chooseDataUsePurpose(user, 'Research')
+        await waitFor(() =>
+          expect(screen.queryAllByText(REMOVED_OPTION_MESSAGE)).toEqual([]),
+        )
+        expect(screen.queryByText(RESUMED_ALERT_TITLE)).toBeNull()
+        await user.click(screen.getByRole('button', { name: 'Next' }))
+        expect(
+          await screen.findByText(COMPLIANCE_STEP_DESCRIPTION),
+        ).toBeVisible()
+      },
+    )
+
+    it('does not interrupt a requester whose saved answers the current form accepts', async () => {
+      mockRequestServices(updatedClinicalAccessRequirement, {
+        ...createRequest(clinicalAccessRequirement),
+        schemaData: clinicalAnswers('Research'),
+        attachments: ['123'],
+      })
+      server.use(...getUpdatedClinicalFormHandlers(REPO_ENDPOINT))
+      const user = userEvent.setup()
+      renderWizard(clinicalAccessRequirement)
+
+      await advanceToStep(user)
+      await screen.findByRole('combobox', { name: /Data Use Purpose/ })
+      expect(screen.queryByText(RESUMED_ALERT_TITLE)).toBeNull()
+      expect(screen.queryByText(/is no longer an option/)).toBeNull()
+    })
+
+    it('returns to an answer that the form changed to reject while the requester was submitting', async () => {
+      const { savedRequests, submissionRequests, updateAccessRequirement } =
+        mockRequestServices(clinicalAccessRequirement, {
+          ...createRequest(clinicalAccessRequirement),
+          schemaData: clinicalAnswers(REMOVED_DATA_USE_PURPOSE),
+          attachments: ['123'],
+        })
+      server.use(...getUpdatedClinicalFormHandlers(REPO_ENDPOINT))
+      const user = userEvent.setup()
+      const props = renderWizard(clinicalAccessRequirement)
+      await advanceToStep(user)
+      await screen.findByRole('combobox', { name: /Data Use Purpose/ })
+      await user.click(screen.getByRole('button', { name: 'Next' }))
+      await screen.findByText(COMPLIANCE_STEP_DESCRIPTION)
+
+      updateAccessRequirement(updatedClinicalAccessRequirement)
+      await user.click(screen.getByRole('button', { name: 'Submit' }))
+
+      const alert = (
+        await screen.findByText(CHANGED_DURING_SESSION_ALERT_TITLE)
+      ).closest('[role="alert"]')
+      expect(alert).toHaveTextContent(CHANGED_DURING_SESSION_ALERT_TITLE)
+      expect(alert).toHaveTextContent('Project Details: 1 answer')
+      await screen.findAllByText(REMOVED_OPTION_MESSAGE)
+      expect(submissionRequests).toHaveLength(0)
+      // The answers were saved before the newer form was shown
+      expect(savedRequests.at(-1)?.schemaData).toMatchObject(
+        clinicalAnswers(REMOVED_DATA_USE_PURPOSE),
+      )
+
+      await chooseDataUsePurpose(user, 'Research')
+      await user.click(screen.getByRole('button', { name: 'Next' }))
+      await screen.findByText(COMPLIANCE_STEP_DESCRIPTION)
+      await user.click(screen.getByRole('button', { name: 'Submit' }))
+
+      await waitFor(() =>
+        expect(props.onSubmissionCreated).toHaveBeenCalledWith(SUBMISSION_ID),
+      )
+      expect(savedRequests.at(-1)?.schemaData).toMatchObject(
+        clinicalAnswers('Research'),
+      )
+    })
+
+    it('submits without interruption when the form changes while the requester is submitting but still accepts the answers', async () => {
+      const { submissionRequests, updateAccessRequirement } =
+        mockRequestServices(clinicalAccessRequirement, {
+          ...createRequest(clinicalAccessRequirement),
+          schemaData: clinicalAnswers('Research'),
+          attachments: ['123'],
+        })
+      server.use(...getUpdatedClinicalFormHandlers(REPO_ENDPOINT))
+      const user = userEvent.setup()
+      const props = renderWizard(clinicalAccessRequirement)
+      await advanceToStep(user)
+      await screen.findByRole('combobox', { name: /Data Use Purpose/ })
+      await user.click(screen.getByRole('button', { name: 'Next' }))
+      await screen.findByText(COMPLIANCE_STEP_DESCRIPTION)
+
+      updateAccessRequirement(updatedClinicalAccessRequirement)
+      await user.click(screen.getByRole('button', { name: 'Submit' }))
+
+      await waitFor(() =>
+        expect(props.onSubmissionCreated).toHaveBeenCalledWith(SUBMISSION_ID),
+      )
+      expect(submissionRequests).toHaveLength(1)
+      expect(screen.queryByText(CHANGED_DURING_SESSION_ALERT_TITLE)).toBeNull()
+    })
+
+    it('submits again, without the server message, when the access requirement changed just before the submission', async () => {
+      const { submissionRequests, nextSubmissionErrors } = mockRequestServices(
+        genomicsAccessRequirement,
+        createRequest(genomicsAccessRequirement),
+      )
+      nextSubmissionErrors.push(OUT_OF_DATE_ERROR)
+      const user = userEvent.setup()
+      const props = renderWizard(genomicsAccessRequirement)
+      await advanceToAgreementsStep(user)
+      await acceptTerms(user)
+      await user.click(screen.getByRole('button', { name: 'Submit' }))
+
+      await waitFor(() =>
+        expect(props.onSubmissionCreated).toHaveBeenCalledWith(SUBMISSION_ID),
+      )
+      expect(submissionRequests).toHaveLength(2)
+      expect(screen.queryByText(OUT_OF_DATE_ERROR.reason)).toBeNull()
+    })
+
+    it('shows plain-language copy when the submission keeps being rejected because the access requirement changed', async () => {
+      const { nextSubmissionErrors } = mockRequestServices(
+        genomicsAccessRequirement,
+        createRequest(genomicsAccessRequirement),
+      )
+      nextSubmissionErrors.push(OUT_OF_DATE_ERROR, OUT_OF_DATE_ERROR)
+      const user = userEvent.setup()
+      const props = renderWizard(genomicsAccessRequirement)
+      await advanceToAgreementsStep(user)
+      await acceptTerms(user)
+      await user.click(screen.getByRole('button', { name: 'Submit' }))
+
+      expect(
+        await screen.findByText(ACCESS_REQUIREMENT_CHANGED_ON_SUBMIT_MESSAGE),
+      ).toBeVisible()
+      expect(screen.queryByText(OUT_OF_DATE_ERROR.reason)).toBeNull()
+      expect(props.onSubmissionCreated).not.toHaveBeenCalled()
+    })
+
+    it('returns to an answer that the server would reject although its step accepted it', async () => {
+      const { submissionRequests } = mockRequestServices(
+        genomicsAccessRequirement,
+        createRequest(genomicsAccessRequirement),
+      )
+      // A rule that only the schema the server validates against holds, as a rule across steps would be
+      server.use(
+        ...getValidationSchemaHandlers(REPO_ENDPOINT, [
+          toMockValidationSchema({
+            ...mockGenomicsSchema,
+            properties: {
+              ...mockGenomicsSchema.properties,
+              intendedDataUse: { type: 'string', minLength: 30 },
+            },
+          }),
+        ]),
+      )
+      const user = userEvent.setup()
+      const props = renderWizard(genomicsAccessRequirement)
+      await advanceToAgreementsStep(user)
+      await acceptTerms(user)
+      await user.click(screen.getByRole('button', { name: 'Submit' }))
+
+      const alert = (
+        await screen.findByText('Some of your answers need your attention.')
+      ).closest('[role="alert"]')
+      expect(alert).toHaveTextContent('Research Use: 1 answer')
+      const answer = await screen.findByRole('textbox')
+      await screen.findAllByText('Must be at least 30 characters')
+      expect(submissionRequests).toHaveLength(0)
+
+      await user.type(answer, ' across many cohorts')
+      await user.click(screen.getByRole('button', { name: 'Next' }))
+      await user.click(await screen.findByRole('button', { name: 'Submit' }))
+
+      await waitFor(() =>
+        expect(props.onSubmissionCreated).toHaveBeenCalledWith(SUBMISSION_ID),
+      )
+    })
+
+    it('does not submit answers to questions the form no longer asks, but keeps them in drafts', async () => {
+      const { savedRequests } = mockRequestServices(
+        genomicsAccessRequirement,
+        createRequest(genomicsAccessRequirement, {
+          schemaData: { retiredQuestion: 'An earlier answer' },
+        }),
+      )
+      const user = userEvent.setup()
+      const props = renderWizard(genomicsAccessRequirement)
+      await advanceToAgreementsStep(user)
+      expect(savedRequests.at(-1)?.schemaData).toMatchObject({
+        retiredQuestion: 'An earlier answer',
+      })
+      await acceptTerms(user)
+      await user.click(screen.getByRole('button', { name: 'Submit' }))
+
+      await waitFor(() =>
+        expect(props.onSubmissionCreated).toHaveBeenCalledWith(SUBMISSION_ID),
+      )
+      expect(savedRequests.at(-1)?.schemaData).toEqual({
+        intendedDataUse: 'Studying the genome',
+        agreeToTerms: true,
+        [SUBMISSION_CONTEXT_PROPERTY]: 'REQUEST',
+      })
+    })
   })
 })

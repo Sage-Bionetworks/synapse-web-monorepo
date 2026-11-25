@@ -39,6 +39,12 @@ import { useState } from 'react'
 import { DialogBaseTitle } from '../../../DialogBase'
 import { longFieldLabelSx } from '../styles'
 import { RequestFlowAccessRequirement } from '../requestFlowTypes'
+import { getSubmissionErrorMessage } from '../../accessRequirementOutOfDate'
+import { AnswersNeedReviewAlert } from '../../AnswersNeedReviewAlert'
+import {
+  toSubmittedRequest,
+  useRequestAnswersReview,
+} from '../../requestAnswerIssues'
 
 /** Browser defaults indent a blockquote far too much for a nested list item. */
 const declinedReasonSx: SxProps = {
@@ -148,8 +154,13 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
   const { mutate: submit, isPending: isSubmitting } =
     useSubmitDataAccessRequest({
       onSuccess: submission => onSubmissionCreated(submission.submissionId),
-      onError: e => setSubmitDarError(e.reason),
+      onError: e => setSubmitDarError(getSubmissionErrorMessage(e)),
     })
+
+  const answersReview = useRequestAnswersReview(
+    managedACTAccessRequirement,
+    dataAccessRequest,
+  )
 
   const isSubmitDisabled =
     isLoadingDar ||
@@ -158,15 +169,24 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
     !dataAccessRequest ||
     !allCollected ||
     !signedFileHandle?.fileHandleId ||
+    answersReview.status !== 'ready' ||
     isUpdating ||
     isSubmitting
 
   const handleSubmit = async () => {
-    if (!dataAccessRequest || !signedFileHandle?.fileHandleId) return
+    if (
+      !dataAccessRequest ||
+      !signedFileHandle?.fileHandleId ||
+      answersReview.status !== 'ready'
+    ) {
+      return
+    }
     setUpdateDarError(undefined)
     setSubmitDarError(undefined)
     const updated = await updateDarAsync({
-      ...dataAccessRequest,
+      ...(answersReview.form
+        ? toSubmittedRequest(dataAccessRequest, answersReview.form)
+        : dataAccessRequest),
       ducFileHandleId: signedFileHandle.fileHandleId,
     }).catch(() => null)
     if (!updated) return
@@ -188,6 +208,15 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
         <Typography variant={'headline3'} sx={{ mb: 2 }}>
           Sign a Data Use Certificate (DUC)
         </Typography>
+        {answersReview.status === 'needsReview' && (
+          <AnswersNeedReviewAlert
+            title="This form was updated after your DUC was sent for signature."
+            canGoBack={Boolean(onBackClicked)}
+            // Answers are not part of the signed DUC
+            note="Changing your answers to the form does not affect the signatures already collected."
+            sx={{ mb: 2 }}
+          />
+        )}
         <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 2 }}>
           Your DUC has been emailed to your Collaborators. Once all signatures
           (including the Signing Official) have been collected, you can submit

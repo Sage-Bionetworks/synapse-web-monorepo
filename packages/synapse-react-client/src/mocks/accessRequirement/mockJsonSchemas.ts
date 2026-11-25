@@ -14,6 +14,7 @@ import { RJSFSchema } from '@rjsf/utils'
 import { DataAccessRequestType } from '@sage-bionetworks/synapse-client'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
 import { ACCESS_REQUIREMENT_BASE_SCHEMA_ID } from '@/components/FormTemplateEditor/formTemplateSchema'
+import { JSONSchema7 } from 'json-schema'
 
 /** The genomics DAR's must-be-checked Terms and Conditions box, labelled by its title. */
 export const GENOMICS_TERMS_LABEL = 'I agree to the terms and conditions'
@@ -111,3 +112,41 @@ export function getMockJsonSchemaById(
 ): RJSFSchema | undefined {
   return mockJsonSchemaRegistry[schema$id]
 }
+
+/** The schema that every access requirement's schema extends, as Synapse registers it. */
+const mockAccessRequirementBaseSchema: RJSFSchema = {
+  type: 'object',
+  properties: {
+    [SUBMISSION_CONTEXT_PROPERTY]: {
+      type: 'string',
+      enum: [DataAccessRequestType.REQUEST, DataAccessRequestType.RENEWAL],
+    },
+  },
+  required: [SUBMISSION_CONTEXT_PROPERTY],
+}
+
+/**
+ * The validation schema Synapse serves for a registered schema: its `$id` is absolute, and its reference to the base
+ * schema points into `definitions`, which holds the base schema without an `$id`.
+ */
+export function toMockValidationSchema(schema: RJSFSchema): JSONSchema7 {
+  const baseSchemaRef = `#/definitions/${ACCESS_REQUIREMENT_BASE_SCHEMA_ID}`
+  return {
+    ...schema,
+    $id: `https://repo-prod.prod.sagebase.org/repo/v1/schema/type/registered/${schema.$id}`,
+    allOf: schema.allOf?.map(entry =>
+      typeof entry === 'object' &&
+      entry.$ref === ACCESS_REQUIREMENT_BASE_SCHEMA_ID
+        ? { $ref: baseSchemaRef }
+        : entry,
+    ),
+    definitions: {
+      [ACCESS_REQUIREMENT_BASE_SCHEMA_ID]: mockAccessRequirementBaseSchema,
+    },
+  } as JSONSchema7
+}
+
+/** The validation schemas of the schemas in {@link mockJsonSchemaRegistry}. */
+export const mockJsonSchemaValidationSchemas: JSONSchema7[] = Object.values(
+  mockJsonSchemaRegistry,
+).map(toMockValidationSchema)

@@ -1,12 +1,16 @@
 import {
+  useGetCurrentJsonSchemaAccessRequirement,
   useGetCurrentUserProfile,
   useGetDataAccessRequestForUpdate,
   useSubmitDataAccessRequest,
   useUpdateDataAccessRequest,
 } from '@/synapse-queries'
-import { useGeneratedRequestForm } from '@/synapse-queries/dataaccess/useGeneratedRequestForm'
+import {
+  fetchGeneratedRequestForm,
+  GeneratedRequestForm,
+  useGeneratedRequestForm,
+} from '@/synapse-queries/dataaccess/useGeneratedRequestForm'
 import { useSynapseContext } from '@/utils'
-import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
 import {
   Alert,
   Box,
@@ -26,13 +30,28 @@ import {
   RestrictableObjectType,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
-import { RJSFSchema } from '@rjsf/utils'
+import { useQueryClient } from '@tanstack/react-query'
+import isEmpty from 'lodash-es/isEmpty'
+import isEqual from 'lodash-es/isEqual'
+import pick from 'lodash-es/pick'
+import pickBy from 'lodash-es/pickBy'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { DialogBaseTitle } from '../../DialogBase'
+import {
+  getSubmissionErrorMessage,
+  isAccessRequirementOutOfDateError,
+} from '../accessRequirementOutOfDate'
 import {
   RequestCreationRejectedAlert,
   useRequestCreationRejection,
 } from '../RequestCreationRejectedAlert'
+import { findRequestAnswerIssues } from '../requestAnswerIssues'
+import { AnswerIssues } from '@/utils/jsonschema/answerIssues'
+import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
+import {
+  AnswerIssuesReason,
+  AnswersNeedAttentionAlert,
+} from './AnswersNeedAttentionAlert'
 import RequesterInformationFields from './RequesterInformationFields'
 import {
   isRequesterInformationComplete,
@@ -47,8 +66,10 @@ import SchemaStepForm, {
 import { FileHandleWidgetContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import {
   fileAnswersChanged,
+  getStepPropertyKeys,
   getStepTitle,
   SchemaData,
+  withoutUnaskedAnswers,
 } from '@/utils/jsonschema/schemaData'
 
 export const REQUESTER_INFORMATION_STEP_LABEL = 'Requester information'
@@ -71,16 +92,18 @@ export type JsonSchemaRequestWizardProps = {
 
 /**
  * The request wizard for a JsonSchemaAccessRequirement: a fixed step of requester information followed by one step
- * per step of the access requirement's FormTemplate.
+ * per step of the access requirement's FormTemplate. The form is the one the access requirement uses on the server
+ * when the wizard opens, and it is checked again before the requester finishes.
  */
 export default function JsonSchemaRequestWizard(
   props: JsonSchemaRequestWizardProps,
 ) {
-  const { accessRequirement, onHide } = props
-  const { isAuthenticated } = useSynapseContext()
+  const { onHide } = props
+  const { isAuthenticated, keyFactory, synapseClient } = useSynapseContext()
+  const queryClient = useQueryClient()
   const { data: user } = useGetCurrentUserProfile({ enabled: isAuthenticated })
   const { data: request } = useGetDataAccessRequestForUpdate(
-    String(accessRequirement.id),
+    String(props.accessRequirement.id),
     {
       enabled: isAuthenticated,
       // Infinite staleTime ensures this won't be re-fetched unless explicitly invalidated by a mutation
@@ -88,36 +111,105 @@ export default function JsonSchemaRequestWizard(
       throwOnError: true,
     },
   )
+  const {
+    accessRequirement: currentAccessRequirement,
+    error: accessRequirementError,
+    refetch: refetchAccessRequirement,
+  } = useGetCurrentJsonSchemaAccessRequirement(props.accessRequirement.id)
+  // The access requirement the form is generated from: the one fetched on open, replaced only by a newer form found
+  // when the requester finishes. A later fetch must not swap the form under answers that are not yet saved.
+  const [accessRequirement, setAccessRequirement] = useState<
+    JsonSchemaAccessRequirement | undefined
+  >()
+  if (!accessRequirement && currentAccessRequirement) {
+    setAccessRequirement(currentAccessRequirement)
+  }
+  const [formChangedDuringSession, setFormChangedDuringSession] =
+    useState(false)
   const { form, error: formError } = useGeneratedRequestForm(
-    accessRequirement.formTemplateRef,
+    accessRequirement?.formTemplateRef,
     request ? getRequestType(request) : undefined,
   )
 
-  if (formError) {
+  /** The access requirement and its form, if the access requirement now uses a different form than the one shown. */
+  async function fetchNewerForm(): Promise<NewerForm | undefined> {
+    // If the access requirement or its form cannot be fetched, the requester continues: the server checks the answers
+    // on submit
+    const { data } = await refetchAccessRequirement()
+    if (
+      !data ||
+      !request ||
+      isEqual(data.formTemplateRef, accessRequirement?.formTemplateRef)
+    ) {
+      return undefined
+    }
+    try {
+      const newerForm = await fetchGeneratedRequestForm(
+        { queryClient, keyFactory, synapseClient },
+        data.formTemplateRef,
+        getRequestType(request),
+      )
+      return { accessRequirement: data, form: newerForm }
+    } catch {
+      return undefined
+    }
+  }
+
+  const loadError = accessRequirementError ?? formError
+  if (loadError) {
     return (
       <WizardFrame onHide={onHide}>
         <Alert severity="error">
-          The request form could not be loaded. {formError.reason}
+          The request form could not be loaded. {loadError.reason}
         </Alert>
       </WizardFrame>
     )
   }
-  if (!request || !user || !form) {
+  if (!request || !user || !accessRequirement || !form) {
     return (
       <WizardFrame onHide={onHide}>
         <Skeleton variant="rectangular" height={300} />
       </WizardFrame>
     )
   }
+  const { templateId, templateVersionNumber } =
+    accessRequirement.formTemplateRef
   return (
     <JsonSchemaRequestWizardContent
+      // A newer form starts the wizard again, from the answers saved before it was loaded
+      key={`${templateId}@${templateVersionNumber}`}
       {...props}
+      accessRequirement={accessRequirement}
       request={request}
       currentUserId={user.ownerId}
-      steps={form.steps}
-      schema={form.schema}
+      form={form}
+      formChangedDuringSession={formChangedDuringSession}
+      fetchNewerForm={fetchNewerForm}
+      onFormChanged={newerAccessRequirement => {
+        setAccessRequirement(newerAccessRequirement)
+        setFormChangedDuringSession(true)
+      }}
     />
   )
+}
+
+/** The answers that issues were found with, kept to tell when the requester changes them. */
+type AnswerIssuesFound = {
+  issues: AnswerIssues
+  answers: SchemaData
+  reason: AnswerIssuesReason
+}
+
+/** The index, among all of the wizard's steps, of the first form step with an issue. */
+function getFirstStepIndexWithIssues(
+  steps: GeneratedFormStepForRjsf[],
+  issues: AnswerIssues,
+): number | undefined {
+  const index = steps.findIndex(step =>
+    getStepPropertyKeys(step).some(key => Object.hasOwn(issues, key)),
+  )
+  // The requester information step comes first
+  return index === -1 ? undefined : index + 1
 }
 
 function WizardFrame(props: { onHide: () => void; children: React.ReactNode }) {
@@ -129,11 +221,22 @@ function WizardFrame(props: { onHide: () => void; children: React.ReactNode }) {
   )
 }
 
+/** An access requirement that now uses a different form than the one shown, and that form. */
+type NewerForm = {
+  accessRequirement: JsonSchemaAccessRequirement
+  form: GeneratedRequestForm
+}
+
 type JsonSchemaRequestWizardContentProps = JsonSchemaRequestWizardProps & {
   request: Request | Renewal
   currentUserId: string
-  steps: GeneratedFormStepForRjsf[]
-  schema: RJSFSchema
+  form: GeneratedRequestForm
+  /** Whether this form replaced the one the requester was finishing the request with */
+  formChangedDuringSession: boolean
+  /** Resolves to the access requirement and its form if it now uses a different form than this one */
+  fetchNewerForm: () => Promise<NewerForm | undefined>
+  /** Replaces this form with the given access requirement's, once the answers are saved */
+  onFormChanged: (newerAccessRequirement: JsonSchemaAccessRequirement) => void
 }
 
 function JsonSchemaRequestWizardContent(
@@ -149,12 +252,39 @@ function JsonSchemaRequestWizardContent(
     onEDucContinue,
     request,
     currentUserId,
-    steps,
-    schema,
+    form,
+    formChangedDuringSession,
+    fetchNewerForm,
+    onFormChanged,
   } = props
+  const { steps, schema } = form
   const isEDucEnabled = Boolean(accessRequirement.eDucTemplateId)
 
-  const [activeStepIndex, setActiveStepIndex] = useState(0)
+  // The saved answers that this form rejects, found as it opens. A requester resuming a draft is expected to have
+  // questions left to answer; one who was finishing the request when the form changed is not.
+  const [answerIssuesFound, setAnswerIssuesFound] = useState<AnswerIssuesFound>(
+    () => {
+      const answers = request.schemaData ?? {}
+      const issues = findRequestAnswerIssues(
+        answers,
+        getRequestType(request),
+        form,
+        formChangedDuringSession,
+      )
+      return {
+        issues,
+        answers: pick(answers, Object.keys(issues)),
+        reason: formChangedDuringSession ? 'formChanged' : 'resumed',
+      }
+    },
+  )
+  const [activeStepIndex, setActiveStepIndex] = useState(() =>
+    formChangedDuringSession
+      ? (getFirstStepIndexWithIssues(steps, answerIssuesFound.issues) ??
+        // Nothing needs attention, so the requester finishes the request
+        steps.length)
+      : 0,
+  )
   const [alertMessage, setAlertMessage] = useState<string | undefined>()
   const [requesterInformation, setRequesterInformation] =
     useState<RequesterInformationValues>(() =>
@@ -162,6 +292,19 @@ function JsonSchemaRequestWizardContent(
     )
   const [schemaData, setSchemaData] = useState<SchemaData>(
     request.schemaData ?? {},
+  )
+  // An issue stands until the requester changes the answer it was found with
+  const answerIssues = useMemo(
+    () =>
+      pickBy(answerIssuesFound.issues, (_message, key) =>
+        isEqual(schemaData[key], answerIssuesFound.answers[key]),
+      ),
+    [answerIssuesFound, schemaData],
+  )
+  const stepIssueCounts = steps.map(
+    step =>
+      getStepPropertyKeys(step).filter(key => Object.hasOwn(answerIssues, key))
+        .length,
   )
   const schemaStepFormRef = useRef<SchemaStepFormHandle>(null)
   // The IDs of the file fields whose upload is running. Leaving the step would drop the uploaded file.
@@ -186,6 +329,9 @@ function JsonSchemaRequestWizardContent(
   // the latest etag and, once the request is created, its ID.
   const savedRequestRef = useRef(request)
   const saveQueueRef = useRef<Promise<unknown>>(Promise.resolve())
+  const [isCheckingForm, setIsCheckingForm] = useState(false)
+  // A submission rejected because the access requirement changed is finished again once, which checks the form again
+  const hasRetriedOutOfDateSubmissionRef = useRef(false)
 
   const { requestCreationRejection, onUpdateRequestError } =
     useRequestCreationRejection(e => setAlertMessage(e.reason))
@@ -194,10 +340,20 @@ function JsonSchemaRequestWizardContent(
   const { mutate: submit, isPending: isSubmitting } =
     useSubmitDataAccessRequest({
       onSuccess: submission => onSubmissionCreated(submission.submissionId),
-      onError: e => setAlertMessage(e.reason),
+      onError: e => {
+        if (
+          isAccessRequirementOutOfDateError(e) &&
+          !hasRetriedOutOfDateSubmissionRef.current
+        ) {
+          hasRetriedOutOfDateSubmissionRef.current = true
+          void finishRequest(schemaData)
+          return
+        }
+        setAlertMessage(getSubmissionErrorMessage(e))
+      },
     })
 
-  const isBusy = isSaving || isSubmitting
+  const isBusy = isSaving || isSubmitting || isCheckingForm
   // Step 0 is the requester information; schema steps follow
   const lastStepIndex = steps.length
   const isLastStep = activeStepIndex === lastStepIndex
@@ -281,17 +437,54 @@ function JsonSchemaRequestWizardContent(
     ],
   )
 
-  async function saveAndAdvance(latestSchemaData: SchemaData = schemaData) {
-    // Enter in a field also submits the step, so this is guarded as well as the Next button
-    if (isUploading || isBusy || requestCreationRejection) {
+  /**
+   * Checks the answers against the form the server will validate them against, then saves them and submits the
+   * request, or continues to the eDUC steps. Answers the form rejects are shown to the requester instead: against the
+   * newer form if the access requirement now uses one, after saving them as they are.
+   */
+  async function finishRequest(latestSchemaData: SchemaData) {
+    setIsCheckingForm(true)
+    const newerForm = await fetchNewerForm()
+    setIsCheckingForm(false)
+    const finalForm = newerForm?.form ?? form
+    const issues = findRequestAnswerIssues(
+      latestSchemaData,
+      getRequestType(request),
+      finalForm,
+      true,
+    )
+    if (!isEmpty(issues)) {
+      if (newerForm) {
+        if (await saveRequest(latestSchemaData)) {
+          onFormChanged(newerForm.accessRequirement)
+        }
+      } else {
+        // The server's schema can reject answers that each step accepts, such as a rule across steps
+        setAnswerIssuesFound({
+          issues,
+          answers: pick(latestSchemaData, Object.keys(issues)),
+          reason: 'beforeSubmit',
+        })
+        const firstStepIndexWithIssues = getFirstStepIndexWithIssues(
+          steps,
+          issues,
+        )
+        if (firstStepIndexWithIssues !== undefined) {
+          setActiveStepIndex(firstStepIndexWithIssues)
+        }
+      }
       return
     }
-    const saved = await saveRequest(latestSchemaData)
+    const saved = await enqueueSave(savedRequest =>
+      buildRequest(
+        savedRequest,
+        requesterInformation,
+        withoutUnaskedAnswers(latestSchemaData, finalForm.steps),
+        finalForm.schema,
+        isEDucEnabled,
+      ),
+    )
     if (!saved) {
-      return
-    }
-    if (!isLastStep) {
-      setActiveStepIndex(activeStepIndex + 1)
       return
     }
     if (onEDucContinue) {
@@ -307,6 +500,20 @@ function JsonSchemaRequestWizardContent(
       },
       accessRequirementId: String(accessRequirement.id),
     })
+  }
+
+  async function saveAndAdvance(latestSchemaData: SchemaData = schemaData) {
+    // Enter in a field also submits the step, so this is guarded as well as the Next button
+    if (isUploading || isBusy || requestCreationRejection) {
+      return
+    }
+    if (isLastStep) {
+      await finishRequest(latestSchemaData)
+      return
+    }
+    if (await saveRequest(latestSchemaData)) {
+      setActiveStepIndex(activeStepIndex + 1)
+    }
   }
 
   function onNextClicked() {
@@ -348,20 +555,46 @@ function JsonSchemaRequestWizardContent(
     primaryActionText = onEDucContinue ? 'Continue' : 'Submit'
   }
 
+  const stepTitles = steps.map((step, index) =>
+    // The requester information step comes first, so schema steps start at position 2
+    getStepTitle(step, index + 2),
+  )
+  const activeStepAnswerIssues = useMemo(
+    () =>
+      activeSchemaStep
+        ? pick(answerIssues, getStepPropertyKeys(activeSchemaStep))
+        : undefined,
+    [answerIssues, activeSchemaStep],
+  )
+
   return (
     <>
       <DialogBaseTitle title={REQUEST_ACCESS_TITLE} onCancel={onHide} />
       <DialogContent>
+        {!isEmpty(answerIssues) && (
+          <AnswersNeedAttentionAlert
+            steps={stepTitles
+              .map((title, index) => ({
+                title,
+                issueCount: stepIssueCounts[index],
+              }))
+              .filter(step => step.issueCount > 0)}
+            reason={answerIssuesFound.reason}
+            sx={{ mb: 2 }}
+          />
+        )}
         {steps.length > 0 && (
           <Stepper activeStep={activeStepIndex} sx={{ mb: 3 }}>
-            {[REQUESTER_INFORMATION_STEP_LABEL]
-              // The requester information step comes first, so schema steps start at position 2
-              .concat(steps.map((step, index) => getStepTitle(step, index + 2)))
-              .map((label, index) => (
-                <Step key={index}>
-                  <StepLabel>{label}</StepLabel>
-                </Step>
-              ))}
+            <Step>
+              <StepLabel>{REQUESTER_INFORMATION_STEP_LABEL}</StepLabel>
+            </Step>
+            {stepTitles.map((title, index) => (
+              <Step key={index}>
+                <StepLabel error={stepIssueCounts[index] > 0}>
+                  {title}
+                </StepLabel>
+              </Step>
+            ))}
           </Stepper>
         )}
         {isRequesterInformationStep && (
@@ -389,6 +622,7 @@ function JsonSchemaRequestWizardContent(
             schemaData={schemaData}
             onSchemaDataChange={onSchemaDataChange}
             fileHandleWidgetContext={fileHandleWidgetContext}
+            answerIssues={activeStepAnswerIssues}
             onValid={latestSchemaData => void saveAndAdvance(latestSchemaData)}
           />
         )}

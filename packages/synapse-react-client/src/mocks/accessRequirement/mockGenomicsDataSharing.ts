@@ -5,9 +5,16 @@ import {
   getFormTemplateHandlers,
   getFormTemplateService,
 } from '@/mocks/msw/handlers/formTemplateHandlers'
-import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
+import {
+  getRegisteredSchemaHandlers,
+  getValidationSchemaHandlers,
+} from '@/mocks/msw/handlers/schemaHandlers'
 import { mockClinicalTemplate, mockGenomicsTemplate } from './mockFormTemplates'
-import { mockClinicalSchema, mockGenomicsSchema } from './mockJsonSchemas'
+import {
+  mockClinicalSchema,
+  mockGenomicsSchema,
+  toMockValidationSchema,
+} from './mockJsonSchemas'
 
 export const DATA_SHARING_QUESTION =
   'Will the data be shared with collaborators outside your institution?'
@@ -52,6 +59,10 @@ export function getGenomicsDataSharingHandlers(backendOrigin: string) {
     ...getRegisteredSchemaHandlers(backendOrigin, [
       mockGenomicsSchemaWithDataSharing as JSONSchema7,
       mockClinicalSchema as JSONSchema7,
+    ]),
+    ...getValidationSchemaHandlers(backendOrigin, [
+      toMockValidationSchema(mockGenomicsSchemaWithDataSharing),
+      toMockValidationSchema(mockClinicalSchema),
     ]),
   ]
 }

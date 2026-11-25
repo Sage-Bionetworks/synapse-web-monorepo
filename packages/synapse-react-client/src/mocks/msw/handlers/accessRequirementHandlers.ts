@@ -28,6 +28,7 @@ import {
   mockSearchResultsPageTwo,
   mockSelfSignAccessRequirement,
 } from '../../accessRequirement/mockAccessRequirements'
+import { mockJsonSchemaAccessRequirements } from '../../accessRequirement/mockJsonSchemaAccessRequirements'
 import { mockApprovedSubmission } from '../../dataaccess/MockSubmission'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
 import { SynapseApiResponse } from '../handlers'
@@ -45,9 +46,11 @@ export const getAccessRequirementHandlers = (backendOrigin: string) => [
         concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `Mock Service worker could not find an access requirement with ID ${params.id}`,
       }
-      const ar = mockAccessRequirements.find(
-        ar => ar.id.toString() === params.id,
-      )
+      const ar = [
+        ...mockAccessRequirements,
+        // The generated client types these mocks; the handler responds with the legacy types
+        ...(mockJsonSchemaAccessRequirements as unknown as AccessRequirement[]),
+      ].find(ar => ar.id.toString() === params.id)
 
       if (ar) {
         response = ar

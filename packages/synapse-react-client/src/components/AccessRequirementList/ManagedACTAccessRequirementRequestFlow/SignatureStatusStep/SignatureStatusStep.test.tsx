@@ -13,7 +13,10 @@ import {
   DATA_ACCESS_REQUEST_SUBMISSION,
 } from '@/utils/APIConstants'
 import { EDucSignatureStatus } from '@sage-bionetworks/synapse-client'
-import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
+import {
+  JsonSchemaAccessRequirement,
+  RestrictableObjectType,
+} from '@sage-bionetworks/synapse-types'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { render, screen, waitFor } from '@testing-library/react'
 import dayjs from 'dayjs'
@@ -22,6 +25,21 @@ import { http, HttpResponse } from 'msw'
 import SignatureStatusStep, {
   SignatureStatusStepProps,
 } from './SignatureStatusStep'
+import { ACCESS_REQUIREMENT_CHANGED_ON_SUBMIT_MESSAGE } from '../../accessRequirementOutOfDate'
+import {
+  getUpdatedClinicalFormHandlers,
+  mockUpdatedJsonSchemaAR2,
+  REMOVED_DATA_USE_PURPOSE,
+} from '@/mocks/accessRequirement/mockUpdatedClinicalForm'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
+
+const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+const OUT_OF_DATE_SERVER_REASON =
+  'This request was last saved against version 1 of the access requirement, which is now on version 2.'
+// The mock is typed with the generated client; the step is typed with the legacy access requirement types
+const updatedJsonSchemaAccessRequirement =
+  mockUpdatedJsonSchemaAR2 as unknown as JsonSchemaAccessRequirement
 
 vi.spyOn(SynapseClient, 'getUserProfileById').mockImplementation(id => {
   return Promise.resolve(
@@ -502,5 +520,165 @@ describe('SignatureStatusStep', () => {
     await screen.findByText(/couldn't submit your request/i)
     expect(screen.getByText('Something went wrong')).toBeInTheDocument()
     expect(mockOnSubmissionCreated).not.toHaveBeenCalled()
+  })
+
+  it('shows plain-language copy when the submission is rejected because the access requirement changed', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(fullySignedStatus, { status: 200 }),
+      ),
+      http.get(signedFileHandleEndpoint, () =>
+        HttpResponse.json(
+          { fileHandleId: 'signed-duc-file-handle' },
+          { status: 200 },
+        ),
+      ),
+      http.post(updateEndpoint, async ({ request }) => {
+        const body = (await request.json()) as { id: string; etag: string }
+        return HttpResponse.json({ ...body, etag: 'new-etag' }, { status: 201 })
+      }),
+      http.post(submissionEndpoint, () =>
+        HttpResponse.json(
+          {
+            reason: OUT_OF_DATE_SERVER_REASON,
+            errorCode: 'ACCESS_REQUIREMENT_VERSION_OUT_OF_DATE',
+          },
+          { status: 400 },
+        ),
+      ),
+    )
+    const { user } = renderComponent()
+    const submit = await screen.findByRole('button', { name: 'Submit' })
+    await waitFor(() => expect(submit).toBeEnabled())
+    await user.click(submit)
+
+    expect(
+      await screen.findByText(ACCESS_REQUIREMENT_CHANGED_ON_SUBMIT_MESSAGE),
+    ).toBeVisible()
+    expect(
+      screen.queryByText(OUT_OF_DATE_SERVER_REASON),
+    ).not.toBeInTheDocument()
+  })
+
+  describe('for a JsonSchemaAccessRequirement', () => {
+    const props: Partial<SignatureStatusStepProps> = {
+      managedACTAccessRequirement: {
+        ...updatedJsonSchemaAccessRequirement,
+        eDucTemplateId: 'educ-template-123',
+      },
+    }
+
+    function serveFullySignedRequest(schemaData: Record<string, unknown>) {
+      mockGetDataRequestForUpdate.mockResolvedValue({
+        ...MOCK_DATA_ACCESS_REQUEST,
+        accessRequirementId: String(updatedJsonSchemaAccessRequirement.id),
+        eDucSignatureEnvelopeId: 'docusign-envelope-xyz',
+        schemaData,
+      })
+      server.use(
+        ...getUpdatedClinicalFormHandlers(REPO_ENDPOINT),
+        http.get(
+          `${REPO_ENDPOINT}/repo/v1/accessRequirement/${updatedJsonSchemaAccessRequirement.id}`,
+          () => HttpResponse.json(updatedJsonSchemaAccessRequirement),
+        ),
+        http.get(statusEndpoint, () =>
+          HttpResponse.json(fullySignedStatus, { status: 200 }),
+        ),
+        http.get(signedFileHandleEndpoint, () =>
+          HttpResponse.json(
+            { fileHandleId: 'signed-duc-file-handle' },
+            { status: 200 },
+          ),
+        ),
+      )
+    }
+
+    it('blocks Submit and points to Back when the current form no longer accepts the answers', async () => {
+      serveFullySignedRequest({
+        projectTitle: 'Trial',
+        dataUsePurpose: REMOVED_DATA_USE_PURPOSE,
+        signedDataUseAgreement: 123,
+      })
+      renderComponent(props)
+
+      expect(
+        await screen.findByText(
+          'This form was updated after your DUC was sent for signature.',
+        ),
+      ).toBeVisible()
+      expect(screen.getByText(/to review them before you submit/)).toBeVisible()
+      // The collected signatures stand
+      expect(screen.getByText('All signatures collected.')).toBeVisible()
+      expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
+    })
+
+    it('blocks Submit when a required question is unanswered', async () => {
+      serveFullySignedRequest({
+        dataUsePurpose: 'Research',
+        signedDataUseAgreement: 123,
+      })
+      renderComponent(props)
+
+      expect(
+        await screen.findByText(
+          'This form was updated after your DUC was sent for signature.',
+        ),
+      ).toBeVisible()
+      expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
+    })
+
+    it('enables Submit when the current form accepts the answers', async () => {
+      serveFullySignedRequest({
+        projectTitle: 'Trial',
+        dataUsePurpose: 'Research',
+        signedDataUseAgreement: 123,
+      })
+      renderComponent(props)
+
+      const submit = await screen.findByRole('button', { name: 'Submit' })
+      await waitFor(() => expect(submit).toBeEnabled())
+      expect(
+        screen.queryByText(
+          'This form was updated after your DUC was sent for signature.',
+        ),
+      ).not.toBeInTheDocument()
+    })
+
+    it('submits without answers to questions the current form no longer asks', async () => {
+      serveFullySignedRequest({
+        projectTitle: 'Trial',
+        dataUsePurpose: 'Research',
+        signedDataUseAgreement: 123,
+        retiredQuestion: 'An earlier answer',
+      })
+      const savedRequests: Array<{ schemaData?: unknown }> = []
+      server.use(
+        http.post(updateEndpoint, async ({ request }) => {
+          const body = (await request.json()) as { schemaData?: unknown }
+          savedRequests.push(body)
+          return HttpResponse.json(
+            { ...body, etag: 'new-etag' },
+            { status: 201 },
+          )
+        }),
+        http.post(submissionEndpoint, () =>
+          HttpResponse.json({ submissionId: 'sub-1' }, { status: 201 }),
+        ),
+      )
+      const { user } = renderComponent(props)
+      const submit = await screen.findByRole('button', { name: 'Submit' })
+      await waitFor(() => expect(submit).toBeEnabled())
+      await user.click(submit)
+
+      await waitFor(() =>
+        expect(mockOnSubmissionCreated).toHaveBeenCalledWith('sub-1'),
+      )
+      expect(savedRequests.at(-1)?.schemaData).toEqual({
+        projectTitle: 'Trial',
+        dataUsePurpose: 'Research',
+        signedDataUseAgreement: 123,
+        [SUBMISSION_CONTEXT_PROPERTY]: 'REQUEST',
+      })
+    })
   })
 })

@@ -30,7 +30,10 @@ import {
   getFormTemplateService,
 } from '@/mocks/msw/handlers/formTemplateHandlers'
 import { mockFormTemplates } from '@/mocks/accessRequirement/mockFormTemplates'
-import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
+import {
+  getRegisteredSchemaHandlers,
+  getValidationSchemaHandlers,
+} from '@/mocks/msw/handlers/schemaHandlers'
 import { getEntityHandlers } from '@/mocks/msw/handlers/entityHandlers'
 import { getResearchProjectHandlers } from '@/mocks/msw/handlers/researchProjectHandlers'
 import {
@@ -41,6 +44,7 @@ import { getWikiHandlers } from '@/mocks/msw/handlers/wikiHandlers'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import {
   ACCESS_APPROVAL,
+  ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   DATA_ACCESS_REQUEST_PREVIEW,
   WIKI_PAGE_ID,
@@ -488,6 +492,7 @@ const schemaDrivenRequirementHandlers = [
     MOCK_REPO_ORIGIN,
     Object.values(mockJsonSchemaRegistry) as JSONSchema7[],
   ),
+  ...getValidationSchemaHandlers(MOCK_REPO_ORIGIN),
 ]
 
 const schemaDrivenRequirementArgs = {
@@ -638,6 +643,11 @@ export const SchemaDrivenRequirementWithEDuc: Story = {
   parameters: {
     msw: {
       handlers: [
+        // The wizard fetches the access requirement as it is on the server
+        http.get(
+          `${MOCK_REPO_ORIGIN}${ACCESS_REQUIREMENT_BY_ID(eDucSchemaDrivenAccessRequirement.id)}`,
+          () => HttpResponse.json(eDucSchemaDrivenAccessRequirement),
+        ),
         http.get(
           `${MOCK_REPO_ORIGIN}${DATA_ACCESS_REQUEST_PREVIEW(':id')}`,
           () =>

@@ -5,6 +5,10 @@ import {
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
 import { FileHandleWidget } from '@/components/JsonSchemaForm/widgets/FileHandleWidget'
 import { explainMustCheckErrors } from '@/components/JsonSchemaForm/mustCheckBoolean'
+import {
+  AnswerIssues,
+  getTopLevelPropertyKey,
+} from '@/utils/jsonschema/answerIssues'
 import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
 import {
   getStepData,
@@ -12,7 +16,8 @@ import {
   SYNAPSE_FILE_HANDLE_ID_FORMAT,
 } from '@/utils/jsonschema/schemaData'
 import RJSFForm from '@rjsf/core'
-import { RJSFSchema, RJSFValidationError } from '@rjsf/utils'
+import { ErrorSchema, RJSFSchema, RJSFValidationError } from '@rjsf/utils'
+import isEmpty from 'lodash-es/isEmpty'
 import { Ref, useImperativeHandle, useMemo, useRef } from 'react'
 
 const SCHEMA_STEP_FORM_CONTEXT: CustomFormContext = {
@@ -65,6 +70,11 @@ export type SchemaStepFormProps = {
    * template preview), where such a question could never be answered and would block the step.
    */
   ignoreRequiredFileAnswers?: boolean
+  /**
+   * Issues found with the step's answers before the requester edited them, shown against their fields from the start.
+   * Each replaces the error the step's own validation would show for the same field.
+   */
+  answerIssues?: AnswerIssues
 }
 
 /**
@@ -81,6 +91,7 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
     onInvalid,
     fileHandleWidgetContext,
     ignoreRequiredFileAnswers = false,
+    answerIssues,
   } = props
   const formRef = useRef<RJSFForm>(null)
   const formContext = useMemo<CustomFormContext>(
@@ -95,6 +106,19 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
     submit: () => formRef.current?.submit(),
   }))
 
+  const extraErrors = useMemo(
+    () =>
+      answerIssues && !isEmpty(answerIssues)
+        ? (Object.fromEntries(
+            Object.entries(answerIssues).map(([key, message]) => [
+              key,
+              { __errors: [message] },
+            ]),
+          ) as ErrorSchema)
+        : undefined,
+    [answerIssues],
+  )
+
   return (
     <JsonSchemaForm
       formRef={formRef}
@@ -106,14 +130,23 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
       widgets={{ [SYNAPSE_FILE_HANDLE_ID_FORMAT]: FileHandleWidget }}
       liveValidate={false}
       experimental_defaultFormStateBehavior={DEFAULT_FORM_STATE_BEHAVIOR}
-      transformErrors={errors =>
-        explainMustCheckErrors(
+      extraErrors={extraErrors}
+      // An issue stands for the answer it was found with, which the step's own validation may not reject
+      extraErrorsBlockSubmit
+      transformErrors={errors => {
+        const unreported = answerIssues
+          ? errors.filter(error => {
+              const key = getTopLevelPropertyKey(error)
+              return !key || !Object.hasOwn(answerIssues, key)
+            })
+          : errors
+        return explainMustCheckErrors(
           step.jsonSchema,
           ignoreRequiredFileAnswers
-            ? withoutRequiredFileErrors(step.jsonSchema, errors)
-            : errors,
+            ? withoutRequiredFileErrors(step.jsonSchema, unreported)
+            : unreported,
         )
-      }
+      }}
       onChange={event =>
         onSchemaDataChange({ ...schemaData, ...event.formData })
       }
