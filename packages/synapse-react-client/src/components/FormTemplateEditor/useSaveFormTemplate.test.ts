@@ -97,6 +97,7 @@ describe('useSaveFormTemplate', () => {
 
     const saveResult = await result.current.mutateAsync({
       name: 'My Template',
+      deprecated: false,
       jsonSchema,
       steps: invalidSteps,
     })
@@ -124,6 +125,7 @@ describe('useSaveFormTemplate', () => {
 
     const saveResult = await result.current.mutateAsync({
       name: 'My Template',
+      deprecated: false,
       jsonSchema,
       steps,
     })
@@ -154,6 +156,7 @@ describe('useSaveFormTemplate', () => {
 
     await result.current.mutateAsync({
       name: 'My Template',
+      deprecated: false,
       jsonSchema,
       steps: [
         {
@@ -192,6 +195,7 @@ describe('useSaveFormTemplate', () => {
       initialTemplate,
       initialJsonSchema: jsonSchema,
       name: 'My Template',
+      deprecated: false,
       jsonSchema,
       steps,
     })
@@ -252,6 +256,7 @@ describe('useSaveFormTemplate', () => {
       initialTemplate,
       initialJsonSchema: threeFieldJsonSchema,
       name: 'My Template',
+      deprecated: false,
       jsonSchema: threeFieldJsonSchema,
       steps: stepsWithDocuments,
     })
@@ -282,6 +287,7 @@ describe('useSaveFormTemplate', () => {
       initialTemplate,
       initialJsonSchema: jsonSchema,
       name: 'My Template',
+      deprecated: false,
       jsonSchema,
       steps,
     })
@@ -315,6 +321,7 @@ describe('useSaveFormTemplate', () => {
         initialTemplate,
         initialJsonSchema: jsonSchema,
         name: 'My Template',
+        deprecated: false,
         jsonSchema,
         steps,
       }),
@@ -358,6 +365,7 @@ describe('useSaveFormTemplate', () => {
       initialTemplate,
       initialJsonSchema: jsonSchema,
       name: 'Renamed Template',
+      deprecated: false,
       jsonSchema: changedJsonSchema,
       steps,
     })

@@ -21,6 +21,8 @@ The `FormTemplateStep[]` shape exists only at the boundary. `toEditableSteps` sp
 
 A new per-slot setting goes into `FieldSettings`, edited through the `updateFieldSettings` transition. Keep it out of `EditableFormTemplateStep`. A new derived view of the draft goes in `useFormTemplateDraft` as a `useMemo` over draft state; keep a second copy of the data out of the draft.
 
+Template-level settings that no transition reads (`name`, `deprecated`) are plain `useState` in `useFormTemplateDraft`, outside `FormTemplateDraftState`. `useSaveFormTemplate` takes each one explicitly. Every update publishes a new version, so deprecating is an ordinary save with `deprecated: true`.
+
 ## Schema conventions
 
 - Every template schema extends `ACCESS_REQUIREMENT_BASE_SCHEMA_ID`, which declares the reserved `x-synapse-submissionContext` property.

@@ -14,7 +14,10 @@ import {
   Alert,
   Box,
   Button,
+  Checkbox,
   Divider,
+  FormControlLabel,
+  FormHelperText,
   Grid,
   Paper,
   TextField,
@@ -22,7 +25,7 @@ import {
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { RJSFSchema } from '@rjsf/utils'
-import { useMemo, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { displayToast } from '@/components/ToastMessage'
 import {
   propertyKeyToPointer,
@@ -71,6 +74,8 @@ export function FormTemplateEditorForm({
   const {
     name,
     setName,
+    deprecated,
+    setDeprecated,
     jsonSchema,
     setJsonSchema,
     steps,
@@ -100,6 +105,7 @@ export function FormTemplateEditorForm({
     FormTemplateFieldValidationError[] | null
   >(null)
   const [nameTouched, setNameTouched] = useState(false)
+  const deprecatedHelpId = useId()
   const trimmedName = name.trim()
   const showNameError = nameTouched && !trimmedName
 
@@ -117,6 +123,7 @@ export function FormTemplateEditorForm({
         initialTemplate,
         initialJsonSchema,
         name: trimmedName,
+        deprecated,
         jsonSchema,
         steps: formTemplateSteps,
       })
@@ -206,13 +213,34 @@ export function FormTemplateEditorForm({
           component="p"
           sx={{
             color: 'text.secondary',
-            mb: 3,
+            mb: initialTemplate ? 1 : 3,
           }}
         >
           JSON Schema:{' '}
           {initialTemplate?.schema$id ?? formatSchema$id(templateSchemaName)}
           {!initialTemplate && ' (a new version is registered when saved)'}
         </Typography>
+        {initialTemplate && (
+          <Box sx={{ mb: 3 }}>
+            <FormControlLabel
+              label="Deprecated"
+              control={
+                <Checkbox
+                  checked={deprecated}
+                  onChange={e => setDeprecated(e.target.checked)}
+                  slotProps={{
+                    input: { 'aria-describedby': deprecatedHelpId },
+                  }}
+                />
+              }
+            />
+            <FormHelperText id={deprecatedHelpId} sx={{ mt: 0 }}>
+              A deprecated template is hidden from the Form Templates list
+              unless deprecated templates are included. Access Requirements that
+              already use it are unaffected.
+            </FormHelperText>
+          </Box>
+        )}
 
         <Grid
           container

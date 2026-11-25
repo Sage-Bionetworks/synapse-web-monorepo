@@ -45,6 +45,8 @@ import {
 export interface FormTemplateDraft {
   name: string
   setName: (name: string) => void
+  deprecated: boolean
+  setDeprecated: (deprecated: boolean) => void
   jsonSchema: RJSFSchema
   setJsonSchema: (jsonSchema: RJSFSchema) => void
   steps: EditableFormTemplateStep[]
@@ -79,6 +81,9 @@ export function useFormTemplateDraft(
   initialJsonSchema?: RJSFSchema,
 ): FormTemplateDraft {
   const [name, setName] = useState(initialTemplate?.name ?? '')
+  const [deprecated, setDeprecated] = useState(
+    initialTemplate?.deprecated ?? false,
+  )
   const [draft, setDraft] = useState<FormTemplateDraftState>(() => ({
     jsonSchema: initialJsonSchema ?? createNewFormTemplateSchema(),
     ...(initialTemplate
@@ -183,6 +188,8 @@ export function useFormTemplateDraft(
   return {
     name,
     setName,
+    deprecated,
+    setDeprecated,
     jsonSchema,
     setJsonSchema,
     steps,

@@ -3,13 +3,18 @@ import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { fn } from 'storybook/test'
 import {
   mockClinicalTemplate,
+  mockDeprecatedTemplate,
+  mockFormTemplates,
   mockGenomicsTemplate,
 } from '@/mocks/accessRequirement/mockFormTemplates'
 import {
   mockClinicalSchema,
   mockGenomicsSchema,
 } from '@/mocks/accessRequirement/mockJsonSchemas'
-import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
+import {
+  getFormTemplateHandlers,
+  getFormTemplateService,
+} from '@/mocks/msw/handlers/formTemplateHandlers'
 import { getJsonSchemaListingHandlers } from '@/mocks/msw/handlers/jsonSchemaListingHandlers'
 import {
   getCreateSchemaHandlers,
@@ -72,5 +77,25 @@ export const EditGenomicsTemplate: Story = {
 export const EditClinicalTemplate: Story = {
   args: {
     templateId: mockClinicalTemplate.id,
+  },
+}
+
+/** Edit a deprecated template: the Deprecated box starts checked. */
+export const EditDeprecatedTemplate: Story = {
+  args: {
+    templateId: mockDeprecatedTemplate.id,
+  },
+  parameters: {
+    msw: {
+      handlers: {
+        formTemplate: getFormTemplateHandlers(
+          MOCK_REPO_ORIGIN,
+          getFormTemplateService([
+            ...mockFormTemplates,
+            mockDeprecatedTemplate,
+          ]),
+        ),
+      },
+    },
   },
 }
