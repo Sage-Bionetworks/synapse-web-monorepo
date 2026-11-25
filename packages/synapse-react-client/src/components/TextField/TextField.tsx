@@ -1,6 +1,7 @@
 import {
   Box,
   inputBaseClasses,
+  inputLabelClasses,
   TextField as MuiTextField,
   TextFieldProps as MuiTextFieldProps,
   Typography,
@@ -65,12 +66,14 @@ export default function TextField({
         fullWidth={fullWidth}
         value={value}
         sx={{
-          [`& .${inputBaseClasses.root}`]: {
-            // The theme default applies spacing(3) for the floating-label pattern (absolute
-            // positioned label). Our label is in document flow (position: relative), so it
-            // already occupies vertical space — no top margin needed on the input.
-            marginTop: 0,
-          },
+          // Matches MUI's own `.MuiInputLabel-root + &` selector so this override wins.
+          [`& .${inputBaseClasses.root}, & .${inputLabelClasses.root} + .${inputBaseClasses.root}`]:
+            {
+              // The theme default applies spacing(3) for the floating-label pattern (absolute
+              // positioned label). Our label is in document flow (position: relative), so it
+              // already occupies vertical space — no top margin needed on the input.
+              marginTop: 0,
+            },
         }}
         slotProps={{
           ...slotProps,
