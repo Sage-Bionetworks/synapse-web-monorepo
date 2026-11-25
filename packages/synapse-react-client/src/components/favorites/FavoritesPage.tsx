@@ -160,7 +160,7 @@ export default function FavoritesPage() {
             textAlign: 'center',
           }}
         >
-          <NoSearchResults height={'150px'} />
+          <NoSearchResults sx={{ height: '150px' }} />
           {data?.length == 0 ? (
             <p>You currently have no favorites</p>
           ) : (

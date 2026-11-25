@@ -23,7 +23,7 @@ export default function OpenData(props: OpenDataProps) {
 
   if (isOpenData && isPublic) {
     return (
-      <OpenDataContainer display={'flex'} gap={1}>
+      <OpenDataContainer sx={{ display: 'flex', gap: 1 }}>
         <IconSvg icon="checkCircle" color={'success'} wrap={false} />
         <div>
           <Typography
