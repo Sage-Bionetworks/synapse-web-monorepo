@@ -16,7 +16,6 @@ import OpenInNew from '@mui/icons-material/OpenInNew'
 import Refresh from '@mui/icons-material/Refresh'
 import {
   Alert,
-  AlertTitle,
   Box,
   Button,
   DialogActions,
@@ -41,7 +40,11 @@ import { DialogBaseTitle } from '../../../DialogBase'
 import { longFieldLabelSx } from '../styles'
 import { RequestFlowAccessRequirement } from '../requestFlowTypes'
 import { getSubmissionErrorMessage } from '../../accessRequirementOutOfDate'
-import { useRequestAnswersNeedReview } from '../../JsonSchemaAccessRequirementRequestFlow/requestAnswerIssues'
+import { AnswersNeedReviewAlert } from '../../AnswersNeedReviewAlert'
+import {
+  toSubmittedRequest,
+  useRequestAnswersReview,
+} from '../../requestAnswerIssues'
 
 /** Browser defaults indent a blockquote far too much for a nested list item. */
 const declinedReasonSx: SxProps = {
@@ -154,8 +157,7 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
       onError: e => setSubmitDarError(getSubmissionErrorMessage(e)),
     })
 
-  // Answers are not part of the signed DUC, so changing them keeps the signatures collected
-  const answersNeedReview = useRequestAnswersNeedReview(
+  const answersReview = useRequestAnswersReview(
     managedACTAccessRequirement,
     dataAccessRequest,
   )
@@ -167,16 +169,24 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
     !dataAccessRequest ||
     !allCollected ||
     !signedFileHandle?.fileHandleId ||
-    answersNeedReview !== false ||
+    answersReview.status !== 'ready' ||
     isUpdating ||
     isSubmitting
 
   const handleSubmit = async () => {
-    if (!dataAccessRequest || !signedFileHandle?.fileHandleId) return
+    if (
+      !dataAccessRequest ||
+      !signedFileHandle?.fileHandleId ||
+      answersReview.status !== 'ready'
+    ) {
+      return
+    }
     setUpdateDarError(undefined)
     setSubmitDarError(undefined)
     const updated = await updateDarAsync({
-      ...dataAccessRequest,
+      ...(answersReview.form
+        ? toSubmittedRequest(dataAccessRequest, answersReview.form)
+        : dataAccessRequest),
       ducFileHandleId: signedFileHandle.fileHandleId,
     }).catch(() => null)
     if (!updated) return
@@ -198,22 +208,14 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
         <Typography variant={'headline3'} sx={{ mb: 2 }}>
           Sign a Data Use Certificate (DUC)
         </Typography>
-        {answersNeedReview && (
-          <Alert severity={'warning'} sx={{ mb: 2 }}>
-            <AlertTitle>
-              This form was updated after your DUC was sent for signature.
-            </AlertTitle>
-            Some of your answers no longer fit.{' '}
-            {onBackClicked ? (
-              <>
-                Press <strong>Back</strong> to review them before you submit.
-              </>
-            ) : (
-              'Review them from your data access request before you submit.'
-            )}{' '}
-            Changing your answers to the form does not affect the signatures
-            already collected.
-          </Alert>
+        {answersReview.status === 'needsReview' && (
+          <AnswersNeedReviewAlert
+            title="This form was updated after your DUC was sent for signature."
+            canGoBack={Boolean(onBackClicked)}
+            // Answers are not part of the signed DUC
+            note="Changing your answers to the form does not affect the signatures already collected."
+            sx={{ mb: 2 }}
+          />
         )}
         <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 2 }}>
           Your DUC has been emailed to your Collaborators. Once all signatures

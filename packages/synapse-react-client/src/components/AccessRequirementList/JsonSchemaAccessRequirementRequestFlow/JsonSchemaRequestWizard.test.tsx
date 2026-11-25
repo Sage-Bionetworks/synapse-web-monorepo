@@ -12,8 +12,12 @@ import {
   GENOMICS_TERMS_LABEL as TERMS_LABEL,
   mockClinicalSchema,
   mockGenomicsSchema,
+  toMockValidationSchema,
 } from '@/mocks/accessRequirement/mockJsonSchemas'
-import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
+import {
+  getRegisteredSchemaHandlers,
+  getValidationSchemaHandlers,
+} from '@/mocks/msw/handlers/schemaHandlers'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
@@ -158,7 +162,6 @@ function mockRequestServices(
 ) {
   let currentRequest = initialRequest
   let currentAccessRequirement = accessRequirement
-  let accessRequirementFetchCount = 0
   const savedRequests: Array<Request | Renewal> = []
   const submissionRequests: unknown[] = []
   // Each rejects the next submission, before `options.submissionRejection` applies
@@ -171,10 +174,7 @@ function mockRequestServices(
     ]),
     http.get(
       `${REPO_ENDPOINT}/repo/v1/accessRequirement/${accessRequirement.id}`,
-      () => {
-        accessRequirementFetchCount++
-        return HttpResponse.json(currentAccessRequirement)
-      },
+      () => HttpResponse.json(currentAccessRequirement),
     ),
     http.get(
       `${REPO_ENDPOINT}/repo/v1/accessRequirement/${accessRequirement.id}/dataAccessRequestForUpdate`,
@@ -234,7 +234,6 @@ function mockRequestServices(
     nextSubmissionErrors,
     holdNextSave,
     updateAccessRequirement,
-    getAccessRequirementFetchCount: () => accessRequirementFetchCount,
   }
 }
 
@@ -985,9 +984,8 @@ describe('JsonSchemaRequestWizard', () => {
         expect(alert).toHaveTextContent('Project Details: 1 answer')
 
         await advanceToStep(user)
-        expect(await screen.findAllByText(REMOVED_OPTION_MESSAGE)).not.toEqual(
-          [],
-        )
+        // Shown against the field, and in the step's list of errors
+        await screen.findAllByText(REMOVED_OPTION_MESSAGE)
         const savesBeforeNext = savedRequests.length
         await user.click(screen.getByRole('button', { name: 'Next' }))
         expect(screen.queryByText(COMPLIANCE_STEP_DESCRIPTION)).toBeNull()
@@ -1044,7 +1042,7 @@ describe('JsonSchemaRequestWizard', () => {
       ).closest('[role="alert"]')
       expect(alert).toHaveTextContent(CHANGED_DURING_SESSION_ALERT_TITLE)
       expect(alert).toHaveTextContent('Project Details: 1 answer')
-      expect(await screen.findAllByText(REMOVED_OPTION_MESSAGE)).not.toEqual([])
+      await screen.findAllByText(REMOVED_OPTION_MESSAGE)
       expect(submissionRequests).toHaveLength(0)
       // The answers were saved before the newer form was shown
       expect(savedRequests.at(-1)?.schemaData).toMatchObject(
@@ -1125,6 +1123,46 @@ describe('JsonSchemaRequestWizard', () => {
       ).toBeVisible()
       expect(screen.queryByText(OUT_OF_DATE_ERROR.reason)).toBeNull()
       expect(props.onSubmissionCreated).not.toHaveBeenCalled()
+    })
+
+    it('returns to an answer that the server would reject although its step accepted it', async () => {
+      const { submissionRequests } = mockRequestServices(
+        genomicsAccessRequirement,
+        createRequest(genomicsAccessRequirement),
+      )
+      // A rule that only the schema the server validates against holds, as a rule across steps would be
+      server.use(
+        ...getValidationSchemaHandlers(REPO_ENDPOINT, [
+          toMockValidationSchema({
+            ...mockGenomicsSchema,
+            properties: {
+              ...mockGenomicsSchema.properties,
+              intendedDataUse: { type: 'string', minLength: 30 },
+            },
+          }),
+        ]),
+      )
+      const user = userEvent.setup()
+      const props = renderWizard(genomicsAccessRequirement)
+      await advanceToAgreementsStep(user)
+      await acceptTerms(user)
+      await user.click(screen.getByRole('button', { name: 'Submit' }))
+
+      const alert = (
+        await screen.findByText('Some of your answers need your attention.')
+      ).closest('[role="alert"]')
+      expect(alert).toHaveTextContent('Research Use: 1 answer')
+      const answer = await screen.findByRole('textbox')
+      await screen.findAllByText('Must be at least 30 characters')
+      expect(submissionRequests).toHaveLength(0)
+
+      await user.type(answer, ' across many cohorts')
+      await user.click(screen.getByRole('button', { name: 'Next' }))
+      await user.click(await screen.findByRole('button', { name: 'Submit' }))
+
+      await waitFor(() =>
+        expect(props.onSubmissionCreated).toHaveBeenCalledWith(SUBMISSION_ID),
+      )
     })
 
     it('does not submit answers to questions the form no longer asks, but keeps them in drafts', async () => {

@@ -13,6 +13,7 @@ import {
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
+  ACCESS_REQUIREMENT_BY_ID,
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_PREVIEW,
   DATA_ACCESS_REQUEST_SIGNATURE,
@@ -20,6 +21,7 @@ import {
 } from '@/utils/APIConstants'
 import {
   AccessType,
+  JsonSchemaAccessRequirement,
   RestrictableObjectType,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
@@ -31,6 +33,15 @@ import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 import ManualUploadDucStep, {
   ManualUploadDucStepProps,
 } from './ManualUploadDucStep'
+import {
+  getUpdatedClinicalFormHandlers,
+  mockUpdatedJsonSchemaAR2,
+  REMOVED_DATA_USE_PURPOSE,
+} from '@/mocks/accessRequirement/mockUpdatedClinicalForm'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
+
+const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
 // Controls what response the mock upload button fires; reset to success in beforeEach.
 let mockUploadResponse: UploadCallbackResp = {
@@ -406,6 +417,83 @@ describe('ManualUploadDucStep', () => {
 
       await waitFor(() => expect(calls.update).toBe(1))
       expect(calls.void).toBe(0)
+    })
+  })
+
+  describe('for a JsonSchemaAccessRequirement', () => {
+    const accessRequirement =
+      mockUpdatedJsonSchemaAR2 as unknown as JsonSchemaAccessRequirement
+
+    function serveRequest(schemaData: Record<string, unknown>) {
+      mockGetDataRequestForUpdate.mockResolvedValue({
+        ...MOCK_DATA_ACCESS_REQUEST,
+        accessRequirementId: String(accessRequirement.id),
+        ducFileHandleId: 'signed-duc-987',
+        schemaData,
+      })
+      const savedRequests: Array<{ schemaData?: unknown }> = []
+      server.use(
+        ...getUpdatedClinicalFormHandlers(REPO_ENDPOINT),
+        http.get(
+          `${REPO_ENDPOINT}${ACCESS_REQUIREMENT_BY_ID(accessRequirement.id)}`,
+          () => HttpResponse.json(accessRequirement),
+        ),
+        http.post(updateEndpoint, async ({ request }) => {
+          const body = (await request.json()) as { schemaData?: unknown }
+          savedRequests.push(body)
+          return HttpResponse.json(
+            { ...body, etag: 'new-etag' },
+            { status: 201 },
+          )
+        }),
+        http.post(submissionEndpoint, () =>
+          HttpResponse.json({ submissionId: 'sub-42' }, { status: 201 }),
+        ),
+      )
+      return savedRequests
+    }
+
+    it('blocks Submit Request when the current form no longer accepts the answers', async () => {
+      serveRequest({
+        projectTitle: 'Trial',
+        dataUsePurpose: REMOVED_DATA_USE_PURPOSE,
+        signedDataUseAgreement: 123,
+      })
+      renderComponent({ managedACTAccessRequirement: accessRequirement })
+
+      expect(
+        await screen.findByText('This form was updated after you answered it.'),
+      ).toBeVisible()
+      expect(
+        screen.getByRole('button', { name: 'Submit Request' }),
+      ).toBeDisabled()
+    })
+
+    it('submits without answers to questions the current form no longer asks', async () => {
+      const savedRequests = serveRequest({
+        projectTitle: 'Trial',
+        dataUsePurpose: 'Research',
+        signedDataUseAgreement: 123,
+        retiredQuestion: 'An earlier answer',
+      })
+      const { user } = renderComponent({
+        managedACTAccessRequirement: accessRequirement,
+      })
+      const submit = await screen.findByRole('button', {
+        name: 'Submit Request',
+      })
+      await waitFor(() => expect(submit).toBeEnabled())
+      await user.click(submit)
+
+      await waitFor(() =>
+        expect(mockOnSubmissionCreated).toHaveBeenCalledWith('sub-42'),
+      )
+      expect(savedRequests.at(-1)?.schemaData).toEqual({
+        projectTitle: 'Trial',
+        dataUsePurpose: 'Research',
+        signedDataUseAgreement: 123,
+        [SUBMISSION_CONTEXT_PROPERTY]: 'REQUEST',
+      })
     })
   })
 })

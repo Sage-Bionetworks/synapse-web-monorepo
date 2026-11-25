@@ -1,8 +1,14 @@
-import { useGetFormTemplateVersion } from '@/synapse-queries/dataaccess/useFormTemplate'
 import {
+  getFormTemplateVersionQuery,
+  useGetFormTemplateVersion,
+} from '@/synapse-queries/dataaccess/useFormTemplate'
+import {
+  getRegisteredSchemaQuery,
+  getValidationSchemaQuery,
   useGetRegisteredSchema,
   useGetSchema,
 } from '@/synapse-queries/jsonschema/useSchema'
+import { SynapseQueriesContext } from '@/synapse-queries/types'
 import {
   GeneratedFormSchemaForRjsf,
   generateDataAccessSchema,
@@ -10,9 +16,11 @@ import {
 import { RJSFSchema } from '@rjsf/utils'
 import {
   DataAccessRequestType,
+  FormTemplate,
   FormTemplateReference,
 } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { JSONSchema7 } from 'json-schema'
 import { useMemo } from 'react'
 
 export type GeneratedRequestForm = GeneratedFormSchemaForRjsf & {
@@ -31,6 +39,21 @@ export type GeneratedRequestFormResult = {
   error: SynapseClientError | null
 }
 
+function toGeneratedRequestForm(
+  template: FormTemplate,
+  schema: JSONSchema7,
+  validationSchema: JSONSchema7,
+  requestType: DataAccessRequestType,
+): GeneratedRequestForm {
+  const { $id: _$id, ...validationSchemaWithoutId } =
+    validationSchema as RJSFSchema
+  return {
+    ...generateDataAccessSchema(template, schema as RJSFSchema, requestType),
+    schema: schema as RJSFSchema,
+    validationSchema: validationSchemaWithoutId,
+  }
+}
+
 /**
  * Generate the form a requester fills out for a JsonSchemaAccessRequirement: the FormTemplate version referenced by
  * the access requirement, rendered against that template's registered schema for the given request type.
@@ -41,37 +64,38 @@ export function useGeneratedRequestForm(
   formTemplateRef: FormTemplateReference | undefined,
   requestType: DataAccessRequestType | undefined,
 ): GeneratedRequestFormResult {
+  // A template version and a schema `$id` each name content that never changes
   const templateQuery = useGetFormTemplateVersion(
     formTemplateRef?.templateId,
     formTemplateRef?.templateVersionNumber,
+    { staleTime: Infinity },
   )
   const schema$id = templateQuery.data?.schema$id
   const schemaQuery = useGetRegisteredSchema(schema$id ?? '', {
     enabled: !!schema$id,
+    staleTime: Infinity,
   })
-  // The $id names an exact version of the schema, so its validation schema never changes
   const validationSchemaQuery = useGetSchema(schema$id ?? '', {
     enabled: !!schema$id,
     staleTime: Infinity,
   })
 
   const template = templateQuery.data
-  const schema = schemaQuery.data as RJSFSchema | undefined
-  const fetchedValidationSchema = validationSchemaQuery.data as
-    | RJSFSchema
-    | undefined
+  const schema = schemaQuery.data
+  const validationSchema = validationSchemaQuery.data
 
-  const form = useMemo(() => {
-    if (!template || !schema || !fetchedValidationSchema || !requestType) {
-      return undefined
-    }
-    const { $id: _$id, ...validationSchema } = fetchedValidationSchema
-    return {
-      ...generateDataAccessSchema(template, schema, requestType),
-      schema,
-      validationSchema,
-    }
-  }, [template, schema, fetchedValidationSchema, requestType])
+  const form = useMemo(
+    () =>
+      template && schema && validationSchema && requestType
+        ? toGeneratedRequestForm(
+            template,
+            schema,
+            validationSchema,
+            requestType,
+          )
+        : undefined,
+    [template, schema, validationSchema, requestType],
+  )
 
   return {
     form,
@@ -85,4 +109,35 @@ export function useGeneratedRequestForm(
       validationSchemaQuery.error ??
       null,
   }
+}
+
+/** Fetches the form {@link useGeneratedRequestForm} generates, through the same cached queries. */
+export async function fetchGeneratedRequestForm(
+  context: Pick<
+    SynapseQueriesContext,
+    'queryClient' | 'keyFactory' | 'synapseClient'
+  >,
+  formTemplateRef: FormTemplateReference,
+  requestType: DataAccessRequestType,
+): Promise<GeneratedRequestForm> {
+  const { queryClient } = context
+  const template = await queryClient.fetchQuery({
+    ...getFormTemplateVersionQuery(
+      formTemplateRef.templateId,
+      formTemplateRef.templateVersionNumber,
+      context,
+    ),
+    staleTime: Infinity,
+  })
+  const [schema, validationSchema] = await Promise.all([
+    queryClient.fetchQuery({
+      ...getRegisteredSchemaQuery(template.schema$id, context),
+      staleTime: Infinity,
+    }),
+    queryClient.fetchQuery({
+      ...getValidationSchemaQuery(template.schema$id, context),
+      staleTime: Infinity,
+    }),
+  ])
+  return toGeneratedRequestForm(template, schema, validationSchema, requestType)
 }

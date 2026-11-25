@@ -48,7 +48,11 @@ export function findAnswerIssues(
   for (const error of errors) {
     // Errors about the answers as a whole, such as an unmet `if`, are reported again on the answer they concern
     const key = getTopLevelPropertyKey(error)
-    if (!key || key === SUBMISSION_CONTEXT_PROPERTY || key in issues) {
+    if (
+      !key ||
+      key === SUBMISSION_CONTEXT_PROPERTY ||
+      Object.hasOwn(issues, key)
+    ) {
       continue
     }
     const answer = schemaData[key]

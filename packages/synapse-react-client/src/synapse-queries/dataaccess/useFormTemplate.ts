@@ -12,6 +12,7 @@ import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/Synaps
 import {
   InfiniteData,
   QueryKey,
+  queryOptions,
   skipToken,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
@@ -23,6 +24,7 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { SynapseQueriesContext } from '../types'
 
 /**
  * Retrieve the latest version of a FormTemplate by its ID. Disabled while templateId is undefined.
@@ -46,6 +48,23 @@ export function useGetFormTemplate(
   })
 }
 
+/** The query for a specific version of a FormTemplate. */
+export const getFormTemplateVersionQuery = (
+  templateId: string,
+  versionNumber: number,
+  context: Pick<SynapseQueriesContext, 'keyFactory' | 'synapseClient'>,
+) =>
+  queryOptions<FormTemplate, SynapseClientError>({
+    queryKey: context.keyFactory.getFormTemplateVersionQueryKey(
+      templateId,
+      versionNumber,
+    ),
+    queryFn: () =>
+      context.synapseClient.accessRequirementServicesClient.getRepoV1AccessRequirementFormTemplateTemplateIdVersionVersionNumber(
+        { templateId, versionNumber },
+      ),
+  })
+
 /**
  * Retrieve a specific version of a FormTemplate. Disabled while templateId or versionNumber is
  * undefined.
@@ -60,17 +79,15 @@ export function useGetFormTemplateVersion(
 
   return useQuery({
     ...options,
-    queryKey: keyFactory.getFormTemplateVersionQueryKey(
-      templateId ?? '',
-      versionNumber ?? 0,
-    ),
-    queryFn:
-      templateId != null && versionNumber != null
-        ? () =>
-            synapseClient.accessRequirementServicesClient.getRepoV1AccessRequirementFormTemplateTemplateIdVersionVersionNumber(
-              { templateId, versionNumber },
-            )
-        : skipToken,
+    ...(templateId != null && versionNumber != null
+      ? getFormTemplateVersionQuery(templateId, versionNumber, {
+          keyFactory,
+          synapseClient,
+        })
+      : {
+          queryKey: keyFactory.getFormTemplateVersionQueryKey('', 0),
+          queryFn: skipToken,
+        }),
   })
 }
 

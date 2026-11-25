@@ -137,7 +137,7 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
         const unreported = answerIssues
           ? errors.filter(error => {
               const key = getTopLevelPropertyKey(error)
-              return !key || !(key in answerIssues)
+              return !key || !Object.hasOwn(answerIssues, key)
             })
           : errors
         return explainMustCheckErrors(

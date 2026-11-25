@@ -32,6 +32,7 @@ import {
   REMOVED_DATA_USE_PURPOSE,
 } from '@/mocks/accessRequirement/mockUpdatedClinicalForm'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
 
 const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 const OUT_OF_DATE_SERVER_REASON =
@@ -606,6 +607,8 @@ describe('SignatureStatusStep', () => {
         ),
       ).toBeVisible()
       expect(screen.getByText(/to review them before you submit/)).toBeVisible()
+      // The collected signatures stand
+      expect(screen.getByText('All signatures collected.')).toBeVisible()
       expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
     })
 
@@ -639,6 +642,43 @@ describe('SignatureStatusStep', () => {
           'This form was updated after your DUC was sent for signature.',
         ),
       ).not.toBeInTheDocument()
+    })
+
+    it('submits without answers to questions the current form no longer asks', async () => {
+      serveFullySignedRequest({
+        projectTitle: 'Trial',
+        dataUsePurpose: 'Research',
+        signedDataUseAgreement: 123,
+        retiredQuestion: 'An earlier answer',
+      })
+      const savedRequests: Array<{ schemaData?: unknown }> = []
+      server.use(
+        http.post(updateEndpoint, async ({ request }) => {
+          const body = (await request.json()) as { schemaData?: unknown }
+          savedRequests.push(body)
+          return HttpResponse.json(
+            { ...body, etag: 'new-etag' },
+            { status: 201 },
+          )
+        }),
+        http.post(submissionEndpoint, () =>
+          HttpResponse.json({ submissionId: 'sub-1' }, { status: 201 }),
+        ),
+      )
+      const { user } = renderComponent(props)
+      const submit = await screen.findByRole('button', { name: 'Submit' })
+      await waitFor(() => expect(submit).toBeEnabled())
+      await user.click(submit)
+
+      await waitFor(() =>
+        expect(mockOnSubmissionCreated).toHaveBeenCalledWith('sub-1'),
+      )
+      expect(savedRequests.at(-1)?.schemaData).toEqual({
+        projectTitle: 'Trial',
+        dataUsePurpose: 'Research',
+        signedDataUseAgreement: 123,
+        [SUBMISSION_CONTEXT_PROPERTY]: 'REQUEST',
+      })
     })
   })
 })

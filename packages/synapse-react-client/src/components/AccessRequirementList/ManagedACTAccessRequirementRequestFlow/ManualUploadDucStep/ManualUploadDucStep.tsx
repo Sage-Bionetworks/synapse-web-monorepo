@@ -30,6 +30,11 @@ import { UploadDocumentField } from '../UploadDocumentField'
 import { longFieldLabelSx } from '../styles'
 import { RequestFlowAccessRequirement } from '../requestFlowTypes'
 import { getSubmissionErrorMessage } from '../../accessRequirementOutOfDate'
+import { AnswersNeedReviewAlert } from '../../AnswersNeedReviewAlert'
+import {
+  toSubmittedRequest,
+  useRequestAnswersReview,
+} from '../../requestAnswerIssues'
 
 export type ManualUploadDucStepProps = {
   managedACTAccessRequirement: RequestFlowAccessRequirement
@@ -112,6 +117,11 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
       onError: e => setSubmitDarError(getSubmissionErrorMessage(e)),
     })
 
+  const answersReview = useRequestAnswersReview(
+    managedACTAccessRequirement,
+    dataAccessRequest,
+  )
+
   const accessorChanges = dataAccessRequest?.accessorChanges ?? []
   const pi = dataAccessRequest?.principalInvestigator
   const so = dataAccessRequest?.signingOfficial
@@ -135,7 +145,8 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
     !signedDucFileHandleId ||
     isUpdating ||
     isVoidingSignature ||
-    isSubmitting
+    isSubmitting ||
+    answersReview.status !== 'ready'
 
   const handleUpload = async (resp: UploadCallbackResp) => {
     if (!resp.success || !resp.resp || !dataAccessRequest) {
@@ -176,10 +187,14 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
   }
 
   const handleSubmit = async () => {
-    if (!dataAccessRequest) return
+    if (!dataAccessRequest || answersReview.status !== 'ready') return
     setSubmitDarError(undefined)
     // Persist the DAR once more so the submission uses the latest etag.
-    const latest = await updateDarAsync(dataAccessRequest).catch(() => null)
+    const latest = await updateDarAsync(
+      answersReview.form
+        ? toSubmittedRequest(dataAccessRequest, answersReview.form)
+        : dataAccessRequest,
+    ).catch(() => null)
     if (!latest) return
     submit({
       request: {
@@ -200,6 +215,13 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
           <Typography variant={'headline3'} sx={{ mb: 2 }}>
             Submit a signed PDF instead of e-signatures
           </Typography>
+          {answersReview.status === 'needsReview' && (
+            <AnswersNeedReviewAlert
+              title="This form was updated after you answered it."
+              canGoBack={Boolean(onBackClicked)}
+              sx={{ mb: 2 }}
+            />
+          )}
           <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 2 }}>
             Instead of signing the Data Use Certificate (DUC) using DocuSign,
             you can download the DUC as a PDF and then upload it after it has
