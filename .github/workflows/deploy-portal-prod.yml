@@ -1,4 +1,5 @@
 name: Deploy a portal to production
+run-name: Deploy ${{ inputs.portal-name }} to production (${{ inputs.tag }})
 
 on:
   workflow_dispatch:

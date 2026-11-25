@@ -1,4 +1,5 @@
 name: Deploy an app to production
+run-name: Deploy ${{ inputs.app-name }} to production (${{ inputs.tag }})
 
 on:
   workflow_dispatch:
