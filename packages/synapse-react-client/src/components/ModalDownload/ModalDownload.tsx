@@ -3,6 +3,7 @@ import { SynapseContext } from '@/utils/context/SynapseContext'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import { Button } from '@mui/material'
 import Form, { IChangeEvent } from '@rjsf/core'
+import { BOOTSTRAP3_CLASS_MAP } from '@/utils/jsonschema/bootstrap3ClassMap'
 import validator from '@rjsf/validator-ajv8'
 import {
   DownloadFromTableRequest,
@@ -23,11 +24,26 @@ import {
   writeHeaderOption,
 } from './ModalDownload.FormSchema'
 
+type ModalDownloadFormData = {
+  'File Type'?: string
+  Contents?: string[]
+}
+
+const INITIAL_FORM_DATA: ModalDownloadFormData = {
+  'File Type': csvOption,
+  Contents: [writeHeaderOption, includeRowIdAndRowVersionOption],
+}
+
+const WIDGETS = {
+  CheckboxWidget: SynapseFormCheckboxWidget,
+  CheckboxesWidget: SynapseFormCheckboxesWidget,
+  RadioWidget: SynapseFormRadioWidget,
+}
+
 type ModalDownloadState = {
   isLoading: boolean
   step: number
   data?: DownloadFromTableResult
-  formData: Record<string, unknown>
 }
 
 export type ModalDownloadProps = {
@@ -52,14 +68,10 @@ export class ModalDownload extends Component<
     this.state = {
       isLoading: false,
       step: 0,
-      formData: {
-        'File Type': csvOption,
-        Contents: [writeHeaderOption, includeRowIdAndRowVersionOption],
-      },
     }
   }
 
-  handleSubmit = (event: IChangeEvent) => {
+  handleSubmit = (event: IChangeEvent<ModalDownloadFormData>) => {
     if (this.state.step === 0) {
       this.handleDownloadSetup(event)
     } else {
@@ -67,13 +79,13 @@ export class ModalDownload extends Component<
     }
   }
 
-  handleDownloadSetup = (event: IChangeEvent) => {
+  handleDownloadSetup = (event: IChangeEvent<ModalDownloadFormData>) => {
     this.setState({
       isLoading: true,
     })
     const { formData } = event
-    const fileType = formData['File Type']
-    const contents = formData.Contents as string[]
+    const fileType = formData?.['File Type']
+    const contents = formData?.Contents ?? []
     const { queryBundleRequest, getLastQueryRequest } = this.props
     const separator = fileType === csvOption ? ',' : '\t'
     const writeHeader = contents.includes(writeHeaderOption)
@@ -122,13 +134,6 @@ export class ModalDownload extends Component<
     })
   }
 
-  handleChange = (event: IChangeEvent) => {
-    const { formData } = event
-    this.setState({
-      formData,
-    })
-  }
-
   render() {
     const spinnerStyle: CSSProperties = {
       height: 50,
@@ -142,19 +147,15 @@ export class ModalDownload extends Component<
         title="Download query results"
         content={
           <>
-            <Form
+            <Form<ModalDownloadFormData>
               validator={validator}
+              classMap={BOOTSTRAP3_CLASS_MAP}
               id="modal-download-form"
               schema={formSchemaArray[this.state.step]}
               uiSchema={formSchemaUIArray[this.state.step]}
-              onChange={this.handleChange}
-              formData={this.state.formData}
+              initialFormData={INITIAL_FORM_DATA}
               onSubmit={this.handleSubmit}
-              widgets={{
-                CheckboxWidget: SynapseFormCheckboxWidget,
-                CheckboxesWidget: SynapseFormCheckboxesWidget,
-                RadioWidget: SynapseFormRadioWidget,
-              }}
+              widgets={WIDGETS}
             >
               {this.state.isLoading && (
                 <div className="SRC-centerAndJustifyContent">

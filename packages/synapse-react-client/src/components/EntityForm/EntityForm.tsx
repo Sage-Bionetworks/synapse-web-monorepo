@@ -12,9 +12,10 @@ import { ErrorBanner } from '@/components/error/ErrorBanner'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { isFileEntity } from '@/utils/types/IsType'
 import { Alert, Stack, Typography } from '@mui/material'
-import Form from '@rjsf/core'
+import Form, { FormRef } from '@rjsf/core'
 import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'
+import { BOOTSTRAP3_CLASS_MAP } from '@/utils/jsonschema/bootstrap3ClassMap'
 import {
   FILE_ENTITY_CONCRETE_TYPE_VALUE,
   FileEntity,
@@ -65,7 +66,7 @@ export default function EntityForm(props: EntityFormProps) {
   } = props
   const { isAuthenticated, keyFactory } = useSynapseContext()
   const queryClient = useQueryClient()
-  const formRef = useRef<Form>(null)
+  const formRef = useRef<FormRef>(null)
 
   const { data: userProfile, error: userProfileError } =
     useGetCurrentUserProfile({ enabled: isAuthenticated })
@@ -258,9 +259,10 @@ export default function EntityForm(props: EntityFormProps) {
       <Form
         ref={formRef}
         validator={validator}
+        classMap={BOOTSTRAP3_CLASS_MAP}
         schema={formSchemaQuery.data}
         uiSchema={uiSchemaQuery.data}
-        formData={existingFileContentQuery.data}
+        initialFormData={existingFileContentQuery.data}
         disabled={isSaving}
         onSubmit={({ formData }) => saveFormData(formData)}
       >
