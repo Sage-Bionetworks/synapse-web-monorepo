@@ -25,7 +25,7 @@ import PortalSectionHeader from '../PortalSectionHeader'
 
 const BORDER_RADIUS = '6px'
 // Space between cards. `heightPx` includes one gap, so each card is `heightPx - CARD_GAP_PX` tall.
-const CARD_GAP_PX = 24
+const CARD_GAP_PX = 20
 
 export type ImageCardGridWithLinksProps = {
   sql: string
@@ -84,7 +84,11 @@ const ImageCard = ({
       }}
     >
       {isLoading ? (
-        <Skeleton variant="rectangular" height={heightPx - 20} width="100%" />
+        <Skeleton
+          variant="rectangular"
+          height={heightPx - CARD_GAP_PX}
+          width="100%"
+        />
       ) : (
         <Card
           raised={false}
