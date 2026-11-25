@@ -13,7 +13,7 @@ const loadingScreen = (
     <LinearProgress
       classes={{
         colorPrimary: 'bar-background-color',
-        barColorPrimary: 'bar-color',
+        bar: 'bar-color',
       }}
     />
   </div>
@@ -72,7 +72,7 @@ export function BlockingLoader({
           variant="determinate"
           classes={{
             colorPrimary: 'bar-background-color',
-            barColorPrimary: 'bar-color',
+            bar: 'bar-color',
           }}
           value={(currentProgress! / totalProgress!) * 100}
         />
@@ -99,7 +99,6 @@ export function BlockingLoader({
     <Backdrop
       open={show}
       onClick={() => {}}
-      aria-hidden={false}
       sx={{
         backgroundColor: 'rgba(255, 255, 255, 0.9)',
         zIndex: theme => theme.zIndex.modal + 1,
