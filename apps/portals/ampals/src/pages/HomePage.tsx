@@ -1,6 +1,5 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSHeader'
-import AMPALSPublishingRequirements from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSPublishingRequirements'
 import HowToAccessData from '@sage-bionetworks/synapse-portal-framework/components/ampals/HowToAccessData'
 // import AMPALSExploreTheData from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSExploreTheData'
 import FeaturedDataTabs from 'synapse-react-client/components/FeaturedDataTabs/FeaturedDataTabs'
@@ -202,7 +201,6 @@ export default function HomePage() {
           titleText="Our Contributors"
         />
       </SectionLayout>
-      <AMPALSPublishingRequirements />
       <SectionLayout
         title={"What's New"}
         centerTitle={true}
@@ -245,7 +243,8 @@ export default function HomePage() {
               plotsConfig: {
                 configs: [
                   {
-                    title: 'Gene Expression Omnibus',
+                    title: 'ALS Datasets in GEO',
+                    // TODO(AMPALS-521): add card description
                     description: '',
                     facetsToPlot: ['dataType'],
                     selectFacetColumnName: 'source',
@@ -256,6 +255,7 @@ export default function HomePage() {
                   },
                   {
                     title: 'NYGC ALS Consortium',
+                    // TODO(AMPALS-521): add card description
                     description: '',
                     facetsToPlot: ['dataType'],
                     selectFacetColumnName: 'contributor',
@@ -266,6 +266,7 @@ export default function HomePage() {
                   },
                   {
                     title: 'Barmada Lab - University of Michigan',
+                    // TODO(AMPALS-521): add card description
                     description: '',
                     facetsToPlot: ['dataType'],
                     selectFacetColumnName: 'contributor',

@@ -5,4 +5,5 @@ export default {
   relevantOrgName: 'Relevant Organization',
   name: 'Name',
   isOpen: 'Is Open?',
+  sameAs: 'Source ID',
 }
