@@ -213,13 +213,15 @@ export function fairSectionToRjsf(
         // The FAIR API expects a `date-time`, but FAIR date fields ask for a calendar date
         // only, so a simple date picker (DateWidget) is ideal.
         properties[name] = { type: 'string', format: 'date-time' }
-        uiSchema[name] = { 'ui:widget': 'DateWidget' }
         const earliest = earliestDate(v.minimum, today)
         if (earliest) {
           // `DateWidget` values are UTC midnight of the picked calendar date, so ajv-formats'
           // `formatMinimum` against UTC midnight of the earliest date compares calendar dates.
           properties[name].formatMinimum = `${earliest}T00:00:00.000Z`
-          uiSchema[name]['ui:options'] = { minDate: earliest }
+        }
+        uiSchema[name] = {
+          'ui:widget': 'DateWidget',
+          ...(earliest ? { 'ui:options': { minDate: earliest } } : {}),
         }
         break
       }

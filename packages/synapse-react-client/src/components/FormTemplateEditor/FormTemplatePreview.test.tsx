@@ -194,7 +194,7 @@ describe('FormTemplatePreview', () => {
   it('does not render a stepper for a single step', () => {
     renderPreview({ template: oneStepTemplate, jsonSchema: schema })
     expect(
-      screen.queryByRole('button', { name: 'Basics' }),
+      screen.queryByRole('tab', { name: 'Basics' }),
     ).not.toBeInTheDocument()
   })
 
@@ -205,7 +205,7 @@ describe('FormTemplatePreview', () => {
       jsonSchema: schema,
     })
     expect(getFieldLabel('Institution')).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: 'Additional info' }))
+    await user.click(screen.getByRole('tab', { name: 'Additional info' }))
     expect(queryFieldLabel('Institution')).not.toBeInTheDocument()
     expect(getFieldLabel('Signing Official')).toBeInTheDocument()
   })
@@ -217,8 +217,8 @@ describe('FormTemplatePreview', () => {
       jsonSchema: schema,
     })
     await user.type(screen.getByRole('textbox'), 'Sage Bionetworks')
-    await user.click(screen.getByRole('button', { name: 'Additional info' }))
-    await user.click(screen.getByRole('button', { name: 'Basics' }))
+    await user.click(screen.getByRole('tab', { name: 'Additional info' }))
+    await user.click(screen.getByRole('tab', { name: 'Basics' }))
     expect(screen.getByRole('textbox')).toHaveValue('Sage Bionetworks')
   })
 
@@ -226,7 +226,7 @@ describe('FormTemplatePreview', () => {
     // "summaryOfUse" is gated to RENEWAL by the schema's allOf, so the Request view omits the step
     renderPreview({ template: renewalGatedTemplate, jsonSchema: schema })
     expect(
-      screen.queryByRole('button', { name: 'Renewal details' }),
+      screen.queryByRole('tab', { name: 'Renewal details' }),
     ).not.toBeInTheDocument()
     expect(screen.getByRole('status')).toHaveTextContent(
       'Skipped in a Request (Renewal only): Step 2 “Renewal details”',
@@ -257,7 +257,7 @@ describe('FormTemplatePreview', () => {
       ]),
       jsonSchema: schema,
     })
-    await user.click(screen.getByRole('button', { name: 'Additional info' }))
+    await user.click(screen.getByRole('tab', { name: 'Additional info' }))
     expect(getFieldLabel('Signing Official')).toBeInTheDocument()
     expect(screen.getByRole('status')).toHaveTextContent(
       'Step 2 “Renewal details”',
@@ -292,7 +292,7 @@ describe('FormTemplatePreview', () => {
     expect(screen.getByRole('status')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Renewal' }))
     expect(
-      screen.getByRole('button', { name: 'Renewal details' }),
+      screen.getByRole('tab', { name: 'Renewal details' }),
     ).toBeInTheDocument()
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
@@ -333,10 +333,10 @@ describe('FormTemplatePreview', () => {
     renderPreview({ template: renewalGatedTemplate, jsonSchema: schema })
     // Only the Basics step qualifies for REQUEST, so no stepper is shown yet.
     expect(
-      screen.queryByRole('button', { name: 'Renewal details' }),
+      screen.queryByRole('tab', { name: 'Renewal details' }),
     ).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Renewal' }))
-    await user.click(screen.getByRole('button', { name: 'Renewal details' }))
+    await user.click(screen.getByRole('tab', { name: 'Renewal details' }))
     expect(getFieldLabel('Summary')).toBeInTheDocument()
   })
 
@@ -346,7 +346,7 @@ describe('FormTemplatePreview', () => {
       template: twoAlwaysVisibleStepsTemplate,
       jsonSchema: schema,
     })
-    await user.click(screen.getByRole('button', { name: 'Additional info' }))
+    await user.click(screen.getByRole('tab', { name: 'Additional info' }))
     expect(getFieldLabel('Signing Official')).toBeInTheDocument()
     rerender(
       <FormTemplatePreview template={oneStepTemplate} jsonSchema={schema} />,
@@ -506,7 +506,7 @@ describe('FormTemplatePreview', () => {
       })
       await user.click(getValidateCheckbox())
 
-      await user.click(screen.getByRole('button', { name: 'Basics' }))
+      await user.click(screen.getByRole('tab', { name: 'Basics' }))
 
       expect(
         await screen.findByText('Institution', { selector: 'label' }),
@@ -541,7 +541,7 @@ describe('FormTemplatePreview', () => {
     expect(screen.queryByRole('radio')).not.toBeInTheDocument()
 
     await user.click(getValidateCheckbox())
-    await user.click(screen.getByRole('button', { name: 'Additional info' }))
+    await user.click(screen.getByRole('tab', { name: 'Additional info' }))
     expect(
       await screen.findByRole('checkbox', {
         name: 'I agree',
@@ -551,7 +551,7 @@ describe('FormTemplatePreview', () => {
     expect(queryFieldLabel('Signing Official')).not.toBeInTheDocument()
 
     await user.click(screen.getByRole('checkbox', { name: 'I agree' }))
-    await user.click(screen.getByRole('button', { name: 'Additional info' }))
+    await user.click(screen.getByRole('tab', { name: 'Additional info' }))
     expect(await screen.findByText('Signing Official')).toBeInTheDocument()
   })
 
@@ -564,13 +564,13 @@ describe('FormTemplatePreview', () => {
       })
       expect(getValidateCheckbox()).not.toBeChecked()
       // The required Institution field is blank
-      await user.click(screen.getByRole('button', { name: 'Additional info' }))
+      await user.click(screen.getByRole('tab', { name: 'Additional info' }))
       expect(getFieldLabel('Signing Official')).toBeInTheDocument()
     })
 
     it('marks the blank required field invalid and stays on its step', async () => {
       const user = await renderWithValidation(twoAlwaysVisibleStepsTemplate)
-      await user.click(screen.getByRole('button', { name: 'Additional info' }))
+      await user.click(screen.getByRole('tab', { name: 'Additional info' }))
       await expectTextboxInvalid()
       expect(getFieldLabel('Institution')).toBeInTheDocument()
       expect(queryFieldLabel('Signing Official')).not.toBeInTheDocument()
@@ -578,7 +578,7 @@ describe('FormTemplatePreview', () => {
 
     it('does not later move to a step whose navigation was blocked', async () => {
       const user = await renderWithValidation(twoAlwaysVisibleStepsTemplate)
-      await user.click(screen.getByRole('button', { name: 'Additional info' }))
+      await user.click(screen.getByRole('tab', { name: 'Additional info' }))
       await expectTextboxInvalid()
       // Enter submits the step's form without a step being chosen; the cleared error shows it was validated
       await user.type(screen.getByRole('textbox'), 'Sage Bionetworks{Enter}')
@@ -590,13 +590,13 @@ describe('FormTemplatePreview', () => {
       )
       expect(getFieldLabel('Institution')).toBeInTheDocument()
 
-      await user.click(screen.getByRole('button', { name: 'Additional info' }))
+      await user.click(screen.getByRole('tab', { name: 'Additional info' }))
       expect(getFieldLabel('Signing Official')).toBeInTheDocument()
     })
 
     it('does not validate when clicking the step already shown', async () => {
       const user = await renderWithValidation(twoAlwaysVisibleStepsTemplate)
-      await user.click(screen.getByRole('button', { name: 'Basics' }))
+      await user.click(screen.getByRole('tab', { name: 'Basics' }))
       expect(screen.getByRole('textbox')).not.toHaveAttribute(
         'aria-invalid',
         'true',
@@ -607,27 +607,27 @@ describe('FormTemplatePreview', () => {
       const user = await renderWithValidation(renewalGatedTemplate)
       await user.click(screen.getByRole('button', { name: 'Renewal' }))
       await user.type(screen.getByRole('textbox'), 'Sage Bionetworks')
-      await user.click(screen.getByRole('button', { name: 'Renewal details' }))
+      await user.click(screen.getByRole('tab', { name: 'Renewal details' }))
       // The required Summary field is left blank
       await screen.findByText('Summary', { selector: 'label' })
-      await user.click(screen.getByRole('button', { name: 'Basics' }))
+      await user.click(screen.getByRole('tab', { name: 'Basics' }))
       expect(getFieldLabel('Institution')).toBeInTheDocument()
       expect(queryFieldLabel('Summary')).not.toBeInTheDocument()
     })
 
     it('restores free navigation when unchecked', async () => {
       const user = await renderWithValidation(twoAlwaysVisibleStepsTemplate)
-      await user.click(screen.getByRole('button', { name: 'Additional info' }))
+      await user.click(screen.getByRole('tab', { name: 'Additional info' }))
       await expectTextboxInvalid()
       await user.click(getValidateCheckbox())
-      await user.click(screen.getByRole('button', { name: 'Additional info' }))
+      await user.click(screen.getByRole('tab', { name: 'Additional info' }))
       expect(getFieldLabel('Signing Official')).toBeInTheDocument()
     })
 
     it('moves to the chosen step when the current step is valid', async () => {
       const user = await renderWithValidation(twoAlwaysVisibleStepsTemplate)
       await user.type(screen.getByRole('textbox'), 'Sage Bionetworks')
-      await user.click(screen.getByRole('button', { name: 'Additional info' }))
+      await user.click(screen.getByRole('tab', { name: 'Additional info' }))
       expect(
         await screen.findByText('Signing Official', { selector: 'label' }),
       ).toBeInTheDocument()
@@ -645,7 +645,7 @@ describe('FormTemplatePreview', () => {
     it('blocks navigation in the Renewal view', async () => {
       const user = await renderWithValidation(renewalGatedTemplate)
       await user.click(screen.getByRole('button', { name: 'Renewal' }))
-      await user.click(screen.getByRole('button', { name: 'Renewal details' }))
+      await user.click(screen.getByRole('tab', { name: 'Renewal details' }))
       await expectTextboxInvalid()
       expect(getFieldLabel('Institution')).toBeInTheDocument()
       expect(queryFieldLabel('Summary')).not.toBeInTheDocument()

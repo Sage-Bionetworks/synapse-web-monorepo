@@ -10,11 +10,11 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import RJSFForm from '@rjsf/core'
-import { GenericObjectType, RJSFSchema } from '@rjsf/utils'
+import { useForkRef } from '@mui/material/utils'
+import { FormRef } from '@rjsf/core'
 import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
 import type { ParseError } from 'papaparse'
-import { Ref, useCallback, useMemo, useState } from 'react'
+import { Ref, useCallback, useMemo, useRef, useState } from 'react'
 import { transformErrors } from '../SchemaDrivenAnnotationEditor/AnnotationEditorUtils'
 import useParseCsv, { UseParseCsvError } from './useParseCsv'
 
@@ -25,7 +25,19 @@ export type JSONArrayEditorProps<T = unknown> = {
   arrayItemDefinition?: JSONSchema7Definition
   onChange: (newValue: T[]) => void
   onSubmit: (formData: T[]) => void
-  formRef?: Ref<RJSFForm<T, RJSFSchema, GenericObjectType>>
+  formRef?: Ref<FormRef<T[]>>
+}
+
+const UI_SCHEMA = {
+  'ui:submitButtonOptions': {
+    norender: true,
+  },
+}
+const FORM_CONTEXT = {
+  allowRemovingLastItemInArray: true,
+}
+const WIDGETS = {
+  TextWidget: TextWidget,
 }
 
 function getSchema(
@@ -47,6 +59,8 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
     formRef,
   } = props
   const [showPasteNewValuesForm, setShowPasteNewValuesForm] = useState(false)
+  const localFormRef = useRef<FormRef<T[]>>(null)
+  const handleFormRef = useForkRef(localFormRef, formRef)
   const [pastedValues, setPastedValues] = useState('')
   const [parseErrors, setParseErrors] = useState<ParseError[]>([])
   const schema = useMemo(
@@ -58,10 +72,12 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
     jsonSchemaDefinition: arrayItemDefinition,
   })
   const addPastedValuesToArray = useCallback(async () => {
-    if (pastedValues) {
+    const form = localFormRef.current
+    if (pastedValues && form) {
       try {
         const parsedValues = (await parse(pastedValues)) as T[]
-        onChange([...value, ...parsedValues])
+        // The form owns its data, so the values are appended there, which reports the change through `onChange`
+        form.setFieldValue('', [...(form.getFormData() ?? []), ...parsedValues])
         setParseErrors([])
         setPastedValues('')
         setShowPasteNewValuesForm(false)
@@ -73,7 +89,7 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
         }
       }
     }
-  }, [onChange, pastedValues, value, parse])
+  }, [pastedValues, parse])
 
   return (
     <Box
@@ -85,24 +101,16 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
         },
       }}
     >
-      <JsonSchemaForm
-        formRef={formRef}
+      <JsonSchemaForm<T[]>
+        formRef={handleFormRef}
         schema={schema}
-        uiSchema={{
-          'ui:submitButtonOptions': {
-            norender: true,
-          },
-        }}
-        formData={value}
-        formContext={{
-          allowRemovingLastItemInArray: true,
-        }}
-        onChange={({ formData }) => onChange(formData)}
-        onSubmit={({ formData }) => onSubmit(formData)}
+        uiSchema={UI_SCHEMA}
+        initialFormData={value}
+        formContext={FORM_CONTEXT}
+        onChange={({ formData }) => onChange(formData ?? [])}
+        onSubmit={({ formData }) => onSubmit(formData ?? [])}
         transformErrors={transformErrors}
-        widgets={{
-          TextWidget: TextWidget,
-        }}
+        widgets={WIDGETS}
       />
       <Button onClick={() => setShowPasteNewValuesForm(true)}>
         Paste new values

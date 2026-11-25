@@ -4,8 +4,7 @@ import {
   ConfirmationDialogProps,
 } from '../ConfirmationDialog'
 import JSONArrayEditor, { JSONArrayEditorProps } from './JSONArrayEditor'
-import type RJSFForm from '@rjsf/core'
-import { RJSFSchema } from '@rjsf/utils'
+import type { FormRef } from '@rjsf/core'
 
 export type JSONArrayEditorModalProps<T = unknown> = Pick<
   JSONArrayEditorProps<T>,
@@ -28,7 +27,7 @@ function JSONArrayEditorModal<T = unknown>(
     value,
     ...editorProps
   } = props
-  const formRef = useRef<RJSFForm<any, RJSFSchema, any>>(null)
+  const formRef = useRef<FormRef<T[]>>(null)
   const [tempValue, setTempValue] = useState<T[]>(value ?? [])
 
   useEffect(() => {
@@ -54,8 +53,7 @@ function JSONArrayEditorModal<T = unknown>(
         />
       }
       onConfirm={() => {
-        // Workaround for https://github.com/rjsf-team/react-jsonschema-form/issues/3121
-        formRef.current!.formElement.current.requestSubmit()
+        formRef.current?.submit()
       }}
     ></ConfirmationDialog>
   )

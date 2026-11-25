@@ -36,7 +36,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import RJSF from '@rjsf/core'
+import { FormRef } from '@rjsf/core'
 import {
   DoiObjectType,
   DoiResourceTypeGeneral,
@@ -152,10 +152,6 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
     enabled: Boolean(portalId),
   })
 
-  const [formData, setFormData] = useState<DoiFormData>({
-    titles: [''],
-    creators: [''],
-  })
   const { data: currentUser, isLoading: isLoadingCurrentUser } =
     useGetCurrentUserProfile()
   const { data: entityBundle, isLoading: isLoadingEntity } = useGetEntityBundle(
@@ -231,7 +227,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
       enabled: doiCanBeAppliedToVersion,
     },
   )
-  const formRef = useRef<RJSF>(null)
+  const formRef = useRef<FormRef<DoiFormData>>(null)
 
   const entityType = entityBundle?.entityType ?? EntityType.file
   const entityTypeDisplay = entityTypeToFriendlyName(entityType)
@@ -269,12 +265,18 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
 
   const wasModifiedViaAPI = Boolean(doi && getWasModifiedViaAPI(doi))
 
-  useEffect(() => {
-    if (doi) {
-      setFormData(convertDoiToFormData(doi))
+  // The form reads its data on mount: the DOI's metadata, or a pre-filled form if there is no DOI yet
+  const initialFormData = useMemo<DoiFormData | undefined>(() => {
+    if (doi === undefined) {
+      return undefined
     }
-    // If there is no DOI, then pre-fill the form.
-    if (currentUser && entityBundle?.entity && doi === null) {
+    if (doi) {
+      return convertDoiToFormData(doi)
+    }
+    if (isLoadingCurrentUser || isLoadingEntity) {
+      return undefined
+    }
+    if (currentUser && entityBundle?.entity) {
       const newFormData = {
         titles: [entityBundle.entity.name],
         creators: new Array<string>(),
@@ -288,13 +290,15 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
           `${currentUser.lastName}, ${currentUser.firstName}`,
         )
       }
-      setFormData(newFormData)
+      return newFormData
     }
-  }, [currentUser, doi, entityBundle])
+    return { titles: [''], creators: [''] }
+  }, [currentUser, doi, entityBundle, isLoadingCurrentUser, isLoadingEntity])
 
   function onSave() {
-    if (formRef.current?.validateForm()) {
-      const requestDoi: V2Doi = convertFormDataToDoi(formData)
+    const form = formRef.current
+    if (form?.validateForm()) {
+      const requestDoi: V2Doi = convertFormDataToDoi(form.getFormData() ?? {})
       requestDoi.objectType = objectType
       requestDoi.objectId = objectId
       requestDoi.objectVersion = selectedVersionNumber
@@ -386,17 +390,20 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
           </Select>
         </StyledFormControl>
       )}
-      <JsonSchemaForm
-        formRef={formRef}
-        disabled={isLoading || wasModifiedViaAPI}
-        schema={doiFormSchema}
-        formData={formData}
-        onChange={e => {
-          setFormData(e.formData)
-        }}
-        uiSchema={doiFormUiSchema}
-        showErrorList={false}
-      />
+      {initialFormData === undefined ? (
+        <SynapseSpinner />
+      ) : (
+        <JsonSchemaForm<DoiFormData>
+          // Another version has its own DOI, so the form starts over with its data
+          key={`${selectedVersionNumber}-${doi?.etag ?? 'new'}`}
+          formRef={formRef}
+          disabled={isLoading || wasModifiedViaAPI}
+          schema={doiFormSchema}
+          initialFormData={initialFormData}
+          uiSchema={doiFormUiSchema}
+          showErrorList={false}
+        />
+      )}
       {doi && (
         <Alert severity={'warning'}>
           <Typography variant={'body1'}>
