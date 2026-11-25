@@ -1,15 +1,19 @@
 import { CustomFormContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import { ChangeEvent, FocusEvent } from 'react'
 import TextField, { TextFieldProps } from '@mui/material/TextField'
+import { SchemaExamples } from '@rjsf/core'
 import {
-  ariaDescribedByIds,
   BaseInputTemplateProps,
   examplesId,
-  getInputProps,
-  labelValue,
   FormContextType,
+  getBaseInputProps,
+  getControlAttributes,
+  getExampleSuggestions,
+  getSchemaType,
+  hasWidgetErrors,
   RJSFSchema,
   StrictRJSFSchema,
+  toInputValue,
 } from '@rjsf/utils'
 
 const TYPES_THAT_SHRINK_LABEL = new Set([
@@ -23,6 +27,9 @@ const TYPES_THAT_SHRINK_LABEL = new Set([
  * It is used as the template for rendering many of the <input> based widgets that differ by `type` and callbacks only.
  * It can be customized/overridden for other themes or individual implementations as needed.
  *
+ * `FieldTemplate` draws the label, so this draws none. A `number`/`integer` field keeps a native number input, with the
+ * schema's `minimum`, `maximum` and `multipleOf` on it, unless `ui:options.inputType` says otherwise.
+ *
  * @param props - The `WidgetProps` for this template
  */
 export default function BaseInputTemplate<
@@ -32,13 +39,13 @@ export default function BaseInputTemplate<
 >(props: BaseInputTemplateProps<T, S, F>) {
   const {
     id,
-    name, // remove this from textFieldProps
+    htmlName,
     placeholder: placeholderFromProps,
-    required,
+    required: _required,
     readonly,
     disabled,
     type,
-    label,
+    label: _label,
     hideLabel: _hideLabel,
     hideError: _hideError,
     value,
@@ -49,36 +56,53 @@ export default function BaseInputTemplate<
     autofocus,
     options,
     schema,
-    uiSchema,
-    rawErrors = [],
-    formContext,
+    uiSchema: _uiSchema,
+    rawErrors: _rawErrors,
+    errorSchema: _errorSchema,
     registry,
-    InputLabelProps,
+    presentation,
+    // Attributes of the `<input>`, which `TextField` would otherwise put on its root
+    pattern: _pattern,
+    accept: _accept,
+    inputMode: _inputMode,
+    multiple: _multiple,
+    name: _name,
     ...textFieldProps
   } = props
-  const hideLabel = true
-  const inputProps = getInputProps<T, S, F>(schema, type, options)
-  // The step, min and max belong on the inner <input>. They go in `slotProps.htmlInput`, since
-  // MUI ignores `inputProps` whenever `slotProps.htmlInput` is set.
-  const { step, min, max, ...otherProps } = inputProps
+  const schemaType = getSchemaType(schema)
+  const isNumeric = schemaType === 'number' || schemaType === 'integer'
+  const { title, step, min, max, accept, inputMode, pattern, ...inputProps } =
+    getBaseInputProps<T, S, F>({
+      ...props,
+      options:
+        isNumeric && !options.inputType && !type
+          ? { ...options, inputType: 'number' }
+          : options,
+    })
+  const exampleSuggestions = getExampleSuggestions<S>(schema)
+  const hasExamples = exampleSuggestions.length > 0
+  // The step, min and max belong on the inner <input>, along with the field's accessibility attributes.
   const htmlInputProps = {
+    title,
     step,
     min,
     max,
-    ...(schema.examples ? { list: examplesId<T>(id) } : undefined),
+    accept,
+    inputMode,
+    pattern,
+    ...getControlAttributes<T, S, F>(
+      { id, presentation },
+      hasExamples ? [examplesId(id)] : [],
+    ),
+    ...(hasExamples ? { list: examplesId(id) } : undefined),
+    'aria-label': id,
   }
   const _onChange = ({ target: { value } }: ChangeEvent<HTMLInputElement>) =>
     onChange(value === '' ? options.emptyValue : value)
-  const _onBlur = ({ target: { value } }: FocusEvent<HTMLInputElement>) =>
-    onBlur(id, value)
-  const _onFocus = ({ target: { value } }: FocusEvent<HTMLInputElement>) =>
-    onFocus(id, value)
-  const DisplayInputLabelProps = TYPES_THAT_SHRINK_LABEL.has(type)
-    ? {
-        ...InputLabelProps,
-        shrink: true,
-      }
-    : InputLabelProps
+  const _onBlur = ({ target }: FocusEvent<HTMLInputElement>) =>
+    onBlur(id, target?.value)
+  const _onFocus = ({ target }: FocusEvent<HTMLInputElement>) =>
+    onFocus(id, target?.value)
 
   let derivedValuePlaceholder: string | undefined = undefined
   if (schema.default || schema.const) {
@@ -95,42 +119,30 @@ export default function BaseInputTemplate<
     <>
       <TextField
         id={id}
-        name={id}
+        name={htmlName || id}
         placeholder={placeholder}
-        label={labelValue(label || undefined, hideLabel, false)}
         autoFocus={autofocus}
         required={false}
         disabled={disabled || readonly}
-        {...otherProps}
-        value={value || value === 0 ? value : ''}
-        error={rawErrors.length > 0}
+        {...inputProps}
+        value={toInputValue(value)}
+        error={hasWidgetErrors<T, S, F>(props)}
         onChange={onChangeOverride || _onChange}
         onBlur={_onBlur}
         onFocus={_onFocus}
         {...(textFieldProps as TextFieldProps)}
-        aria-describedby={ariaDescribedByIds<T>(id, !!schema.examples)}
         slotProps={{
-          htmlInput: {
-            ...htmlInputProps,
-            'aria-label': id,
-          },
-
-          inputLabel: DisplayInputLabelProps,
+          htmlInput: htmlInputProps,
+          inputLabel: TYPES_THAT_SHRINK_LABEL.has(inputProps.type)
+            ? { shrink: true }
+            : undefined,
         }}
       />
-      {Array.isArray(schema.examples) && (
-        <datalist id={examplesId<T>(id)}>
-          {(schema.examples as string[])
-            .concat(
-              schema.default && !schema.examples.includes(schema.default)
-                ? ([schema.default] as string[])
-                : [],
-            )
-            .map((example: any) => {
-              return <option key={example} value={example} />
-            })}
-        </datalist>
-      )}
+      <SchemaExamples
+        id={id}
+        schema={schema}
+        suggestions={exampleSuggestions}
+      />
     </>
   )
 }

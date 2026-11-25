@@ -1,5 +1,10 @@
 import { CustomFormContext } from '@/components/JsonSchemaForm/CustomFormContext'
-import { Widget, WidgetProps, EnumOptionsType } from '@rjsf/utils'
+import {
+  EnumOptionsType,
+  hasWidgetErrors,
+  Widget,
+  WidgetProps,
+} from '@rjsf/utils'
 import { Autocomplete, TextField } from '@mui/material'
 import { createFilterOptions } from '@mui/material/Autocomplete'
 import { isObject } from 'lodash-es'
@@ -13,7 +18,7 @@ const filter = createFilterOptions<EnumOptionsType>()
  * where the label and value are set to the provided value.
  */
 export function findValueOption(
-  value: string | null | undefined,
+  value: unknown,
   options: EnumOptionsType[],
 ): EnumOptionsType | string | null {
   if (value == null) {
@@ -24,7 +29,9 @@ export function findValueOption(
   if (correspondingOption.length > 0) {
     return correspondingOption[0]
   } else {
-    return { value: value, label: value }
+    // A free-solo answer is text the user typed; any other value is shown as JSON
+    const label = typeof value === 'string' ? value : JSON.stringify(value)
+    return { value: value, label }
   }
 }
 
@@ -62,14 +69,11 @@ export function fromMultipleAutocompleteValue(newValue: unknown): unknown[] {
   )
 }
 
-type SelectWidgetProps = WidgetProps & {
-  isClearable?: boolean
-}
-
 /**
- * Select widget compatible with react-jsonschema-form enumerations
+ * Select widget compatible with react-jsonschema-form enumerations. Set `ui:options.isClearable` to `false` to keep
+ * the user from clearing a choice.
  */
-export const SelectWidget: Widget = (props: SelectWidgetProps) => {
+export const SelectWidget: Widget = (props: WidgetProps) => {
   const {
     id,
     options,
@@ -83,13 +87,12 @@ export const SelectWidget: Widget = (props: SelectWidgetProps) => {
     onBlur,
     onFocus,
     placeholder,
-    isClearable: _isClearable = true,
-    rawErrors,
     registry,
   } = props
 
-  const { enumOptions } = options as {
+  const { enumOptions, isClearable: _isClearable = true } = options as {
     enumOptions: EnumOptionsType[]
+    isClearable?: boolean
   }
 
   // If the ID includes one of these, then this is a widget used to select a schema in `oneOf` or `anyOf`.
@@ -143,10 +146,10 @@ export const SelectWidget: Widget = (props: SelectWidgetProps) => {
           {...params}
           required={required}
           placeholder={placeholder}
-          error={rawErrors && rawErrors.length > 0}
+          error={hasWidgetErrors(props)}
           autoFocus={autofocus}
-          onFocus={onFocus && (() => onFocus(id, value?.value))}
-          onBlur={onBlur && (() => onBlur(id, value?.value))}
+          onFocus={onFocus && (() => onFocus(id, value))}
+          onBlur={onBlur && (() => onBlur(id, value))}
         />
       )}
       filterOptions={(options, params) => {

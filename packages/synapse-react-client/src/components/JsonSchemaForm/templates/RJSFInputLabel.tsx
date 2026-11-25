@@ -1,3 +1,4 @@
+import { CustomFormContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import { StyledPopover } from '@/components/styled/StyledPopover'
 import HelpOutlineOutlined from '@mui/icons-material/HelpOutlineOutlined'
 import HelpTwoTone from '@mui/icons-material/HelpTwoTone'
@@ -42,7 +43,7 @@ export function RJSFInputLabelWrapper<
     children,
   } = props
   const descriptionVariant =
-    registry.formContext.descriptionVariant || 'popover'
+    (registry.formContext as CustomFormContext).descriptionVariant || 'popover'
 
   const [showDetails, setShowDetails] = useState(false)
 
