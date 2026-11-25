@@ -163,13 +163,14 @@ export function FullTextSearch({
                   placeholder="Enter Search Terms"
                   type="text"
                   slotProps={{
+                    ...params.slotProps,
                     input: {
-                      ...params.InputProps,
+                      ...params.slotProps.input,
                       startAdornment,
                       endAdornment,
                     },
                     htmlInput: {
-                      ...params.inputProps,
+                      ...params.slotProps.htmlInput,
                       minLength: minSearchQueryLength,
                     },
                   }}

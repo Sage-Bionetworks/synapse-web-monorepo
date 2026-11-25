@@ -164,27 +164,24 @@ function UserSearchBox(props: UserSearchBoxProps) {
           />
         </li>
       )}
-      renderInput={({
-        inputProps: inputPropsFromParams,
-        InputProps: InputPropsFromParams,
-        ...params
-      }) => (
+      renderInput={({ slotProps: slotPropsFromParams, ...params }) => (
         <TextField
           {...params}
           placeholder={showBadge ? undefined : placeholderText}
           autoFocus={autoFocus}
           slotProps={{
+            ...slotPropsFromParams,
             htmlInput: {
-              ...inputPropsFromParams,
+              ...slotPropsFromParams.htmlInput,
               // While the badge is displayed, hide the underlying input text and cursor.
               // Merge custom styles with parent styles to preserve mouse selection and other behaviors.
               style: {
-                ...inputPropsFromParams.style,
+                ...slotPropsFromParams.htmlInput.style,
                 ...(showBadge ? { color: 'transparent' } : {}),
               },
             },
             input: {
-              ...InputPropsFromParams,
+              ...slotPropsFromParams.input,
               startAdornment: showBadge ? (
                 <Box sx={{ ml: 1 }}>
                   <UserOrTeamBadge

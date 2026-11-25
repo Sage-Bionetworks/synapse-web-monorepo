@@ -128,8 +128,9 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
             variant="outlined"
             placeholder="Select property…"
             slotProps={{
+              ...params.slotProps,
               htmlInput: {
-                ...params.inputProps,
+                ...params.slotProps.htmlInput,
                 'aria-label': 'Property',
               },
             }}

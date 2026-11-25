@@ -101,7 +101,9 @@ export function SynapseHomepageSearch({
             variant="outlined"
             placeholder="Search Synapse"
             slotProps={{
+              ...params.slotProps,
               input: {
+                ...params.slotProps.input,
                 sx: {
                   fontSize: '24px',
                   borderRadius: isPopperOpen ? '40px 40px 0px 0px' : '40px',
