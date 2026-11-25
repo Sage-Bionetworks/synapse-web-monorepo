@@ -119,15 +119,15 @@ export default function LastLoginInfo(props: LastLoginInfoProps) {
       </Typography>
       <Typography
         variant="smallText1"
-        color="white"
         sx={{
+          color: 'white',
           mb: 1,
         }}
       >
         {`This computer was used to sign in to an account on ${lastLoginSourceAppDefiniteArticle}${lastLoginSourceAppName}. 
           You can use the same account to sign in to ${currentSourceAppDefiniteArticle}${currentSourceAppName}.`}
       </Typography>
-      <Typography variant="smallText1" color="white">
+      <Typography variant="smallText1" sx={{ color: 'white' }}>
         {accountLastUsed}
       </Typography>
     </>
