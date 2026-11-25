@@ -306,7 +306,11 @@ const AccountSettings = (): React.ReactNode => {
                   }}
                 />
                 <form onChange={markFormDirty}>
-                  <Stack gap={isMobile ? 2 : 3}>
+                  <Stack
+                    sx={{
+                      gap: isMobile ? 2 : 3,
+                    }}
+                  >
                     <TextField
                       label={'Username'}
                       id="username"

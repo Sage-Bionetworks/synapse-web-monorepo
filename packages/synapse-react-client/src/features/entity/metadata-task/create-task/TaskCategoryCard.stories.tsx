@@ -8,7 +8,12 @@ const meta = {
   component: TaskCategoryCard,
   decorators: [
     Story => (
-      <Stack direction="row" gap={3}>
+      <Stack
+        direction="row"
+        sx={{
+          gap: 3,
+        }}
+      >
         <Story />
       </Stack>
     ),

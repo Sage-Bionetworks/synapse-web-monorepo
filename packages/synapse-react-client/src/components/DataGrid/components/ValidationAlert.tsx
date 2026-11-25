@@ -201,7 +201,13 @@ function RowLinks({
         </Fragment>
       ))}
       {hiddenRowCount > 0 && (
-        <Typography component="span" variant="body1" color="text.disabled">
+        <Typography
+          component="span"
+          variant="body1"
+          sx={{
+            color: 'text.disabled',
+          }}
+        >
           +{hiddenRowCount.toLocaleString()} more
         </Typography>
       )}
@@ -214,7 +220,12 @@ function HiddenEntries({ count, noun }: { count: number; noun: string }) {
   if (count === 0) return null
   return (
     <Box sx={groupSectionItemSx}>
-      <Typography variant="body1" color="text.disabled">
+      <Typography
+        variant="body1"
+        sx={{
+          color: 'text.disabled',
+        }}
+      >
         +{count.toLocaleString()} more {pluralize(noun, count)}
       </Typography>
     </Box>
@@ -237,7 +248,12 @@ function ByColumnTab({
         return (
           <Box key={colName}>
             <Box sx={groupSectionHeaderSx}>
-              <Typography variant="body1" fontWeight="bold">
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: 'bold',
+                }}
+              >
                 {colLabel(colName)}
               </Typography>
               <Chip
@@ -250,8 +266,10 @@ function ByColumnTab({
               <Box key={msg} sx={groupSectionItemSx}>
                 <Typography
                   variant="body1"
-                  color="text.secondary"
-                  sx={{ mr: 0.5 }}
+                  sx={{
+                    color: 'text.secondary',
+                    mr: 0.5,
+                  }}
                 >
                   {msg}
                 </Typography>
@@ -282,7 +300,12 @@ function ByMessageTab({
       {groups.map(({ key: msg, totalCount, entries, hiddenEntryCount }) => (
         <Box key={msg}>
           <Box sx={groupSectionHeaderSx}>
-            <Typography variant="body1" fontWeight="bold">
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: 'bold',
+              }}
+            >
               {msg}
             </Typography>
             <Chip
@@ -300,8 +323,11 @@ function ByMessageTab({
               <Box key={colName} sx={groupSectionItemSx}>
                 <Typography
                   variant="body1"
-                  color="text.secondary"
-                  sx={{ mr: 0.5, fontStyle: 'italic' }}
+                  sx={{
+                    color: 'text.secondary',
+                    mr: 0.5,
+                    fontStyle: 'italic',
+                  }}
                 >
                   {colLabel(colName)}
                 </Typography>
@@ -379,7 +405,12 @@ export const ValidationAlert = ({
         }}
       >
         <SynapseSpinner size={14} margin="0" />
-        <Typography variant="body1" color="text.secondary">
+        <Typography
+          variant="body1"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           Loading validation errors…
         </Typography>
       </Box>
@@ -396,7 +427,12 @@ export const ValidationAlert = ({
           borderLeftColor: 'success.main',
         }}
       >
-        <Typography variant="body1" color="success.main">
+        <Typography
+          variant="body1"
+          sx={{
+            color: 'success.main',
+          }}
+        >
           No validation errors
         </Typography>
         <HideLink onHide={onHide} linkRef={hideLinkRef} />
@@ -419,7 +455,12 @@ export const ValidationAlert = ({
           color="error"
           size="small"
         />
-        <Typography variant="body1" fontWeight="bold">
+        <Typography
+          variant="body1"
+          sx={{
+            fontWeight: 'bold',
+          }}
+        >
           Validation errors
         </Typography>
         <HideLink onHide={onHide} linkRef={hideLinkRef} />
@@ -478,7 +519,9 @@ export const ValidationAlert = ({
             borderTop: '1px solid',
             borderColor: 'divider',
           }}
-          TabIndicatorProps={{ style: { height: 2 } }}
+          slotProps={{
+            indicator: { style: { height: 2 } },
+          }}
         >
           <Tab label="By row" value="row" sx={tabSx} />
           <Tab label="By column" value="column" sx={tabSx} />
@@ -544,7 +587,13 @@ export const ValidationAlert = ({
           )}
 
           {allErrors.length > MAX_LISTED_ERRORS && (
-            <Typography variant="body2" color="text.secondary" sx={{ pt: 1 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+                pt: 1,
+              }}
+            >
               Showing the first {MAX_LISTED_ERRORS.toLocaleString()} of{' '}
               {allErrors.length.toLocaleString()} errors
             </Typography>

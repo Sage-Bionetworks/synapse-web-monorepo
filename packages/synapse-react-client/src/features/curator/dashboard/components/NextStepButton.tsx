@@ -87,8 +87,10 @@ export default function NextStepButton(props: NextStepButtonProps) {
             className={styles.buttonTextMain}
             variant="buttonLink"
             color="primary"
-            fontWeight={700}
             align="left"
+            sx={{
+              fontWeight: 700,
+            }}
           >
             {buttonText}
           </Typography>

@@ -12,7 +12,13 @@ export function PrivateEntityDoiWarning() {
         This page is currently <strong>private</strong>.<br />
         You may want to make it <strong>public</strong> before you continue.
       </Alert>
-      <Box rowGap={'15px'} display="flex" flexDirection="column">
+      <Box
+        sx={{
+          rowGap: '15px',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
         <Typography variant="body1">
           DOIs are permanent identifiers for citing research works. When someone
           accesses a DOI, they must be able to view basic information (metadata)

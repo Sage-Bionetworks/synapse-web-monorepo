@@ -34,7 +34,13 @@ export default function TaskFormHeader(props: TaskFormHeaderProps) {
       )}
 
       {pageTitle && (
-        <Stack gap={1} alignItems="center" sx={{ textAlign: 'center' }}>
+        <Stack
+          sx={{
+            gap: 1,
+            alignItems: 'center',
+            textAlign: 'center',
+          }}
+        >
           <Typography variant="headline1" component="h1">
             {pageTitle}
           </Typography>
@@ -42,7 +48,9 @@ export default function TaskFormHeader(props: TaskFormHeaderProps) {
             <Typography
               variant="headline3"
               component="p"
-              color="text.secondary"
+              sx={{
+                color: 'text.secondary',
+              }}
             >
               {pageDescription}
             </Typography>

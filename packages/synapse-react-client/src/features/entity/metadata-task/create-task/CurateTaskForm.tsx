@@ -128,14 +128,25 @@ export default function CurateTaskForm(props: CurateTaskFormProps) {
   }
 
   return (
-    <Stack gap={3}>
+    <Stack
+      sx={{
+        gap: 3,
+      }}
+    >
       <TaskFormHeader
         onExit={onExit}
         pageTitle={pageTitle}
         pageDescription={pageDescription}
       />
 
-      <Stack gap={3} sx={{ width: '100%', maxWidth: 700, mx: 'auto' }}>
+      <Stack
+        sx={{
+          gap: 3,
+          width: '100%',
+          maxWidth: 700,
+          mx: 'auto',
+        }}
+      >
         <StyledFormControl fullWidth>
           <InputLabel id="curate-task-type-label">
             {CURATE_TASK_TYPE_INPUT_LABEL}

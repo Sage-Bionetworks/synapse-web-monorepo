@@ -27,13 +27,21 @@ export default function CuratorDashboardContent() {
   }, [curationTasks])
 
   return (
-    <Stack gap={4}>
+    <Stack
+      sx={{
+        gap: 4,
+      }}
+    >
       <Typography variant="headline1">On Your Radar</Typography>
       <OpenInvitationsToUserCard cardProps={{ className: sharedStyles.card }} />
       <FilteredByTaskIdsBanner taskIds={taskIds} onClear={clearTaskIdsFilter} />
       <InfiniteTableLayout
         table={
-          <Stack gap={3}>
+          <Stack
+            sx={{
+              gap: 3,
+            }}
+          >
             {tasks.map(taskBundle => (
               <CurationTaskCard
                 key={taskBundle.task?.taskId}

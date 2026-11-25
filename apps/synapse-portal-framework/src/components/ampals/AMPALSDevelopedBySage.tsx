@@ -15,10 +15,12 @@ const AMPALSDevelopedBySage = (): React.ReactNode => {
 
       <Stack
         direction={{ xs: 'column', md: 'row' }}
-        justifyContent="center"
-        alignItems="center"
         spacing={5}
-        sx={{ mt: 2 }}
+        sx={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          mt: 2,
+        }}
       >
         <Link
           href="https://c-path.org/"

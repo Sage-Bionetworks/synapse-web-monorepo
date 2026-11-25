@@ -48,7 +48,11 @@ export default function SampleSheetFields(props: SampleSheetFieldsProps) {
   })
 
   return (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       <TextField
         label={SAMPLE_SHEET_INPUT_TASK_ID_LABEL}
         fullWidth

@@ -48,11 +48,18 @@ export default function TaskFormActions(props: TaskFormActionsProps) {
       <Divider />
       <Stack
         direction="row"
-        gap={1}
-        justifyContent="space-between"
-        sx={{ mb: 2 }}
+        sx={{
+          gap: 1,
+          justifyContent: 'space-between',
+          mb: 2,
+        }}
       >
-        <Stack direction="row" gap={1}>
+        <Stack
+          direction="row"
+          sx={{
+            gap: 1,
+          }}
+        >
           {canDelete && (
             <Button
               variant="outlined"
@@ -64,7 +71,12 @@ export default function TaskFormActions(props: TaskFormActionsProps) {
             </Button>
           )}
         </Stack>
-        <Stack direction="row" gap={1}>
+        <Stack
+          direction="row"
+          sx={{
+            gap: 1,
+          }}
+        >
           {onBack && (
             <Button variant="outlined" onClick={onBack} disabled={isPending}>
               Back

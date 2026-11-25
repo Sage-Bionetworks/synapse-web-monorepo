@@ -312,7 +312,14 @@ export function SynapseChatInteraction({
             <Box className={animateEntry ? styles.entryAnimation : undefined}>
               {textContent && <MarkdownSynapse markdown={textContent} />}
               {onSendChat && guidePrompts.length > 0 && (
-                <Stack direction="row" flexWrap="wrap" gap={1} mt={1}>
+                <Stack
+                  direction="row"
+                  sx={{
+                    flexWrap: 'wrap',
+                    gap: 1,
+                    mt: 1,
+                  }}
+                >
                   {guidePrompts.map(prompt => (
                     <Tooltip key={prompt} title={prompt}>
                       <Chip

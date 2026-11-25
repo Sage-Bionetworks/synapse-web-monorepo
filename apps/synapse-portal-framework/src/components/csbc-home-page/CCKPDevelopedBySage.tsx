@@ -15,10 +15,12 @@ const CCKPDevelopedBySage = (): React.ReactNode => {
 
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
-        justifyContent="center"
-        alignItems="center"
         spacing={3}
-        sx={{ mt: 2 }}
+        sx={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          mt: 2,
+        }}
       >
         <Link
           href="https://www.nih.gov/"

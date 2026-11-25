@@ -206,7 +206,13 @@ export function FieldDefinitionDrawer({
                 fullWidth
                 helperText="Shown to the requester below the question."
               />
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: 'center',
+                }}
+              >
                 <TextField
                   select
                   label="Field type"

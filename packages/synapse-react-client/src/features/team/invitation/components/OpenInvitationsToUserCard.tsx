@@ -71,7 +71,12 @@ function InvitationRow(props: { invitation: MembershipInvitation }) {
             >
               <ChatTwoTone sx={{ color: 'grey.700' }} />
             </Tooltip>
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+              }}
+            >
               {invitation.message}
             </Typography>
           </>
@@ -152,7 +157,9 @@ export default function OpenInvitationsToUserCard(
           component={TransitionGroup}
           divider={<Divider flexItem />}
           spacing={2}
-          mt={2}
+          sx={{
+            mt: 2,
+          }}
         >
           {openInvitations.map(invitation => (
             <Collapse key={invitation.id}>
@@ -164,8 +171,10 @@ export default function OpenInvitationsToUserCard(
         <Typography
           variant="body1Italic"
           align="center"
-          color="text.secondary"
-          mt={2}
+          sx={{
+            color: 'text.secondary',
+            mt: 2,
+          }}
         >
           You have no pending team invitations.
         </Typography>

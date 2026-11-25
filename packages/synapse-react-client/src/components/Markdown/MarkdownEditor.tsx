@@ -172,9 +172,6 @@ export function MarkdownEditor({
       <div>
         {MarkdownEditorTabs[currentTab] === 'WRITE' ? (
           <TextField
-            inputProps={{
-              ['aria-label']: 'markdown',
-            }}
             onChange={e => {
               setText(e.target.value)
               handleTagModal(e.target.value)
@@ -188,6 +185,11 @@ export function MarkdownEditor({
             sx={{
               textarea: {
                 resize: 'vertical',
+              },
+            }}
+            slotProps={{
+              htmlInput: {
+                ['aria-label']: 'markdown',
               },
             }}
           />

@@ -85,7 +85,12 @@ export function DarDestinationStep(props: DarDestinationStepProps) {
     <Stack spacing={4}>
       <Stack spacing={1}>
         <Typography variant="h6">Tables</Typography>
-        <Typography variant="subtitle1" color="text.secondary">
+        <Typography
+          variant="subtitle1"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           Choose specific tables to include in your request, or leave this empty
           to request access to every table. Once approved, each included table
           will be transferred to your workspace.
@@ -120,7 +125,12 @@ export function DarDestinationStep(props: DarDestinationStepProps) {
 
       <Stack spacing={1}>
         <Typography variant="h6">Workspace destination</Typography>
-        <Typography variant="subtitle1" color="text.secondary">
+        <Typography
+          variant="subtitle1"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           Choose an existing workspace, or request a new one as part of this
           request.
         </Typography>

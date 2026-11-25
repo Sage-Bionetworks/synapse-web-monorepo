@@ -20,7 +20,12 @@ export function DarWorkspaceStep(props: DarWorkspaceStepProps) {
   return (
     <Stack spacing={1}>
       <Typography variant="h6">New workspace details</Typography>
-      <Typography variant="subtitle1" color="text.secondary">
+      <Typography
+        variant="subtitle1"
+        sx={{
+          color: 'text.secondary',
+        }}
+      >
         Tell us about the workspace you&apos;d like to provision in RDCA-DAP.
       </Typography>
       <TextField

@@ -60,10 +60,22 @@ export function TemplateFileHandleField({
 
   return (
     <Box>
-      <Typography variant="caption" color="text.secondary" component="div">
+      <Typography
+        variant="caption"
+        component="div"
+        sx={{
+          color: 'text.secondary',
+        }}
+      >
         Template file
       </Typography>
-      <Stack direction="row" spacing={1} alignItems="center">
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{
+          alignItems: 'center',
+        }}
+      >
         {fileHandleId ? (
           <>
             {/* A file that no saved version lists yet is one that the current user uploaded, so it is downloaded directly. */}
@@ -87,7 +99,12 @@ export function TemplateFileHandleField({
             </IconButton>
           </>
         ) : (
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
             None
           </Typography>
         )}
