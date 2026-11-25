@@ -15,6 +15,18 @@ export const sageAccountWebThemeOverrides: PartialDeep<ThemeOptions> = {
         contained: {
           fontWeight: '900',
           borderRadius: '3px',
+          variants: [
+            {
+              props: { color: 'secondary' },
+              style: {
+                background: '#FFFFFF',
+                border: '1px solid #EAECEE',
+                boxShadow:
+                  '0px 4px 4px rgba(0, 0, 0, 0.03), 0px 2px 2px rgba(0, 0, 0, 0.03), 0px 1px 1px rgba(0, 0, 0, 0.03)',
+                borderRadius: '3px',
+              },
+            },
+          ],
         },
         outlined: {
           background: '#FFFFFF',
@@ -27,13 +39,6 @@ export const sageAccountWebThemeOverrides: PartialDeep<ThemeOptions> = {
             backgroundColor: '#FFFFFF',
             border: '1px solid #b5bcc3',
           },
-        },
-        containedSecondary: {
-          background: '#FFFFFF',
-          border: '1px solid #EAECEE',
-          boxShadow:
-            '0px 4px 4px rgba(0, 0, 0, 0.03), 0px 2px 2px rgba(0, 0, 0, 0.03), 0px 1px 1px rgba(0, 0, 0, 0.03)',
-          borderRadius: '3px',
         },
         text: {
           '&:hover': {
