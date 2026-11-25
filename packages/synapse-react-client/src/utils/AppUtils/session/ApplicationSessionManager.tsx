@@ -79,6 +79,7 @@ export function ApplicationSessionManager(
         synapseContext={{
           accessToken: token,
           isAuthenticated: sessionContext.isAuthenticated,
+          realmId: sessionContext.realmId,
           isInExperimentalMode: isHydrated && isInSynapseExperimentalMode(),
           enabledExperimentalFeatures,
           utcTime: isHydrated && getUseUtcTimeFromCookie(),
