@@ -1,4 +1,8 @@
-import { mockGenomicsTemplate } from '@/mocks/accessRequirement/mockFormTemplates'
+import { displayToast } from '@/components/ToastMessage'
+import {
+  mockDeprecatedTemplate,
+  mockGenomicsTemplate,
+} from '@/mocks/accessRequirement/mockFormTemplates'
 import {
   GENOMICS_TERMS_LABEL,
   mockGenomicsSchema,
@@ -28,6 +32,8 @@ import { JSONSchema7 } from 'json-schema'
 import { FormTemplateEditor } from './FormTemplateEditor'
 import { ACCESS_REQUIREMENT_BASE_SCHEMA_ID } from './formTemplateSchema'
 import { CHOICE_OPTION_PROBLEM_TEXT, fieldTypeLabel } from './schemaFieldUtils'
+
+vi.mock('@/components/ToastMessage', { spy: true })
 
 const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
@@ -787,5 +793,86 @@ describe('FormTemplateEditor', () => {
     expect(
       screen.queryByRole('textbox', { name: 'Internal Name' }),
     ).not.toBeInTheDocument()
+  })
+
+  describe('Deprecated', () => {
+    function queryDeprecatedCheckbox() {
+      return screen.queryByRole('checkbox', { name: 'Deprecated' })
+    }
+
+    /** Open the Genomics template for editing against a template service the test can inspect. */
+    async function renderGenomicsTemplateEditor() {
+      const user = userEvent.setup()
+      const templates = getFormTemplateService()
+      server.use(...getFormTemplateHandlers(REPO_ENDPOINT, templates))
+      const onSaved = vi.fn()
+      renderEditor(onSaved, mockGenomicsTemplate.id)
+      await screen.findByRole('heading', { name: 'Edit Form Template' })
+      return { user, templates, onSaved }
+    }
+
+    it('is offered only when editing an existing template', async () => {
+      renderEditor()
+      await screen.findByRole('heading', { name: 'Create Form Template' })
+      expect(queryDeprecatedCheckbox()).not.toBeInTheDocument()
+    })
+
+    it("reflects the template's current value", async () => {
+      server.use(
+        ...getFormTemplateHandlers(
+          REPO_ENDPOINT,
+          getFormTemplateService([mockDeprecatedTemplate]),
+        ),
+      )
+      renderEditor(vi.fn(), mockDeprecatedTemplate.id)
+      await screen.findByRole('heading', { name: 'Edit Form Template' })
+      expect(queryDeprecatedCheckbox()).toBeChecked()
+    })
+
+    it('saves a new version marked deprecated, against the same schema version', async () => {
+      const { user, templates, onSaved } = await renderGenomicsTemplateEditor()
+
+      const checkbox = queryDeprecatedCheckbox()!
+      expect(checkbox).not.toBeChecked()
+      await user.click(checkbox)
+      await user.click(screen.getByRole('button', { name: 'Save Changes' }))
+
+      await waitFor(() => expect(onSaved).toHaveBeenCalled())
+      expect(templates.getOneById(mockGenomicsTemplate.id)).toMatchObject({
+        deprecated: true,
+        versionNumber: (mockGenomicsTemplate.versionNumber ?? 0) + 1,
+        schema$id: mockGenomicsTemplate.schema$id,
+      })
+      expect(createdSchemas).toEqual([])
+    })
+
+    it('keeps the edits and warns when the template changed since it was opened', async () => {
+      const { user, templates, onSaved } = await renderGenomicsTemplateEditor()
+      // Someone else saves a version after this editor loaded the template.
+      templates.update(mockGenomicsTemplate.id, {
+        ...templates.getOneById(mockGenomicsTemplate.id)!,
+        etag: 'saved-elsewhere',
+      })
+
+      await user.click(queryDeprecatedCheckbox()!)
+      await user.clear(getNameField())
+      await user.type(getNameField(), 'Renamed Template')
+      await user.click(screen.getByRole('button', { name: 'Save Changes' }))
+
+      await waitFor(() =>
+        expect(displayToast).toHaveBeenCalledWith(
+          expect.stringContaining('changed by someone else'),
+          'warning',
+          expect.anything(),
+        ),
+      )
+      expect(onSaved).not.toHaveBeenCalled()
+      expect(templates.getOneById(mockGenomicsTemplate.id)?.deprecated).toBe(
+        false,
+      )
+      expect(queryDeprecatedCheckbox()).toBeChecked()
+      expect(getNameField()).toHaveValue('Renamed Template')
+      expect(screen.getByRole('button', { name: 'Save Changes' })).toBeEnabled()
+    })
   })
 })

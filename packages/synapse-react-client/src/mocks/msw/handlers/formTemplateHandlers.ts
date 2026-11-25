@@ -63,12 +63,8 @@ export const getFormTemplateHandlers = (
     `${backendOrigin}${FORM_TEMPLATE_BASE}/:id`,
     async ({ request, params }) => {
       const body = (await request.json()) as FormTemplate
-      const updated = service.update(params.id as string, {
-        ...body,
-        etag: crypto.randomUUID(),
-        versionNumber: (body.versionNumber ?? 0) + 1,
-      })
-      if (!updated) {
+      const current = service.getOneById(params.id as string)
+      if (!current) {
         return HttpResponse.json(
           {
             concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
@@ -77,6 +73,21 @@ export const getFormTemplateHandlers = (
           { status: 404 },
         )
       }
+      // Like the server, reject an update derived from a version other than the current one.
+      if (body.etag !== current.etag) {
+        return HttpResponse.json(
+          {
+            concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+            reason: `FormTemplate ${params.id} was updated since you last fetched it, retrieve it again and reapply the update.`,
+          },
+          { status: 412 },
+        )
+      }
+      const updated = service.update(params.id as string, {
+        ...body,
+        etag: crypto.randomUUID(),
+        versionNumber: (current.versionNumber ?? 0) + 1,
+      })
       return HttpResponse.json(updated)
     },
   ),

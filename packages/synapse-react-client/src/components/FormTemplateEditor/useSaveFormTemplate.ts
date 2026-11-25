@@ -38,6 +38,8 @@ export type SaveFormTemplateDraftParams = {
   initialTemplate?: FormTemplate
   initialJsonSchema?: RJSFSchema
   name: string
+  /** Whether the saved version is deprecated, which hides it from the default template search. */
+  deprecated: boolean
   jsonSchema: RJSFSchema
   /** The steps as the template stores them. */
   steps: FormTemplateStep[]
@@ -120,6 +122,7 @@ export function useSaveFormTemplate(
       const formTemplate: FormTemplate = {
         ...params.initialTemplate,
         name: params.name,
+        deprecated: params.deprecated,
         schema$id,
         steps: params.steps,
         attachments: getFormTemplateAttachments(params.steps),
