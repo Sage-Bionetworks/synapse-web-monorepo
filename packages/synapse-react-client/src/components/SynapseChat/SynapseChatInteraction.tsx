@@ -17,6 +17,7 @@ import {
   useTheme,
 } from '@mui/material'
 import { TraceEvent } from '@sage-bionetworks/synapse-types'
+import classNames from 'classnames'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import styles from './SynapseChatInteraction.module.scss'
@@ -309,7 +310,11 @@ export function SynapseChatInteraction({
             )}
           </Box>
           {(textContent || (onSendChat && guidePrompts.length > 0)) && (
-            <Box className={animateEntry ? styles.entryAnimation : undefined}>
+            <Box
+              className={classNames(styles.response, {
+                [styles.entryAnimation]: animateEntry,
+              })}
+            >
               {textContent && <MarkdownSynapse markdown={textContent} />}
               {onSendChat && guidePrompts.length > 0 && (
                 <Stack

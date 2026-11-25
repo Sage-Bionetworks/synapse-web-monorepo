@@ -1,4 +1,5 @@
 import SynapseGridLayout from '@/components/DataGrid/components/SynapseGridLayout'
+import { mockWideTableAgentChatResponse } from '@/mocks/chat/mockChat'
 import { getChatbotHandlers } from '@/mocks/msw/handlers/chatHandlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Box, Button, Typography } from '@mui/material'
@@ -81,6 +82,21 @@ type Story = StoryObj<typeof meta>
 
 /** Docked in the AI Assistant sidebar, used when the GRID_AGENT_SIDEBAR feature flag is on */
 export const Sidebar: Story = {}
+
+/** The agent replies with a table wider than the sidebar */
+export const WideResponse: Story = {
+  parameters: {
+    msw: {
+      handlers: {
+        ...handlers,
+        chatbot: getChatbotHandlers(
+          MOCK_REPO_ORIGIN,
+          mockWideTableAgentChatResponse,
+        ),
+      },
+    },
+  },
+}
 
 /** In a dialog opened from the toolbar, used when the GRID_AGENT_SIDEBAR feature flag is off */
 export const Dialog: Story = {
