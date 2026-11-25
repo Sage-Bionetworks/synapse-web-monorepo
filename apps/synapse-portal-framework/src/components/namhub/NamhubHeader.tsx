@@ -2,8 +2,6 @@
 import styles from './NamhubHeader.module.scss'
 import { Link, Stack, SxProps } from '@mui/material'
 import HeaderSearchBox from '../HeaderSearchBox'
-import { RssFeedCards } from 'synapse-react-client'
-import { SectionLayout } from '../SectionLayout'
 
 const searchExampleTerms = [
   'LLFS',
@@ -53,31 +51,18 @@ function NamhubHomePageHeader() {
   )
 
   return (
-    <>
-      <div className={styles.topSectionContainer}>
-        <Stack className={styles.headerTextContainer}>
-          <div className={styles.headerText}>{title}</div>
-          <div className={styles.descriptionText}>{description}</div>
-        </Stack>
-        <HeaderSearchBox
-          searchPlaceholder="Search for data and resources"
-          searchExampleTerms={searchExampleTerms}
-          path="/Search"
-          sx={searchBoxSx}
-        />
-      </div>
-      <div className={styles.eventSection}>
-        <SectionLayout title="Events" centerTitle>
-          <RssFeedCards
-            url="https://nhdcc.wpenginepowered.com"
-            itemsToShow={3}
-            allowCategories={[]}
-            viewAllNewsButtonText="View All Events"
-            hideDate
-          />
-        </SectionLayout>
-      </div>
-    </>
+    <div className={styles.topSectionContainer}>
+      <Stack className={styles.headerTextContainer}>
+        <div className={styles.headerText}>{title}</div>
+        <div className={styles.descriptionText}>{description}</div>
+      </Stack>
+      <HeaderSearchBox
+        searchPlaceholder="Search for data and resources"
+        searchExampleTerms={searchExampleTerms}
+        path="/Search"
+        sx={searchBoxSx}
+      />
+    </div>
   )
 }
 
