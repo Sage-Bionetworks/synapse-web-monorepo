@@ -14,6 +14,7 @@ import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import { Submission } from '@sage-bionetworks/synapse-types'
 import { ReactNode, useMemo } from 'react'
 import { DataAccessSubmissionFileHandleLink } from './DataAccessSubmissionFileHandleLink'
+import styles from './SubmissionSchemaAnswers.module.scss'
 
 export const NO_RESPONSE_TEXT = 'No response'
 export const OTHER_RESPONSES_TITLE = 'Other responses'
@@ -170,7 +171,7 @@ export function SubmissionSchemaAnswerList(
       {groups.map((group, index) => (
         // Step titles are not unique, and the list is derived rather than reordered.
         <Stack component="section" key={index} sx={{ gap: 2 }}>
-          <Stack sx={{ gap: 0.5 }}>
+          <Stack className={styles.groupHeading} sx={{ gap: 0.5 }}>
             <Typography variant="headline3">{group.title}</Typography>
             {group.description && (
               <Typography
@@ -185,7 +186,11 @@ export function SubmissionSchemaAnswerList(
           </Stack>
           <Stack component="dl" sx={{ gap: 2, m: 0 }}>
             {group.fields.map(field => (
-              <Stack key={field.propertyKey} sx={{ gap: 0.5 }}>
+              <Stack
+                key={field.propertyKey}
+                className={styles.answer}
+                sx={{ gap: 0.5 }}
+              >
                 <Typography variant="smallText2" component="dt">
                   {field.label}
                 </Typography>

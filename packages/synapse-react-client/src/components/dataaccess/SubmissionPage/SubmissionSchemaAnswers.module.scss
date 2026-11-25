@@ -1,0 +1,9 @@
+@media print {
+  // Keep step headings and answer labels with what follows. Answers may split across pages: one moved whole to the
+  // next page leaves the rest of this page blank.
+  .groupHeading,
+  .answer dt {
+    break-inside: avoid;
+    break-after: avoid;
+  }
+}

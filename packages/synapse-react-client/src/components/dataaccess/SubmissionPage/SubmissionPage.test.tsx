@@ -35,7 +35,10 @@ import {
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   DATA_ACCESS_SUBMISSION_BY_ID,
   THREAD_FOR_SUBMISSION,
+  USER_PROFILE,
 } from '@/utils/APIConstants'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import dayjs from 'dayjs'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -57,16 +60,28 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { http, HttpResponse } from 'msw'
+import { delay, http, HttpResponse } from 'msw'
+import type { MockInstance } from 'vitest'
 import { useNavigate } from 'react-router'
 import * as RejectDataAccessRequestModalModule from '../RejectDataAccessRequestModal'
 import { CancelDataAccessRequestConfirmationModal } from './CancelDataAccessRequestConfirmationModal'
-import SubmissionPage, { SubmissionPageProps } from './SubmissionPage'
+import SubmissionPage, {
+  SUBMISSION_PRINT_TITLE,
+  SubmissionPageProps,
+} from './SubmissionPage'
 
 function renderComponent(props: SubmissionPageProps) {
   render(<SubmissionPage {...props} />, {
     wrapper: createWrapper(),
   })
+}
+
+/** The value the submission details list gives for `label` */
+function getSubmissionDetail(label: string) {
+  const index = screen
+    .getAllByRole('term')
+    .findIndex(term => term.textContent === label)
+  return screen.getAllByRole('definition')[index]
 }
 
 const SUBMITTED_SUBMISSION_ID = mockSubmittedSubmission.id
@@ -280,11 +295,13 @@ describe('Submission Page tests', () => {
         ')',
     )
 
-    // This username appears three times, in 'submittedBy', 'modifiedBy', and as an accessor
-    expect(await screen.findAllByText('@' + MOCK_USER_NAME)).toHaveLength(3)
+    // Named in full three times: as the submitter, the modifier, and a data requester
+    expect(
+      await screen.findAllByText(`First Last (@${MOCK_USER_NAME})`),
+    ).toHaveLength(3)
 
-    // This username only appears as an accessor
-    await screen.findByText('@' + MOCK_USER_NAME_2)
+    // Only a data requester
+    await screen.findByText(`John Doe (@${MOCK_USER_NAME_2})`)
 
     await screen.findByText('Institution')
     await screen.findByText(
@@ -424,9 +441,9 @@ describe('Submission Page tests', () => {
       isReviewer: true,
     })
 
-    // User 1 now appears as the submitter, modifier, an accessor, and the Reviewer
+    // Only the reviewer card shows User 1 by username alone; elsewhere they are named in full
     await waitFor(() =>
-      expect(screen.getAllByText('@' + MOCK_USER_NAME)).toHaveLength(4),
+      expect(screen.getAllByText('@' + MOCK_USER_NAME)).toHaveLength(1),
     )
 
     // User 3 should not appear - they are not a reviewer
@@ -434,6 +451,142 @@ describe('Submission Page tests', () => {
 
     // When an ACL exists, don't show the ACT as the reviewer
     expect(screen.queryByText(mockActTeam.name)).not.toBeInTheDocument()
+  })
+
+  describe('Download PDF', () => {
+    const repoEndpoint = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+    const pageTitle = 'Synapse'
+    let titleWhilePrinting: string | undefined
+    let printSpy: MockInstance<Window['print']>
+
+    beforeEach(() => {
+      document.title = pageTitle
+      titleWhilePrinting = undefined
+      printSpy = vi.spyOn(window, 'print').mockImplementation(() => {
+        titleWhilePrinting = document.title
+      })
+    })
+    afterEach(() => {
+      printSpy.mockRestore()
+    })
+
+    it.each([
+      { viewer: 'reviewer', isReviewer: true },
+      { viewer: 'requester', isReviewer: false },
+    ])(
+      'prints the loaded submission for a $viewer, titled so the PDF is named for it',
+      async ({ isReviewer }) => {
+        renderComponent({ submissionId: SUBMITTED_SUBMISSION_ID, isReviewer })
+
+        const downloadButton = await screen.findByRole('button', {
+          name: 'Download PDF',
+        })
+        await waitFor(() => expect(downloadButton).toBeEnabled())
+
+        await userEvent.click(downloadButton)
+        expect(printSpy).toHaveBeenCalledOnce()
+        expect(titleWhilePrinting).toBe(
+          `${SUBMISSION_PRINT_TITLE} ${SUBMITTED_SUBMISSION_ID}`,
+        )
+
+        window.dispatchEvent(new Event('afterprint'))
+        expect(document.title).toBe(pageTitle)
+      },
+    )
+
+    // Each case stalls one request the printout needs, once everything else it waits for has loaded.
+    it.each([
+      {
+        stalled: 'the current user profile',
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: true,
+        path: USER_PROFILE,
+        loaded: `${mockManagedACTAccessRequirement.name} (${mockSubmittedSubmission.accessRequirementId})`,
+      },
+      {
+        stalled: 'the access requirement',
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: true,
+        path: ACCESS_REQUIREMENT_BY_ID(':id'),
+        loaded: 'Submission ID',
+      },
+      {
+        stalled: "the requester's access approval",
+        submissionId: APPROVED_SUBMISSION_ID,
+        isReviewer: false,
+        path: USER_ACCESS_APPROVAL_PATH(':id'),
+        loaded: `${mockManagedACTAccessRequirement.name} (${mockApprovedSubmission.accessRequirementId})`,
+      },
+      {
+        stalled: 'the form template',
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+        path: '/repo/v1/accessRequirement/formTemplate/*',
+        loaded: `${mockManagedACTAccessRequirement.name} (${mockSchemaDataSubmission.accessRequirementId})`,
+      },
+    ])(
+      'keeps Download PDF disabled while $stalled is loading',
+      async ({ submissionId, isReviewer, path, loaded }) => {
+        server.use(
+          ...getFormTemplateHandlers(repoEndpoint),
+          ...getRegisteredSchemaHandlers(repoEndpoint, [
+            mockClinicalSchema as JSONSchema7,
+          ]),
+          http.get(`${repoEndpoint}${path}`, () => delay('infinite')),
+        )
+        renderComponent({ submissionId, isReviewer })
+
+        await screen.findByText(loaded)
+        expect(
+          screen.getByRole('button', { name: 'Download PDF' }),
+        ).toBeDisabled()
+      },
+    )
+
+    it('keeps Download PDF disabled while the submission is loading', async () => {
+      server.use(
+        http.get(`${repoEndpoint}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`, () =>
+          delay('infinite'),
+        ),
+      )
+      renderComponent({
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: true,
+      })
+
+      expect(
+        await screen.findByRole('button', { name: 'Download PDF' }),
+      ).toBeDisabled()
+    })
+  })
+
+  it('shows the submission ID, submitter, submission date and each requester with their access change', async () => {
+    renderComponent({
+      submissionId: SUBMITTED_SUBMISSION_ID,
+      isReviewer: false,
+    })
+
+    await screen.findByText(
+      `${mockManagedACTAccessRequirement.name} (${mockSubmittedSubmission.accessRequirementId})`,
+    )
+    expect(getSubmissionDetail('Submission ID')).toHaveTextContent(
+      SUBMITTED_SUBMISSION_ID,
+    )
+    expect(getSubmissionDetail('Submitted On')).toHaveTextContent(
+      formatDate(dayjs(mockSubmittedSubmission.submittedOn)),
+    )
+    await waitFor(() =>
+      expect(getSubmissionDetail('Submitted By')).toHaveTextContent(
+        `First Last (@${MOCK_USER_NAME})`,
+      ),
+    )
+    await waitFor(() =>
+      expect(
+        getSubmissionDetail(
+          `Data Requesters (${mockSubmittedSubmission.accessorChanges.length})`,
+        ),
+      ).toHaveTextContent(`John Doe (@${MOCK_USER_NAME_2})Gain`),
+    )
   })
 
   describe('Viewing page as an accessor', () => {
@@ -617,11 +770,14 @@ describe('Submission Page tests', () => {
       expect(mockDiscussionThread).not.toHaveBeenCalled()
     })
 
-    it('hides certain ui elements that should not be shown to accessors', () => {
+    it('hides certain ui elements that should not be shown to accessors', async () => {
       renderComponent({
         submissionId: SUBMITTED_SUBMISSION_ID,
         isReviewer: false,
       })
+
+      // Wait for the submission details, which include Modified By for a reviewer
+      await screen.findByText('Submitted By')
 
       // approve/reject buttons
       expect(

@@ -1,0 +1,35 @@
+.printTitle {
+  display: none;
+}
+
+@media print {
+  // useMediaPrintOnly hides the rest of the page with `visibility`, which leaves it taking up space: a host page taller
+  // than the submission would print blank pages after it. Take everything but this page and its ancestors out of the
+  // layout.
+  :global(body) :not(:has(.page), .page, .page *) {
+    display: none !important;
+  }
+
+  .page {
+    // Override MUI Grid's flex layout, whose style sheet may load after this one. useMediaPrintOnly positions the page
+    // absolutely, which would otherwise shrink it to its content's width.
+    display: block !important;
+    width: 100%;
+
+    // A global print rule follows each link with its URL; user names are links here.
+    a[href]::after {
+      content: none !important;
+    }
+  }
+
+  .column {
+    width: 100% !important;
+  }
+
+  .printTitle {
+    display: block;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    border-bottom: 2px solid currentColor;
+  }
+}

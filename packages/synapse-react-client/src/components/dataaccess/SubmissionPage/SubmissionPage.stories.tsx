@@ -16,7 +16,11 @@ import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService
 import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
 import { getWikiHandlers } from '@/mocks/msw/handlers/wikiHandlers'
 import mockRejectionReasonsTableQueryResultBundle from '@/mocks/query/mockRejectionReasonsTableQueryResultBundle'
-import { MOCK_USER_ID_2 } from '@/mocks/user/mock_user_profile'
+import {
+  MOCK_USER_ID,
+  MOCK_USER_ID_2,
+  MOCK_USER_ID_3,
+} from '@/mocks/user/mock_user_profile'
 import {
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
@@ -28,7 +32,7 @@ import { Meta, StoryObj } from '@storybook/react-vite'
 import { JSONSchema7 } from 'json-schema'
 import { http, HttpResponse } from 'msw'
 import SubmissionPage from './SubmissionPage'
-import { ErrorResponse } from '@sage-bionetworks/synapse-types'
+import { AccessType, ErrorResponse } from '@sage-bionetworks/synapse-types'
 
 const meta = {
   title: 'Governance/SubmissionPage',
@@ -181,6 +185,48 @@ export const SchemaDataWithAttachments: Story = {
             HttpResponse.json({
               ...mockSchemaDataSubmission,
               attachments: [MOCK_FILE_HANDLE_ID, MOCK_PREVIEW_FILE_HANDLE_ID],
+            }),
+        ),
+        ...formTemplateHandlers,
+        ...submissionPageHandlers,
+      ],
+    },
+  },
+}
+
+const LONG_ANSWER = Array.from(
+  { length: 12 },
+  (_, i) =>
+    `Paragraph ${i + 1}. We will combine the requested clinical trial data with our existing cohort to model amyloid and tau trajectories over 36 months. Data will be stored on our institution's HIPAA-compliant cluster and accessed only by the named requesters.`,
+).join('\n\n')
+
+/** Answers long enough to span several printed pages, for checking Download PDF pagination. */
+export const SchemaDataWithLongAnswers: Story = {
+  ...SchemaDataOnly,
+  name: 'Schema-driven submission with long answers',
+  parameters: {
+    ...Demo.parameters,
+    msw: {
+      handlers: [
+        http.get(
+          `${MOCK_REPO_ORIGIN}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
+          () =>
+            HttpResponse.json({
+              ...mockSchemaDataSubmission,
+              accessorChanges: [
+                MOCK_USER_ID,
+                MOCK_USER_ID_2,
+                MOCK_USER_ID_3,
+              ].map(userId => ({
+                userId: String(userId),
+                type: AccessType.GAIN_ACCESS,
+              })),
+              schemaData: {
+                ...mockSchemaDataSubmission.schemaData,
+                projectTitle: LONG_ANSWER,
+                researchPlan: LONG_ANSWER,
+                dataManagementPlan: LONG_ANSWER,
+              },
             }),
         ),
         ...formTemplateHandlers,

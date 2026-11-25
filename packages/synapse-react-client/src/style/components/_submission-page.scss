@@ -11,28 +11,6 @@
   }
   .SubmissionSummary {
     margin-bottom: 15px;
-    .SubmissionSummaryGrid {
-      display: grid;
-      gap: 8px;
-      // Grid column maximum is 50% minus 5px to account for the column gap
-      grid-template-columns: minmax(auto, calc(50% - 5px)) minmax(
-          auto,
-          calc(50% - 5px)
-        );
-
-      .Key {
-        grid-column: 1;
-      }
-
-      .Value {
-        grid-column: 2;
-      }
-
-      .DataAccessor {
-        margin-top: 5px;
-        margin-bottom: 3px;
-      }
-    }
   }
   ul {
     padding-left: 25px;
