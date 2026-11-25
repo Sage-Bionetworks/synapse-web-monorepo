@@ -9,7 +9,7 @@ import {
 import {
   applyFieldType,
   FIELD_TYPE_OPTIONS,
-  SimpleFieldType,
+  LONG_TEXT_WIDGET,
 } from './schemaFieldUtils'
 
 const textProperty: RJSFSchema = { type: 'string', title: 'Institution' }
@@ -22,13 +22,14 @@ function baseProps(
     propertyKey: 'institution',
     existingKeys: new Set(['institution', 'summaryOfUse']),
     property: textProperty,
+    uiDefinition: {},
     isRequired: false,
     context: 'ALWAYS',
     isUsedInSteps: false,
     onClose: vi.fn(),
     onUpdate: vi.fn(),
     onRenameKey: vi.fn(),
-    onReplace: vi.fn(),
+    onChangeType: vi.fn(),
     onChangeRequired: vi.fn(),
     onChangeContext: vi.fn(),
     onRemove: vi.fn(),
@@ -111,43 +112,77 @@ describe('FieldDefinitionDrawer', () => {
   })
 
   it.each(FIELD_TYPE_OPTIONS)(
-    'replaces the property with the $value shape when the field type changes to it',
+    'reports $value when the field type changes to it',
     async ({ value, label }) => {
       const user = userEvent.setup()
-      const onReplace = vi.fn()
+      const onChangeType = vi.fn()
       // Start from a property of a *different* type than the option being selected -- MUI's
       // Select only fires onChange when the value actually changes.
       const startingType = value === 'text' ? 'boolean' : 'text'
       const startingProperty = applyFieldType(textProperty, startingType)
       render(
         <FieldDefinitionDrawer
-          {...baseProps({ property: startingProperty, onReplace })}
+          {...baseProps({ property: startingProperty, onChangeType })}
         />,
       )
       await user.click(screen.getByLabelText('Field type'))
       await user.click(screen.getByRole('option', { name: label }))
-      // Literal per-type shape (not a call to applyFieldType) so a regression in that helper's
-      // own mapping fails this integration test too, not only schemaFieldUtils.test.ts.
-      const expectedShapeByType: Record<SimpleFieldType, RJSFSchema> = {
-        text: { title: 'Institution', type: 'string' },
-        number: { title: 'Institution', type: 'number' },
-        boolean: { title: 'Institution', type: 'boolean' },
-        choice: { title: 'Institution', type: 'string', enum: ['Option 1'] },
-        multiChoice: {
-          title: 'Institution',
-          type: 'array',
-          items: { type: 'string', enum: ['Option 1'] },
-          uniqueItems: true,
-        },
-        file: {
-          title: 'Institution',
-          type: 'number',
-          format: 'synapse-filehandle-id',
-        },
-      }
-      expect(onReplace).toHaveBeenCalledWith(expectedShapeByType[value])
+      expect(onChangeType).toHaveBeenCalledWith(value)
     },
   )
+
+  it('shows a string whose uiDefinition asks for a textarea as Long text', () => {
+    render(
+      <FieldDefinitionDrawer
+        {...baseProps({ uiDefinition: { 'ui:widget': LONG_TEXT_WIDGET } })}
+      />,
+    )
+    expect(
+      screen.getByRole('combobox', { name: 'Field type' }),
+    ).toHaveTextContent('Long text')
+  })
+
+  it('shows a boolean that must be true as a must-be-checked checkbox that is always required', () => {
+    render(
+      <FieldDefinitionDrawer
+        {...baseProps({
+          property: { type: 'boolean', const: true, title: 'Agree' },
+          isRequired: true,
+        })}
+      />,
+    )
+    expect(
+      screen.getByRole('combobox', { name: 'Field type' }),
+    ).toHaveTextContent('Checkbox (must be checked)')
+    const required = screen.getByRole('switch', { name: 'Required' })
+    expect(required).toBeChecked()
+    expect(required).toBeDisabled()
+  })
+
+  it('lets a plain Yes / No question be made optional', () => {
+    render(
+      <FieldDefinitionDrawer
+        {...baseProps({ property: { type: 'boolean' }, isRequired: true })}
+      />,
+    )
+    expect(screen.getByRole('switch', { name: 'Required' })).toBeEnabled()
+  })
+
+  it('lets a must-be-checked box authored as optional be made required', async () => {
+    const user = userEvent.setup()
+    const onChangeRequired = vi.fn()
+    render(
+      <FieldDefinitionDrawer
+        {...baseProps({
+          property: { type: 'boolean', const: true },
+          isRequired: false,
+          onChangeRequired,
+        })}
+      />,
+    )
+    await user.click(screen.getByRole('switch', { name: 'Required' }))
+    expect(onChangeRequired).toHaveBeenCalledWith(true)
+  })
 
   describe('property key editing', () => {
     it('shows "Required" when the key is cleared', async () => {

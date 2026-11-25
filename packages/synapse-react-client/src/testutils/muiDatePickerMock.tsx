@@ -6,7 +6,7 @@ vi.mock('@mui/x-date-pickers', () => ({
       // If textFieldProps is a function, call it to get the props
       textFieldProps = slotProps?.textField({ value, onChange })
     }
-    const inputProps = textFieldProps.inputProps || {}
+    const inputProps = textFieldProps.slotProps?.htmlInput || {}
     // when a dayjs object is passed in, the mock input is given a formatted string for its value (aligning with test case expectations)
     const formattedValue =
       value && typeof value === 'object' && value.format

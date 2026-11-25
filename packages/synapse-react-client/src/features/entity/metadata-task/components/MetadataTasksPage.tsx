@@ -48,7 +48,12 @@ function MetadataTasksPageInternal(props: MetadataTaskTableProps) {
 
   return (
     <Stack>
-      <Stack direction="row" justifyContent="flex-end">
+      <Stack
+        direction="row"
+        sx={{
+          justifyContent: 'flex-end',
+        }}
+      >
         <FormControlLabel
           control={
             <Switch
@@ -73,7 +78,12 @@ function MetadataTasksPageInternal(props: MetadataTaskTableProps) {
       <FilteredByTaskIdsBanner taskIds={taskIds} onClear={clearTaskIdsFilter} />
       <InfiniteTableLayout
         table={
-          <Stack gap={3} sx={{ my: 2 }}>
+          <Stack
+            sx={{
+              gap: 3,
+              my: 2,
+            }}
+          >
             {tasks.map(taskBundle => (
               <CurationTaskCard
                 key={taskBundle.task?.taskId}

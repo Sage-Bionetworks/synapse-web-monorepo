@@ -59,7 +59,12 @@ function SchemaAnswerValue(props: {
   const { submissionId, value, subSchema } = props
   if (isEmptyAnswer(value)) {
     return (
-      <Typography variant="body1" color="text.secondary">
+      <Typography
+        variant="body1"
+        sx={{
+          color: 'text.secondary',
+        }}
+      >
         {NO_RESPONSE_TEXT}
       </Typography>
     )
@@ -168,7 +173,12 @@ export function SubmissionSchemaAnswerList(
           <Stack sx={{ gap: 0.5 }}>
             <Typography variant="headline3">{group.title}</Typography>
             {group.description && (
-              <Typography variant="body1" color="text.secondary">
+              <Typography
+                variant="body1"
+                sx={{
+                  color: 'text.secondary',
+                }}
+              >
                 {group.description}
               </Typography>
             )}

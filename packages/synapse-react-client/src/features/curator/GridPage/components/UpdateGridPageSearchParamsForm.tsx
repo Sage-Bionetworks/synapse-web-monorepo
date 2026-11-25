@@ -51,7 +51,13 @@ export function UpdateGridPageSearchParamsForm() {
           onChange={e => setAgentRegistrationIdInputValue(e.target.value)}
         />
       </Grid>
-      <Grid container size={12} justifyContent="flex-end">
+      <Grid
+        container
+        size={12}
+        sx={{
+          justifyContent: 'flex-end',
+        }}
+      >
         <Button
           variant={'outlined'}
           onClick={() => {

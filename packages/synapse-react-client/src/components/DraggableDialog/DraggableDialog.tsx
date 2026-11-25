@@ -94,10 +94,10 @@ export default function DraggableDialog({
     >
       <Stack
         direction="row"
-        alignItems="center"
-        gap="5px"
         className="drag-handle"
         sx={{
+          alignItems: 'center',
+          gap: '5px',
           padding: variant === 'curie' ? '44px 44px 20px 44px' : '20px',
           cursor: 'move',
         }}

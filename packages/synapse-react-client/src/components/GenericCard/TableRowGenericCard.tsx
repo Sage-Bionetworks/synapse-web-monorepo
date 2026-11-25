@@ -374,9 +374,21 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     }[]
     if (rows.length === 0) return undefined
     return (
-      <Stack direction="column" gap="4px">
+      <Stack
+        direction="column"
+        sx={{
+          gap: '4px',
+        }}
+      >
         {rows.map(({ name, rawValue, columnName }) => (
-          <Stack key={columnName} direction="row" gap="4px" alignItems="center">
+          <Stack
+            key={columnName}
+            direction="row"
+            sx={{
+              gap: '4px',
+              alignItems: 'center',
+            }}
+          >
             <Typography component="span" variant="body1">
               {name}:
             </Typography>

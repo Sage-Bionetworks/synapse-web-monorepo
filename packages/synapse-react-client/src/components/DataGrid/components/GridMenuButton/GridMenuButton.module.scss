@@ -1,5 +1,5 @@
 .button:global(.MuiButton-root) {
-  height: 36px;
+  height: var(--synapse-grid-toolbar-item-height);
   font-size: 16px;
   font-weight: 400;
   white-space: nowrap;

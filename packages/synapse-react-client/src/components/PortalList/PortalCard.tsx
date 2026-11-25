@@ -89,14 +89,24 @@ export function PortalCard({ portal }: PortalCardProps): React.ReactNode {
 
           <Box className={styles.metadata}>
             {id && (
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.secondary',
+                }}
+              >
                 <strong>ID:</strong> {id}
               </Typography>
             )}
 
             {createdBy && (
               <Box className={styles.userInfo}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'text.secondary',
+                  }}
+                >
                   <strong>Created by:</strong>
                 </Typography>
                 <UserCard
@@ -106,7 +116,12 @@ export function PortalCard({ portal }: PortalCardProps): React.ReactNode {
                   disableLink={false}
                 />
                 {createdOn && (
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary',
+                    }}
+                  >
                     on {dayjs(createdOn).format('MMMM D, YYYY')}
                   </Typography>
                 )}
@@ -115,7 +130,12 @@ export function PortalCard({ portal }: PortalCardProps): React.ReactNode {
 
             {modifiedBy && (
               <Box className={styles.userInfo}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'text.secondary',
+                  }}
+                >
                   <strong>Last modified by:</strong>
                 </Typography>
                 <UserCard
@@ -125,7 +145,12 @@ export function PortalCard({ portal }: PortalCardProps): React.ReactNode {
                   disableLink={false}
                 />
                 {modifiedOn && (
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary',
+                    }}
+                  >
                     on {dayjs(modifiedOn).format('MMMM D, YYYY')}
                   </Typography>
                 )}

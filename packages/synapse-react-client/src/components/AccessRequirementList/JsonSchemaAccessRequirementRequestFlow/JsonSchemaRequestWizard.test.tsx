@@ -9,6 +9,7 @@ import {
 import { MOCK_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
 import { FileUploadProps } from '@/components/FileUpload/FileUpload'
 import {
+  GENOMICS_TERMS_LABEL as TERMS_LABEL,
   mockClinicalSchema,
   mockGenomicsSchema,
 } from '@/mocks/accessRequirement/mockJsonSchemas'
@@ -35,6 +36,7 @@ import JsonSchemaRequestWizard, {
   REQUESTER_INFORMATION_STEP_LABEL,
   JsonSchemaRequestWizardProps,
 } from './JsonSchemaRequestWizard'
+import { REQUIRED_MESSAGE } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
 
 // The upload completes with whichever file handle the test sets, or fails. While `holdUploads` is set, it completes
 // only when the test calls `completeHeldUpload`.
@@ -224,7 +226,15 @@ function renderWizard(
 }
 
 async function acceptTerms(user: UserEvent) {
-  await user.click(await screen.findByRole('radio', { name: 'Yes' }))
+  await user.click(await screen.findByRole('checkbox', { name: TERMS_LABEL }))
+}
+
+/** Answers the Research Use step of the plain genomics form, reaching its Agreements step. */
+async function advanceToAgreementsStep(user: UserEvent) {
+  await advanceToStep(user)
+  await user.type(await screen.findByRole('textbox'), 'Studying the genome')
+  await user.click(screen.getByRole('button', { name: 'Next' }))
+  return screen.findByRole('checkbox', { name: TERMS_LABEL })
 }
 
 /** Answers the Research Use step of the genomics form served by getGenomicsDataSharingHandlers */
@@ -263,6 +273,21 @@ describe('JsonSchemaRequestWizard', () => {
     await advanceToStep(user)
     expect(await screen.findByRole('textbox')).toBeVisible()
     expect(screen.queryByRole('radio')).not.toBeInTheDocument()
+  })
+
+  it("renders a long-text question, set by the slot's uiDefinition, as a multi-line box", async () => {
+    mockRequestServices(
+      genomicsAccessRequirement,
+      createRequest(genomicsAccessRequirement),
+    )
+    const user = userEvent.setup()
+    renderWizard(genomicsAccessRequirement)
+    await advanceToStep(user)
+
+    // The genomics template's intendedDataUse slot sets `ui:widget: textarea` with 5 rows.
+    const answer = await screen.findByRole('textbox')
+    expect(answer.tagName).toBe('TEXTAREA')
+    expect(answer).toHaveAttribute('rows', '5')
   })
 
   it('does not advance past a step with a missing required answer', async () => {
@@ -311,6 +336,34 @@ describe('JsonSchemaRequestWizard', () => {
         requestEtag: savedRequests.at(-1)?.etag,
       }),
     ])
+  })
+
+  it('asks the requester to check the terms box, and does not submit until it is checked', async () => {
+    const { submissionRequests } = mockRequestServices(
+      genomicsAccessRequirement,
+      createRequest(genomicsAccessRequirement),
+    )
+    const user = userEvent.setup()
+    const props = renderWizard(genomicsAccessRequirement)
+    const terms = await advanceToAgreementsStep(user)
+    expect(terms).not.toBeChecked()
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }))
+
+    expect(
+      await screen.findByRole('checkbox', {
+        name: TERMS_LABEL,
+        description: /You must check this box to continue/,
+      }),
+    ).toHaveAttribute('aria-invalid', 'true')
+    expect(submissionRequests).toHaveLength(0)
+
+    await acceptTerms(user)
+    await user.click(screen.getByRole('button', { name: 'Submit' }))
+    await waitFor(() =>
+      expect(props.onSubmissionCreated).toHaveBeenCalledWith(SUBMISSION_ID),
+    )
   })
 
   it('shows the server message and keeps the answers when the submission is rejected', async () => {
@@ -602,7 +655,7 @@ describe('JsonSchemaRequestWizard', () => {
       await advanceToFileQuestion(user)
 
       await user.click(screen.getByRole('button', { name: 'Submit' }))
-      await screen.findAllByText(/required property/i)
+      await screen.findAllByText(REQUIRED_MESSAGE)
       expect(submissionRequests).toHaveLength(0)
 
       await upload(user, UPLOADED_FILE_HANDLE_ID)

@@ -111,7 +111,9 @@ export function ProjectVisibilityRadioGroup({
                     <Typography
                       variant="body1"
                       component="span"
-                      fontWeight="bold"
+                      sx={{
+                        fontWeight: 'bold',
+                      }}
                     >
                       {option.label}
                     </Typography>
@@ -128,8 +130,10 @@ export function ProjectVisibilityRadioGroup({
                   </Box>
                   <Typography
                     variant="body1"
-                    color="text.secondary"
-                    sx={{ mt: 0.25 }}
+                    sx={{
+                      color: 'text.secondary',
+                      mt: 0.25,
+                    }}
                   >
                     {option.description}
                     {option.note && (

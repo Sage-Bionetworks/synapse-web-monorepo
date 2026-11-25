@@ -84,7 +84,13 @@ export const StartGridSession = forwardRef<
           onReplicaChange={onReplicaChange}
         />
       </Grid>
-      <Grid container size={12} justifyContent="flex-end">
+      <Grid
+        container
+        size={12}
+        sx={{
+          justifyContent: 'flex-end',
+        }}
+      >
         <Button
           color={'primary'}
           variant="contained"

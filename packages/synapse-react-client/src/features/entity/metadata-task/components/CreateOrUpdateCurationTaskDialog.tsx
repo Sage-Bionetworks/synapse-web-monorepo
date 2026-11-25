@@ -429,7 +429,11 @@ export default function CreateOrUpdateCurationTaskDialog(
 
   // ── Form fields (used in both step 3 create and edit mode) ──────────────
   const commonFields = (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       <TextField
         label="Task Name"
         fullWidth
@@ -448,7 +452,11 @@ export default function CreateOrUpdateCurationTaskDialog(
         description={TASK_INSTRUCTIONS_INPUT_DESCRIPTION}
       />
       {/* TODO: Display the below 'collaborators' once multiple owners are supported */}
-      <Box display="none">
+      <Box
+        sx={{
+          display: 'none',
+        }}
+      >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <InputLabel>Collaborators</InputLabel>
           <Tooltip title={COLLABORATORS_TOOLTIP}>
@@ -457,9 +465,23 @@ export default function CreateOrUpdateCurationTaskDialog(
             </div>
           </Tooltip>
         </Box>
-        <Stack gap={1}>
-          <Stack direction="row" gap={1} alignItems="center">
-            <Box flex={1}>
+        <Stack
+          sx={{
+            gap: 1,
+          }}
+        >
+          <Stack
+            direction="row"
+            sx={{
+              gap: 1,
+              alignItems: 'center',
+            }}
+          >
+            <Box
+              sx={{
+                flex: 1,
+              }}
+            >
               <UserSearchBox
                 value={pendingCollaboratorId}
                 onChange={id => setPendingCollaboratorId(id)}
@@ -490,8 +512,10 @@ export default function CreateOrUpdateCurationTaskDialog(
             <Stack
               key={id}
               direction="row"
-              alignItems="center"
-              justifyContent="space-between"
+              sx={{
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
             >
               <UserOrTeamBadge principalId={id} />
               <IconButton
@@ -513,7 +537,11 @@ export default function CreateOrUpdateCurationTaskDialog(
 
   // ── TaskProperties fields ────────────────────────────────────────────────
   const fileBasedFields = (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       <EntityIdTextField
         label="Upload Folder ID"
         value={uploadFolderId}
@@ -582,7 +610,11 @@ export default function CreateOrUpdateCurationTaskDialog(
 
   // ── Step 1: Type selection ───────────────────────────────────────────────
   const step1Content = (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       <Typography variant="body1">{SELECT_TASK_TYPE_DESCRIPTION}</Typography>
       <WizardChoiceButtonGroup>
         <WizardChoiceButton
@@ -607,7 +639,11 @@ export default function CreateOrUpdateCurationTaskDialog(
 
   // ── Step 2: Type-specific fields ───────────────────────────────────────────────
   const step2Content = (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       {selectedConcreteType === FILE_BASED_CONCRETE_TYPE && fileBasedFields}
       {selectedConcreteType === RECORD_BASED_CONCRETE_TYPE && recordBasedFields}
     </Stack>
@@ -615,13 +651,33 @@ export default function CreateOrUpdateCurationTaskDialog(
 
   // ── Step 3 / edit form content ───────────────────────────────────────────
   const step3Content = (
-    <Stack gap={3}>
-      <Grid container spacing={3} alignItems="flex-start">
+    <Stack
+      sx={{
+        gap: 3,
+      }}
+    >
+      <Grid
+        container
+        spacing={3}
+        sx={{
+          alignItems: 'flex-start',
+        }}
+      >
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Stack gap={2}>{commonFields}</Stack>
+          <Stack
+            sx={{
+              gap: 2,
+            }}
+          >
+            {commonFields}
+          </Stack>
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Stack gap={3}>
+          <Stack
+            sx={{
+              gap: 3,
+            }}
+          >
             {isEditMode && (
               <StyledFormControl fullWidth>
                 <InputLabel id="dlg-task-status-label">
@@ -758,10 +814,12 @@ export default function CreateOrUpdateCurationTaskDialog(
         actions={
           <Stack
             direction="row"
-            gap={1}
-            justifyContent="space-between"
-            alignItems="center"
-            width="100%"
+            sx={{
+              gap: 1,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+            }}
           >
             <Box>
               {canDelete && (
@@ -775,7 +833,12 @@ export default function CreateOrUpdateCurationTaskDialog(
                 </Button>
               )}
             </Box>
-            <Stack direction="row" gap={1}>
+            <Stack
+              direction="row"
+              sx={{
+                gap: 1,
+              }}
+            >
               {dialogActions}
             </Stack>
           </Stack>
@@ -785,7 +848,11 @@ export default function CreateOrUpdateCurationTaskDialog(
         title={DELETE_CURATION_TASK_DIALOG_TITLE}
         open={showDeleteConfirmation}
         content={
-          <Stack gap={2}>
+          <Stack
+            sx={{
+              gap: 2,
+            }}
+          >
             <Typography variant="body1">
               {DELETE_CURATION_TASK_CONFIRMATION_PROMPT}
             </Typography>

@@ -16,6 +16,20 @@ export const navbarConfig: NavbarConfig = {
       path: 'https://help.namhub.org/help/about',
     },
     {
+      name: 'People',
+      path: '/People',
+      children: [
+        {
+          name: 'MPI Leadership',
+          path: 'https://nhdcc.wpenginepowered.com/mpi-leadership/',
+        },
+        {
+          name: 'Scientific Advisory Board',
+          path: 'https://nhdcc.wpenginepowered.com/scientific-advisory-board/',
+        },
+      ],
+    },
+    {
       name: 'Events',
       path: 'https://nhdcc.wpenginepowered.com/',
     },
@@ -27,6 +41,10 @@ export const navbarConfig: NavbarConfig = {
       name: 'Admin',
       path: 'https://www.synapse.org/Synapse:syn74360399/wiki/640276',
       requiredTeamId: '3582968',
+    },
+    {
+      name: 'News',
+      path: 'https://nhdcc.wpenginepowered.com/news/',
     },
   ],
   isPortalsDropdownEnabled: false,

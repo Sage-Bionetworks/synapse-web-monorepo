@@ -95,6 +95,12 @@
       align-content: flex-start;
       height: var(--synapse-header-height-with-sticky-search);
 
+      // Grow to fit the open menu; the shared mb-active rule caps the height
+      // at the viewport and scrolls.
+      &.mb-active {
+        height: auto;
+      }
+
       .mb-open,
       .mb-close {
         padding: 12px 18px 0 18px;
@@ -315,6 +321,13 @@
     }
 
     &.mb-active {
+      // The nav is position: fixed, so an open menu taller than the viewport
+      // can only be reached by scrolling the nav itself.
+      max-height: 100vh;
+      max-height: 100dvh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+
       .nav-link-container {
         height: auto;
         overflow-y: visible;

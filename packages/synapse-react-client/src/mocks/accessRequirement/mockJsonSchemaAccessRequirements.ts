@@ -5,6 +5,7 @@ import {
   RestrictableObjectDescriptorTypeEnum,
 } from '@sage-bionetworks/synapse-client'
 import { MOCK_FILE_ENTITY_ID } from '@/mocks/entity/mockFileEntity'
+import { MOCK_EDUC_TEMPLATE_ID_1 } from '@/mocks/eDuc/mockEDucTemplates'
 import { MOCK_DUC_TEMPLATE_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
 import { DAY_IN_MS } from '@/utils/SynapseConstants'
 import {
@@ -55,6 +56,15 @@ export const mockJsonSchemaAR2: JsonSchemaAccessRequirement = {
   isTwoFaRequired: true,
   isDUCRequired: true,
   ducTemplateFileHandleId: MOCK_DUC_TEMPLATE_FILE_HANDLE_ID,
+}
+
+/**
+ * {@link mockJsonSchemaAR2} with an eDUC template, so the requester continues to the eDUC steps instead of submitting.
+ * It keeps AR 2's ID, so it shares AR 2's Clinical Trial FormTemplate and in-progress request mocks.
+ */
+export const mockEDucJsonSchemaAR: JsonSchemaAccessRequirement = {
+  ...mockJsonSchemaAR2,
+  eDucTemplateId: MOCK_EDUC_TEMPLATE_ID_1,
 }
 
 export const mockJsonSchemaAccessRequirements: JsonSchemaAccessRequirement[] = [

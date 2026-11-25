@@ -89,7 +89,9 @@ export function StepFieldRow({
     accept: SLOT_SORTABLE_TYPE,
   })
 
-  const type = resolvedProperty ? detectFieldType(resolvedProperty) : null
+  const type = resolvedProperty
+    ? detectFieldType(resolvedProperty, settings.uiDefinition)
+    : null
   const displayLabel = resolvedProperty?.title || propertyKey
   const isFileField = type === 'file'
   const isUnresolved = !resolvedProperty
@@ -198,7 +200,12 @@ export function StepFieldRow({
             }
             label="Publicly viewable after approval"
           />
-          <Typography variant="caption" color="text.secondary">
+          <Typography
+            variant="caption"
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
             Answers appear in this AR's public submission info once a submission
             is approved. Snapshotted at submit time.
           </Typography>

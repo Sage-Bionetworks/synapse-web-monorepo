@@ -6,7 +6,12 @@ import Skeleton from '@mui/material/Skeleton'
 function EcosystemSkeleton() {
   const skeletonTitle = <Skeleton width={'80%'} />
   const skeletonContent = (
-    <Stack gap={2} py={2}>
+    <Stack
+      sx={{
+        gap: 2,
+        py: 2,
+      }}
+    >
       <SkeletonParagraph />
       <SkeletonParagraph />
       <SkeletonParagraph />

@@ -1,0 +1,144 @@
+// Below this container width the wheel collapses into a hub above a two-column grid of spokes
+$wheel-min-width: 640px;
+
+.container {
+  // Consumers override --hub-and-spokes-label-color / --hub-and-spokes-ring-color on an ancestor; otherwise both follow
+  // the portal theme. The resolved values get distinct names so declaring them here doesn't shadow the overrides.
+  --hub-and-spokes-resolved-label-color: var(
+    --hub-and-spokes-label-color,
+    var(--synapse-primary-action-color)
+  );
+  --hub-and-spokes-resolved-ring-color: var(
+    --hub-and-spokes-ring-color,
+    var(--synapse-primary-200)
+  );
+
+  container-type: inline-size;
+  width: 100%;
+}
+
+.wheel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+
+  @container (min-width: #{$wheel-min-width}) {
+    display: block;
+    position: relative;
+    aspect-ratio: var(--wheel-aspect-ratio);
+  }
+}
+
+.arrows {
+  display: none;
+
+  @container (min-width: #{$wheel-min-width}) {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    color: var(--synapse-primary-action-color);
+    stroke: currentColor;
+    stroke-width: 0.35;
+  }
+}
+
+.hub {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: min(60%, 240px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 3px solid var(--hub-and-spokes-resolved-ring-color);
+  box-shadow: 0 0 12px
+    color-mix(
+      in srgb,
+      var(--hub-and-spokes-resolved-label-color) 30%,
+      transparent
+    );
+  overflow: hidden;
+  background-color: #fff;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  @container (min-width: #{$wheel-min-width}) {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--hub-size);
+    transform: translate(-50%, -50%);
+    border-width: 0.4cqw;
+  }
+}
+
+.spoke:global(.MuiLink-root) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: #fff;
+  border: 1px solid var(--synapse-gray-300);
+  border-radius: 6px;
+  box-shadow:
+    0 1px 1px 0 rgba(0, 0, 0, 0.03),
+    0 3px 3px 0 rgba(0, 0, 0, 0.03),
+    0 9px 9px 0 rgba(0, 0, 0, 0.03);
+  text-align: center;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-2px);
+    box-shadow:
+      0 6px 12px rgba(0, 0, 0, 0.12),
+      0 15px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  @container (min-width: #{$wheel-min-width}) {
+    position: absolute;
+    left: var(--spoke-left);
+    top: var(--spoke-top);
+    width: var(--spoke-width);
+    height: var(--spoke-height);
+    padding: 1cqw;
+    gap: 0.8cqw;
+    transform: translate(-50%, -50%);
+
+    &:hover,
+    &:focus-visible {
+      transform: translate(-50%, calc(-50% - 2px));
+    }
+  }
+}
+
+.spokeImage {
+  max-width: 90%;
+  height: 48px;
+  object-fit: contain;
+
+  @container (min-width: #{$wheel-min-width}) {
+    height: 5.5cqw;
+  }
+}
+
+.spokeLabel:global(.MuiTypography-root) {
+  color: var(--hub-and-spokes-resolved-label-color);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.2;
+
+  @container (min-width: #{$wheel-min-width}) {
+    font-size: 1.9cqw;
+  }
+}

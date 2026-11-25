@@ -48,9 +48,21 @@ export default function GridLoadingState(props: GridLoadingStateProps) {
       <Typography variant="sectionTitle" component="h2">
         {GRID_LOADING_MESSAGES.heading}
       </Typography>
-      <Stack direction="row" spacing={1} role="status" alignItems="center">
+      <Stack
+        direction="row"
+        spacing={1}
+        role="status"
+        sx={{
+          alignItems: 'center',
+        }}
+      >
         <SynapseSpinner size={16} margin="0" />
-        <Typography variant="caption" color="text.secondary">
+        <Typography
+          variant="caption"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           {getGridLoadingMessage(props)}
         </Typography>
       </Stack>

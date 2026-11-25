@@ -102,7 +102,12 @@ export const TruncatedForFacetSidebar: Story = {
 export const OnADatasetCard: Story = {
   args: { terms: [] },
   render: () => (
-    <Stack gap={2} sx={{ maxWidth: 900 }}>
+    <Stack
+      sx={{
+        gap: 2,
+        maxWidth: 900,
+      }}
+    >
       <GenericCard
         type="DATASET"
         title="Whole-genome sequencing of NF1-associated tumors"

@@ -91,7 +91,13 @@ export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
       content={
         <Box>
           {canRemoveColumns && (
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+                mb: 1,
+              }}
+            >
               Only columns that are not part of the schema can be removed.
             </Typography>
           )}

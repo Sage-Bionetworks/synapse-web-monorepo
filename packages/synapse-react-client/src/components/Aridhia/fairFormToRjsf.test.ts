@@ -1,10 +1,14 @@
-import { describe, expect, test } from 'vitest'
+import { ALLOWED_VALUES_MESSAGE } from '@/components/JsonSchemaForm/JsonSchemaFormValidator'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import allFieldTypesWorkflow from '@/mocks/aridhia/cpathBasicAllAccessRequestV2Workflow.json'
 import {
   fairSectionToRjsf,
   FairField,
   FairFormSection,
   parseFairFormSections,
   summarizeFormAnswers,
+  toFairSubmissionAnswers,
+  validateFairSection,
 } from './fairFormToRjsf'
 
 // Comprehensive set of FairField variants
@@ -112,6 +116,470 @@ describe('fairSectionToRjsf', () => {
     const { schema, unsupported } = fairSectionToRjsf(sectionWithAuthField)
     expect(unsupported.map(f => f.name)).toEqual(['sso_login'])
     expect(schema.properties).not.toHaveProperty('sso_login')
+  })
+})
+
+describe('FAIR string formats', () => {
+  const formattedSection: FairFormSection = {
+    key: 'about',
+    fields: [
+      { name: 'email', type: 'string', validation: { format: 'email' } },
+      { name: 'website', type: 'string', validation: { format: 'uri' } },
+      { name: 'orcid_uuid', type: 'string', validation: { format: 'uuid' } },
+      { name: 'other', type: 'string', validation: { format: 'ipv4' } },
+      { name: 'plain', type: 'string' },
+    ],
+  }
+  const form = fairSectionToRjsf(formattedSection)
+  const { schema } = form
+
+  test('email, uri and uuid string fields carry their JSON-schema format', () => {
+    expect(schema.properties!.email).toMatchObject({ format: 'email' })
+    expect(schema.properties!.website).toMatchObject({ format: 'uri' })
+    expect(schema.properties!.orcid_uuid).toMatchObject({ format: 'uuid' })
+  })
+
+  test('unknown formats and unformatted fields get no format', () => {
+    expect(schema.properties!.other).not.toHaveProperty('format')
+    expect(schema.properties!.plain).not.toHaveProperty('format')
+  })
+
+  test('flags malformed values with the shared validator’s messages', () => {
+    expect(
+      validateFairSection(form, {
+        email: 'jane@',
+        website: 'not a url',
+        orcid_uuid: '1234',
+        other: 'anything',
+        plain: 'anything',
+      }),
+    ).toEqual({
+      isValid: false,
+      fieldErrors: {
+        email: 'Enter a valid email address',
+        website: 'Enter a valid URL',
+        orcid_uuid: 'Enter a valid UUID',
+      },
+    })
+  })
+
+  test('accepts well-formed values', () => {
+    expect(
+      validateFairSection(form, {
+        email: 'jane@example.edu',
+        website: 'https://example.org/lab',
+        orcid_uuid: '123e4567-e89b-12d3-a456-426614174000',
+      }),
+    ).toEqual({ isValid: true, fieldErrors: {} })
+  })
+
+  test('does not flag blank values (undefined, null, or empty string)', () => {
+    expect(
+      validateFairSection(form, {
+        email: '',
+        website: null,
+        orcid_uuid: undefined,
+      }),
+    ).toEqual({ isValid: true, fieldErrors: {} })
+  })
+})
+
+describe('validateFairSection', () => {
+  const form = fairSectionToRjsf({
+    key: 'about',
+    fields: [
+      { name: 'name', type: 'string', validation: { required: true } },
+      {
+        name: 'summary',
+        type: 'text',
+        validation: { minimum: '20', maximum: '200' },
+      },
+      {
+        name: 'phase',
+        type: 'list',
+        options: [
+          { text: 'Phase 1', value: '1' },
+          { text: 'Phase 2', value: '2' },
+        ],
+      },
+    ],
+  })
+
+  test('counts a blank required answer as unanswered, without a field message', () => {
+    expect(validateFairSection(form, { name: '' })).toEqual({
+      isValid: false,
+      fieldErrors: {},
+    })
+    expect(validateFairSection(form, { name: 'Jane' }).isValid).toBe(true)
+  })
+
+  test('flags a text answer outside FAIR’s length limits', () => {
+    expect(
+      validateFairSection(form, { name: 'Jane', summary: 'Too short' }),
+    ).toEqual({
+      isValid: false,
+      fieldErrors: { summary: 'Must be at least 20 characters' },
+    })
+  })
+
+  test('flags a list answer that is not one of its options', () => {
+    expect(validateFairSection(form, { name: 'Jane', phase: '3' })).toEqual({
+      isValid: false,
+      fieldErrors: { phase: ALLOWED_VALUES_MESSAGE },
+    })
+    expect(
+      validateFairSection(form, { name: 'Jane', phase: '2' }).isValid,
+    ).toBe(true)
+  })
+
+  test('reports a schema that cannot be compiled, without field messages', () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const result = validateFairSection(
+      {
+        schema: {
+          type: 'object',
+          properties: { name: { type: 'string', minLength: -1 } },
+        },
+        uiSchema: {},
+      },
+      { name: 'Jane' },
+    )
+    expect(result.isValid).toBe(false)
+    expect(result.fieldErrors).toEqual({})
+    expect(result.schemaError).toEqual(expect.any(String))
+  })
+})
+
+describe('fairSectionToRjsf keeps the schema compilable', () => {
+  test('treats a list field with no options as unsupported', () => {
+    const listField: FairField = { name: 'phase', type: 'list', options: [] }
+    const { schema, unsupported } = fairSectionToRjsf({
+      key: 'project',
+      fields: [listField, { name: 'other', type: 'list' }],
+    })
+    expect(schema.properties).toEqual({})
+    expect(unsupported.map(field => field.name)).toEqual(['phase', 'other'])
+  })
+
+  test('drops length limits that are not non-negative integers', () => {
+    const rjsf = fairSectionToRjsf({
+      key: 'about',
+      fields: [
+        {
+          name: 'name',
+          type: 'string',
+          validation: { minimum: 'abc', maximum: '10.5' },
+        },
+        { name: 'bio', type: 'text', validation: { minimum: '-1' } },
+        { name: 'phone', type: 'phone', validation: { maximum: '' } },
+      ],
+    })
+    expect(rjsf.schema.properties).toEqual({
+      name: { type: 'string' },
+      bio: { type: 'string' },
+      phone: { type: 'string' },
+    })
+    expect(
+      validateFairSection(rjsf, { name: 'Jane' }).schemaError,
+    ).toBeUndefined()
+  })
+})
+
+describe('FAIR date minimum', () => {
+  // The user's local date, fixed so `today` doesn't move mid-test.
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date(2027, 0, 15, 12))
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  const dateForm = () =>
+    fairSectionToRjsf({
+      key: 'project',
+      fields: [
+        { name: 'start', type: 'date', validation: { minimum: 'today' } },
+        {
+          name: 'end',
+          type: 'date',
+          validation: { minimum: '2027-03-05T10:00:00Z' },
+        },
+        { name: 'other', type: 'date', validation: { minimum: 'tomorrow' } },
+        { name: 'bogus', type: 'date', validation: { minimum: '2027-02-30' } },
+      ],
+    })
+
+  test('restricts the date picker and the schema for `today` and real ISO dates only', () => {
+    const form = dateForm()
+    expect(form.uiSchema.start).toEqual({
+      'ui:widget': 'DateWidget',
+      'ui:options': { minDate: '2027-01-15' },
+    })
+    expect(form.schema.properties!.start).toMatchObject({
+      formatMinimum: '2027-01-15T00:00:00.000Z',
+    })
+    expect(form.uiSchema.end).toEqual({
+      'ui:widget': 'DateWidget',
+      'ui:options': { minDate: '2027-03-05' },
+    })
+    expect(form.schema.properties!.end).toMatchObject({
+      formatMinimum: '2027-03-05T00:00:00.000Z',
+    })
+    expect(form.uiSchema.other).toEqual({ 'ui:widget': 'DateWidget' })
+    expect(form.schema.properties!.other).not.toHaveProperty('formatMinimum')
+    expect(form.uiSchema.bogus).toEqual({ 'ui:widget': 'DateWidget' })
+    expect(form.schema.properties!.bogus).not.toHaveProperty('formatMinimum')
+  })
+
+  test('resolves a `today` minimum to the given date', () => {
+    const later = fairSectionToRjsf(
+      {
+        key: 'project',
+        fields: [
+          { name: 'start', type: 'date', validation: { minimum: 'TODAY' } },
+        ],
+      },
+      '2030-01-02',
+    )
+    expect(later.uiSchema.start).toMatchObject({
+      'ui:options': { minDate: '2030-01-02' },
+    })
+    expect(later.schema.properties!.start).toMatchObject({
+      formatMinimum: '2030-01-02T00:00:00.000Z',
+    })
+  })
+
+  test('flags a date before the minimum', () => {
+    expect(
+      validateFairSection(dateForm(), {
+        start: '2027-01-14T00:00:00.000Z',
+        end: '2027-03-04T00:00:00.000Z',
+        other: '2000-01-01T00:00:00.000Z',
+      }).fieldErrors,
+    ).toEqual({
+      start: 'Must be today or later',
+      end: 'Must be Mar 5, 2027 or later',
+    })
+  })
+
+  test('accepts the minimum date itself', () => {
+    expect(
+      validateFairSection(dateForm(), {
+        start: '2027-01-15T00:00:00.000Z',
+        end: '2027-03-05T00:00:00.000Z',
+      }),
+    ).toEqual({ isValid: true, fieldErrors: {} })
+  })
+
+  test('flags a date the picker could not parse, with or without a minimum', () => {
+    expect(
+      validateFairSection(dateForm(), {
+        end: 'Invalid DateT00:00:00.000Z',
+        other: 'Invalid DateT00:00:00.000Z',
+      }).fieldErrors,
+    ).toEqual({
+      end: 'Enter a valid date',
+      other: 'Enter a valid date',
+    })
+  })
+})
+
+describe('FAIR text length bounds', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      {
+        name: 'summary',
+        type: 'markdown',
+        validation: { minimum: 5, maximum: 10 },
+      },
+      { name: 'title', type: 'string', validation: { minimum: '2' } },
+      { name: 'phone', type: 'phone', validation: { maximum: 6 } },
+    ],
+  })
+
+  test('accept bounds sent as numbers or numeric strings', () => {
+    expect(form.schema.properties!.summary).toMatchObject({
+      minLength: 5,
+      maxLength: 10,
+    })
+    expect(form.schema.properties!.title).toMatchObject({ minLength: 2 })
+    expect(form.schema.properties!.phone).toMatchObject({ maxLength: 6 })
+  })
+
+  test('flag values shorter or longer than the bounds with the shared validator’s messages', () => {
+    expect(
+      validateFairSection(form, {
+        summary: 'abc',
+        title: 'a',
+        phone: '+1 2345',
+      }).fieldErrors,
+    ).toEqual({
+      summary: 'Must be at least 5 characters',
+      title: 'Must be at least 2 characters',
+      phone: 'Must be at most 6 characters',
+    })
+    expect(
+      validateFairSection(form, { summary: 'abcdefghijk' }).fieldErrors,
+    ).toEqual({ summary: 'Must be at most 10 characters' })
+  })
+
+  test('accept values within the bounds, including the bounds themselves', () => {
+    expect(
+      validateFairSection(form, {
+        summary: 'abcde',
+        title: 'ab',
+        phone: '+1 234',
+      }),
+    ).toEqual({ isValid: true, fieldErrors: {} })
+    expect(validateFairSection(form, { summary: 'abcdefghij' }).isValid).toBe(
+      true,
+    )
+  })
+})
+
+describe('FAIR default values', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      { name: 'opt_out', type: 'boolean', defaultValue: false },
+      { name: 'opt_in', type: 'boolean', defaultValue: true },
+      { name: 'count', type: 'number', defaultValue: 0 },
+      { name: 'blank', type: 'string', defaultValue: '' },
+      { name: 'nulled', type: 'string', defaultValue: null },
+      { name: 'heading', type: 'label', label: 'Heading', defaultValue: 'x' },
+    ],
+  })
+
+  test('keep falsy defaults (`false`, `0`) with their own types', () => {
+    expect(form.schema.properties!.opt_out).toMatchObject({ default: false })
+    expect(form.schema.properties!.opt_in).toMatchObject({ default: true })
+    expect(form.schema.properties!.count).toMatchObject({ default: 0 })
+  })
+
+  test('treat an empty-string or null default as no default', () => {
+    expect(form.schema.properties!.blank).not.toHaveProperty('default')
+    expect(form.schema.properties!.nulled).not.toHaveProperty('default')
+  })
+
+  test('ignore a default on a label, which holds no value', () => {
+    expect(form.schema.properties!.heading).not.toHaveProperty('default')
+  })
+})
+
+describe('FAIR number fields', () => {
+  const form = fairSectionToRjsf({
+    key: 'project',
+    fields: [
+      {
+        name: 'number_type',
+        type: 'number',
+        label: 'Number',
+        validation: { minimum: 1, maximum: 10, required: true },
+        defaultValue: 10,
+      },
+      // FAIR may also send bounds and defaults as numeric strings.
+      {
+        name: 'ratio',
+        type: 'number',
+        validation: { minimum: '0', maximum: '0.5' },
+        defaultValue: '0.25',
+      },
+      { name: 'unbounded', type: 'number' },
+      { name: 'bad_default', type: 'number', defaultValue: 'ten' },
+    ],
+  })
+
+  test('map to a JSON-schema number with value bounds, not length bounds', () => {
+    expect(form.unsupported).toEqual([])
+    expect(form.schema.properties!.number_type).toEqual({
+      type: 'number',
+      title: 'Number',
+      minimum: 1,
+      maximum: 10,
+      default: 10,
+    })
+    expect(form.schema.properties!.ratio).toMatchObject({
+      type: 'number',
+      minimum: 0,
+      maximum: 0.5,
+      default: 0.25,
+    })
+    expect(form.schema.properties!.number_type).not.toHaveProperty('minLength')
+    expect(form.schema.required).toEqual(['number_type'])
+  })
+
+  test('flag values outside the bounds with the shared validator’s messages', () => {
+    expect(
+      validateFairSection(form, { number_type: 0, ratio: 0.75 }).fieldErrors,
+    ).toEqual({
+      number_type: 'Must be 1 or more',
+      ratio: 'Must be 0.5 or less',
+    })
+    expect(validateFairSection(form, { number_type: 11 }).fieldErrors).toEqual({
+      number_type: 'Must be 10 or less',
+    })
+  })
+
+  test('accept in-range values, including decimals and bounds themselves', () => {
+    expect(validateFairSection(form, { number_type: 1, ratio: 0 })).toEqual({
+      isValid: true,
+      fieldErrors: {},
+    })
+    expect(
+      validateFairSection(form, { number_type: 9.5, ratio: 0.5 }).isValid,
+    ).toBe(true)
+  })
+
+  test('accept any number when there are no bounds', () => {
+    expect(
+      validateFairSection(form, { number_type: 1, unbounded: -5000.5 }).isValid,
+    ).toBe(true)
+  })
+
+  test('count a blank required number as unanswered, without a field message', () => {
+    for (const blank of [undefined, null, '']) {
+      expect(validateFairSection(form, { number_type: blank })).toEqual({
+        isValid: false,
+        fieldErrors: {},
+      })
+    }
+  })
+
+  test('drop a default that is not a number', () => {
+    expect(form.schema.properties!.bad_default).not.toHaveProperty('default')
+  })
+
+  test('flag a numeric string, which is not a JSON number', () => {
+    expect(validateFairSection(form, { number_type: '9' })).toEqual({
+      isValid: false,
+      fieldErrors: { number_type: 'must be number' },
+    })
+  })
+})
+
+describe('the live omop_als1001 request form (cpath_basic_all_access_request_v2)', () => {
+  // RDCA-DAP's one other field type, `auth`, is deliberately unsupported.
+  test('maps every field it contains, of every field type the portal renders, with none unsupported', () => {
+    const sections = parseFairFormSections(allFieldTypesWorkflow)
+    expect(sections.map(s => s.key)).toEqual(['about', 'project'])
+    expect(new Set(sections.flatMap(s => s.fields.map(f => f.type)))).toEqual(
+      new Set([
+        'string',
+        'text',
+        'markdown',
+        'phone',
+        'date',
+        'label',
+        'boolean',
+        'number',
+        'list',
+      ]),
+    )
+    for (const section of sections) {
+      expect(fairSectionToRjsf(section).unsupported).toEqual([])
+    }
   })
 })
 
@@ -236,5 +704,28 @@ describe('summarizeFormAnswers', () => {
         project_end_date: '2027-03-05T00:00:00.000Z',
       }),
     ).toEqual([{ label: 'project_end_date', value: 'Mar 5, 2027' }])
+  })
+})
+
+describe('toFairSubmissionAnswers', () => {
+  const rjsf = fairSectionToRjsf(section)
+
+  test('sends phone answers as digits only, matching what RDCA-DAP stores', () => {
+    const values = {
+      phone_number: '+1 202 555 0123',
+      nickname: '+1 202 555 0123',
+    }
+    expect(toFairSubmissionAnswers(values, [rjsf])).toEqual({
+      phone_number: '12025550123',
+      nickname: '+1 202 555 0123',
+    })
+    // The in-form values (and so the saved draft) are left untouched.
+    expect(values.phone_number).toBe('+1 202 555 0123')
+  })
+
+  test('leaves unanswered phone fields absent', () => {
+    expect(toFairSubmissionAnswers({ nickname: 'x' }, [rjsf])).toEqual({
+      nickname: 'x',
+    })
   })
 })

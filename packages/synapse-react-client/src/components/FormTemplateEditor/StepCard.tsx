@@ -4,6 +4,7 @@ import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import {
   Alert,
   Box,
+  Chip,
   Collapse,
   IconButton,
   MenuItem,
@@ -24,8 +25,10 @@ import { useId, useState } from 'react'
 import {
   pointerToPropertyKey,
   propertyKeyToPointer,
+  requestTypeOnlyContext,
   ResolvedSchemaProperty,
   resolveSchemaPropertyAtPointer,
+  submissionContextLabel,
 } from '@/utils/jsonschema/submissionContext'
 import dragHandleStyles from './dragHandle.module.scss'
 import dropTargetStyles from './dropTarget.module.scss'
@@ -130,6 +133,12 @@ export function StepCard({
   }
 
   const fieldCountLabel = pluralize('field', step.fieldPaths.length, true)
+  const resolvedFields = step.fieldPaths.map(schemaPath =>
+    resolveSchemaPropertyAtPointer(jsonSchema, schemaPath),
+  )
+  const stepContext = requestTypeOnlyContext(
+    resolvedFields.flatMap(field => (field ? [field.context] : [])),
+  )
 
   return (
     <Paper
@@ -165,12 +174,40 @@ export function StepCard({
           )}
         </IconButton>
         <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-          <Typography id={headingId} variant="body2" fontWeight={500} noWrap>
+          <Typography
+            id={headingId}
+            variant="body2"
+            noWrap
+            sx={{
+              fontWeight: 500,
+            }}
+          >
             Step {stepIndex + 1}: {step.title || '(untitled)'}
           </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {fieldCountLabel}
-          </Typography>
+          {/* Beside the field count, so the chip never truncates the step title */}
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: 'center',
+              gap: 1,
+            }}
+          >
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'text.secondary',
+              }}
+            >
+              {fieldCountLabel}
+            </Typography>
+            {stepContext && (
+              <Chip
+                label={submissionContextLabel(stepContext)}
+                size="small"
+                variant="outlined"
+              />
+            )}
+          </Stack>
         </Box>
         <IconButton
           size="small"
@@ -236,17 +273,16 @@ export function StepCard({
             {step.fieldPaths.length === 0 ? (
               <Typography
                 variant="caption"
-                color="text.secondary"
-                sx={{ p: 1 }}
+                sx={{
+                  color: 'text.secondary',
+                  p: 1,
+                }}
               >
                 Drag a field here, or bind one below.
               </Typography>
             ) : (
               step.fieldPaths.map((schemaPath, fieldIdx) => {
-                const resolved = resolveSchemaPropertyAtPointer(
-                  jsonSchema,
-                  schemaPath,
-                )
+                const resolved = resolvedFields[fieldIdx]
                 return (
                   <StepFieldRow
                     key={schemaPath}

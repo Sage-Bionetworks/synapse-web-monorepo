@@ -20,7 +20,11 @@ export function DeleteEvaluationQueueConfirmationDialog({
       title="Delete Evaluation Queue?"
       content={
         <>
-          <Typography pb={2}>
+          <Typography
+            sx={{
+              pb: 2,
+            }}
+          >
             <strong>Warning</strong>: Deleting this evaluation queue will also
             permanently erase all associated submissions and scores. This action
             is irreversible.

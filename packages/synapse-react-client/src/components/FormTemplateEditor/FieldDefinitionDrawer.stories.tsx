@@ -9,13 +9,14 @@ const meta = {
     propertyKey: 'institution',
     existingKeys: new Set(['institution', 'summaryOfUse']),
     property: { type: 'string', title: 'Institution' },
+    uiDefinition: {},
     isRequired: false,
     context: 'ALWAYS',
     isUsedInSteps: false,
     onClose: () => console.log('onClose'),
     onUpdate: (patch: unknown) => console.log('onUpdate', patch),
     onRenameKey: (key: string) => console.log('onRenameKey', key),
-    onReplace: (next: unknown) => console.log('onReplace', next),
+    onChangeType: (type: unknown) => console.log('onChangeType', type),
     onChangeRequired: (isRequired: boolean) =>
       console.log('onChangeRequired', isRequired),
     onChangeContext: (context: unknown) =>
@@ -29,6 +30,14 @@ type Story = StoryObj<typeof FieldDefinitionDrawer>
 
 export const TextField: Story = {}
 
+export const LongTextField: Story = {
+  args: {
+    propertyKey: 'summaryOfUse',
+    property: { type: 'string', title: 'Summary of use' },
+    uiDefinition: { 'ui:widget': 'textarea' },
+  },
+}
+
 export const ChoiceField: Story = {
   args: {
     propertyKey: 'preferredContactMethod',
@@ -37,6 +46,19 @@ export const ChoiceField: Story = {
       title: 'Preferred contact method',
       enum: ['Email', 'Phone', 'Mail'],
     },
+  },
+}
+
+/** A box the requester must check: a required boolean that must be `true`. */
+export const MustCheckField: Story = {
+  args: {
+    propertyKey: 'agreeToTerms',
+    property: {
+      type: 'boolean',
+      const: true,
+      title: 'I agree to the terms and conditions',
+    },
+    isRequired: true,
   },
 }
 

@@ -68,7 +68,12 @@ export function PortalList(): React.ReactNode {
       )}
 
       {!isLoading && allPortals.length === 0 && (
-        <Typography variant="body1" color="text.secondary">
+        <Typography
+          variant="body1"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           No portals found.
         </Typography>
       )}

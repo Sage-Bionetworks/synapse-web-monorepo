@@ -16,11 +16,13 @@ const ClassicDevelopedBySage = (): React.ReactNode => {
 
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
-        justifyContent="center"
-        alignItems="center"
         spacing={{
           xs: 1,
           sm: 4,
+        }}
+        sx={{
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
         <Link

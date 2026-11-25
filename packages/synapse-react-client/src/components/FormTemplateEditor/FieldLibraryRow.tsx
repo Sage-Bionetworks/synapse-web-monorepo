@@ -1,7 +1,7 @@
 import { useDraggable } from '@dnd-kit/react'
 import { Box, Chip, Paper, Stack, Typography } from '@mui/material'
 import DragHandleIcon from '@mui/icons-material/DragIndicator'
-import { RJSFSchema } from '@rjsf/utils'
+import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import {
   SchemaPropertyContext,
   submissionContextLabel,
@@ -13,6 +13,8 @@ import { FIELD_DRAG_TYPE, fieldDragData } from './sortableIds'
 export type FieldLibraryRowProps = {
   propertyKey: string
   property: RJSFSchema
+  /** The property's slot `uiDefinition`, whether or not a step binds it. */
+  uiDefinition?: UiSchema | null
   isRequired: boolean
   /** Which submission context (per the schema's `x-synapse-submissionContext` convention)
    * gates this property. `ALWAYS` properties show no badge. */
@@ -29,12 +31,13 @@ export type FieldLibraryRowProps = {
 export function FieldLibraryRow({
   propertyKey,
   property,
+  uiDefinition,
   isRequired,
   context,
   isUsedInSteps,
   onClick,
 }: FieldLibraryRowProps) {
-  const type = detectFieldType(property)
+  const type = detectFieldType(property, uiDefinition)
   const displayLabel = property.title || propertyKey
 
   const { ref, handleRef, isDragging } = useDraggable({
@@ -95,37 +98,66 @@ export function FieldLibraryRow({
           <Box sx={{ flexGrow: 1, minWidth: 0 }}>
             <Typography
               variant="body2"
-              fontWeight={500}
               noWrap
               title={displayLabel}
+              sx={{
+                fontWeight: 500,
+              }}
             >
               {displayLabel}
             </Typography>
             <Stack
               direction="row"
               spacing={0.5}
-              alignItems="center"
-              sx={{ mt: 0.25 }}
+              sx={{
+                alignItems: 'center',
+                mt: 0.25,
+              }}
             >
-              <Typography variant="caption" color="text.secondary">
+              <Typography
+                variant="caption"
+                sx={{
+                  color: 'text.secondary',
+                }}
+              >
                 {fieldTypeLabel(type)}
               </Typography>
               {isRequired && (
                 <>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary',
+                    }}
+                  >
                     ·
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary',
+                    }}
+                  >
                     Required
                   </Typography>
                 </>
               )}
               {context !== 'ALWAYS' && (
                 <>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary',
+                    }}
+                  >
                     ·
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary',
+                    }}
+                  >
                     {submissionContextLabel(context)}
                   </Typography>
                 </>

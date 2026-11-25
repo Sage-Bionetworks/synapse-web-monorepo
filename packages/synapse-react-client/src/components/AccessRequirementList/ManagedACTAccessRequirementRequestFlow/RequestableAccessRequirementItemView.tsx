@@ -195,7 +195,11 @@ export function RequestableAccessRequirementItemView(
   const isExempt = Boolean(restrictionFulfillment?.isExempt)
 
   const requirementTermsWikiContent = (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       {wikiPage}
       {accessRequirementStatus?.currentSubmissionStatus?.state ===
         SubmissionState.SUBMITTED && (

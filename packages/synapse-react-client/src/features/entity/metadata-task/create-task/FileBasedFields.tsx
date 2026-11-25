@@ -43,7 +43,11 @@ export default function FileBasedFields(props: FileBasedFieldsProps) {
   const { value, onChange, disabled = false } = props
 
   return (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       <EntityIdTextField
         label="Upload Folder ID"
         value={value.uploadFolderId}

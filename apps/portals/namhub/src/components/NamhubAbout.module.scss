@@ -1,0 +1,90 @@
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+@use 'sass:map';
+@use './sectionTitle';
+
+// NAMHub design colours
+$text-color: #33465f;
+$image-panel-color: #f3f8fc;
+$highlight-dot-color: #7ac361;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 20px;
+  color: $text-color;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    flex-direction: row;
+    align-items: center;
+    padding: 40px;
+    gap: 32px;
+  }
+}
+
+.imageContainer {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+  // The illustration overflows the top and bottom of its backing panel
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 5% 0 18%;
+    z-index: -1;
+    border-radius: 8px;
+    background-color: $image-panel-color;
+  }
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    width: 58%;
+  }
+}
+
+.image {
+  width: 70%;
+  height: auto;
+}
+
+.textContainer {
+  gap: 8px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    width: 42%;
+  }
+}
+
+.title {
+  @include sectionTitle.section-title;
+}
+
+.highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+
+  li {
+    display: flex;
+    gap: 10px;
+
+    &::before {
+      content: '';
+      flex: none;
+      width: 16px;
+      height: 16px;
+      // Center the dot on the first line when the text wraps
+      margin-top: 4px;
+      border-radius: 50%;
+      background-color: $highlight-dot-color;
+    }
+  }
+}

@@ -634,7 +634,27 @@ function getAggregateConfig(
   return {
     suppressionThreshold: profile.suppressionThreshold,
     countSuppressionStrategy: profile.countSuppressionStrategy,
+    approvedVirtualTableIds: [
+      profile.participantsVirtualTableId,
+      profile.dataVirtualTableId,
+    ],
     facetPostProcessingConfig: profile.facetPostProcessingConfig,
+  }
+}
+
+/** Like the backend (PLFM-10147), an aggregate-only read, real or previewed, may only query an approved VirtualTable. */
+function assertApprovedVirtualTable(
+  entityId: string,
+  aggregateConfig: AggregateDataConfiguration | undefined,
+): void {
+  if (
+    aggregateConfig &&
+    !aggregateConfig.approvedVirtualTableIds?.includes(entityId)
+  ) {
+    throw new MockQueryError(403, {
+      concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+      reason: `${entityId} is not a VirtualTable approved for aggregate-only reads.`,
+    })
   }
 }
 
@@ -843,6 +863,7 @@ type ParsedCohort = {
   columnName: string
   columnType: string
   columnModels: ColumnModel[]
+  tableId: string
 }
 
 /** Validates a cohort definition's shape without running it. */
@@ -886,6 +907,7 @@ function parseCohort(
     name,
     query,
     perspective,
+    tableId,
     columnName,
     columnType: column.columnType,
     columnModels,
@@ -900,6 +922,8 @@ function runCohortQuery(
   access: CohortBuilderAccess,
   maxCohortValues: number,
 ): Set<string> {
+  const aggregateConfig = getAggregateConfig(data.profile, request, access)
+  assertApprovedVirtualTable(cohort.tableId, aggregateConfig)
   const { rows } = matchRows(data, cohort.perspective, cohort.query, {
     listColumnNames: new Set(
       cohort.columnModels
@@ -917,10 +941,7 @@ function runCohortQuery(
     })
   }
   if (access === 'AGGREGATE_ONLY') {
-    assertAboveSuppressionThreshold(
-      values.size,
-      getAggregateConfig(data.profile, request, access),
-    )
+    assertAboveSuppressionThreshold(values.size, aggregateConfig)
   }
   return values
 }
@@ -1042,6 +1063,7 @@ function executeQuery(
   const partMask = request.partMask ?? 0
   const { query } = request
   const aggregateConfig = getAggregateConfig(data.profile, request, access)
+  assertApprovedVirtualTable(request.entityId, aggregateConfig)
   assertRowsAllowed(perspective, partMask, aggregateConfig !== undefined)
   const cohortValues = resolveCohorts(
     data,

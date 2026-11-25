@@ -47,7 +47,6 @@ function RowSelectionCell<TValue = unknown>(props: CellContext<Row, TValue>) {
   return (
     <div>
       <Checkbox
-        inputProps={{ 'aria-label': 'Select row' }}
         checked={isRowSelected(row.original, rowSet!.headers)}
         onChange={(_event, checked) => {
           const cloneSelectedRows = [...selectedRows]
@@ -63,6 +62,9 @@ function RowSelectionCell<TValue = unknown>(props: CellContext<Row, TValue>) {
           }
           // update context on change
           setSelectedRows(cloneSelectedRows)
+        }}
+        slotProps={{
+          input: { 'aria-label': 'Select row' },
         }}
       />
     </div>

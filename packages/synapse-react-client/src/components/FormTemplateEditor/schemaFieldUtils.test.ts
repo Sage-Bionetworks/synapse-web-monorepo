@@ -1,11 +1,13 @@
 import { RJSFSchema } from '@rjsf/utils'
 import {
   applyFieldType,
+  applyFieldTypeUiDefinition,
   choiceOptionProblems,
   choiceOptions,
   detectFieldType,
   fieldTypeLabel,
   generatePropertyKey,
+  LONG_TEXT_WIDGET,
   sanitizePropertyKey,
 } from './schemaFieldUtils'
 
@@ -56,6 +58,23 @@ describe('detectFieldType', () => {
     expect(detectFieldType({ type: 'string' })).toBe('text')
   })
 
+  it('detects a plain string whose uiDefinition asks for a textarea as longText', () => {
+    expect(
+      detectFieldType({ type: 'string' }, { 'ui:widget': LONG_TEXT_WIDGET }),
+    ).toBe('longText')
+    expect(detectFieldType({ type: 'string' }, { 'ui:widget': 'email' })).toBe(
+      'text',
+    )
+  })
+
+  it('keeps detecting a non-plain-string type when its uiDefinition asks for a textarea', () => {
+    const textarea = { 'ui:widget': LONG_TEXT_WIDGET }
+    expect(detectFieldType({ type: 'number' }, textarea)).toBe('number')
+    expect(detectFieldType({ type: 'string', enum: ['a'] }, textarea)).toBe(
+      'choice',
+    )
+  })
+
   it('detects number and integer as number', () => {
     expect(detectFieldType({ type: 'number' })).toBe('number')
     expect(detectFieldType({ type: 'integer' })).toBe('number')
@@ -63,6 +82,11 @@ describe('detectFieldType', () => {
 
   it('detects boolean', () => {
     expect(detectFieldType({ type: 'boolean' })).toBe('boolean')
+  })
+
+  it('detects a boolean that must be true as mustCheck, and any other const as advanced', () => {
+    expect(detectFieldType({ type: 'boolean', const: true })).toBe('mustCheck')
+    expect(detectFieldType({ type: 'boolean', const: false })).toBeNull()
   })
 
   it('returns null for an unrecognized shape (advanced)', () => {
@@ -97,8 +121,10 @@ describe('choiceOptionProblems', () => {
 describe('fieldTypeLabel', () => {
   it('labels every simple field type', () => {
     expect(fieldTypeLabel('text')).toBe('Text')
+    expect(fieldTypeLabel('longText')).toBe('Long text')
     expect(fieldTypeLabel('number')).toBe('Number')
     expect(fieldTypeLabel('boolean')).toBe('Yes / No')
+    expect(fieldTypeLabel('mustCheck')).toBe('Checkbox (must be checked)')
     expect(fieldTypeLabel('choice')).toBe('Single choice')
     expect(fieldTypeLabel('multiChoice')).toBe('Multiple choice (select many)')
     expect(fieldTypeLabel('file')).toBe('File upload')
@@ -123,7 +149,16 @@ describe('applyFieldType', () => {
   })
 
   it('builds a boolean field', () => {
-    expect(applyFieldType({}, 'boolean')).toMatchObject({ type: 'boolean' })
+    expect(applyFieldType({}, 'boolean')).toEqual({ type: 'boolean' })
+  })
+
+  it('builds a must-be-checked field as a boolean that must be true, dropped when switched back', () => {
+    const mustCheck = applyFieldType({ title: 'Agree' }, 'mustCheck')
+    expect(mustCheck).toEqual({ title: 'Agree', type: 'boolean', const: true })
+    expect(applyFieldType(mustCheck, 'boolean')).toEqual({
+      title: 'Agree',
+      type: 'boolean',
+    })
   })
 
   it('builds a file field with the synapse-filehandle-id format', () => {
@@ -198,6 +233,31 @@ describe('applyFieldType', () => {
     expect(
       applyFieldType({ type: 'string', enum: ['Yes', 'No'] }, 'text'),
     ).not.toHaveProperty('enum')
+  })
+})
+
+describe('applyFieldTypeUiDefinition', () => {
+  const options = { 'ui:options': { rows: 5 } }
+
+  it('sets the textarea widget for longText, keeping other keys', () => {
+    expect(applyFieldTypeUiDefinition(options, 'longText')).toEqual({
+      ...options,
+      'ui:widget': LONG_TEXT_WIDGET,
+    })
+  })
+
+  it('removes only the textarea widget for any other type', () => {
+    expect(
+      applyFieldTypeUiDefinition(
+        { ...options, 'ui:widget': LONG_TEXT_WIDGET },
+        'text',
+      ),
+    ).toEqual(options)
+  })
+
+  it("leaves a widget it didn't set alone", () => {
+    const uiDefinition = { 'ui:widget': 'email' }
+    expect(applyFieldTypeUiDefinition(uiDefinition, 'text')).toBe(uiDefinition)
   })
 })
 

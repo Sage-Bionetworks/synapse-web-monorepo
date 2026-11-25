@@ -35,7 +35,12 @@ export function ActionPanel(props: ActionPanelProps) {
           </Typography>
         )}
         {description && (
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
             {description}
           </Typography>
         )}

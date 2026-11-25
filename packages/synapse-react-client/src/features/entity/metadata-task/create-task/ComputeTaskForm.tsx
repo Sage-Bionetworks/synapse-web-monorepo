@@ -113,14 +113,25 @@ export default function ComputeTaskForm(props: ComputeTaskFormProps) {
   }
 
   return (
-    <Stack gap={3}>
+    <Stack
+      sx={{
+        gap: 3,
+      }}
+    >
       <TaskFormHeader
         onExit={onExit}
         pageTitle={pageTitle}
         pageDescription={pageDescription}
       />
 
-      <Stack gap={3} sx={{ width: '100%', maxWidth: 700, mx: 'auto' }}>
+      <Stack
+        sx={{
+          gap: 3,
+          width: '100%',
+          maxWidth: 700,
+          mx: 'auto',
+        }}
+      >
         {typeFields.showTypeSection && (
           <StyledFormControl fullWidth>
             <InputLabel id="compute-task-type-label">

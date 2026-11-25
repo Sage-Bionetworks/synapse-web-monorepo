@@ -155,7 +155,9 @@ function JsonSchemaVersionSelect(props: JsonSchemaVersionSelectProps) {
       fullWidth
       size="small"
       value={value}
-      inputProps={{ 'aria-label': `Version for ${schema.schemaName}` }}
+      slotProps={{
+        input: { 'aria-label': `Version for ${schema.schemaName}` },
+      }}
       onClick={event => {
         event.stopPropagation()
       }}

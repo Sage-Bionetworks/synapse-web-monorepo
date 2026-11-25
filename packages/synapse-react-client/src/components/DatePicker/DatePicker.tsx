@@ -15,7 +15,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 export default function DatePicker(props: MuiDatePickerProps) {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <MuiDatePicker enableAccessibleFieldDOMStructure={false} {...props} />
+      <MuiDatePicker {...props} />
     </LocalizationProvider>
   )
 }

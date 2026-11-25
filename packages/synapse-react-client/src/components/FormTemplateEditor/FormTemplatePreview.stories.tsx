@@ -80,7 +80,7 @@ export const MultiStepStepper: Story = {
 }
 
 /** "Renewal details" only has a resolvable field once the Renewal toggle above the stepper is
- * selected -- toggle it to see the step appear. */
+ * selected. Until then a notice names the hidden step. */
 export const RenewalGatedStep: Story = {
   args: {
     template: template([
@@ -88,6 +88,18 @@ export const RenewalGatedStep: Story = {
         title: 'Basics',
         fields: [{ schemaPath: '/institution', uiDefinition: {} }],
       },
+      {
+        title: 'Renewal details',
+        fields: [{ schemaPath: '/summaryOfUse', uiDefinition: {} }],
+      },
+    ]),
+  },
+}
+
+/** Every step is renewal-only, so the Request view has no step to show. */
+export const RenewalOnlySteps: Story = {
+  args: {
+    template: template([
       {
         title: 'Renewal details',
         fields: [{ schemaPath: '/summaryOfUse', uiDefinition: {} }],
@@ -144,6 +156,32 @@ export const YesNoField: Story = {
           description: 'Has an IRB approved this research?',
         },
       },
+    },
+  },
+}
+
+/** A boolean that must be `true` is a single box the requester must check, not Yes/No. */
+export const MustCheckField: Story = {
+  args: {
+    template: template([
+      {
+        title: 'Agreements',
+        fields: [{ schemaPath: '/agreeToTerms', uiDefinition: {} }],
+      },
+    ]),
+    jsonSchema: {
+      ...schema,
+      properties: {
+        ...schema.properties,
+        agreeToTerms: {
+          type: 'boolean',
+          const: true,
+          title: 'I agree to the terms and conditions',
+          description:
+            'You must abide by all terms and conditions for accessing this data.',
+        },
+      },
+      required: [...(schema.required ?? []), 'agreeToTerms'],
     },
   },
 }

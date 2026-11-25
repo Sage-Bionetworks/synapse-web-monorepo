@@ -139,6 +139,7 @@ function toColumnNames(names: string[]): string[] {
 /** Returns the configuration the form describes, or undefined when the form is invalid. */
 function toAggregateDataConfiguration(
   form: PreviewForm,
+  approvedVirtualTableIds: string[],
 ): AggregateDataConfiguration | undefined {
   const suppressionThreshold = parsePositiveInteger(form.suppressionThreshold)
   const facetPostProcessingConfig = toFacetPostProcessingConfig(form)
@@ -155,6 +156,7 @@ function toAggregateDataConfiguration(
         ? form.quasiIdentifierColumnNames
         : undefined,
     countSuppressionStrategy: form.countSuppressionStrategy,
+    approvedVirtualTableIds,
     facetPostProcessingConfig,
   }
 }
@@ -162,6 +164,8 @@ function toAggregateDataConfiguration(
 export type AggregateDataPreviewControlsProps = {
   /** The AGGREGATE_DATA source table whose administrators may preview its aggregate-only results. */
   sourceTableId: string
+  /** The VirtualTables the preview approves for aggregate-only reads; the server refuses a previewed read of any other. */
+  approvedVirtualTableIds: string[]
 }
 
 /**
@@ -177,13 +181,23 @@ export function AggregateDataPreviewControls(
   if (!permissions?.canChangePermissions) {
     return null
   }
-  return <AggregateDataPreviewForm />
+  return (
+    <AggregateDataPreviewForm
+      approvedVirtualTableIds={props.approvedVirtualTableIds}
+    />
+  )
 }
 
-function AggregateDataPreviewForm() {
+function AggregateDataPreviewForm(props: {
+  approvedVirtualTableIds: string[]
+}) {
+  const { approvedVirtualTableIds } = props
   const { currentQueryRequest, executeQueryRequest } = useQueryContext()
   const [form, setForm] = useState<PreviewForm>(DEFAULT_PREVIEW_FORM)
-  const configuration = toAggregateDataConfiguration(form)
+  const configuration = toAggregateDataConfiguration(
+    form,
+    approvedVirtualTableIds,
+  )
   const isPreviewing = currentQueryRequest.aggregateDataPreview !== undefined
 
   function updateForm(changes: Partial<PreviewForm>) {
@@ -214,8 +228,9 @@ function AggregateDataPreviewForm() {
       <AccordionDetails className={styles.preview}>
         <Typography variant="body1">
           Results are processed as they would be for users with aggregate-only
-          access. Only administrators of the participant source table see this
-          option.
+          access, reading only the approved VirtualTables (
+          {approvedVirtualTableIds.join(', ')}). Only administrators of the
+          participant source table see this option.
         </Typography>
         <div className={styles.previewFields}>
           <TextField

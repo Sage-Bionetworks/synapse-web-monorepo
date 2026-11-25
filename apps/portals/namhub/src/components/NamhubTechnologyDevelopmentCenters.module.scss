@@ -1,0 +1,49 @@
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+@use 'sass:map';
+@use './sectionTitle';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 20px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    flex-direction: row;
+    align-items: center;
+    padding: 40px;
+    gap: 50px;
+  }
+}
+
+.textContainer {
+  gap: 11px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    width: 35%;
+  }
+}
+
+.wheelContainer {
+  // NAMHub design colours, lighter than the portal's primary-derived defaults
+  --hub-and-spokes-label-color: #7aa0d8;
+  --hub-and-spokes-ring-color: #d1e1f3;
+
+  width: 100%;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    width: 65%;
+  }
+}
+
+.title {
+  @include sectionTitle.section-title;
+
+  :global(.MuiContainer-root) {
+    color: var(--synapse-gray-1000);
+  }
+}
+
+.text {
+  color: var(--synapse-gray-900);
+}

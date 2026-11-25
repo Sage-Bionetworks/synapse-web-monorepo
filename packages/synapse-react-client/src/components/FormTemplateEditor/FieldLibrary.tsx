@@ -18,11 +18,14 @@ import {
 } from '@/utils/jsonschema/submissionContext'
 import { FieldLibraryRow } from './FieldLibraryRow'
 import fieldLibraryStyles from './FieldLibrary.module.scss'
+import { FieldSettingsByPath, fieldSettingsFor } from './utils'
 
 export type FieldLibraryProps = {
   jsonSchema: RJSFSchema
   /** Set of JSON pointers (e.g. `/institution`) currently bound to a step. */
   usedPaths: Set<string>
+  /** Each property's slot settings by `schemaPath`, whether or not a step binds it. */
+  fieldSettings: FieldSettingsByPath
   selectedPropertyKey: string | null
   onSelectField: (propertyKey: string) => void
   onCreateField: () => void
@@ -37,6 +40,7 @@ export type FieldLibraryProps = {
 export function FieldLibrary({
   jsonSchema,
   usedPaths,
+  fieldSettings,
   selectedPropertyKey,
   onSelectField,
   onCreateField,
@@ -79,6 +83,12 @@ export function FieldLibrary({
             <FieldLibraryRow
               propertyKey={p.propertyKey}
               property={p.subSchema}
+              uiDefinition={
+                fieldSettingsFor(
+                  fieldSettings,
+                  propertyKeyToPointer(p.propertyKey),
+                ).uiDefinition
+              }
               isRequired={p.isRequired}
               context={p.context}
               isUsedInSteps={usedPaths.has(propertyKeyToPointer(p.propertyKey))}
@@ -94,13 +104,24 @@ export function FieldLibrary({
     <Paper variant="outlined" sx={{ p: 2, height: '100%' }}>
       <Box sx={{ mb: 1 }}>
         <Typography variant="subtitle2">Fields</Typography>
-        <Typography variant="caption" color="text.secondary">
+        <Typography
+          variant="caption"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           Define the data you want to collect. Click a field to edit it.
         </Typography>
       </Box>
 
       <Stack spacing={1.5}>
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{
+            alignItems: 'center',
+          }}
+        >
           <TextField
             placeholder="Search fields…"
             value={search}

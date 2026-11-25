@@ -23,14 +23,27 @@ export default function CreateTaskCategoryPicker(
   const { onSelectCompute, onSelectCurate } = props
 
   return (
-    <Stack gap={3} alignItems="center">
-      <Typography variant="headline3" component="p" color="text.secondary">
+    <Stack
+      sx={{
+        gap: 3,
+        alignItems: 'center',
+      }}
+    >
+      <Typography
+        variant="headline3"
+        component="p"
+        sx={{
+          color: 'text.secondary',
+        }}
+      >
         {SELECT_TASK_CATEGORY_DESCRIPTION}
       </Typography>
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
-        gap={3}
-        justifyContent="center"
+        sx={{
+          gap: 3,
+          justifyContent: 'center',
+        }}
       >
         <TaskCategoryCard
           title={CURATE_TASK_CATEGORY_TITLE}

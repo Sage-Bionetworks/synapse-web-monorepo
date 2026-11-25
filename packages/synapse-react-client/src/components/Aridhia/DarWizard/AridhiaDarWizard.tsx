@@ -1,3 +1,4 @@
+import { useLocalToday } from '@/utils/hooks/useLocalToday'
 import {
   PropsWithChildren,
   ReactNode,
@@ -6,7 +7,6 @@ import {
   useState,
 } from 'react'
 import { Alert, Box, Button, Link, Skeleton } from '@mui/material'
-import { RJSFSchema } from '@rjsf/utils'
 import { useGetAridhiaDatasetSettings } from '@/aridhia-queries/useGetAridhiaDatasetSettings'
 import { useGetAridhiaWorkflow } from '@/aridhia-queries/useGetAridhiaWorkflow'
 import { useGetAridhiaDictionaries } from '@/aridhia-queries/useGetAridhiaDictionaries'
@@ -21,6 +21,8 @@ import {
   FairFormPayload,
   parseFairFormSections,
   summarizeFormAnswers,
+  toFairSubmissionAnswers,
+  validateFairSection,
 } from '@/components/Aridhia/fairFormToRjsf'
 import { RdcaDapEligibilityExplainer } from '@/components/Aridhia/RdcaDapEligibilityDialog'
 import { useDarDraft } from './useDarDraft'
@@ -55,21 +57,14 @@ type StepKey = 'destination' | 'workspace' | 'project' | 'about' | 'complete'
 const SUPPORT_PORTAL_URL =
   'https://sagebionetworks.jira.com/servicedesk/customer/portal/9'
 
-function isSectionComplete(
-  schema: RJSFSchema,
-  values: Record<string, unknown>,
-): boolean {
-  return (schema.required ?? []).every(key => {
-    const value = values[key]
-    return value !== undefined && value !== null && value !== ''
-  })
-}
-
 function useFairSection(data: FairFormPayload | null | undefined, key: string) {
+  // A date field's `today` minimum is part of the schema, so rebuild it once the user's local
+  // date changes.
+  const today = useLocalToday()
   return useMemo(() => {
     const section = parseFairFormSections(data).find(s => s.key === key)
-    return section ? fairSectionToRjsf(section) : undefined
-  }, [data, key])
+    return section ? fairSectionToRjsf(section, today) : undefined
+  }, [data, key, today])
 }
 
 type DarSectionStepProps = PropsWithChildren<{
@@ -273,17 +268,18 @@ function useAridhiaDarWizardParts(
           !workspaceFormQuery.isLoading &&
           !!draft.workspaceReference?.trim() &&
           (!workspaceRjsf ||
-            isSectionComplete(workspaceRjsf.schema, draft.values))
+            validateFairSection(workspaceRjsf, draft.values).isValid)
         )
       case 'about':
         return (
           !workflowQuery.isLoading &&
-          (!aboutRjsf || isSectionComplete(aboutRjsf.schema, draft.values))
+          (!aboutRjsf || validateFairSection(aboutRjsf, draft.values).isValid)
         )
       case 'project':
         return (
           !workflowQuery.isLoading &&
-          (!projectRjsf || isSectionComplete(projectRjsf.schema, draft.values))
+          (!projectRjsf ||
+            validateFairSection(projectRjsf, draft.values).isValid)
         )
       case 'complete':
         return draft.termsAccepted
@@ -302,7 +298,17 @@ function useAridhiaDarWizardParts(
   }
 
   function handleSubmit() {
-    const { name, code: _formCode, ...fields } = draft.values
+    const { name, code: _formCode, ...answers } = draft.values
+    // Only the submitted payload is converted; the draft keeps the widget's own value so it
+    // restores into the phone input and shows formatted on the Review step.
+    const fields = toFairSubmissionAnswers(
+      answers,
+      [
+        aboutRjsf,
+        projectRjsf,
+        draft.workspaceRequested ? workspaceRjsf : undefined,
+      ].filter(section => section !== undefined),
+    )
     submitMutation.mutate({
       code: draft.code,
       name: (name as string) ?? '',

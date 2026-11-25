@@ -34,7 +34,13 @@ export default function GridPageTitle(props: GridPageTitleProps) {
     <Stack spacing={1}>
       <Typography variant={'headline2'}>ID: {sessionId}</Typography>
       {curationTask && (
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{
+            alignItems: 'center',
+          }}
+        >
           <Typography variant={'body1'}>
             <strong>Task Name:</strong> {curationTask.dataType}{' '}
           </Typography>

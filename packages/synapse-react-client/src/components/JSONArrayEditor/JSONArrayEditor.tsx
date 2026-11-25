@@ -88,7 +88,6 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
       <JsonSchemaForm
         formRef={formRef}
         schema={schema}
-        noHtml5Validate
         uiSchema={{
           'ui:submitButtonOptions': {
             norender: true,
@@ -116,7 +115,7 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
           value={pastedValues}
           onChange={e => setPastedValues(e.target.value)}
           slotProps={{
-            input: { inputProps: { 'aria-label': 'CSV or TSV to Append' } },
+            htmlInput: { 'aria-label': 'CSV or TSV to Append' },
           }}
         />
         <Box

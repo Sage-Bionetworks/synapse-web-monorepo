@@ -163,7 +163,11 @@ export function CreateProjectModal({
   }
 
   const dialogContent = (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       <TextField
         id="projectInput"
         label="Project Name"

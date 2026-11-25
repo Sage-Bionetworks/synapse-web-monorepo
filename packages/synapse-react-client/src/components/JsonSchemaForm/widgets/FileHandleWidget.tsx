@@ -95,7 +95,12 @@ export const FileHandleWidget: Widget = (props: WidgetProps) => {
       />
       {answer && !answerAssociation && (
         // The request does not list the file yet, so only the user who uploaded it can download it
-        <Stack direction="row" alignItems="center">
+        <Stack
+          direction="row"
+          sx={{
+            alignItems: 'center',
+          }}
+        >
           <FileLink fileHandleId={answer} association={undefined} />
           <IconButton
             size="small"

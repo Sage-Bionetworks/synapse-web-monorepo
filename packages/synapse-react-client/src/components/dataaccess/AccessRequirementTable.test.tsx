@@ -17,6 +17,8 @@ import { formatDate } from '@/utils/functions/DateFormatter'
 import {
   ACCESS_TYPE,
   ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+  JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
   SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
@@ -314,5 +316,33 @@ describe('Access Requirement Table tests', () => {
         mockSelfSignAccessRequirement.concreteType,
       ),
     ).toEqual(SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE)
+    expect(
+      accessRequirementConcreteTypeValueToDisplayValue(
+        JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+      ),
+    ).toEqual(JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE)
+  })
+
+  it('labels and filters JSON Schema ARs as Schema-based', async () => {
+    const onTypeFilterChange = vi.fn()
+    renderComponent({ onTypeFilterChange })
+
+    const row = (await screen.findByText('Genomics Data Access')).closest('tr')!
+    within(row).getByRole('cell', {
+      name: JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+    })
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Filter by Type' }),
+    )
+    await userEvent.click(
+      await screen.findByRole('radio', {
+        name: JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_DISPLAY_VALUE,
+      }),
+    )
+
+    expect(onTypeFilterChange).toHaveBeenLastCalledWith(
+      JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+    )
   })
 })

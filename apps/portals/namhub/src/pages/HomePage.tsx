@@ -1,7 +1,8 @@
 import NamhubHeader from '@sage-bionetworks/synapse-portal-framework/components/namhub/NamhubHeader'
-import NamhubAbout from '@sage-bionetworks/synapse-portal-framework/components/namhub/NamhubAbout'
+import NamhubAbout from '@/components/NamhubAbout'
+import NamhubTechnologyDevelopmentCenters from '@/components/NamhubTechnologyDevelopmentCenters'
 import DevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/DevelopedBySage'
-import { ReactComponent as NYUGSOMLogo } from '../assets/NYUGSOM.svg'
+import nyuGsomLogoUrl from '../assets/NYUGSOM.png'
 import { ReactComponent as SageLogo } from '@sage-bionetworks/synapse-portal-framework/components/assets/sage-logo.svg'
 import { Link } from '@mui/material'
 import styles from './HomePage.module.scss'
@@ -39,12 +40,13 @@ export default function Homepage() {
     <>
       <NamhubHeader />
       <NamhubAbout />
+      <NamhubTechnologyDevelopmentCenters />
       <div className={styles.termsAndConditions}>
         <DevelopedBySage />
       </div>
       <div className={styles.logoContainer}>
         <Link href="https://med.nyu.edu" target="_blank" rel="noreferrer">
-          <NYUGSOMLogo />
+          <img src={nyuGsomLogoUrl} alt="NYU Grossman School of Medicine" />
         </Link>
         <Link
           href="https://sagebionetworks.org/platform/synapse"

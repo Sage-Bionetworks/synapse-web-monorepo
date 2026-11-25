@@ -26,7 +26,7 @@ import SetAccessRequirementCommonFields, {
 import { SELECT_FORM_TEMPLATE_ERROR } from '../FormTemplateReferenceField/FormTemplateReferenceField'
 
 const SCHEMA_DRIVEN_TYPE_LABEL =
-  'Schema-driven - requests are in Synapse, using a form template'
+  'Schema-based - requests are in Synapse, using a form template'
 
 const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 

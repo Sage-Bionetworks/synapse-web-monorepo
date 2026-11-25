@@ -83,7 +83,12 @@ export function FormStructurePanel({
       >
         <Box>
           <Typography variant="subtitle2">Steps</Typography>
-          <Typography variant="caption" color="text.secondary">
+          <Typography
+            variant="caption"
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
             Arrange fields into pages requesters will fill out in order.
           </Typography>
         </Box>

@@ -5,39 +5,15 @@ import {
   generateDataAccessSchema,
 } from '@/utils/jsonschema/generateDataAccessSchema'
 import { RJSFSchema } from '@rjsf/utils'
-import {
-  DataAccessRequestType,
-  FormTemplateReference,
-} from '@sage-bionetworks/synapse-client'
+import { DataAccessRequestType } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { Submission } from '@sage-bionetworks/synapse-types'
 import { useMemo } from 'react'
-
-/**
- * A Submission that carries the FormTemplate it was made against.
- *
- * PLFM-10009 will expose this reference; until then it is read from this field, which only mock
- * data populates.
- */
-export type SubmissionWithFormTemplateRef = Submission & {
-  formTemplateRef?: FormTemplateReference
-}
 
 export class MissingFormTemplateRefError extends Error {
   constructor() {
     super('The form template used for this submission could not be determined.')
   }
-}
-
-/**
- * The FormTemplate version in effect when the submission was created, as opposed to the one its
- * Access Requirement currently references.
- */
-export function getSubmissionFormTemplateRef(
-  submission: Submission | undefined,
-): FormTemplateReference | undefined {
-  return (submission as SubmissionWithFormTemplateRef | undefined)
-    ?.formTemplateRef
 }
 
 export type GeneratedSubmissionForm = GeneratedFormSchemaForRjsf & {
@@ -59,7 +35,9 @@ export function useGeneratedSubmissionForm(
   submission: Submission | undefined,
 ): GeneratedSubmissionFormResult {
   const hasSchemaData = submission?.schemaData != null
-  const templateRef = getSubmissionFormTemplateRef(submission)
+  // The template version in effect when the submission was created, not the one its Access
+  // Requirement references now
+  const templateRef = submission?.formTemplateRef
 
   const templateQuery = useGetFormTemplateVersion(
     hasSchemaData ? templateRef?.templateId : undefined,

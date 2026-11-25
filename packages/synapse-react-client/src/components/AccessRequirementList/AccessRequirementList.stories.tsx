@@ -7,6 +7,7 @@ import {
   mockToUAccessRequirement,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
 import {
+  mockEDucJsonSchemaAR,
   mockJsonSchemaAR1,
   mockJsonSchemaAR2,
   mockJsonSchemaAR1WikiPage,
@@ -41,6 +42,7 @@ import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import {
   ACCESS_APPROVAL,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
+  DATA_ACCESS_REQUEST_PREVIEW,
   WIKI_PAGE_ID,
 } from '@/utils/APIConstants'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
@@ -586,5 +588,82 @@ export const SchemaDrivenRequirementWithFileQuestionWithoutTemplate: Story = {
         ...getMswHandlers(SchemaDrivenRequirementWithFileQuestion),
       ],
     },
+  },
+}
+
+const eDucSchemaDrivenAccessRequirement =
+  mockEDucJsonSchemaAR as unknown as AccessRequirement
+
+/** A one-page PDF that stands in for the eDUC that the server generates from the request. */
+function createMockEDucPdf(): Blob {
+  const lines = [
+    'Data Use Certificate',
+    `Access requirement: ${mockEDucJsonSchemaAR.name}`,
+    'Generated from the answers in this request.',
+  ]
+  const content = lines
+    .map(
+      (line, i) =>
+        `BT /F1 ${i === 0 ? 20 : 12} Tf 72 ${720 - i * 32} Td (${line}) Tj ET`,
+    )
+    .join('\n')
+  const objects = [
+    '<< /Type /Catalog /Pages 2 0 R >>',
+    '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>',
+    `<< /Length ${content.length} >>\nstream\n${content}\nendstream`,
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
+  ]
+  let pdf = '%PDF-1.4\n'
+  const offsets = objects.map((object, i) => {
+    const offset = pdf.length
+    pdf += `${i + 1} 0 obj\n${object}\nendobj\n`
+    return offset
+  })
+  const xrefOffset = pdf.length
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`
+  pdf += offsets
+    .map(offset => `${String(offset).padStart(10, '0')} 00000 n \n`)
+    .join('')
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF\n`
+  return new Blob([pdf], { type: 'application/pdf' })
+}
+
+/**
+ * A JsonSchemaAccessRequirement with an eDUC template, using the Clinical Trial FormTemplate. After the FormTemplate's
+ * steps, the requester reviews the request, previews the eDUC generated from it, and sends it for electronic signature
+ * (or uploads a signed copy instead).
+ */
+export const SchemaDrivenRequirementWithEDuc: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        http.get(
+          `${MOCK_REPO_ORIGIN}${DATA_ACCESS_REQUEST_PREVIEW(':id')}`,
+          () =>
+            HttpResponse.json({
+              fileHandleId: 'mock-educ-preview-file-handle',
+            }),
+        ),
+        // The preview is downloaded through the portal's file handle servlet
+        http.get(
+          /\/Portal\/filehandleassociation/,
+          () =>
+            new HttpResponse(createMockEDucPdf(), {
+              headers: { 'Content-Type': 'application/pdf' },
+            }),
+        ),
+        ...getAccessRequirementEntityBindingHandlers(
+          MOCK_REPO_ORIGIN,
+          undefined,
+          [eDucSchemaDrivenAccessRequirement],
+        ),
+        ...getMswHandlers(SchemaDrivenRequirementWithFileQuestion),
+      ],
+    },
+  },
+  args: {
+    ...SchemaDrivenRequirementWithFileQuestion.args,
+    accessRequirementFromProps: [eDucSchemaDrivenAccessRequirement],
   },
 }

@@ -70,7 +70,7 @@ export const MOCK_ARIDHIA_ABOUT_FIELDS: FairField[] = [
     name: 'email',
     type: 'string',
     label: 'Email address',
-    validation: { required: true },
+    validation: { required: true, format: 'email' },
   },
 ]
 
@@ -80,6 +80,12 @@ export const MOCK_ARIDHIA_PROJECT_FIELDS: FairField[] = [
     type: 'string',
     label: 'Project name',
     validation: { required: true },
+  },
+  {
+    name: 'team_size',
+    type: 'number',
+    label: 'Team size',
+    validation: { required: false, minimum: 1, maximum: 10 },
   },
 ]
 
@@ -244,13 +250,17 @@ export function getAridhiaWorkflowHandler(
     about = MOCK_ARIDHIA_ABOUT_FIELDS,
     project = MOCK_ARIDHIA_PROJECT_FIELDS,
   } = fields
+  return getAridhiaWorkflowBodyHandler({
+    code: 'rdca_access_request',
+    fields: { about, project },
+  })
+}
+
+/** Serves `body` verbatim as the dataset's workflow (e.g. a captured gateway response). */
+export function getAridhiaWorkflowBodyHandler(body: JsonBodyType): HttpHandler {
   return http.get(
     `${MOCK_ARIDHIA_GATEWAY}/fair/workflows/rdca_access_request`,
-    () =>
-      HttpResponse.json({
-        code: 'rdca_access_request',
-        fields: { about, project },
-      }),
+    () => HttpResponse.json(body),
   )
 }
 

@@ -165,11 +165,13 @@ function SelectAllCheckboxRenderer(props: {
 
   return (
     <Checkbox
-      inputProps={{ 'aria-label': 'Select All' }}
       checked={checked}
       disabled={disabled}
       onChange={() => {
         onSelectAll()
+      }}
+      slotProps={{
+        input: { 'aria-label': 'Select All' },
       }}
     />
   )
