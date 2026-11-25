@@ -14,6 +14,8 @@ import { CardContainerLogic } from 'synapse-react-client/components/CardContaine
 import { datasetsSql } from '../config/resources'
 import {
   datasetCardConfiguration,
+  datasetHostingSchemaFields,
+  datasetSchema,
   datasetColumnAliases,
 } from '../config/synapseConfigs/datasets'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
@@ -28,6 +30,10 @@ export default function DatasetDetailsPage() {
         <CardContainerLogic
           cardConfiguration={{
             ...datasetCardConfiguration,
+            genericCardSchema: {
+              ...datasetSchema,
+              ...datasetHostingSchemaFields,
+            },
             secondaryLabelLimit: 4,
             isHeader: true,
           }}
