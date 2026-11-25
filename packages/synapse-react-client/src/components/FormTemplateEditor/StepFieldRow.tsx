@@ -152,7 +152,7 @@ export function StepFieldRow({
           </Typography>
           <Typography
             variant="caption"
-            color={isUnresolved ? 'error' : 'text.secondary'}
+            sx={{ color: isUnresolved ? 'error.main' : 'text.secondary' }}
           >
             {caption}
           </Typography>
