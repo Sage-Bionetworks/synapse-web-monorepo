@@ -1,7 +1,6 @@
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
-import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { rgbIndex, studiesSearchIndexId, studiesSql } from '../resources'
+import { rgbIndex, studiesSearchIndexId } from '../resources'
 import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 const type = SynapseConstants.GENERIC_CARD
@@ -30,29 +29,6 @@ export const studyCardConfiguration: CardConfiguration = {
   },
   secondaryLabelLimit: 20,
 }
-
-const studiesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
-  rgbIndex,
-  sql: studiesSql,
-  name: 'Studies',
-  shouldDeepLink: true,
-  cardConfiguration: studyCardConfiguration,
-  columnAliases,
-  searchConfiguration: {
-    searchable: [
-      'studyName',
-      'summary',
-      'studyLeads',
-      'diseaseFocus',
-      'institution',
-      'NAMsTechFocus',
-      'alternateName',
-      'studyDoi',
-    ],
-  },
-}
-
-export default studiesQueryWrapperPlotNavProps
 
 export const studiesSearch: SearchQueryWrapperPlotNavProps = {
   rgbIndex,
